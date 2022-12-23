@@ -1,0 +1,633 @@
+/* ------------------------------------------------------------------------------
+  Squirrel squirrel.cpp
+  Copyright (C) 2004 - 2022
+  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
+  Olin Neuropsychiatry Research Center, Hartford Hospital
+  ------------------------------------------------------------------------------
+  GPLv3 License:
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ------------------------------------------------------------------------------ */
+
+#include "squirrel.h"
+#include "squirrelImageIO.h"
+#include "utils.h"
+
+/* ------------------------------------------------------------ */
+/* ----- squirrel --------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::squirrel
+ */
+squirrel::squirrel()
+{
+    datetime = QDateTime::currentDateTime();
+    description = "Package created by squirrelutils";
+    name = "Squirrel package";
+    version = QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN);
+    format = "squirrel";
+    subjectDirFormat = "orig";
+    studyDirFormat = "orig";
+    seriesDirFormat = "orig";
+    dataFormat = "nifti4dgz";
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- read ------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::read Reads a squirrel package
+ * @param filename Full filepath of the package to read
+ * @return true if package was successfully read, false otherwise
+ */
+bool squirrel::read(QString filepath, bool validateOnly) {
+
+    if (validateOnly)
+        Print("Validating " + filepath);
+    else
+        Print("Reading " + filepath);
+
+    /* check if file exists */
+    if (!FileExists(filepath)) {
+        Print("File " + filepath + " does not exist");
+        return false;
+    }
+
+    /* get listing of the zip the file, check if the squirrel.json exists in the root */
+    QString systemstring;
+    systemstring = "unzip -l " + filepath;
+    QString output = SystemCommand(systemstring, false);
+    if (!output.contains("squirrel.json")) {
+        Print("File " + filepath + " does not appear to be a squirrel package");
+        return false;
+    }
+
+    /* create a working directory */
+    MakeTempDir(workingDir);
+
+    /* unzip the .zip to the working dir */
+    systemstring = QString("unzip " + filepath + " -d " + workingDir);
+    Print(SystemCommand(systemstring, false));
+
+    /* perform all checks */
+
+    /* delete the tmp dir, if it exists */
+    if (validateOnly) {
+        if (DirectoryExists(workingDir)) {
+            Print("Temporary export dir [" + workingDir + "] exists and will be deleted");
+            QString m;
+            if (!RemoveDir(workingDir, m))
+                Print("Error [" + m + "] removing directory [" + workingDir + "]");
+        }
+    }
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- write ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::write Writes a squirrel package using stored information
+ * @param outpath full path to the output squirrel .zip file
+ * @param dataFormat if converting from DICOM, write the data in the specified format
+ *                   - 'orig' - Perform no conversion of DICOM images (not recommended as it retains PHI)
+ *                   - 'anon' - Anonymize DICOM files (light anonymization: remove PHI, but not ID or dates)
+ *                   - 'anonfull' - Anonymize DICOM files (full anonymization)
+ *                   - 'nifti4d' - Nifti 4D
+ *                   - 'nifti4dgz' - Nifti 4D gzip [default]
+ *                   - 'nidti3d' - Nifti 3D
+ *                   - 'nifti3dgz' - Nifti 3D gzip
+ * @param subjectDirFormat directory structure of the subject data
+ *                  - 'orig' - Use the subjectID for subject directories
+ *                  - 'seq' - Use sequentially generated numbers for subject directories
+ * @param studyDirFormat directory structure of the subject data
+ *                  - 'orig' - Use the studyNum for study directories
+ *                  - 'seq' - Use sequentially generated numbers for study directories
+ * @param seriesDirFormat directory structure of the subject data
+ *                  - 'orig' - Use the seriesNum for series directories
+ *                  - 'seq' - Use sequentially generated numbers for series directories
+ * @return true if package was successfully written, false otherwise
+ */
+bool squirrel::write(QString outpath, QString &filepath, QString &m, bool debug) {
+
+    /* create the log file */
+    QFileInfo finfo(outpath);
+    logfile = QString(finfo.absolutePath() + "/squirrel-" + CreateLogDate() + ".log");
+
+    msgs << Log("Beginning writing of squirrel package", __FUNCTION__);
+
+    /* create temp directory */
+    MakeTempDir(workingDir);
+    msgs << Log(QString("Created working directory [" + workingDir + "]"), __FUNCTION__);
+
+    /* ----- 1) write data. And set the relative paths in the objects ----- */
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+
+        squirrelSubject sub = subjectList[i];
+
+        QString subjDir;
+        if (subjectDirFormat == "orig")
+            subjDir = sub.ID;
+        else
+            subjDir = QString("%1").arg(i+1); /* start the numbering at 1 instead of 0 */
+
+        subjDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+        QString vPath = QString("data/%1").arg(subjDir);
+        subjectList[i].virtualPath = vPath;
+
+        msgs << Log(QString("Working on subject [" + subjDir + "]"), __FUNCTION__);
+
+        /* iterate through studies */
+        for (int j=0; j < sub.studyList.size(); j++) {
+
+            squirrelStudy stud = sub.studyList[j];
+
+            QString studyDir;
+            if (studyDirFormat == "orig")
+                studyDir = QString("%1").arg(stud.number);
+            else
+                studyDir = QString("%1").arg(j+1); /* start the numbering at 1 instead of 0 */
+
+            studyDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+            QString vPath = QString("data/%1/%2").arg(subjDir).arg(studyDir);
+            subjectList[i].studyList[j].virtualPath = vPath;
+
+            msgs << Log(QString("Working on study [" + studyDir + "]"), __FUNCTION__);
+
+            /* iterate through series */
+            for (int k=0; k < stud.seriesList.size(); k++) {
+
+                squirrelSeries ser = stud.seriesList[k];
+
+                QString seriesDir;
+                if (seriesDirFormat == "orig")
+                    seriesDir = QString("%1").arg(ser.number);
+                else
+                    seriesDir = QString("%1").arg(k+1); /* start the numbering at 1 instead of 0 */
+
+                seriesDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+                QString vPath = QString("data/%1/%2/%3").arg(subjDir).arg(studyDir).arg(seriesDir);
+                subjectList[i].studyList[j].seriesList[k].virtualPath = vPath;
+
+                QString m;
+                QString seriesPath = QString("%1/%2").arg(workingDir).arg(subjectList[i].studyList[j].seriesList[k].virtualPath);
+                MakePath(seriesPath,m);
+
+                msgs << Log(QString("Working on series [" + seriesDir + "]"), __FUNCTION__);
+                msgs << Log(QString("Package data format [" + dataFormat + "]"), __FUNCTION__);
+
+                /* orig vs other formats */
+                if (dataFormat == "orig") {
+                    msgs << Log(QString("Squirrel: dataformat original [%1]").arg(dataFormat), __FUNCTION__);
+
+                    /* copy all of the series files to the temp directory */
+                    foreach (QString f, ser.stagedFiles) {
+                        QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
+                        SystemCommand(systemstring);
+                    }
+                }
+                else if ((dataFormat == "anon") || (dataFormat == "anonfull")) {
+                    msgs << Log(QString("Squirrel: dataformat anonymize [%1]").arg(dataFormat), __FUNCTION__);
+                    /* create temp directory */
+                    QString td;
+                    MakeTempDir(td);
+
+                    /* copy all files to temp directory */
+                    QString systemstring;
+                    foreach (QString f, ser.stagedFiles) {
+                        systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
+                        SystemCommand(systemstring);
+                    }
+
+                    /* anonymize the directory */
+                    squirrelImageIO io;
+                    QString m;
+                    if (dataFormat == "anon")
+                        io.AnonymizeDir(td,1,"Anonymized","Anonymized",m);
+                    else
+                        io.AnonymizeDir(td,2,"Anonymized","Anonymized",m);
+
+                    /* move the anonymized files to the staging area */
+                    systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);
+                    SystemCommand(systemstring);
+
+                    /* delete temp directory */
+                    QString m2;
+                    RemoveDir(td, m2);
+                }
+                else if (dataFormat.contains("nifti")) {
+                    msgs << Log(QString("dataformat nifti [%1]").arg(dataFormat), __FUNCTION__);
+                    int numConv(0), numRename(0);
+                    //QString format = dataFormat.left(5);
+                    bool gzip;
+                    if (dataFormat.contains("gz"))
+                        gzip = true;
+                    else
+                        gzip = false;
+
+                    /* get path of first file to be converted */
+                    if (ser.stagedFiles.size() > 0) {
+                        msgs << Log(QString("Converting [%1] files to nifti").arg(ser.stagedFiles.size()), __FUNCTION__);
+
+                        QFileInfo f(ser.stagedFiles[0]);
+                        QString origSeriesPath = f.absoluteDir().absolutePath();
+                        squirrelImageIO io;
+                        QString m3;
+                        io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, subjDir, studyDir, seriesDir, "dicom", numConv, numRename, m3);
+                        msgs << Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
+                    }
+                    else {
+                        msgs << Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__);
+                    }
+                }
+                else
+                    msgs << Log(QString("dataFormat not found [%1]").arg(dataFormat), __FUNCTION__);
+
+                /* get the number of files and size of the series */
+                qint64 c(0), b(0);
+                msgs << Log(QString("Running GetDirSizeAndFileCount() on [%1]").arg(seriesPath), __FUNCTION__);
+                GetDirSizeAndFileCount(seriesPath, c, b, false);
+                msgs << Log(QString("GetDirSizeAndFileCount() found  [%1] files   [%2] bytes").arg(c).arg(b), __FUNCTION__);
+                subjectList[i].studyList[j].seriesList[k].numFiles = c;
+                subjectList[i].studyList[j].seriesList[k].size = b;
+
+                /* write the series .json file, containing the dicom header params */
+                QJsonObject params;
+                params = ser.ParamsToJSON();
+                QByteArray j = QJsonDocument(params).toJson();
+                QFile fout(QString("%1/params.json").arg(seriesPath));
+                if (fout.open(QIODevice::WriteOnly)) {
+                    fout.write(j);
+                    msgs << Log(QString("Wrote %1/params.json").arg(seriesPath), __FUNCTION__);
+                }
+                else {
+                    msgs << Log(QString("Error writing [%1]").arg(fout.fileName()), __FUNCTION__);
+                    msgs << Log(QString("Error writing %1/params.json").arg(seriesPath), __FUNCTION__);
+                }
+            }
+        }
+    }
+
+    /* ----- 2) write .json file ----- */
+    /* create JSON object */
+    QJsonObject root;
+
+    QJsonObject pkgInfo;
+    pkgInfo["name"] = name;
+    pkgInfo["description"] = description;
+    pkgInfo["datetime"] = CreateCurrentDateTime(2);
+    pkgInfo["format"] = format;
+    pkgInfo["version"] = version;
+
+    root["_package"] = pkgInfo;
+
+    QJsonArray JSONsubjects;
+
+    /* add subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        JSONsubjects.append(subjectList[i].ToJSON());
+    }
+    root["numSubjects"] = JSONsubjects.size();
+    root["subjects"] = JSONsubjects;
+
+    /* add pipelines */
+    if (pipelineList.size() > 0) {
+        QJsonArray JSONpipelines;
+        for (int i=0; i < pipelineList.size(); i++) {
+            JSONpipelines.append(pipelineList[i].ToJSON(workingDir));
+        }
+        root["numPipelines"] = JSONpipelines.size();
+        root["pipelines"] = JSONpipelines;
+    }
+
+    /* add experiments */
+    if (experimentList.size() > 0) {
+        QJsonArray JSONexperiments;
+        for (int i=0; i < experimentList.size(); i++) {
+            JSONexperiments.append(experimentList[i].ToJSON());
+        }
+        root["numExperiments"] = JSONexperiments.size();
+        root["experiments"] = JSONexperiments;
+    }
+
+    /* write the final .json file */
+    QByteArray j = QJsonDocument(root).toJson();
+    QFile fout(QString("%1/squirrel.json").arg(workingDir));
+    fout.open(QIODevice::WriteOnly);
+    fout.write(j);
+    fout.close();
+
+    msgs << Log(QString("Wrote %1/squirrel.json").arg(workingDir), __FUNCTION__);
+
+    /* zip the temp directory into the output file */
+    QString zipfile = outpath;
+    if (!zipfile.endsWith(".zip"))
+        zipfile += ".zip";
+
+    QString systemstring = "cd " + workingDir + "; zip -1rv " + zipfile + " .";
+    msgs << Log("Beginning zipping package...", __FUNCTION__);
+    if (debug) {
+        msgs << Log(SystemCommand(systemstring), __FUNCTION__);
+    }
+    else {
+        SystemCommand(systemstring, false);
+    }
+
+    msgs << Log("Finished zipping package...", __FUNCTION__);
+
+    if (FileExists(zipfile)) {
+        msgs << Log("Created .zip file [" + zipfile + "]", __FUNCTION__);
+        filepath = zipfile;
+
+        /* delete the tmp dir, if it exists */
+        if (DirectoryExists(workingDir)) {
+            msgs << Log("Temporary export dir [" + workingDir + "] exists and will be deleted", __FUNCTION__);
+            QString m;
+            if (!RemoveDir(workingDir, m))
+                msgs << Log("Error [" + m + "] removing directory [" + workingDir + "]", __FUNCTION__);
+        }
+    }
+    else {
+        msgs << Log("Error creating zip file [" + zipfile + "]", __FUNCTION__);
+    }
+
+    m = msgs.join("\n");
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- validate --------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::validate
+ * @return true if valid squirrel file, false otherwise
+ */
+bool squirrel::validate() {
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- print ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief print
+ */
+void squirrel::print() {
+
+    /* print package info */
+    PrintPackage();
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+
+        squirrelSubject sub = subjectList[i];
+        sub.PrintSubject();
+
+        /* iterate through studies */
+        for (int j=0; j < sub.studyList.size(); j++) {
+
+            squirrelStudy stud = sub.studyList[j];
+            stud.PrintStudy();
+
+            /* iterate through series */
+            for (int k=0; k < stud.seriesList.size(); k++) {
+
+                squirrelSeries ser = stud.seriesList[k];
+                ser.PrintSeries();
+            }
+
+            /* iterate through analyses */
+            for (int k=0; k < stud.analysisList.size(); k++) {
+
+                squirrelAnalysis an = stud.analysisList[k];
+                an.PrintAnalysis();
+            }
+        }
+
+        /* iterate through measures */
+        for (int j=0; j < sub.measureList.size(); j++) {
+
+            squirrelMeasure meas = sub.measureList[j];
+            meas.PrintMeasure();
+        }
+
+        /* iterate through drugs */
+        for (int j=0; j < sub.drugList.size(); j++) {
+
+            squirrelDrug drug = sub.drugList[j];
+            drug.PrintDrug();
+        }
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetUnzipSize ----------------------------------------- */
+/* ------------------------------------------------------------ */
+qint64 squirrel::GetUnzipSize() {
+
+    qint64 unzipSize(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        squirrelSubject sub = subjectList[i];
+        /* iterate through studies */
+        for (int j=0; j < sub.studyList.size(); j++) {
+            squirrelStudy stud = sub.studyList[j];
+            /* iterate through series */
+            for (int k=0; k < stud.seriesList.size(); k++) {
+                squirrelSeries ser = stud.seriesList[k];
+                unzipSize += ser.size;
+            }
+            /* iterate through analyses */
+            for (int k=0; k < stud.analysisList.size(); k++) {
+                squirrelAnalysis an = stud.analysisList[k];
+                unzipSize += an.size;
+            }
+        }
+    }
+    return unzipSize;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumFiles ------------------------------------------ */
+/* ------------------------------------------------------------ */
+qint64 squirrel::GetNumFiles() {
+
+    qint64 numFiles(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        squirrelSubject sub = subjectList[i];
+        /* iterate through studies */
+        for (int j=0; j < sub.studyList.size(); j++) {
+            squirrelStudy stud = sub.studyList[j];
+            /* iterate through series */
+            for (int k=0; k < stud.seriesList.size(); k++) {
+                squirrelSeries ser = stud.seriesList[k];
+                numFiles += ser.numFiles;
+            }
+        }
+    }
+    return numFiles;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- addSubject ------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::addSubject
+ * @param subj
+ * @return true if added, false if not added
+ */
+bool squirrel::addSubject(squirrelSubject subj) {
+
+    /* check size of the subject list before and after adding */
+    qint64 size = subjectList.size();
+
+    subjectList.append(subj);
+
+    if (subjectList.size() > size)
+        return true;
+    else
+        return false;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- addPipeline ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::addPipeline
+ * @param pipe
+ * @return true if added, false if not added
+ */
+bool squirrel::addPipeline(squirrelPipeline pipe) {
+
+    /* check size of the pipeline list before and after adding */
+    qint64 size = pipelineList.size();
+
+    pipelineList.append(pipe);
+
+    if (pipelineList.size() > size)
+        return true;
+    else
+        return false;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- addExperiment ---------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::addExperiment
+ * @param exp
+ * @return true if added, false if not added
+ */
+bool squirrel::addExperiment(squirrelExperiment exp) {
+
+    /* check size of the pipeline list before and after adding */
+    qint64 size = experimentList.size();
+
+    experimentList.append(exp);
+
+    if (experimentList.size() > size)
+        return true;
+    else
+        return false;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- removeSubject ---------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::removeSubject
+ * @param ID
+ * @return true if subject found and removed, false is subject not found
+ */
+bool squirrel::removeSubject(QString ID) {
+
+    for(int i=0; i < subjectList.count(); ++i) {
+        if (subjectList[i].ID == ID) {
+            subjectList.remove(i);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintPackage ----------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintPackage
+ */
+void squirrel::PrintPackage() {
+    Print("-- SQUIRREL PACKAGE ----------");
+    Print(QString("   Date: %1").arg(datetime.toString()));
+    Print(QString("   Description: %1").arg(description));
+    Print(QString("   Name: %1").arg(name));
+    Print(QString("   Version: %1").arg(version));
+    Print(QString("   subjectDirFormat: %1").arg(subjectDirFormat));
+    Print(QString("   studyDirFormat: %1").arg(studyDirFormat));
+    Print(QString("   seriesDirFormat: %1").arg(seriesDirFormat));
+    Print(QString("   dataFormat: %1").arg(dataFormat));
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- MakeTempDir ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::MakeTempDir
+ * @return true if created/exists, false otherwise
+ */
+bool squirrel::MakeTempDir(QString &dir) {
+    QString d = QString("/tmp/%1").arg(GenerateRandomString(20));
+    QString m;
+    if (MakePath(d, m)) {
+        dir = d;
+        return true;
+    }
+    else {
+        dir = "";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Log -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::Log
+ * @return the log message for continued use
+ */
+QString squirrel::Log(QString m, QString f) {
+    m = QString("\tsquirrel.%1() %2").arg(f).arg(m);
+    Print(m);
+    AppendCustomLog(logfile, m);
+    return m;
+}
