@@ -35,14 +35,9 @@ squirrelMiniPipeline::squirrelMiniPipeline()
 QJsonObject squirrelMiniPipeline::ToJSON() {
     QJsonObject json;
 
-	//json["measureName"] = measureName;
-	//json["dateStart"] = dateStart.toString("yyyy-MM-dd HH:mm:ss");
-	//json["dateEnd"] = dateEnd.toString("yyyy-MM-dd HH:mm:ss");
-	//json["instrumentName"] = instrumentName;
-	//json["rater"] = rater;
-	//json["notes"] = notes;
-	//json["value"] = value;
-	//json["description"] = description;
+    json["minipipelineName"] = minipipelineName;
+    json["numFiles"] = files.size();
+    json["entryPoint"] = entryPoint;
 
     return json;
 }
@@ -56,14 +51,8 @@ QJsonObject squirrelMiniPipeline::ToJSON() {
  */
 void squirrelMiniPipeline::PrintMinipipeline() {
 
-	Print("-- MEASURE ----------");
-//	Print(QString("   Name: %1").arg(measureName));
-//	Print(QString("   DateStart: %1").arg(dateStart.toString()));
-//	Print(QString("   DateEnd: %1").arg(dateEnd.toString()));
-//	Print(QString("   InstrumentName: %1").arg(instrumentName));
-//	Print(QString("   Rater: %1").arg(rater));
-//	Print(QString("   Notes: %1").arg(notes));
-//	Print(QString("   Value: %1").arg(value));
-//	Print(QString("   Description: %1").arg(description));
-
+    Print("-- MINIPIPELINE ----------");
+    Print(QString("   MinipipelineName: %1").arg(minipipelineName));
+    Print(QString("   NumFiles: %1").arg(files.size()));
+    Print(QString("   EntryPoint: %1").arg(entryPoint));
 }
