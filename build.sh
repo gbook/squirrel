@@ -47,16 +47,16 @@ else
 fi
 
 # ----- build squirrel library -----
-#if [ ! -d "$BUILDDIR/squirrel" ]; then
+echo -e "\nBuilding squirrel library\n"
+echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
+$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
+cd $BUILDDIR/squirrel
+make -j 16
 
-#	echo -e "\nsquirrel module not built. Building squirrel module now\n"
-	echo -e "\nBuilding squirrel library\n"
-
-	echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
-	
-	$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
-	cd $BUILDDIR/squirrel
-	make -j 16
-#else
-#	echo -e "\nsquirrel already built in $BUILDDIR/squirrel\n"
-#fi
+# ----- build squirrel utilities -----
+echo -e "\nBuilding squirrel utilities\n"
+# create make file in the build directory
+echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
+$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
+cd $BUILDDIR/squirrel
+make -B -j 16
