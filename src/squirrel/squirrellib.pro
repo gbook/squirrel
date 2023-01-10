@@ -8,6 +8,7 @@ TARGET = squirrel
 TEMPLATE = lib
 DEFINES += SQUIRREL_BUILD
 win32:CONFIG += dll
+DESTDIR = ../../bin/squirrel
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -58,15 +59,15 @@ HEADERS += \
 
 
 # gdcm
-win32: {
-    GDCMBIN = C:/gdcmbin
-    GDCMSRC = C:/gdcm/Source
-    win32:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
-    else:win32:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug/
+*msvc*: {
+    GDCMBIN = ../../bin/gdcm
+	GDCMSRC = ../gdcm/Source
+	*msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
+	else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug/
     INCLUDEPATH += $$GDCMSRC/Attribute
     INCLUDEPATH += $$GDCMSRC/Common
     INCLUDEPATH += $$GDCMSRC/DataDictionary
-    INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
+	INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
     INCLUDEPATH += $$GDCMSRC/InformationObjectDefinition
     INCLUDEPATH += $$GDCMSRC/MediaStorageAndFileFormat
     INCLUDEPATH += $$GDCMSRC/MessageExchangeDefinition

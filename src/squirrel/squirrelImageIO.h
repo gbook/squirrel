@@ -31,6 +31,7 @@
 #include "gdcmAttribute.h"
 #include "gdcmStringFilter.h"
 #include "gdcmAnonymizer.h"
+#include "utils.h"
 
 /**
  * @brief The squirrelImageIO class

@@ -24,6 +24,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+# GDCM library
 GDCMBIN = ../bin/gdcm
 GDCMSRC = ../src/gdcm
 win32:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
@@ -54,10 +55,10 @@ LIBS += -lgdcmMSFF \
 -lgdcmzlib \
 -lsocketxx
 
-# Location of squirrel Library
-SQUIRRELBIN = ../../bin/squirrel-win
+# squirrel Library
+SQUIRRELBIN = ../bin/squirrel
 LIBS += -L$$SQUIRRELBIN/release -lsquirrel
-INCLUDEPATH += ../squirrel
+INCLUDEPATH += ../src/squirrel
 DEPENDPATH += $$SQUIRRELBIN
 *msvc* { # visual studio spec filter
     QMAKE_CXXFLAGS += -MP
