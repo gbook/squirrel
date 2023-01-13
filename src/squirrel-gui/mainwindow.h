@@ -36,6 +36,8 @@ private slots:
 
 	void on_actionOpen_triggered();
 
+	void on_btnNewPackage_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -46,5 +48,6 @@ private:
 	bool EditPackageDetails();
 
 	void RefreshPackageDetails();
+	void EnableDisableSubjectButtons();
 };
 #endif // MAINWINDOW_H

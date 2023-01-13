@@ -33,7 +33,7 @@
 squirrel::squirrel()
 {
     datetime = QDateTime::currentDateTime();
-    description = "Package created by squirrelutils";
+	description = "Uninitialized squirrel package";
     name = "Squirrel package";
     version = QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN);
     format = "squirrel";

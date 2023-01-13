@@ -177,6 +177,8 @@ void MainWindow::on_btnAddSeries_clicked()
 /* ------------------------------------------------------------ */
 void MainWindow::on_packageTree_itemSelectionChanged()
 {
+	EnableDisableSubjectButtons();
+
     /* get selected study */
     if (ui->packageTree->selectedItems().size() == 1) {
         QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
@@ -277,14 +279,59 @@ void MainWindow::RefreshPackageDetails() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- EnableDisableSubjectButtons -------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::EnableDisableSubjectButtons() {
+	/* get selected study */
+	if (ui->packageTree->selectedItems().size() == 1) {
+		QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+		QString dataCategory = item->data(0, Qt::EditRole).toString();
+
+		/* start by disabling all buttons */
+		ui->btnAddSubject->setDisabled(true);
+		ui->btnAddStudy->setDisabled(true);
+		ui->btnAddSeries->setDisabled(true);
+		ui->btnAddDrug->setDisabled(true);
+		ui->btnAddMeasure->setDisabled(true);
+		ui->btnAddAnalysis->setDisabled(true);
+
+		if (dataCategory == "subject") {
+			/* enable AddStudy, AddDrug, AddMeasure buttons */
+			ui->btnAddStudy->setEnabled(true);
+			ui->btnAddDrug->setEnabled(true);
+			ui->btnAddMeasure->setEnabled(true);
+		}
+		else if (dataCategory == "study") {
+			/* enable the AddSeries, AddAnalysis buttons */
+			ui->btnAddSeries->setEnabled(true);
+		}
+		else if (dataCategory == "series") {
+			/* display the series table */
+
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- on_actionOpen_triggered ------------------------------ */
 /* ------------------------------------------------------------ */
 void MainWindow::on_actionOpen_triggered()
 {
 	/* open a squirrel file */
 	QString filename;
-	filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("squirrel packages (*.zip)"));
+	filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
 	sqrl->filePath = filename;
 	sqrl->read(sqrl->filePath);
 	RefreshPackageDetails();
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- on_btnNewPackage_clicked ----------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::on_btnNewPackage_clicked()
+{
+	NewPackage();
+}
+
