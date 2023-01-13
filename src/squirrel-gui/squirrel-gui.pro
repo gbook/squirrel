@@ -10,15 +10,17 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    packagedialog.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    packagedialog.h
 
 FORMS += \
     mainwindow.ui \
     objectDetails.ui \
-    packageDetails.ui
+    packagedialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -107,18 +107,18 @@ bool squirrel::read(QString filepath, bool validateOnly) {
  *                   - 'orig' - Perform no conversion of DICOM images (not recommended as it retains PHI)
  *                   - 'anon' - Anonymize DICOM files (light anonymization: remove PHI, but not ID or dates)
  *                   - 'anonfull' - Anonymize DICOM files (full anonymization)
- *                   - 'nifti4d' - Nifti 4D
- *                   - 'nifti4dgz' - Nifti 4D gzip [default]
- *                   - 'nidti3d' - Nifti 3D
- *                   - 'nifti3dgz' - Nifti 3D gzip
+ *                   - 'nifti4d' - Attempt to convert any convertable images to Nifti 4D
+ *                   - 'nifti4dgz' - Attempt to convert any convertable images to Nifti 4D gzip [DEFAULT]
+ *                   - 'nidti3d' - Attempt to convert any convertable images to Nifti 3D
+ *                   - 'nifti3dgz' - Attempt to convert any convertable images to Nifti 3D gzip
  * @param subjectDirFormat directory structure of the subject data
- *                  - 'orig' - Use the subjectID for subject directories
+ *                  - 'orig' - Use the subjectID for subject directories [DEFAULT]
  *                  - 'seq' - Use sequentially generated numbers for subject directories
  * @param studyDirFormat directory structure of the subject data
- *                  - 'orig' - Use the studyNum for study directories
+ *                  - 'orig' - Use the studyNum for study directories [DEFAULT]
  *                  - 'seq' - Use sequentially generated numbers for study directories
  * @param seriesDirFormat directory structure of the subject data
- *                  - 'orig' - Use the seriesNum for series directories
+ *                  - 'orig' - Use the seriesNum for series directories [DEFAULT]
  *                  - 'seq' - Use sequentially generated numbers for series directories
  * @return true if package was successfully written, false otherwise
  */

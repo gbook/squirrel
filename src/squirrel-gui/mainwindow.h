@@ -34,10 +34,17 @@ private slots:
 
     void on_action_New_package_triggered();
 
+	void on_actionOpen_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     /* the main squirrel object */
     squirrel *sqrl;
+
+	bool NewPackage();
+	bool EditPackageDetails();
+
+	void RefreshPackageDetails();
 };
 #endif // MAINWINDOW_H

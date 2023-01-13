@@ -60,11 +60,12 @@ public:
     QString name; /*!< name of the package */
     QString NiDBversion; /*!< NiDB version that wrote this package */
     QString version; /*!< squirrel version */
-    QString format; /*!< package format, most likely 'squirrel' */
+	QString format; /*!< package format. will always be 'squirrel' */
     QString subjectDirFormat; /*!< orig, seq */
     QString studyDirFormat; /*!< orig, seq */
     QString seriesDirFormat; /*!< orig, seq */
     QString dataFormat; /*!< orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz */
+	QString filePath; /*!< full path to the zip file */
     qint64 GetUnzipSize();
     qint64 GetNumFiles();
 
