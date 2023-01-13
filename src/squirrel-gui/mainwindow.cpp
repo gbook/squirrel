@@ -19,14 +19,16 @@ MainWindow::~MainWindow()
  */
 void MainWindow::on_btnAddSubject_clicked()
 {
-	/* add a subject to the data node of the tree */
+    /* add the subject to the squirrel object */
+
+    /* add a subject to the data node of the tree */
     QTreeWidgetItem *item = new QTreeWidgetItem();
     item->setText(0, "New Subject");
     //item->setText(1, "");
     //item->setText(2, "Series");
     item->setData(0, Qt::EditRole, "subject");
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-	ui->packageTree->addTopLevelItem(item);
+    ui->packageTree->addTopLevelItem(item);
 }
 
 /**
@@ -50,17 +52,35 @@ void MainWindow::on_packageTree_itemClicked(QTreeWidgetItem *item, int column)
 
 void MainWindow::on_packageTree_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-	ui->packageTree->editItem(item, column);
+    /* display the variable details in a new dialog box so they can be edited */
 
+    /* get selected study */
+    if (ui->packageTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+        QString dataCategory = item->data(0, Qt::EditRole).toString();
+
+        if (dataCategory == "subject") {
+            /* display the subject table */
+
+        }
+        else if (dataCategory == "study") {
+            /* display the study table */
+
+        }
+        else if (dataCategory == "series") {
+            /* display the series table */
+
+        }
+    }
 }
 
 
 void MainWindow::on_actionE_xit_triggered()
 {
-	/* check if unsaved work */
+    /* check if unsaved work */
 
-	/* then exit */
-	exit(0);
+    /* then exit */
+    exit(0);
 }
 
 
@@ -122,5 +142,13 @@ void MainWindow::on_packageTree_itemSelectionChanged()
 
         }
     }
+}
+
+
+void MainWindow::on_action_New_package_triggered()
+{
+    /* create a new blank squirrel object */
+    sqrl = new squirrel();
+    //sqrl->
 }
 

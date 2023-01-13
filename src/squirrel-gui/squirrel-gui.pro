@@ -17,7 +17,8 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui \
-    objectDetails.ui
+    objectDetails.ui \
+    packageDetails.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -56,7 +57,7 @@ LIBS += -lgdcmMSFF \
 -lsocketxx
 
 # squirrel Library
-SQUIRRELBIN = ../bin/squirrel
+SQUIRRELBIN = ../../bin/squirrel
 LIBS += -L$$SQUIRRELBIN -lsquirrel
 INCLUDEPATH += ../squirrel
 DEPENDPATH += $$SQUIRRELBIN

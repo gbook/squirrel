@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>packageDialog</class>
+ <widget class="QDialog" name="packageDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>squirrel Package Information</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="phone"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -56,7 +59,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>packageDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -72,7 +75,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>packageDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

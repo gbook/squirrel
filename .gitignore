@@ -1,1 +1,4 @@
 /bin
+/src/build-*
+/src/squirrel-gui/squirrel-gui.pro.user
+src/squirrel-gui/squirrel-gui.pro.user

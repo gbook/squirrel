@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>537</width>
-    <height>296</height>
+    <height>352</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,8 @@
            <string>Add Subject</string>
           </property>
           <property name="icon">
-           <iconset theme="phone"/>
+           <iconset theme="phone">
+            <normaloff>.</normaloff>.</iconset>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -177,7 +178,7 @@
      <x>0</x>
      <y>0</y>
      <width>537</width>
-     <height>17</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -185,6 +186,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="separator"/>
+    <addaction name="action_New_package"/>
     <addaction name="actionOpen"/>
     <addaction name="action_Save_package"/>
     <addaction name="actionClose"/>
@@ -212,7 +214,8 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Open package...</string>
@@ -251,6 +254,11 @@
   <action name="action_Save_package">
    <property name="text">
     <string>&amp;Save package</string>
+   </property>
+  </action>
+  <action name="action_New_package">
+   <property name="text">
+    <string>&amp;New package...</string>
    </property>
   </action>
  </widget>

@@ -32,7 +32,12 @@ private slots:
 
     void on_packageTree_itemSelectionChanged();
 
+    void on_action_New_package_triggered();
+
 private:
     Ui::MainWindow *ui;
+
+    /* the main squirrel object */
+    squirrel *sqrl;
 };
 #endif // MAINWINDOW_H
