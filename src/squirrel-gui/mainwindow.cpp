@@ -288,7 +288,7 @@ void MainWindow::EnableDisableSubjectButtons() {
 		QString dataCategory = item->data(0, Qt::EditRole).toString();
 
 		/* start by disabling all buttons */
-		ui->btnAddSubject->setDisabled(true);
+        //ui->btnAddSubject->setDisabled(true);
 		ui->btnAddStudy->setDisabled(true);
 		ui->btnAddSeries->setDisabled(true);
 		ui->btnAddDrug->setDisabled(true);
@@ -306,7 +306,7 @@ void MainWindow::EnableDisableSubjectButtons() {
 			ui->btnAddSeries->setEnabled(true);
 		}
 		else if (dataCategory == "series") {
-			/* display the series table */
+            /* enable series related buttons */
 
 		}
 	}

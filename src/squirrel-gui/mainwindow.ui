@@ -242,6 +242,12 @@
         <property name="editTriggers">
          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
         </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="indentation">
+         <number>20</number>
+        </property>
         <property name="sortingEnabled">
          <bool>true</bool>
         </property>
@@ -401,7 +407,7 @@
      <x>0</x>
      <y>0</y>
      <width>765</width>
-     <height>20</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
