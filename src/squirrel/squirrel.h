@@ -74,6 +74,20 @@ public:
 	QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
 	QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
 
+	/* searching/retrieval functions */
+	squirrelSubject GetSubject(QString ID);
+	squirrelStudy GetStudy(QString ID, int studyNum);
+	squirrelSeries GetSeries(QString ID, int studyNum, int seriesNum);
+	QList<squirrelSubject> GetSubjectList();
+	QList<squirrelStudy> GetStudyList(QString ID);
+	QList<squirrelSeries> GetSeriesList(QString ID, int studyNum);
+	QList<squirrelDrug> GetDrugList(QString ID, int studyNum);
+	QList<squirrelMeasure> GetMeasureList(QString ID, int studyNum);
+	squirrelAnalysis GetAnalysis(QString ID, int studyNum);
+	squirrelPipeline GetPipeline(QString pipelineName);
+	squirrelExperiment GetExperiment(QString experimentName);
+	squirrelMiniPipeline GetMiniPipeline(QString minipipelineName);
+
 private:
     void PrintPackage();
     bool MakeTempDir(QString &dir);
