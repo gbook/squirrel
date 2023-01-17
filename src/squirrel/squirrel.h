@@ -69,6 +69,11 @@ public:
     qint64 GetUnzipSize();
     qint64 GetNumFiles();
 
+	/* subject, pipeline, and experiment data */
+	QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
+	QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
+	QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
+
 private:
     void PrintPackage();
     bool MakeTempDir(QString &dir);
@@ -76,10 +81,6 @@ private:
     QString workingDir;
     QString logfile;
     QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */
-
-    QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
-    QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
-    QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
 
 };
 

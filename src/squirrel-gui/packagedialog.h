@@ -16,6 +16,7 @@ public:
 	~packageDialog();
 
 	void GetValues(QString &pkgName, QString &pkgDesc, QDateTime &pkgDate, QString &pkgDirFormat, QString &pkgDataFormat);
+	void SetValues(QString pkgName, QString pkgDesc, QDateTime pkgDate, QString pkgDirFormat, QString pkgDataFormat);
 private:
 	Ui::packageDialog *ui;
 };

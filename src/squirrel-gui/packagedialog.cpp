@@ -20,3 +20,12 @@ void packageDialog::GetValues(QString &pkgName, QString &pkgDesc, QDateTime &pkg
 	pkgDirFormat = ui->packageDirFormat->itemText(ui->packageDirFormat->currentIndex());
 	pkgDataFormat = ui->packageDataFormat->itemText(ui->packageDataFormat->currentIndex());
 }
+
+
+void packageDialog::SetValues(QString pkgName, QString pkgDesc, QDateTime pkgDate, QString pkgDirFormat, QString pkgDataFormat) {
+	ui->packageName->setText(pkgName);
+	ui->packageDesc->setPlainText(pkgDesc);
+	ui->packageDate->setDateTime(pkgDate);
+	ui->packageDirFormat->setCurrentIndex(ui->packageDirFormat->findText(pkgDirFormat));
+	ui->packageDataFormat->setCurrentIndex(ui->packageDataFormat->findText(pkgDataFormat));
+}

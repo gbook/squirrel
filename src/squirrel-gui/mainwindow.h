@@ -38,6 +38,8 @@ private slots:
 
 	void on_btnNewPackage_clicked();
 
+	void on_btnEditPackageDetails_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -46,6 +48,7 @@ private:
 
 	bool NewPackage();
 	bool EditPackageDetails();
+	void DisplaySubjectDetails(QString ID);
 
 	void RefreshPackageDetails();
 	void EnableDisableSubjectButtons();
