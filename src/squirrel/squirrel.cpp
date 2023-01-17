@@ -631,3 +631,41 @@ QString squirrel::Log(QString m, QString f) {
     AppendCustomLog(logfile, m);
     return m;
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetSubject ------------------------------------------- */
+/* ------------------------------------------------------------ */
+squirrelSubject GetSubject(QString ID) {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetStudy --------------------------------------------- */
+/* ------------------------------------------------------------ */
+squirrelStudy GetStudy(QString ID, int studyNum) {
+}
+
+
+squirrelSeries GetSeries(QString ID, int studyNum, int seriesNum);
+QList<squirrelSubject> GetSubjectList();
+QList<squirrelStudy> GetStudyList(QString ID);
+QList<squirrelSeries> GetSeriesList(QString ID, int studyNum);
+QList<squirrelDrug> GetDrugList(QString ID, int studyNum);
+QList<squirrelMeasure> GetMeasureList(QString ID, int studyNum);
+squirrelAnalysis GetAnalysis(QString ID, int studyNum);
+squirrelPipeline GetPipeline(QString pipelineName);
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetExperiment ---------------------------------------- */
+/* ------------------------------------------------------------ */
+squirrelExperiment GetExperiment(QString experimentName) {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetMiniPipeline -------------------------------------- */
+/* ------------------------------------------------------------ */
+squirrelMiniPipeline GetMiniPipeline(QString minipipelineName) {
+}
