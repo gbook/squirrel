@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-	/* create an empty squirrel object */
-	sqrl = new squirrel();
+    /* create an empty squirrel object */
+    sqrl = new squirrel();
 }
 
 /**
@@ -54,14 +54,14 @@ MainWindow::~MainWindow()
 void MainWindow::on_btnAddSubject_clicked()
 {
     /* add the subject to the squirrel object */
-	squirrelSubject sqrlSubject;
-	sqrlSubject.ID = "S1234ABC";
+    squirrelSubject sqrlSubject;
+    sqrlSubject.ID = "S1234ABC";
 
-	sqrl->addSubject(sqrlSubject);
+    sqrl->addSubject(sqrlSubject);
 
     /* add a subject to the data node of the tree */
     QTreeWidgetItem *item = new QTreeWidgetItem();
-	item->setText(0, "S1234ABC");
+    item->setText(0, "S1234ABC");
     item->setData(0, Qt::EditRole, "subject");
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     ui->packageTree->addTopLevelItem(item);
@@ -179,17 +179,17 @@ void MainWindow::on_btnAddSeries_clicked()
 /* ------------------------------------------------------------ */
 void MainWindow::on_packageTree_itemSelectionChanged()
 {
-	EnableDisableSubjectButtons();
+    EnableDisableSubjectButtons();
 
     /* get selected study */
     if (ui->packageTree->selectedItems().size() == 1) {
         QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-		QString dataCategory = item->data(0, Qt::EditRole).toString().trimmed();
-		QString subjectID = item->text(0);
+        QString dataCategory = item->data(0, Qt::EditRole).toString().trimmed();
+        QString subjectID = item->text(0);
 
         if (dataCategory == "subject") {
             /* display the subject table */
-			DisplaySubjectDetails(subjectID);
+            DisplaySubjectDetails(subjectID);
         }
         else if (dataCategory == "study") {
             /* display the study table */
@@ -208,7 +208,7 @@ void MainWindow::on_packageTree_itemSelectionChanged()
 /* ------------------------------------------------------------ */
 void MainWindow::on_action_New_package_triggered()
 {
-	NewPackage();
+    NewPackage();
 }
 
 
@@ -216,27 +216,27 @@ void MainWindow::on_action_New_package_triggered()
 /* ----- NewPackage ------------------------------------------- */
 /* ------------------------------------------------------------ */
 bool MainWindow::NewPackage() {
-	packageDialog *packageInfo = new packageDialog();
-	if (packageInfo->exec()) {
-		QString pkgName;
-		QString pkgDesc;
-		QDateTime pkgDate;
-		QString pkgDirFormat;
-		QString pkgDataFormat;
+    packageDialog *packageInfo = new packageDialog();
+    if (packageInfo->exec()) {
+        QString pkgName;
+        QString pkgDesc;
+        QDateTime pkgDate;
+        QString pkgDirFormat;
+        QString pkgDataFormat;
 
-		packageInfo->GetValues(pkgName, pkgDesc, pkgDate, pkgDirFormat, pkgDataFormat);
-		sqrl->name = pkgName;
-		sqrl->description = pkgDesc;
-		sqrl->datetime = pkgDate;
-		sqrl->subjectDirFormat = pkgDirFormat;
-		sqrl->studyDirFormat = pkgDirFormat;
-		sqrl->seriesDirFormat = pkgDirFormat;
-		sqrl->dataFormat = pkgDataFormat;
+        packageInfo->GetValues(pkgName, pkgDesc, pkgDate, pkgDirFormat, pkgDataFormat);
+        sqrl->name = pkgName;
+        sqrl->description = pkgDesc;
+        sqrl->datetime = pkgDate;
+        sqrl->subjectDirFormat = pkgDirFormat;
+        sqrl->studyDirFormat = pkgDirFormat;
+        sqrl->seriesDirFormat = pkgDirFormat;
+        sqrl->dataFormat = pkgDataFormat;
 
-		RefreshPackageDetails();
-		return true;
-	}
-	return false;
+        RefreshPackageDetails();
+        return true;
+    }
+    return false;
 }
 
 
@@ -244,30 +244,30 @@ bool MainWindow::NewPackage() {
 /* ----- EditPackageDetails ----------------------------------- */
 /* ------------------------------------------------------------ */
 bool MainWindow::EditPackageDetails() {
-	packageDialog *packageInfo = new packageDialog();
+    packageDialog *packageInfo = new packageDialog();
 
-	packageInfo->SetValues(sqrl->name, sqrl->description, sqrl->datetime, sqrl->subjectDirFormat, sqrl->dataFormat);
+    packageInfo->SetValues(sqrl->name, sqrl->description, sqrl->datetime, sqrl->subjectDirFormat, sqrl->dataFormat);
 
-	if (packageInfo->exec()) {
-		QString pkgName;
-		QString pkgDesc;
-		QDateTime pkgDate;
-		QString pkgDirFormat;
-		QString pkgDataFormat;
+    if (packageInfo->exec()) {
+        QString pkgName;
+        QString pkgDesc;
+        QDateTime pkgDate;
+        QString pkgDirFormat;
+        QString pkgDataFormat;
 
-		packageInfo->GetValues(pkgName, pkgDesc, pkgDate, pkgDirFormat, pkgDataFormat);
-		sqrl->name = pkgName;
-		sqrl->description = pkgDesc;
-		sqrl->datetime = pkgDate;
-		sqrl->subjectDirFormat = pkgDirFormat;
-		sqrl->studyDirFormat = pkgDirFormat;
-		sqrl->seriesDirFormat = pkgDirFormat;
-		sqrl->dataFormat = pkgDataFormat;
+        packageInfo->GetValues(pkgName, pkgDesc, pkgDate, pkgDirFormat, pkgDataFormat);
+        sqrl->name = pkgName;
+        sqrl->description = pkgDesc;
+        sqrl->datetime = pkgDate;
+        sqrl->subjectDirFormat = pkgDirFormat;
+        sqrl->studyDirFormat = pkgDirFormat;
+        sqrl->seriesDirFormat = pkgDirFormat;
+        sqrl->dataFormat = pkgDataFormat;
 
-		RefreshPackageDetails();
-		return true;
-	}
-	return false;
+        RefreshPackageDetails();
+        return true;
+    }
+    return false;
 }
 
 
@@ -275,12 +275,12 @@ bool MainWindow::EditPackageDetails() {
 /* ----- RefreshPackageDetails -------------------------------- */
 /* ------------------------------------------------------------ */
 void MainWindow::RefreshPackageDetails() {
-	ui->lblPackagePath->setText(sqrl->filePath);
-	ui->lblPackageName->setText(sqrl->name);
-	ui->lblPackageDesc->setText(sqrl->description);
-	ui->lblPackageDate->setText(sqrl->datetime.toString());
-	ui->lblPackageDirFormat->setText(sqrl->subjectDirFormat);
-	ui->lblPackageDataFormat->setText(sqrl->dataFormat);
+    ui->lblPackagePath->setText(sqrl->filePath);
+    ui->lblPackageName->setText(sqrl->name);
+    ui->lblPackageDesc->setText(sqrl->description);
+    ui->lblPackageDate->setText(sqrl->datetime.toString());
+    ui->lblPackageDirFormat->setText(sqrl->subjectDirFormat);
+    ui->lblPackageDataFormat->setText(sqrl->dataFormat);
 }
 
 
@@ -288,34 +288,34 @@ void MainWindow::RefreshPackageDetails() {
 /* ----- EnableDisableSubjectButtons -------------------------- */
 /* ------------------------------------------------------------ */
 void MainWindow::EnableDisableSubjectButtons() {
-	/* get selected study */
-	if (ui->packageTree->selectedItems().size() == 1) {
-		QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-		QString dataCategory = item->data(0, Qt::EditRole).toString();
+    /* get selected study */
+    if (ui->packageTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+        QString dataCategory = item->data(0, Qt::EditRole).toString();
 
-		/* start by disabling all buttons */
+        /* start by disabling all buttons */
         //ui->btnAddSubject->setDisabled(true);
-		ui->btnAddStudy->setDisabled(true);
-		ui->btnAddSeries->setDisabled(true);
-		ui->btnAddDrug->setDisabled(true);
-		ui->btnAddMeasure->setDisabled(true);
-		ui->btnAddAnalysis->setDisabled(true);
+        ui->btnAddStudy->setDisabled(true);
+        ui->btnAddSeries->setDisabled(true);
+        ui->btnAddDrug->setDisabled(true);
+        ui->btnAddMeasure->setDisabled(true);
+        ui->btnAddAnalysis->setDisabled(true);
 
-		if (dataCategory == "subject") {
-			/* enable AddStudy, AddDrug, AddMeasure buttons */
-			ui->btnAddStudy->setEnabled(true);
-			ui->btnAddDrug->setEnabled(true);
-			ui->btnAddMeasure->setEnabled(true);
-		}
-		else if (dataCategory == "study") {
-			/* enable the AddSeries, AddAnalysis buttons */
-			ui->btnAddSeries->setEnabled(true);
-		}
-		else if (dataCategory == "series") {
+        if (dataCategory == "subject") {
+            /* enable AddStudy, AddDrug, AddMeasure buttons */
+            ui->btnAddStudy->setEnabled(true);
+            ui->btnAddDrug->setEnabled(true);
+            ui->btnAddMeasure->setEnabled(true);
+        }
+        else if (dataCategory == "study") {
+            /* enable the AddSeries, AddAnalysis buttons */
+            ui->btnAddSeries->setEnabled(true);
+        }
+        else if (dataCategory == "series") {
             /* enable series related buttons */
 
-		}
-	}
+        }
+    }
 }
 
 
@@ -324,12 +324,12 @@ void MainWindow::EnableDisableSubjectButtons() {
 /* ------------------------------------------------------------ */
 void MainWindow::on_actionOpen_triggered()
 {
-	/* open a squirrel file */
-	QString filename;
-	filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
-	sqrl->filePath = filename;
-	sqrl->read(sqrl->filePath);
-	RefreshPackageDetails();
+    /* open a squirrel file */
+    QString filename;
+    filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
+    sqrl->filePath = filename;
+    sqrl->read(sqrl->filePath);
+    RefreshPackageDetails();
 }
 
 
@@ -338,7 +338,7 @@ void MainWindow::on_actionOpen_triggered()
 /* ------------------------------------------------------------ */
 void MainWindow::on_btnNewPackage_clicked()
 {
-	NewPackage();
+    NewPackage();
 }
 
 
@@ -347,7 +347,7 @@ void MainWindow::on_btnNewPackage_clicked()
 /* ------------------------------------------------------------ */
 void MainWindow::on_btnEditPackageDetails_clicked()
 {
-	EditPackageDetails();
+    EditPackageDetails();
 }
 
 
@@ -356,33 +356,32 @@ void MainWindow::on_btnEditPackageDetails_clicked()
 /* ------------------------------------------------------------ */
 void MainWindow::DisplaySubjectDetails(QString ID) {
 
-	/* find subject */
-	int subjIndex(-1);
-	for (int i=0; i<sqrl->subjectList.size(); i++) {
-		if (sqrl->subjectList[i].ID == ID) {
-			subjIndex = i;
-			break;
-		}
-	}
+    /* find subject */
+    squirrelSubject sqrlSubject;
+    if (sqrl->GetSubject(ID, sqrlSubject)) {
 
-	/* load subject details */
-	QStringList variables, values;
-	variables.append("ID"); values.append(sqrl->subjectList[subjIndex].ID);
-	variables.append("alternateIDs"); values.append(sqrl->subjectList[subjIndex].alternateIDs.join(","));
-	variables.append("GUID"); values.append(sqrl->subjectList[subjIndex].GUID);
-	variables.append("dateOfBirth"); values.append(sqrl->subjectList[subjIndex].dateOfBirth.toString());
-	variables.append("sex"); values.append(sqrl->subjectList[subjIndex].sex);
-	variables.append("gender"); values.append(sqrl->subjectList[subjIndex].gender);
-	variables.append("ethnicity1"); values.append(sqrl->subjectList[subjIndex].ethnicity1);
-	variables.append("ethnicity2"); values.append(sqrl->subjectList[subjIndex].ethnicity2);
+        /* load subject details */
+        QStringList variables, values;
+        variables.append("ID"); values.append(sqrlSubject.ID);
+        variables.append("alternateIDs"); values.append(sqrlSubject.alternateIDs.join(","));
+        variables.append("GUID"); values.append(sqrlSubject.GUID);
+        variables.append("dateOfBirth"); values.append(sqrlSubject.dateOfBirth.toString());
+        variables.append("sex"); values.append(sqrlSubject.sex);
+        variables.append("gender"); values.append(sqrlSubject.gender);
+        variables.append("ethnicity1"); values.append(sqrlSubject.ethnicity1);
+        variables.append("ethnicity2"); values.append(sqrlSubject.ethnicity2);
 
-	/* clear table */
-	ui->subjectDetailsTable->setRowCount(0);
+        /* clear table */
+        ui->subjectDetailsTable->setRowCount(0);
 
-	for (int i=0; i<variables.size(); i++) {
-		int currentRow = ui->subjectDetailsTable->rowCount();
-		ui->subjectDetailsTable->setRowCount(currentRow + 1);
-		ui->subjectDetailsTable->setItem(currentRow, 0, new QTableWidgetItem(variables[i]));
-		ui->subjectDetailsTable->setItem(currentRow, 1, new QTableWidgetItem(values[i]));
-	}
+        for (int i=0; i<variables.size(); i++) {
+            int currentRow = ui->subjectDetailsTable->rowCount();
+            ui->subjectDetailsTable->setRowCount(currentRow + 1);
+            ui->subjectDetailsTable->setItem(currentRow, 0, new QTableWidgetItem(variables[i]));
+            ui->subjectDetailsTable->setItem(currentRow, 1, new QTableWidgetItem(values[i]));
+        }
+    }
+    else {
+        /* subject not found */
+    }
 }

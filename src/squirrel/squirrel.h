@@ -60,33 +60,33 @@ public:
     QString name; /*!< name of the package */
     QString NiDBversion; /*!< NiDB version that wrote this package */
     QString version; /*!< squirrel version */
-	QString format; /*!< package format. will always be 'squirrel' */
+    QString format; /*!< package format. will always be 'squirrel' */
     QString subjectDirFormat; /*!< orig, seq */
     QString studyDirFormat; /*!< orig, seq */
     QString seriesDirFormat; /*!< orig, seq */
     QString dataFormat; /*!< orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz */
-	QString filePath; /*!< full path to the zip file */
+    QString filePath; /*!< full path to the zip file */
     qint64 GetUnzipSize();
     qint64 GetNumFiles();
 
-	/* subject, pipeline, and experiment data */
-	QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
-	QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
-	QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
+    /* subject, pipeline, and experiment data */
+    QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
+    QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
+    QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
 
-	/* searching/retrieval functions */
-	squirrelSubject GetSubject(QString ID);
-	squirrelStudy GetStudy(QString ID, int studyNum);
-	squirrelSeries GetSeries(QString ID, int studyNum, int seriesNum);
-	QList<squirrelSubject> GetSubjectList();
-	QList<squirrelStudy> GetStudyList(QString ID);
-	QList<squirrelSeries> GetSeriesList(QString ID, int studyNum);
-	QList<squirrelDrug> GetDrugList(QString ID, int studyNum);
-	QList<squirrelMeasure> GetMeasureList(QString ID, int studyNum);
-	squirrelAnalysis GetAnalysis(QString ID, int studyNum);
-	squirrelPipeline GetPipeline(QString pipelineName);
-	squirrelExperiment GetExperiment(QString experimentName);
-	squirrelMiniPipeline GetMiniPipeline(QString minipipelineName);
+    /* searching/retrieval functions */
+    bool GetSubject(QString ID, squirrelSubject &sqrlSubject);
+    bool GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy);
+    bool GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries);
+    bool GetSubjectList(QList<squirrelSubject> &subjects);
+    bool GetStudyList(QString ID, QList<squirrelStudy> &studies);
+    bool GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series);
+    bool GetDrugList(QString ID, int studyNum, QList<squirrelDrug> &drugs);
+    bool GetMeasureList(QString ID, int studyNum, QList<squirrelMeasure> &measures);
+    bool GetAnalysis(QString ID, int studyNum, squirrelAnalysis &sqrlAnalysis);
+    bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
+    bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
+    bool GetMiniPipeline(QString minipipelineName, squirrelMiniPipeline &sqrlMinipipeline);
 
 private:
     void PrintPackage();
