@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "packagedialog.h"
+#include "subjectDialog.h"
 #include <QDebug>
 #include <QFileDialog>
 
@@ -31,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->packageTree->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
+    ui->experimentsTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
 
     /* create an empty squirrel object */
     sqrl = new squirrel();
@@ -53,6 +57,10 @@ MainWindow::~MainWindow()
  */
 void MainWindow::on_btnAddSubject_clicked()
 {
+    subjectDialog *subjectInfo = new subjectDialog();
+    if (subjectInfo->exec()) {
+    }
+
     /* add the subject to the squirrel object */
     squirrelSubject sqrlSubject;
     sqrlSubject.ID = "S1234ABC";
@@ -65,6 +73,8 @@ void MainWindow::on_btnAddSubject_clicked()
     item->setData(0, Qt::EditRole, "subject");
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     ui->packageTree->addTopLevelItem(item);
+
+    delete item;
 }
 
 
@@ -78,15 +88,7 @@ void MainWindow::on_btnAddSubject_clicked()
  */
 void MainWindow::on_packageTree_itemClicked(QTreeWidgetItem *item, int column)
 {
-    /* check to see what type of object was selected */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-        //qDebug() << item->data(0,Qt::EditRole);
-        if (item->data(0, Qt::EditRole) == "subject") {
-            item->setExpanded(true);
-        }
-    }
-
+    RefreshTopInfoTable();
 }
 
 
@@ -97,24 +99,6 @@ void MainWindow::on_packageTree_itemDoubleClicked(QTreeWidgetItem *item, int col
 {
     /* display the variable details in a new dialog box so they can be edited */
 
-    /* get selected study */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-        QString dataCategory = item->data(0, Qt::EditRole).toString();
-
-        if (dataCategory == "subject") {
-            /* display the subject table */
-
-        }
-        else if (dataCategory == "study") {
-            /* display the study table */
-
-        }
-        else if (dataCategory == "series") {
-            /* display the series table */
-
-        }
-    }
 }
 
 
@@ -138,11 +122,10 @@ void MainWindow::on_btnAddStudy_clicked()
     /* get selected subject */
     if (ui->packageTree->selectedItems().size() == 1) {
         QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-        //qDebug() << item->data(0,Qt::EditRole);
-        if (item->data(0, Qt::EditRole) == "subject") {
+        if (item->text(0) == "subject") {
             /* add a subject to the data node of the tree */
             QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            newItem->setText(1, "Study");
+            newItem->setText(1, "StudyN");
             newItem->setData(0, Qt::EditRole, "study");
 
             item->addChild(newItem);
@@ -160,12 +143,11 @@ void MainWindow::on_btnAddSeries_clicked()
     /* get selected study */
     if (ui->packageTree->selectedItems().size() == 1) {
         QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-        //qDebug() << item->data(0,Qt::EditRole);
-        if (item->data(0, Qt::EditRole) == "study") {
+        if (item->text(0) == "study") {
             /* add a subject to the data node of the tree */
             QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            newItem->setText(2, "Series");
-            newItem->setData(0, Qt::EditRole, "series");
+            newItem->setText(0, "seriesID");
+            newItem->setText(1, "series");
 
             item->addChild(newItem);
             item->setExpanded(true);
@@ -179,27 +161,7 @@ void MainWindow::on_btnAddSeries_clicked()
 /* ------------------------------------------------------------ */
 void MainWindow::on_packageTree_itemSelectionChanged()
 {
-    EnableDisableSubjectButtons();
-
-    /* get selected study */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
-        QString dataCategory = item->data(0, Qt::EditRole).toString().trimmed();
-        QString subjectID = item->text(0);
-
-        if (dataCategory == "subject") {
-            /* display the subject table */
-            DisplaySubjectDetails(subjectID);
-        }
-        else if (dataCategory == "study") {
-            /* display the study table */
-
-        }
-        else if (dataCategory == "series") {
-            /* display the series table */
-
-        }
-    }
+    RefreshTopInfoTable();
 }
 
 
@@ -383,5 +345,66 @@ void MainWindow::DisplaySubjectDetails(QString ID) {
     }
     else {
         /* subject not found */
+    }
+}
+
+void MainWindow::on_btnAddAnalysis_clicked()
+{
+
+}
+
+
+void MainWindow::on_btnAddDrug_clicked()
+{
+
+}
+
+
+void MainWindow::on_btnAddMeasure_clicked()
+{
+
+}
+
+
+void MainWindow::on_btnAddExperiment_clicked()
+{
+
+}
+
+
+void MainWindow::on_btnAddPipeline_clicked()
+{
+
+}
+
+
+void MainWindow::on_packageTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    RefreshTopInfoTable();
+}
+
+void MainWindow::RefreshTopInfoTable() {
+    EnableDisableSubjectButtons();
+
+    /* get selected study */
+    if (ui->packageTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+        QString dataCategory = item->text(1);
+        QString ID = item->text(0);
+
+        qDebug() << "data [" << dataCategory << "]  subjectID [" << ID << "]";
+
+        if (dataCategory == "subject") {
+            /* display the subject table */
+            DisplaySubjectDetails(ID);
+        }
+        else if (dataCategory == "study") {
+            /* display the study table */
+
+        }
+        else if (dataCategory == "series") {
+            /* display the series table */
+
+        }
     }
 }

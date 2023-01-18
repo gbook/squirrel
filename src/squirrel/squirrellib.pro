@@ -24,7 +24,6 @@ DESTDIR = ../../bin/squirrel
 
 SOURCES += \
 	squirrelImageIO.cpp \
-	squirrelMiniPipeline.cpp \
 	utils.cpp \
 	convert.cpp \
 	dicom.cpp \
@@ -47,7 +46,6 @@ SOURCES += \
 
 HEADERS += \
 	squirrelImageIO.h \
-	squirrelMiniPipeline.h \
 	squirrelVersion.h \
 	utils.h \
 	convert.h \

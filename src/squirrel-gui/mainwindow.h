@@ -34,11 +34,23 @@ private slots:
 
     void on_action_New_package_triggered();
 
-	void on_actionOpen_triggered();
+    void on_actionOpen_triggered();
 
-	void on_btnNewPackage_clicked();
+    void on_btnNewPackage_clicked();
 
-	void on_btnEditPackageDetails_clicked();
+    void on_btnEditPackageDetails_clicked();
+
+    void on_btnAddAnalysis_clicked();
+
+    void on_btnAddDrug_clicked();
+
+    void on_btnAddMeasure_clicked();
+
+    void on_btnAddExperiment_clicked();
+
+    void on_btnAddPipeline_clicked();
+
+    void on_packageTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
 private:
     Ui::MainWindow *ui;
@@ -46,11 +58,12 @@ private:
     /* the main squirrel object */
     squirrel *sqrl;
 
-	bool NewPackage();
-	bool EditPackageDetails();
-	void DisplaySubjectDetails(QString ID);
+    bool NewPackage();
+    bool EditPackageDetails();
+    void DisplaySubjectDetails(QString ID);
 
-	void RefreshPackageDetails();
-	void EnableDisableSubjectButtons();
+    void RefreshTopInfoTable();
+    void RefreshPackageDetails();
+    void EnableDisableSubjectButtons();
 };
 #endif // MAINWINDOW_H

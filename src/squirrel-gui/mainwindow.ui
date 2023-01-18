@@ -246,9 +246,12 @@
          <bool>true</bool>
         </property>
         <property name="indentation">
-         <number>20</number>
+         <number>30</number>
         </property>
         <property name="sortingEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="allColumnsShowFocus">
          <bool>true</bool>
         </property>
         <column>
@@ -256,18 +259,9 @@
           <string>ID</string>
          </property>
         </column>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTableWidget" name="subjectDetailsTable">
         <column>
          <property name="text">
-          <string>Variable</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Value</string>
+          <string>Type</string>
          </property>
         </column>
        </widget>
@@ -338,22 +332,17 @@
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Pipelines &amp; Experiments</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QListWidget" name="listWidget"/>
-      </item>
-      <item>
-       <widget class="QTableWidget" name="pipelineDetailsTable">
+       <widget class="QTableWidget" name="subjectDetailsTable">
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
         <column>
          <property name="text">
           <string>Variable</string>
@@ -366,19 +355,59 @@
         </column>
        </widget>
       </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Experiments &amp; Pipelines</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QTableWidget" name="experimentsTable">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+       </widget>
+      </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QPushButton" name="btnAddPipeline">
-          <property name="text">
-           <string>Add Pipeline</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QPushButton" name="btnAddExperiment">
           <property name="text">
            <string>Add Experiment</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnAddPipeline">
+          <property name="text">
+           <string>Add Pipeline</string>
           </property>
          </widget>
         </item>
@@ -396,6 +425,32 @@
          </spacer>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="pipelineDetailsTable">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Variable</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Value</string>
+         </property>
+        </column>
+       </widget>
       </item>
      </layout>
     </item>

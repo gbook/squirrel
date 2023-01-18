@@ -30,7 +30,6 @@
 #include "squirrelExperiment.h"
 #include "squirrelPipeline.h"
 #include "squirrelMeasure.h"
-#include "squirrelMiniPipeline.h"
 #include "squirrelDrug.h"
 #include "squirrelVersion.h"
 
@@ -81,12 +80,11 @@ public:
     bool GetSubjectList(QList<squirrelSubject> &subjects);
     bool GetStudyList(QString ID, QList<squirrelStudy> &studies);
     bool GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series);
-    bool GetDrugList(QString ID, int studyNum, QList<squirrelDrug> &drugs);
-    bool GetMeasureList(QString ID, int studyNum, QList<squirrelMeasure> &measures);
-    bool GetAnalysis(QString ID, int studyNum, squirrelAnalysis &sqrlAnalysis);
+    bool GetDrugList(QString ID, QList<squirrelDrug> &drugs);
+    bool GetMeasureList(QString ID, QList<squirrelMeasure> &measures);
+    bool GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis);
     bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
     bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
-    bool GetMiniPipeline(QString minipipelineName, squirrelMiniPipeline &sqrlMinipipeline);
 
 private:
     void PrintPackage();

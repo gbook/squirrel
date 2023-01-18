@@ -742,7 +742,9 @@ bool squirrel::GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries
 /* ------------------------------------------------------------ */
 bool squirrel::GetSubjectList(QList<squirrelSubject> &subjects) {
 
-    return false;
+    subjects = subjectList;
+
+    return true;
 }
 
 
@@ -750,6 +752,12 @@ bool squirrel::GetSubjectList(QList<squirrelSubject> &subjects) {
 /* ----- GetStudyList ----------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::GetStudyList(QString ID, QList<squirrelStudy> &studies) {
+    squirrelSubject sqrlSubj;
+
+    if (GetSubject(ID, sqrlSubj)) {
+        studies = sqrlSubj.studyList;
+        return true;
+    }
 
     return false;
 }
@@ -759,6 +767,11 @@ bool squirrel::GetStudyList(QString ID, QList<squirrelStudy> &studies) {
 /* ----- GetSeriesList ---------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series) {
+    squirrelStudy sqrlStudy;
+    if (GetStudy(ID, studyNum, sqrlStudy)) {
+        series = sqrlStudy.seriesList;
+        return true;
+    }
 
     return false;
 }
@@ -767,7 +780,13 @@ bool squirrel::GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &se
 /* ------------------------------------------------------------ */
 /* ----- GetDrugList ------------------------------------------ */
 /* ------------------------------------------------------------ */
-bool squirrel::GetDrugList(QString ID, int studyNum, QList<squirrelDrug> &drugs) {
+bool squirrel::GetDrugList(QString ID, QList<squirrelDrug> &drugs) {
+    squirrelSubject sqrlSubj;
+
+    if (GetSubject(ID, sqrlSubj)) {
+        drugs = sqrlSubj.drugList;
+        return true;
+    }
 
     return false;
 }
@@ -776,7 +795,13 @@ bool squirrel::GetDrugList(QString ID, int studyNum, QList<squirrelDrug> &drugs)
 /* ------------------------------------------------------------ */
 /* ----- GetMeasureList --------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::GetMeasureList(QString ID, int studyNum, QList<squirrelMeasure> &measures) {
+bool squirrel::GetMeasureList(QString ID, QList<squirrelMeasure> &measures) {
+    squirrelSubject sqrlSubj;
+
+    if (GetSubject(ID, sqrlSubj)) {
+        measures = sqrlSubj.measureList;
+        return true;
+    }
 
     return false;
 }
@@ -785,7 +810,18 @@ bool squirrel::GetMeasureList(QString ID, int studyNum, QList<squirrelMeasure> &
 /* ------------------------------------------------------------ */
 /* ----- GetAnalysis ------------------------------------------ */
 /* ------------------------------------------------------------ */
-bool squirrel::GetAnalysis(QString ID, int studyNum, squirrelAnalysis &sqrlAnalysis) {
+bool squirrel::GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis) {
+    squirrelStudy sqrlStudy;
+    if (GetStudy(ID, studyNum, sqrlStudy)) {
+
+        /* find analysis by pipelineName */
+        for (int i=0; i < sqrlStudy.analysisList.size(); i++) {
+            if (sqrlStudy.analysisList[i].pipelineName == pipelineName) {
+                sqrlAnalysis = sqrlStudy.analysisList[i];
+                return true;
+            }
+        }
+    }
 
     return false;
 }
@@ -796,6 +832,14 @@ bool squirrel::GetAnalysis(QString ID, int studyNum, squirrelAnalysis &sqrlAnaly
 /* ------------------------------------------------------------ */
 bool squirrel::GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline) {
 
+    /* find pipeline by name */
+    for (int i=0; i < pipelineList.size(); i++) {
+        if (pipelineList[i].pipelineName == pipelineName) {
+            sqrlPipeline = pipelineList[i];
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -805,14 +849,13 @@ bool squirrel::GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline)
 /* ------------------------------------------------------------ */
 bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment) {
 
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetMiniPipeline -------------------------------------- */
-/* ------------------------------------------------------------ */
-bool squirrel::GetMiniPipeline(QString minipipelineName, squirrelMiniPipeline &sqrlMinipipeline) {
+    /* find experiment by name */
+    for (int i=0; i < experimentList.size(); i++) {
+        if (experimentList[i].experimentName == experimentName) {
+            sqrlExperiment = experimentList[i];
+            return true;
+        }
+    }
 
     return false;
 }
