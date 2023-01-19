@@ -290,7 +290,12 @@ void MainWindow::on_actionOpen_triggered()
     QString filename;
     filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
     sqrl->filePath = filename;
-    sqrl->read(sqrl->filePath);
+	if (sqrl->read(sqrl->filePath)) {
+		qDebug() << "Successfuly read squirrel file";
+	}
+	else {
+		qDebug() << "Unable to read squirrel file";
+	}
     RefreshPackageDetails();
 }
 

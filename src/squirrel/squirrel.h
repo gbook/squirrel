@@ -26,6 +26,7 @@
 #include <QString>
 #include <QDate>
 #include <QDateTime>
+#include <QDebug>
 #include "squirrelSubject.h"
 #include "squirrelExperiment.h"
 #include "squirrelPipeline.h"

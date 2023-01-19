@@ -23,6 +23,7 @@
 #include "squirrel.h"
 #include "squirrelImageIO.h"
 #include "utils.h"
+#include "QtZlib/zlib.h"
 
 /* ------------------------------------------------------------ */
 /* ----- squirrel --------------------------------------------- */
@@ -67,8 +68,14 @@ bool squirrel::read(QString filepath, bool validateOnly) {
 
     /* get listing of the zip the file, check if the squirrel.json exists in the root */
     QString systemstring;
-    systemstring = "unzip -l " + filepath;
-    QString output = SystemCommand(systemstring, false);
+    #ifdef Q_OS_WINDOWS
+	    systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" l \"" + filepath + "\"");
+    #else
+	    systemstring = "unzip -l " + filepath;
+    #endif
+	qDebug().noquote() << systemstring;
+	QString output = SystemCommand(systemstring, true);
+	qDebug().noquote() << output;
     if (!output.contains("squirrel.json")) {
         Print("File " + filepath + " does not appear to be a squirrel package");
         return false;
@@ -78,7 +85,11 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     MakeTempDir(workingDir);
 
     /* unzip the .zip to the working dir */
-    systemstring = QString("unzip " + filepath + " -d " + workingDir);
+    #ifdef _OS_WINDOWS
+	    systemstring = QString("C:\\Program Files\\7-Zip\\7z.exe e \"" + filepath + "\" -o " + workingDir);
+    #else
+	    systemstring = QString("unzip " + filepath + " -d " + workingDir);
+    #endif
     Print(SystemCommand(systemstring, false));
 
     /* perform all checks */

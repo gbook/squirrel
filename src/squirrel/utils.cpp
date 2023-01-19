@@ -92,13 +92,19 @@ QString SystemCommand(QString s, bool detail, bool truncate, bool bufferOutput) 
     QProcess *process = new QProcess();
 
     /* start QProcess and check if it started */
-    process->start("sh", QStringList() << "-c" << s);
+    #ifdef Q_OS_WINDOWS
+	    s = QString("\"" + s + "\"");
+		process->start("cmd.exe", QStringList() << "/c" << s);
+    #else
+	    process->start("sh", QStringList() << "-c" << s);
+    #endif
     if (!process->waitForStarted()) {
         output = "QProcess failed to start, with error [" + process->errorString() + "]";
     }
     /* collect the output */
     while(process->waitForReadyRead(-1)) {
-        buffer = QString(process->readAll());
+		buffer = QString(process->readAll());
+		qDebug() << buffer;
         output += buffer;
         //if (!bufferOutput)
         //    WriteLog(buffer,0,false);
