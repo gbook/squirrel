@@ -243,6 +243,7 @@ void MainWindow::RefreshPackageDetails() {
     ui->lblPackageDate->setText(sqrl->datetime.toString());
     ui->lblPackageDirFormat->setText(sqrl->subjectDirFormat);
     ui->lblPackageDataFormat->setText(sqrl->dataFormat);
+	ui->lblTempPath->setText(sqrl->GetTempDir());
 }
 
 

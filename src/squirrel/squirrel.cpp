@@ -73,8 +73,8 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     #else
 	    systemstring = "unzip -l " + filepath;
     #endif
-	qDebug().noquote() << systemstring;
-	QString output = SystemCommand(systemstring, true);
+	//qDebug().noquote() << systemstring;
+	QString output = SystemCommand(systemstring, false);
 	qDebug().noquote() << output;
     if (!output.contains("squirrel.json")) {
         Print("File " + filepath + " does not appear to be a squirrel package");
@@ -85,12 +85,13 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     MakeTempDir(workingDir);
 
     /* unzip the .zip to the working dir */
-    #ifdef _OS_WINDOWS
-	    systemstring = QString("C:\\Program Files\\7-Zip\\7z.exe e \"" + filepath + "\" -o " + workingDir);
+    #ifdef Q_OS_WINDOWS
+	    systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + filepath + "\" -o\"" + workingDir + "\" -y");
     #else
 	    systemstring = QString("unzip " + filepath + " -d " + workingDir);
     #endif
-    Print(SystemCommand(systemstring, false));
+		output = SystemCommand(systemstring, false);
+	qDebug().noquote() << output;
 
     /* perform all checks */
 
@@ -616,7 +617,14 @@ void squirrel::PrintPackage() {
  * @return true if created/exists, false otherwise
  */
 bool squirrel::MakeTempDir(QString &dir) {
-    QString d = QString("/tmp/%1").arg(GenerateRandomString(20));
+
+	QString d;
+    #ifdef Q_OS_WINDOWS
+	    d = QString("C:/tmp/%1").arg(GenerateRandomString(20));
+    #else
+	    d = QString("/tmp/%1").arg(GenerateRandomString(20));
+    #endif
+
     QString m;
     if (MakePath(d, m)) {
         dir = d;
@@ -869,4 +877,12 @@ bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExp
     }
 
     return false;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetTempDir ------------------------------------------- */
+/* ------------------------------------------------------------ */
+QString squirrel::GetTempDir() {
+	return workingDir;
 }
