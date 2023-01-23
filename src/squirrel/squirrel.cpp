@@ -93,7 +93,42 @@ bool squirrel::read(QString filepath, bool validateOnly) {
 		output = SystemCommand(systemstring, false);
 	qDebug().noquote() << output;
 
-    /* perform all checks */
+	/* read from .json file */
+	QString jsonStr;
+	QFile file;
+	file.setFileName(workingDir + "/squirrel.json");
+	file.open(QIODevice::ReadOnly | QIODevice::Text);
+	jsonStr = file.readAll();
+	file.close();
+
+	/* get the JSON document and root object */
+	QJsonDocument d = QJsonDocument::fromJson(jsonStr.toUtf8());
+	QJsonObject root = d.object();
+
+	/* get the package info */
+	QJsonValue pkgVal = root.value("_package");
+	QJsonObject pkgObj = pkgVal.toObject();
+	description = pkgObj["description"].toString();
+	datetime.fromString(pkgObj["datetime"].toString());
+	name = pkgObj["name"].toString();
+	qDebug() << pkgObj;
+
+	/* get the data object, and check for any subjects */
+	QJsonValue dataVal = root.value("data");
+	QJsonObject dataObj = dataVal.toObject();
+	QJsonArray subjects = dataObj["subjects"].toArray();
+	qDebug() << subjects;
+
+	/* in case of string value get value and convert into string*/
+	//qWarning() << tr("QJsonObject[appName] of description: ") << item["description"];
+	//QJsonValue subobj = item["description"];
+	//qWarning() << subobj.toString();
+
+	/* in case of array get array and convert into string*/
+	//qWarning() << tr("QJsonObject[appName] of value: ") << item["imp"];
+	//QJsonArray test = item["imp"].toArray();
+	//qWarning() << test[1].toString();
+
 
     /* delete the tmp dir, if it exists */
     if (validateOnly) {
