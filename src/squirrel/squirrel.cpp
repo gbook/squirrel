@@ -23,7 +23,6 @@
 #include "squirrel.h"
 #include "squirrelImageIO.h"
 #include "utils.h"
-#include "QtZlib/zlib.h"
 
 /* ------------------------------------------------------------ */
 /* ----- squirrel --------------------------------------------- */
