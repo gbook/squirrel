@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel pipeline.cpp
-  Copyright (C) 2004 - 2022
+  Copyright (C) 2004 - 2023
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -74,26 +74,60 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
     json["submitDelay"] = submitDelay;
     json["numConcurrentAnalyses"] = numConcurrentAnalyses;
 
-	//AppendJSONParents(json, parentDependencyIDs, path);
-	//AppendJSONDataSpec(json);
-//	AppendJSONScripts(json);
+    /* add the dataSteps */
+    QJsonArray JSONdataSteps;
+    for (int i=0; i < dataSteps.size(); i++) {
+        QJsonObject dataStep;
+        dataStep["associationType"] = dataSteps[i].associationType;
+        dataStep["behDir"] = dataSteps[i].behDir;
+        dataStep["behFormat"] = dataSteps[i].behFormat;
+        dataStep["dataFormat"] = dataSteps[i].dataFormat;
+        dataStep["imageType"] = dataSteps[i].imageType;
+        dataStep["datalevel"] = dataSteps[i].datalevel;
+        dataStep["location"] = dataSteps[i].location;
+        dataStep["modality"] = dataSteps[i].modality;
+        dataStep["numBOLDreps"] = dataSteps[i].numBOLDreps;
+        dataStep["numImagesCriteria"] = dataSteps[i].numImagesCriteria;
+        dataStep["order"] = dataSteps[i].order;
+        dataStep["protocol"] = dataSteps[i].protocol;
+        dataStep["seriesCriteria"] = dataSteps[i].seriesCriteria;
+        dataStep["enabled"] = dataSteps[i].flags.enabled;
+        dataStep["optional"] = dataSteps[i].flags.optional;
+        dataStep["gzip"] = dataSteps[i].flags.gzip;
+        dataStep["preserveSeries"] = dataSteps[i].flags.preserveSeries;
+        dataStep["primaryProtocol"] = dataSteps[i].flags.primaryProtocol;
+        dataStep["usePhaseDir"] = dataSteps[i].flags.usePhaseDir;
+        dataStep["useSeries"] = dataSteps[i].flags.useSeries;
+
+        JSONdataSteps.append(dataStep);
+    }
+    json["numSubjects"] = JSONdataSteps.size();
+    json["dataSteps"] = JSONdataSteps;
 
     /* write all pipeline info to path */
     QString m;
     QString pipelinepath = QString("%1/%2").arg(path).arg(pipelineName);
-    if (!MakePath(pipelinepath, m))
-    //	n->WriteLog("Created path [" + pipelinepath + "]");
-    //else
+    if (MakePath(pipelinepath, m)) {
+        QByteArray j = QJsonDocument(json).toJson();
+        QFile fout(QString("%1/%2/pipeline.json").arg(path).arg(pipelineName));
+        if (fout.open(QIODevice::WriteOnly))
+            fout.write(j);
+        else
+            Print("Error writing file [" + QString("%1/%2/pipeline.json").arg(path).arg(pipelineName) + "]");
+
+        /* write the scripts */
+        if (!WriteTextFile(QString(pipelinepath + "/primaryScript.sh"), primaryScript))
+            Print("Error writing primary script [" + pipelinepath + "/primaryScript.sh]");
+
+        if (!WriteTextFile(QString(pipelinepath + "/secondaryScript.sh"), secondaryScript))
+            Print("Error writing secondary script [" + pipelinepath + "/secondaryScript.sh]");
+
+    }
+    else {
         Print("Error creating path [" + pipelinepath + "] because of [" + m + "]");
+    }
 
-    QByteArray j = QJsonDocument(json).toJson();
-    QFile fout(QString("%1/%2/pipeline.json").arg(path).arg(pipelineName));
-    if (fout.open(QIODevice::WriteOnly))
-        fout.write(j);
-    else
-        Print("Error writing file [" + QString("%1/%2/pipeline.json").arg(path).arg(pipelineName) + "]");
-
-    /* return small JSON object */
+    /* return JSON object */
     return json;
 }
 
@@ -159,37 +193,37 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
  */
 void squirrelPipeline::PrintPipeline() {
 
-	Print("-- PIPELINE ----------");
+    Print("-- PIPELINE ----------");
 
-	Print(QString("       PipelineName: %1").arg(pipelineName));
-	Print(QString("       PipelineName: %1").arg(description));
-	Print(QString("       PipelineName: %1").arg(createDate.toString()));
-	Print(QString("       PipelineName: %1").arg(version));
-	Print(QString("       PipelineName: %1").arg(level));
+    Print(QString("       PipelineName: %1").arg(pipelineName));
+    Print(QString("       PipelineName: %1").arg(description));
+    Print(QString("       PipelineName: %1").arg(createDate.toString()));
+    Print(QString("       PipelineName: %1").arg(version));
+    Print(QString("       PipelineName: %1").arg(level));
 
-	Print(QString("       PipelineName: %1").arg(parentPipelines.join(",")));
-	Print(QString("       PipelineName: %1").arg(completeFiles));
+    Print(QString("       PipelineName: %1").arg(parentPipelines.join(",")));
+    Print(QString("       PipelineName: %1").arg(completeFiles));
 
-	Print(QString("       PipelineName: %1").arg(dataCopyMethod));
-	Print(QString("       PipelineName: %1").arg(directory));
-	Print(QString("       PipelineName: %1").arg(dirStructure));
-	Print(QString("       PipelineName: %1").arg(depLevel));
-	Print(QString("       PipelineName: %1").arg(depDir));
-	Print(QString("       PipelineName: %1").arg(depLinkType));
-	Print(QString("       PipelineName: %1").arg(group));
-	Print(QString("       PipelineName: %1").arg(groupType));
-	Print(QString("       PipelineName: %1").arg(notes));
-	Print(QString("       PipelineName: %1").arg(resultScript));
-	Print(QString("       PipelineName: %1").arg(tmpDir));
-	Print(QString("       PipelineName: %1").arg(flags.useTmpDir));
-	Print(QString("       PipelineName: %1").arg(flags.useProfile));
+    Print(QString("       PipelineName: %1").arg(dataCopyMethod));
+    Print(QString("       PipelineName: %1").arg(directory));
+    Print(QString("       PipelineName: %1").arg(dirStructure));
+    Print(QString("       PipelineName: %1").arg(depLevel));
+    Print(QString("       PipelineName: %1").arg(depDir));
+    Print(QString("       PipelineName: %1").arg(depLinkType));
+    Print(QString("       PipelineName: %1").arg(group));
+    Print(QString("       PipelineName: %1").arg(groupType));
+    Print(QString("       PipelineName: %1").arg(notes));
+    Print(QString("       PipelineName: %1").arg(resultScript));
+    Print(QString("       PipelineName: %1").arg(tmpDir));
+    Print(QString("       PipelineName: %1").arg(flags.useTmpDir));
+    Print(QString("       PipelineName: %1").arg(flags.useProfile));
 
-	Print(QString("       PipelineName: %1").arg(clusterType));
-	Print(QString("       PipelineName: %1").arg(clusterUser));
-	Print(QString("       PipelineName: %1").arg(clusterQueue));
-	Print(QString("       PipelineName: %1").arg(clusterSubmitHost));
-	Print(QString("       PipelineName: %1").arg(maxWallTime));
-	Print(QString("       PipelineName: %1").arg(submitDelay));
-	Print(QString("       PipelineName: %1").arg(numConcurrentAnalyses));
+    Print(QString("       PipelineName: %1").arg(clusterType));
+    Print(QString("       PipelineName: %1").arg(clusterUser));
+    Print(QString("       PipelineName: %1").arg(clusterQueue));
+    Print(QString("       PipelineName: %1").arg(clusterSubmitHost));
+    Print(QString("       PipelineName: %1").arg(maxWallTime));
+    Print(QString("       PipelineName: %1").arg(submitDelay));
+    Print(QString("       PipelineName: %1").arg(numConcurrentAnalyses));
 
 }

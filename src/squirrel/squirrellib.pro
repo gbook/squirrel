@@ -13,8 +13,8 @@ DEFINES += SQUIRREL_BUILD
     #LIBS += Advapi32.lib Setupapi.lib
     CONFIG -= dll
     CONFIG += shared static
+    DESTDIR = ../../bin/squirrel
 }
-DESTDIR = ../../bin/squirrel
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -68,6 +68,7 @@ GDCMSRC = ../gdcm/Source
 
 *msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
 else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug/
+linux: LIBS += -L$$GDCMBIN/bin
 INCLUDEPATH += $$GDCMSRC/Attribute
 INCLUDEPATH += $$GDCMSRC/Common
 INCLUDEPATH += $$GDCMSRC/DataDictionary
