@@ -52,16 +52,20 @@ squirrel::squirrel()
  * @param filename Full filepath of the package to read
  * @return true if package was successfully read, false otherwise
  */
-bool squirrel::read(QString filepath, bool validateOnly) {
+bool squirrel::read(QString filepath, QString &m, bool validateOnly) {
+
+    QStringList msgs;
 
     if (validateOnly)
-        Print("Validating " + filepath);
+        msgs << QString("Validating " + filepath);
     else
-        Print("Reading " + filepath);
+        msgs << QString("Reading " + filepath);
 
     /* check if file exists */
     if (!FileExists(filepath)) {
-        Print("File " + filepath + " does not exist");
+        msgs << QString("File " + filepath + " does not exist");
+        PrependQStringList(msgs, "read() ");
+        m = msgs.join("\n");
         return false;
     }
 
@@ -72,16 +76,18 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     #else
         systemstring = "unzip -l " + filepath;
     #endif
-    //qDebug().noquote() << systemstring;
-    QString output = SystemCommand(systemstring, false);
-    qDebug().noquote() << output;
+    QString output = SystemCommand(systemstring, true);
+    msgs << output;
     if (!output.contains("squirrel.json")) {
-        Print("File " + filepath + " does not appear to be a squirrel package");
+        msgs << QString("File " + filepath + " does not appear to be a squirrel package");
+        PrependQStringList(msgs, "read() ");
+        m = msgs.join("\n");
         return false;
     }
 
     /* create a working directory */
     MakeTempDir(workingDir);
+    msgs << QString("Created temp directory [" + workingDir + "]");
 
     /* unzip the .zip to the working dir */
     #ifdef Q_OS_WINDOWS
@@ -89,8 +95,8 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     #else
         systemstring = QString("unzip " + filepath + " -d " + workingDir);
     #endif
-        output = SystemCommand(systemstring, false);
-    qDebug().noquote() << output;
+    output = SystemCommand(systemstring, true);
+    msgs << output;
 
     /* read from .json file */
     QString jsonStr;
@@ -138,6 +144,9 @@ bool squirrel::read(QString filepath, bool validateOnly) {
                 Print("Error [" + m + "] removing directory [" + workingDir + "]");
         }
     }
+
+    PrependQStringList(msgs, "read() ");
+    m = msgs.join("\n");
 
     return true;
 }

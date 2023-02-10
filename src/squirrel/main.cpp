@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
             /* create squirrel object and validate */
             squirrel *sqrl = new squirrel();
             QString m;
-            if (sqrl->read(paramInputFile, true)) {
+            if (sqrl->read(paramInputFile, m, true)) {
                 Print("Valid squirrel file");
             }
             else {

@@ -24,7 +24,7 @@
    </iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1,0,0,0">
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
@@ -558,6 +558,9 @@
        </layout>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="txtOutput"/>
     </item>
    </layout>
   </widget>

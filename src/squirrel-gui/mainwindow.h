@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include <squirrel.h>
+#include <dicom.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -51,6 +52,8 @@ private slots:
     void on_btnAddPipeline_clicked();
 
     void on_packageTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void on_btnAddDICOM_clicked();
 
 private:
     Ui::MainWindow *ui;

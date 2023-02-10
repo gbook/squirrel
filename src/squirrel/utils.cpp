@@ -1102,3 +1102,13 @@ bool FileDirectoryExists(QString f) {
     else
         return false;
 }
+
+
+/* ---------------------------------------------------------- */
+/* --------- PrependQStringList ----------------------------- */
+/* ---------------------------------------------------------- */
+void PrependQStringList(QStringList &list, QString s) {
+    for (int i=0; i<list.size(); i++) {
+        list[i] = s + list[i];
+    }
+}

@@ -93,4 +93,6 @@ bool DirectoryExists(QString dir);
 bool FileExists(QString f);
 bool FileDirectoryExists(QString f);
 
+void PrependQStringList(QStringList &list, QString s);
+
 #endif // UTILS_H

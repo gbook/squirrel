@@ -32,7 +32,7 @@ dicom::dicom()
 
 
 /* ---------------------------------------------------------------------------- */
-/* ----- ReadDirectory -------------------------------------------------------- */
+/* ----- LoadToSquirrel ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
  * @brief dicom::ReadDirectory
@@ -41,7 +41,6 @@ dicom::dicom()
  * @param m
  * @return
  */
-//bool dicom::ReadDirectory(QString dir, QString binpath, QString &msg) {
 bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl, QString &msg) {
 
     numFiles = 0;

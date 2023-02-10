@@ -243,7 +243,7 @@ void MainWindow::RefreshPackageDetails() {
     ui->lblPackageDate->setText(sqrl->datetime.toString());
     ui->lblPackageDirFormat->setText(sqrl->subjectDirFormat);
     ui->lblPackageDataFormat->setText(sqrl->dataFormat);
-	ui->lblTempPath->setText(sqrl->GetTempDir());
+    ui->lblTempPath->setText(sqrl->GetTempDir());
 }
 
 
@@ -289,14 +289,17 @@ void MainWindow::on_actionOpen_triggered()
 {
     /* open a squirrel file */
     QString filename;
+    QString m;
     filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
     sqrl->filePath = filename;
-	if (sqrl->read(sqrl->filePath)) {
-		qDebug() << "Successfuly read squirrel file";
-	}
-	else {
-		qDebug() << "Unable to read squirrel file";
-	}
+    if (sqrl->read(filename, m, false)) {
+        qDebug() << "Successfuly read squirrel file";
+    }
+    else {
+        qDebug() << "Unable to read squirrel file";
+    }
+    ui->txtOutput->appendPlainText(m);
+
     RefreshPackageDetails();
 }
 
@@ -414,3 +417,16 @@ void MainWindow::RefreshTopInfoTable() {
         }
     }
 }
+
+void MainWindow::on_btnAddDICOM_clicked()
+{
+    QString dicomdir;
+    dicomdir = QFileDialog::getExistingDirectory(this, tr("Select DICOM directory"), "/");
+
+    /* create the dicom object to read the DICOM dir */
+    dicom dcm;
+    QString m;
+    dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
+    ui->txtOutput->appendPlainText(m);
+}
+
