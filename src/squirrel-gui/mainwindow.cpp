@@ -26,6 +26,7 @@
 #include "subjectDialog.h"
 #include <QDebug>
 #include <QFileDialog>
+#include <dicom.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -292,13 +293,14 @@ void MainWindow::on_actionOpen_triggered()
     QString m;
     filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
     sqrl->filePath = filename;
-    if (sqrl->read(filename, m, false)) {
-        qDebug() << "Successfuly read squirrel file";
+    bool success = sqrl->read(filename, m);
+    ui->txtOutput->appendPlainText(m);
+    if (success) {
+        ui->txtOutput->appendPlainText("Successfuly read squirrel file");
     }
     else {
-        qDebug() << "Unable to read squirrel file";
+        ui->txtOutput->appendPlainText("Unable to read squirrel file");
     }
-    ui->txtOutput->appendPlainText(m);
 
     RefreshPackageDetails();
 }

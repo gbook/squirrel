@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include <squirrel.h>
-#include <dicom.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
