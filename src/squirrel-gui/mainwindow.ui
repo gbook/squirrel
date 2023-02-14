@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>765</width>
-    <height>583</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="font">
@@ -24,7 +24,7 @@
    </iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1,0,0,0,0">
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
@@ -558,6 +558,13 @@
        </layout>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>Output</string>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPlainTextEdit" name="txtOutput"/>
