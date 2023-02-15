@@ -87,7 +87,7 @@ public:
     bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
     bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
     QString GetTempDir();
-    bool valid() { return isvalid; };
+	bool valid() { return isvalid; }
 
 private:
     void PrintPackage();

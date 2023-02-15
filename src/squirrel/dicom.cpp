@@ -140,6 +140,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl, QString
 
                     currStudy.addSeries(currSeries);
 
+					msgs << QString("Added [%1-%2-%3]").arg(currSubject.ID).arg(currStudy.dateTime.toString()).arg(currSeries.number);
                 }
                 currSubject.addStudy(currStudy);
             }
@@ -152,5 +153,6 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl, QString
 
     delete img;
 
-    return true;
+	msg = msgs.join("\n");
+	return true;
 }

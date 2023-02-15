@@ -65,7 +65,8 @@ private:
     void DisplaySubjectDetails(QString ID);
 
     void RefreshTopInfoTable();
-    void RefreshPackageDetails();
+	void RefreshSubjectTable();
+	void RefreshPackageDetails();
     void EnableDisableSubjectButtons();
 };
 #endif // MAINWINDOW_H
