@@ -261,18 +261,20 @@ void MainWindow::on_btnAddDICOM_clicked()
     QString dicomdir;
     dicomdir = QFileDialog::getExistingDirectory(this, tr("Select DICOM directory"), "/");
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+    if (dicomdir != "") {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    /* create the dicom object to read the DICOM dir */
-    dicom dcm;
-    QString m;
-	dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
+        /* create the dicom object to read the DICOM dir */
+        dicom dcm;
+        QString m;
+        dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
 
-	QApplication::restoreOverrideCursor();
+        QApplication::restoreOverrideCursor();
 
-	RefreshSubjectTable();
+        RefreshSubjectTable();
 
-    ui->txtOutput->appendPlainText(m);
+        ui->txtOutput->appendPlainText(m);
+    }
 }
 
 
