@@ -61,7 +61,8 @@ private:
     squirrel *sqrl;
 
     bool NewPackage();
-    bool EditPackageDetails();
+	void ClosePackage();
+	bool EditPackageDetails();
     void DisplaySubjectDetails(QString ID);
 
     void RefreshTopInfoTable();

@@ -26,6 +26,7 @@
 #include "subjectDialog.h"
 #include <QDebug>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <dicom.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -86,9 +87,9 @@ void MainWindow::on_actionE_xit_triggered()
 /* ------------------------------------------------------------ */
 void MainWindow::on_btnAddSubject_clicked()
 {
-	//subjectDialog *subjectInfo = new subjectDialog();
-	//if (subjectInfo->exec()) {
-	//}
+	subjectDialog *subjectInfo = new subjectDialog();
+	if (subjectInfo->exec()) {
+	}
 
 	/* add the subject to the squirrel object */
 	squirrelSubject sqrlSubject;
@@ -118,14 +119,13 @@ void MainWindow::on_btnAddStudy_clicked()
 		if (item->data(0,Qt::UserRole) == "subject") {
 
             /* add a subject to the data node of the tree */
-			//QTreeWidgetItem *newItem = new QTreeWidgetItem();
-			//newItem->setText(1, "StudyN");
-			//newItem->setData(0, Qt::EditRole, "study");
+			QTreeWidgetItem *newItem = new QTreeWidgetItem();
+			newItem->setText(1, "StudyN");
+			newItem->setData(0, Qt::EditRole, "study");
 
-			//item->addChild(newItem);
-			//item->setExpanded(true);
+			item->addChild(newItem);
+			item->setExpanded(true);
 
-			//delete newItem;
 			RefreshSubjectTable();
         }
     }
@@ -143,14 +143,12 @@ void MainWindow::on_btnAddSeries_clicked()
         if (item->text(0) == "study") {
 
 			/* add a subject to the data node of the tree */
-			//QTreeWidgetItem *newItem = new QTreeWidgetItem();
-			//newItem->setText(0, "seriesID");
-			//newItem->setText(1, "series");
+			QTreeWidgetItem *newItem = new QTreeWidgetItem();
+			newItem->setText(0, "seriesID");
+			newItem->setText(1, "series");
 
-			//item->addChild(newItem);
-			//item->setExpanded(true);
-
-			//delete newItem;
+			item->addChild(newItem);
+			item->setExpanded(true);
 
 			RefreshSubjectTable();
         }
@@ -262,7 +260,9 @@ void MainWindow::on_btnAddDICOM_clicked()
     dicomdir = QFileDialog::getExistingDirectory(this, tr("Select DICOM directory"), "/");
 
     if (dicomdir != "") {
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+		ui->lblStatus->setText("<font color='blue'>Reading DICOM directory</font>");
+		qApp->processEvents();
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 
         /* create the dicom object to read the DICOM dir */
         dicom dcm;
@@ -270,6 +270,7 @@ void MainWindow::on_btnAddDICOM_clicked()
         dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
 
         QApplication::restoreOverrideCursor();
+		ui->lblStatus->setText("Done reading DICOM directory");
 
         RefreshSubjectTable();
 
@@ -312,6 +313,8 @@ void MainWindow::RefreshTopInfoTable() {
 /* ----- NewPackage ------------------------------------------- */
 /* ------------------------------------------------------------ */
 bool MainWindow::NewPackage() {
+	ClosePackage();
+
 	packageDialog *packageInfo = new packageDialog();
 	if (packageInfo->exec()) {
 		QString pkgName;
@@ -452,7 +455,6 @@ void MainWindow::EnableDisableSubjectButtons() {
 		QString dataCategory = item->data(0, Qt::UserRole).toString();
 
 		/* start by disabling all buttons */
-		//ui->btnAddSubject->setDisabled(true);
 		ui->btnAddStudy->setDisabled(true);
 		ui->btnAddSeries->setDisabled(true);
 		ui->btnAddDrug->setDisabled(true);
@@ -509,5 +511,37 @@ void MainWindow::DisplaySubjectDetails(QString ID) {
 	}
 	else {
 		/* subject not found */
+	}
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ClosePackage ----------------------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::ClosePackage() {
+	if (sqrl->okToDelete())
+		delete sqrl;
+	else {
+		QMessageBox msgBox;
+		msgBox.setText("This squirrel package is not saved");
+		msgBox.setInformativeText("Do you want to save this package?");
+		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Save);
+		int ret = msgBox.exec();
+
+		switch (ret) {
+		    case QMessageBox::Save:
+			    // Save was clicked - save if the package was valid and an existing. prompt for filename if the package was new
+			    break;
+		    case QMessageBox::Discard:
+			    // Don't Save was clicked - delete the package
+			    break;
+		    case QMessageBox::Cancel:
+			    // Cancel was clicked - leave the function without doing anything
+			    break;
+		    default:
+			    // should never be reached
+			    break;
+		}
 	}
 }
