@@ -61,13 +61,15 @@ private:
     squirrel *sqrl;
 
     bool NewPackage();
-	void ClosePackage();
-	bool EditPackageDetails();
+    void ClosePackage();
+    bool EditPackageDetails();
     void DisplaySubjectDetails(QString ID);
+    void DisplayStudyDetails(QString subjectID, int studyNum);
+    void DisplaySeriesDetails(QString subjectID, int studyNum, int seriesNum);
 
     void RefreshTopInfoTable();
-	void RefreshSubjectTable();
-	void RefreshPackageDetails();
+    void RefreshSubjectTable();
+    void RefreshPackageDetails();
     void EnableDisableSubjectButtons();
 };
 #endif // MAINWINDOW_H
