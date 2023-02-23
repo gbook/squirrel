@@ -54,6 +54,16 @@ private slots:
 
     void on_btnAddDICOM_clicked();
 
+    void on_action_Save_package_triggered();
+
+    void on_action_Help_triggered();
+
+    void on_action_About_triggered();
+
+    void on_actionValidate_triggered();
+
+    void on_actionClose_triggered();
+
 private:
     Ui::MainWindow *ui;
 

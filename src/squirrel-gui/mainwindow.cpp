@@ -24,6 +24,7 @@
 #include "ui_mainwindow.h"
 #include "packagedialog.h"
 #include "subjectDialog.h"
+#include "aboutDialog.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -124,7 +125,6 @@ void MainWindow::on_btnAddStudy_clicked()
             newItem->setText(0, "StudyN");
 
             item->addChild(newItem);
-            item->setExpanded(true);
 
             RefreshSubjectTable();
         }
@@ -148,7 +148,6 @@ void MainWindow::on_btnAddSeries_clicked()
             newItem->setData(0, Qt::UserRole, "series");
 
             item->addChild(newItem);
-            item->setExpanded(true);
 
             RefreshSubjectTable();
         }
@@ -428,7 +427,6 @@ void MainWindow::RefreshSubjectTable() {
             studyItem->setText(1, "study");
 
             subjectItem->addChild(studyItem);
-            subjectItem->setExpanded(true);
 
             /* iterate through series */
             for (int k=0; k < stud.seriesList.size(); k++) {
@@ -443,7 +441,6 @@ void MainWindow::RefreshSubjectTable() {
                 seriesItem->setText(1, "series");
 
                 studyItem->addChild(seriesItem);
-                studyItem->setExpanded(true);
             }
         }
     }
@@ -608,3 +605,34 @@ void MainWindow::ClosePackage() {
         }
     }
 }
+
+void MainWindow::on_action_Save_package_triggered()
+{
+
+}
+
+
+void MainWindow::on_action_Help_triggered()
+{
+
+}
+
+
+void MainWindow::on_action_About_triggered()
+{
+    AboutDialog *about = new AboutDialog();
+    about->exec();
+}
+
+
+void MainWindow::on_actionValidate_triggered()
+{
+
+}
+
+
+void MainWindow::on_actionClose_triggered()
+{
+
+}
+
