@@ -2,7 +2,7 @@
 #include "ui_aboutDialog.h"
 #include <squirrelVersion.h>
 
-AboutDialog::AboutDialog(QWidget *parent) :
+About::About(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::About)
 {
@@ -17,7 +17,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
 }
 
-AboutDialog::~AboutDialog()
+About::~About()
 {
     delete ui;
 }

@@ -620,7 +620,7 @@ void MainWindow::on_action_Help_triggered()
 
 void MainWindow::on_action_About_triggered()
 {
-    AboutDialog *about = new AboutDialog();
+    About *about = new About();
     about->exec();
 }
 
