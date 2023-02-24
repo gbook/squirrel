@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->packageTree->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
+    ui->subjectTree->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
     ui->experimentsTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
 
     /* create an empty squirrel object */
@@ -77,9 +77,8 @@ void MainWindow::on_packageTree_itemDoubleClicked(QTreeWidgetItem *item, int col
 void MainWindow::on_actionE_xit_triggered()
 {
     /* check if unsaved work */
-
-    /* then exit */
-    exit(0);
+    if (ClosePackage())
+        exit(0);
 }
 
 
@@ -98,12 +97,12 @@ void MainWindow::on_btnAddSubject_clicked()
     sqrl->addSubject(sqrlSubject);
 
     /* add a subject to the data node of the tree */
-    QTreeWidgetItem *item = new QTreeWidgetItem();
-    item->setData(0, Qt::UserRole, "subject");
-    item->setText(0, "S1234ABC");
-    item->setText(1, "subject");
-    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    ui->packageTree->addTopLevelItem(item);
+    //QTreeWidgetItem *item = new QTreeWidgetItem();
+    //item->setData(0, Qt::UserRole, "subject");
+    //item->setText(0, "S1234ABC");
+    //item->setText(1, "subject");
+    //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    //ui->subjectTree->addTopLevelItem(item);
 
     RefreshSubjectTable();
 }
@@ -115,8 +114,8 @@ void MainWindow::on_btnAddSubject_clicked()
 void MainWindow::on_btnAddStudy_clicked()
 {
     /* get selected subject */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         if (item->data(0,Qt::UserRole) == "subject") {
 
             /* add a subject to the data node of the tree */
@@ -138,8 +137,8 @@ void MainWindow::on_btnAddStudy_clicked()
 void MainWindow::on_btnAddSeries_clicked()
 {
     /* get selected study */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         if (item->text(0) == "study") {
 
             /* add a subject to the data node of the tree */
@@ -222,13 +221,50 @@ void MainWindow::on_btnAddAnalysis_clicked()
 
 void MainWindow::on_btnAddDrug_clicked()
 {
+    /* get selected subject */
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
+        if (item->data(0,Qt::UserRole) == "subject") {
 
+            /* add a drug to the node */
+            QTreeWidgetItem *newItem = new QTreeWidgetItem();
+            newItem->setData(0, Qt::UserRole, "drug");
+            newItem->setText(0, "Drug");
+
+            item->addChild(newItem);
+
+            RefreshSubjectTable();
+        }
+    }
 }
 
 
 void MainWindow::on_btnAddMeasure_clicked()
 {
+    /* get selected subject */
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
+        if (item->data(0,Qt::UserRole) == "subject") {
+            QString subjectID = item->text(0);
 
+            squirrelSubject sqrlSubject;
+            sqrl->GetSubject(subjectID, sqrlSubject);
+
+            squirrelMeasure sqrlMeasure;
+            sqrlMeasure.measureName = "Measure";
+
+            sqrlSubject.addMeasure(sqrlMeasure);
+
+            /* add a measure to the node */
+            //QTreeWidgetItem *newItem = new QTreeWidgetItem();
+            //newItem->setData(0, Qt::UserRole, "measure");
+            //newItem->setText(0, "Measure");
+
+            //item->addChild(newItem);
+
+            RefreshSubjectTable();
+        }
+    }
 }
 
 
@@ -285,8 +321,8 @@ void MainWindow::RefreshTopInfoTable() {
     EnableDisableSubjectButtons();
 
     /* get selected study */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         QString dataCategory = item->data(0, Qt::UserRole).toString();
 
         qDebug() << "data [" << dataCategory << "]";
@@ -394,7 +430,7 @@ void MainWindow::RefreshPackageDetails() {
 void MainWindow::RefreshSubjectTable() {
 
     /* clear all existing rows in the treeControl */
-    ui->packageTree->clear();
+    ui->subjectTree->clear();
 
     QList<squirrelSubject> subjects;
     sqrl->GetSubjectList(subjects);
@@ -412,7 +448,7 @@ void MainWindow::RefreshSubjectTable() {
         subjectItem->setText(0, sub.ID);
         subjectItem->setText(1, "subject");
         subjectItem->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        ui->packageTree->addTopLevelItem(subjectItem);
+        ui->subjectTree->addTopLevelItem(subjectItem);
 
         /* iterate through studies */
         for (int j=0; j < sub.studyList.size(); j++) {
@@ -443,6 +479,21 @@ void MainWindow::RefreshSubjectTable() {
                 studyItem->addChild(seriesItem);
             }
         }
+
+        /* iterate through the drugs */
+        for (int j=0; j < sub.drugList.size(); j++) {
+            squirrelDrug drug = sub.drugList[j];
+
+            /* add a subject to the data node of the tree */
+            QTreeWidgetItem *drugItem = new QTreeWidgetItem();
+            drugItem->setData(0, Qt::UserRole, "drug");
+            drugItem->setText(0, QString("%1").arg(drug.drugName));
+            drugItem->setText(1, "drug");
+
+            subjectItem->addChild(drugItem);
+        }
+
+        /* iterate through the measures */
     }
 }
 
@@ -452,8 +503,8 @@ void MainWindow::RefreshSubjectTable() {
 /* ------------------------------------------------------------ */
 void MainWindow::EnableDisableSubjectButtons() {
     /* get selected study */
-    if (ui->packageTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->packageTree->selectedItems()[0];
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         QString dataCategory = item->data(0, Qt::UserRole).toString();
 
         /* start by disabling all buttons */
@@ -578,9 +629,11 @@ void MainWindow::DisplaySeriesDetails(QString subjectID, int studyNum, int serie
 /* ------------------------------------------------------------ */
 /* ----- ClosePackage ----------------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::ClosePackage() {
-    if (sqrl->okToDelete())
+bool MainWindow::ClosePackage() {
+    if (sqrl->okToDelete()) {
         delete sqrl;
+        return true;
+    }
     else {
         QMessageBox msgBox;
         msgBox.setText("This squirrel package is not saved");
@@ -592,18 +645,23 @@ void MainWindow::ClosePackage() {
         switch (ret) {
             case QMessageBox::Save:
                 // Save was clicked - save if the package was valid and an existing. prompt for filename if the package was new
+                return true;
                 break;
             case QMessageBox::Discard:
                 // Don't Save was clicked - delete the package
+                return true;
                 break;
             case QMessageBox::Cancel:
                 // Cancel was clicked - leave the function without doing anything
+                return false;
                 break;
             default:
                 // should never be reached
                 break;
         }
     }
+
+    return false;
 }
 
 void MainWindow::on_action_Save_package_triggered()

@@ -269,7 +269,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0">
           <item>
-           <widget class="QTreeWidget" name="packageTree">
+           <widget class="QTreeWidget" name="subjectTree">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -506,7 +506,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="pipelineDetailsTable">
+             <widget class="QTableWidget" name="experimentDetailsTable">
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
@@ -545,7 +545,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <widget class="QTableWidget" name="experimentsTable_2">
+           <widget class="QTableWidget" name="pipelineTable">
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -610,7 +610,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="pipelineDetailsTable_2">
+             <widget class="QTableWidget" name="pipelineDetailsTable">
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
@@ -761,7 +761,8 @@
   </action>
   <action name="action_New_package">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;New package...</string>

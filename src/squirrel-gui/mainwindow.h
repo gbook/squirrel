@@ -71,7 +71,7 @@ private:
     squirrel *sqrl;
 
     bool NewPackage();
-    void ClosePackage();
+    bool ClosePackage();
     bool EditPackageDetails();
     void DisplaySubjectDetails(QString ID);
     void DisplayStudyDetails(QString subjectID, int studyNum);
