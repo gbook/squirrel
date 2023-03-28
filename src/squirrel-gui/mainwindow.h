@@ -64,13 +64,18 @@ private slots:
 
     void on_actionClose_triggered();
 
+	void on_btnOpenPackage_clicked();
+
+	void on_btnClosePackage_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     /* the main squirrel object */
-    squirrel *sqrl;
+	squirrel *sqrl;
 
-    bool NewPackage();
+	void OpenPackage();
+	bool NewPackage();
     bool ClosePackage();
     bool EditPackageDetails();
     void DisplaySubjectDetails(QString ID);

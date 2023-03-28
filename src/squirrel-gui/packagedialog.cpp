@@ -13,6 +13,10 @@ packageDialog::~packageDialog()
 	delete ui;
 }
 
+
+/* ------------------------------------------------------------ */
+/* ----- GetValues -------------------------------------------- */
+/* ------------------------------------------------------------ */
 void packageDialog::GetValues(QString &pkgName, QString &pkgDesc, QDateTime &pkgDate, QString &pkgDirFormat, QString &pkgDataFormat) {
 	pkgName = ui->packageName->text();
 	pkgDesc = ui->packageDesc->toPlainText();
@@ -22,6 +26,9 @@ void packageDialog::GetValues(QString &pkgName, QString &pkgDesc, QDateTime &pkg
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- SetValues -------------------------------------------- */
+/* ------------------------------------------------------------ */
 void packageDialog::SetValues(QString pkgName, QString pkgDesc, QDateTime pkgDate, QString pkgDirFormat, QString pkgDataFormat) {
 	ui->packageName->setText(pkgName);
 	ui->packageDesc->setPlainText(pkgDesc);
@@ -29,3 +36,32 @@ void packageDialog::SetValues(QString pkgName, QString pkgDesc, QDateTime pkgDat
 	ui->packageDirFormat->setCurrentIndex(ui->packageDirFormat->findText(pkgDirFormat));
 	ui->packageDataFormat->setCurrentIndex(ui->packageDataFormat->findText(pkgDataFormat));
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- SetEditType ------------------------------------------ */
+/* ------------------------------------------------------------ */
+void packageDialog::SetEditType(bool createNew) {
+	/* enable all fields of the package info for new packages */
+	if (createNew) {
+		ui->packageName->setEnabled(true);
+		ui->packageDesc->setEnabled(true);
+		ui->packageDate->setEnabled(true);
+		ui->packageDirFormat->setEnabled(true);
+		ui->packageDataFormat->setEnabled(true);
+	}
+	/* enable only name, desc for existing packages */
+	else {
+		ui->packageName->setEnabled(true);
+		ui->packageDesc->setEnabled(true);
+		ui->packageDate->setDisabled(true);
+		ui->packageDirFormat->setDisabled(true);
+		ui->packageDataFormat->setDisabled(true);
+	}
+}
+
+void packageDialog::on_btnSetCurrentDateTime_clicked()
+{
+	ui->packageDate->setDateTime(QDateTime::currentDateTime());
+}
+

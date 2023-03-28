@@ -28,6 +28,41 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
+       <widget class="QPushButton" name="btnOpenPackage">
+        <property name="text">
+         <string>Open Package...</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>open-file.ico</normaloff>open-file.ico</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnNewPackage">
+        <property name="text">
+         <string>New Package...</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>new-file.ico</normaloff>new-file.ico</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QLabel" name="label">
         <property name="font">
          <font>
@@ -55,12 +90,19 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="btnClosePackage">
+        <property name="text">
+         <string>Close Package</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -717,8 +759,8 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset>
+     <normaloff>open-file.ico</normaloff>open-file.ico</iconset>
    </property>
    <property name="text">
     <string>&amp;Open package...</string>
@@ -762,7 +804,7 @@
   <action name="action_New_package">
    <property name="icon">
     <iconset theme="document-open">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>new-file.ico</normaloff>new-file.ico</iconset>
    </property>
    <property name="text">
     <string>&amp;New package...</string>

@@ -39,8 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->subjectTree->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
     ui->experimentsTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
 
-    /* create an empty squirrel object */
-    sqrl = new squirrel();
 }
 
 /**
@@ -350,13 +348,45 @@ void MainWindow::RefreshTopInfoTable() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- OpenPackage ------------------------------------------ */
+/* ------------------------------------------------------------ */
+void MainWindow::OpenPackage()
+{
+	/* create an empty squirrel object */
+	sqrl = new squirrel();
+
+	/* open a squirrel file */
+	QString filename;
+	QString m;
+	filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
+	sqrl->filePath = filename;
+	bool success = sqrl->read(filename, m);
+	ui->txtOutput->appendPlainText(m);
+	if (success) {
+		ui->txtOutput->appendPlainText("Successfuly read squirrel file");
+	}
+	else {
+		ui->txtOutput->appendPlainText("Unable to read squirrel file");
+	}
+
+	RefreshPackageDetails();
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- NewPackage ------------------------------------------- */
 /* ------------------------------------------------------------ */
 bool MainWindow::NewPackage() {
     ClosePackage();
 
+	/* create an empty squirrel object */
+	sqrl = new squirrel();
+
     packageDialog *packageInfo = new packageDialog();
     if (packageInfo->exec()) {
+
+		packageInfo->SetEditType(true);
+
         QString pkgName;
         QString pkgDesc;
         QDateTime pkgDate;
@@ -388,7 +418,10 @@ bool MainWindow::EditPackageDetails() {
     packageInfo->SetValues(sqrl->name, sqrl->description, sqrl->datetime, sqrl->subjectDirFormat, sqrl->dataFormat);
 
     if (packageInfo->exec()) {
-        QString pkgName;
+
+		packageInfo->SetEditType(false);
+
+		QString pkgName;
         QString pkgDesc;
         QDateTime pkgDate;
         QString pkgDirFormat;
@@ -692,5 +725,17 @@ void MainWindow::on_actionValidate_triggered()
 void MainWindow::on_actionClose_triggered()
 {
 
+}
+
+
+void MainWindow::on_btnOpenPackage_clicked()
+{
+	OpenPackage();
+}
+
+
+void MainWindow::on_btnClosePackage_clicked()
+{
+	ClosePackage();
 }
 

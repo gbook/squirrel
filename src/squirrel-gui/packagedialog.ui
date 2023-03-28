@@ -50,17 +50,14 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QDateTimeEdit" name="packageDate"/>
-     </item>
-     <item row="3" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Directory format</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="5" column="1">
       <widget class="QComboBox" name="packageDirFormat">
        <item>
         <property name="text">
@@ -74,14 +71,14 @@
        </item>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Data format</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="6" column="1">
       <widget class="QComboBox" name="packageDataFormat">
        <item>
         <property name="text">
@@ -120,33 +117,50 @@
        </item>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="7" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Package format</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="7" column="1">
       <widget class="QLabel" name="label_8">
        <property name="text">
         <string>squirrel</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
         <string>squirrel version</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="8" column="1">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>1.0</string>
        </property>
       </widget>
+     </item>
+     <item row="2" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="btnSetCurrentDateTime">
+         <property name="text">
+          <string>Today</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDateTimeEdit" name="packageDate"/>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
