@@ -20,17 +20,11 @@ public:
 private slots:
     void on_btnAddSubject_clicked();
 
-    void on_packageTree_itemClicked(QTreeWidgetItem *item, int column);
-
-    void on_packageTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
-
     void on_actionE_xit_triggered();
 
     void on_btnAddStudy_clicked();
 
     void on_btnAddSeries_clicked();
-
-    void on_packageTree_itemSelectionChanged();
 
     void on_action_New_package_triggered();
 
@@ -50,8 +44,6 @@ private slots:
 
     void on_btnAddPipeline_clicked();
 
-    void on_packageTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-
     void on_btnAddDICOM_clicked();
 
     void on_action_Save_package_triggered();
@@ -67,6 +59,12 @@ private slots:
 	void on_btnOpenPackage_clicked();
 
 	void on_btnClosePackage_clicked();
+
+    void on_subjectTree_itemClicked(QTreeWidgetItem *item, int column);
+
+    void on_subjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void on_subjectTree_itemChanged(QTreeWidgetItem *item, int column);
 
 private:
     Ui::MainWindow *ui;

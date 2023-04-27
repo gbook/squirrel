@@ -51,25 +51,6 @@ MainWindow::~MainWindow()
 
 
 /* ------------------------------------------------------------ */
-/* ----- on_packageTree_itemClicked --------------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_packageTree_itemClicked(QTreeWidgetItem *item, int column)
-{
-    RefreshTopInfoTable();
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- on_packageTree_itemDoubleClicked --------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_packageTree_itemDoubleClicked(QTreeWidgetItem *item, int column)
-{
-    /* display the variable details in a new dialog box so they can be edited */
-
-}
-
-
-/* ------------------------------------------------------------ */
 /* ----- on_actionE_xit_triggered ----------------------------- */
 /* ------------------------------------------------------------ */
 void MainWindow::on_actionE_xit_triggered()
@@ -149,15 +130,6 @@ void MainWindow::on_btnAddSeries_clicked()
             RefreshSubjectTable();
         }
     }
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- on_packageTree_itemSelectionChanged ------------------ */
-/* ------------------------------------------------------------ */
-void MainWindow::on_packageTree_itemSelectionChanged()
-{
-    RefreshTopInfoTable();
 }
 
 
@@ -278,12 +250,6 @@ void MainWindow::on_btnAddPipeline_clicked()
 }
 
 
-void MainWindow::on_packageTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
-{
-    RefreshTopInfoTable();
-}
-
-
 /* ------------------------------------------------------------ */
 /* ----- on_btnAddDICOM_clicked ------------------------------- */
 /* ------------------------------------------------------------ */
@@ -320,6 +286,8 @@ void MainWindow::RefreshTopInfoTable() {
 
     /* get selected study */
     if (ui->subjectTree->selectedItems().size() == 1) {
+        ui->txtOutput->appendPlainText("Clicked 1 item on subject tree");
+
         QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         QString dataCategory = item->data(0, Qt::UserRole).toString();
 
@@ -344,6 +312,7 @@ void MainWindow::RefreshTopInfoTable() {
             DisplaySeriesDetails(subjectID, studyNum, seriesNum);
         }
     }
+    ui->txtOutput->appendPlainText(QString("Clicked %1 items on subject tree").arg(ui->subjectTree->selectedItems().size()));
 }
 
 
@@ -352,7 +321,10 @@ void MainWindow::RefreshTopInfoTable() {
 /* ------------------------------------------------------------ */
 void MainWindow::OpenPackage()
 {
-	/* create an empty squirrel object */
+    ui->lblStatus->setText("Opening squirrel package...");
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    /* create an empty squirrel object */
 	sqrl = new squirrel();
 
 	/* open a squirrel file */
@@ -364,12 +336,18 @@ void MainWindow::OpenPackage()
 	ui->txtOutput->appendPlainText(m);
 	if (success) {
 		ui->txtOutput->appendPlainText("Successfuly read squirrel file");
+        ui->txtOutput->appendHtml("<span style='color: green'><b>Successfuly</b> read squirrel file</span>");
 	}
 	else {
 		ui->txtOutput->appendPlainText("Unable to read squirrel file");
 	}
 
 	RefreshPackageDetails();
+    RefreshSubjectTable();
+
+    ui->lblStatus->setText("Finished");
+    QApplication::restoreOverrideCursor();
+
 }
 
 
@@ -467,6 +445,8 @@ void MainWindow::RefreshSubjectTable() {
 
     QList<squirrelSubject> subjects;
     sqrl->GetSubjectList(subjects);
+
+    ui->tabWidget->setTabText(1, QString("Subjects (%1)").arg(subjects.size()));
 
     /* iterate through all subjects */
     for (int i=0; i < subjects.size(); i++) {
@@ -737,5 +717,32 @@ void MainWindow::on_btnOpenPackage_clicked()
 void MainWindow::on_btnClosePackage_clicked()
 {
 	ClosePackage();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- on_subjectTree_itemClicked --------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::on_subjectTree_itemClicked(QTreeWidgetItem *item, int column)
+{
+    RefreshTopInfoTable();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- on_subjectTree_currentItemChanged -------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::on_subjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    RefreshTopInfoTable();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- on_subjectTree_itemChanged --------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::on_subjectTree_itemChanged(QTreeWidgetItem *item, int column)
+{
+    RefreshTopInfoTable();
 }
 

@@ -85,6 +85,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Consolas</family>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -102,7 +108,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -129,6 +135,12 @@
           </item>
           <item>
            <widget class="QLabel" name="lblTempPath">
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <stylestrategy>PreferAntialias</stylestrategy>
+             </font>
+            </property>
             <property name="text">
              <string/>
             </property>

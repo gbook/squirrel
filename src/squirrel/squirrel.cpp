@@ -116,14 +116,19 @@ bool squirrel::read(QString filepath, QString &m, bool validateOnly) {
     description = pkgObj["description"].toString();
     datetime.fromString(pkgObj["datetime"].toString());
     name = pkgObj["name"].toString();
-    qDebug() << pkgObj;
 
     /* get the data object, and check for any subjects */
-    QJsonValue dataVal = root.value("data");
-    QJsonObject dataObj = dataVal.toObject();
-    QJsonArray jsonSubjects = dataObj["subjects"].toArray();
-
-    msgs << QString("Getting ready to read subjects. Found [%1] subjects").arg(jsonSubjects.size());
+    QJsonArray jsonSubjects;
+    if (root.contains("data")) {
+        QJsonValue dataVal = root.value("data");
+        QJsonObject dataObj = dataVal.toObject();
+        jsonSubjects = dataObj["subjects"].toArray();
+        msgs << QString("Found [%1] subjects").arg(jsonSubjects.size());
+    }
+    else {
+        jsonSubjects = root["subjects"].toArray();
+        msgs << QString("NOTICE: Found [%1] subjects in the root of the JSON. (Slightly malformed squirrel file, but I'll accept it)").arg(jsonSubjects.size());
+    }
 
     /* loop through and read any subjects */
     for (auto v : jsonSubjects) {
@@ -197,13 +202,16 @@ bool squirrel::read(QString filepath, QString &m, bool validateOnly) {
                 foreach(const QString& key, json.keys()) {
                     tags[key] = json.value(key).toString();
                 }
+                sqrlSeries.params = tags;
 
                 /* add this series to the study */
                 sqrlStudy.addSeries(sqrlSeries);
             }
 
             /* add this study to the subject */
-            sqrlSubject.addStudy(sqrlStudy);
+            if (sqrlSubject.addStudy(sqrlStudy)) {
+                msgs << QString("Added study [%1]").arg(sqrlStudy.number);
+            }
         }
 
         /* read all measures */
@@ -211,7 +219,9 @@ bool squirrel::read(QString filepath, QString &m, bool validateOnly) {
         /* read all drugs */
 
         /* add the subject */
-        addSubject(sqrlSubject);
+        if (addSubject(sqrlSubject)) {
+            msgs << "Added subject [" + sqrlSubject.ID + "]";
+        }
     }
 
     /* in case of string value get value and convert into string*/
