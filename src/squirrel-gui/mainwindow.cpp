@@ -286,7 +286,7 @@ void MainWindow::RefreshTopInfoTable() {
 
     /* get selected study */
     if (ui->subjectTree->selectedItems().size() == 1) {
-        ui->txtOutput->appendPlainText("Clicked 1 item on subject tree");
+        //ui->txtOutput->appendPlainText("Clicked 1 item on subject tree");
 
         QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         QString dataCategory = item->data(0, Qt::UserRole).toString();
@@ -312,7 +312,6 @@ void MainWindow::RefreshTopInfoTable() {
             DisplaySeriesDetails(subjectID, studyNum, seriesNum);
         }
     }
-    ui->txtOutput->appendPlainText(QString("Clicked %1 items on subject tree").arg(ui->subjectTree->selectedItems().size()));
 }
 
 
