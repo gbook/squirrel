@@ -76,9 +76,20 @@ private:
 	bool NewPackage();
     bool ClosePackage();
     bool EditPackageDetails();
+
     void DisplaySubjectDetails(QString ID);
     void DisplayStudyDetails(QString subjectID, int studyNum);
     void DisplaySeriesDetails(QString subjectID, int studyNum, int seriesNum);
+
+    void AddDICOM();
+    void AddSubject();
+    void AddStudy();
+    void AddSeries();
+    void AddDrug();
+    void AddMeasure();
+    void AddAnalysis();
+    void AddExperiment();
+    void AddPipeline();
 
     void RefreshTopInfoTable();
     void RefreshSubjectTable();

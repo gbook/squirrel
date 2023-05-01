@@ -41,6 +41,7 @@ squirrel::squirrel()
     studyDirFormat = "orig";
     seriesDirFormat = "orig";
     dataFormat = "nifti4dgz";
+    isOkToDelete = true;
 }
 
 

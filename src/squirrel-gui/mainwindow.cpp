@@ -49,234 +49,130 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/* ------------------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/* top level menu options
+/* ------------------------------------------------------------ */
+/* ------------------------------------------------------------ */
 
-/* ------------------------------------------------------------ */
-/* ----- on_actionE_xit_triggered ----------------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_actionE_xit_triggered()
-{
+void MainWindow::on_actionE_xit_triggered() {
     /* check if unsaved work */
     if (ClosePackage())
         exit(0);
 }
 
+void MainWindow::on_action_New_package_triggered() {
+    NewPackage();
+}
+
+void MainWindow::on_actionOpen_triggered() {
+    OpenPackage();
+}
+
+void MainWindow::on_action_Save_package_triggered() {
+
+}
+
+void MainWindow::on_action_Help_triggered() {
+
+}
+
+void MainWindow::on_action_About_triggered() {
+    About *about = new About();
+    about->exec();
+}
+
+void MainWindow::on_actionValidate_triggered() {
+    OpenPackage();
+}
+
+void MainWindow::on_actionClose_triggered() {
+    ClosePackage();
+}
 
 /* ------------------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/* GUI events
+/* ------------------------------------------------------------ */
+/* ------------------------------------------------------------ */
+
 /* ----- on_btnAddSubject_clicked ----------------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_btnAddSubject_clicked()
-{
-    subjectDialog *subjectInfo = new subjectDialog();
-    if (subjectInfo->exec()) {
-    }
-
-    /* add the subject to the squirrel object */
-    squirrelSubject sqrlSubject;
-    sqrlSubject.ID = "S1234ABC";
-    sqrl->addSubject(sqrlSubject);
-
-    /* add a subject to the data node of the tree */
-    //QTreeWidgetItem *item = new QTreeWidgetItem();
-    //item->setData(0, Qt::UserRole, "subject");
-    //item->setText(0, "S1234ABC");
-    //item->setText(1, "subject");
-    //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    //ui->subjectTree->addTopLevelItem(item);
-
-    RefreshSubjectTable();
+void MainWindow::on_btnAddSubject_clicked() {
+    AddSubject();
 }
 
-
-/* ------------------------------------------------------------ */
 /* ----- on_btnAddStudy_clicked ------------------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_btnAddStudy_clicked()
-{
-    /* get selected subject */
-    if (ui->subjectTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
-        if (item->data(0,Qt::UserRole) == "subject") {
-
-            /* add a subject to the data node of the tree */
-            QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            newItem->setData(0, Qt::UserRole, "study");
-            newItem->setText(0, "StudyN");
-
-            item->addChild(newItem);
-
-            RefreshSubjectTable();
-        }
-    }
+void MainWindow::on_btnAddStudy_clicked() {
 }
 
-
-/* ------------------------------------------------------------ */
 /* ----- on_btnAddSeries_clicked ------------------------------ */
-/* ------------------------------------------------------------ */
-void MainWindow::on_btnAddSeries_clicked()
-{
-    /* get selected study */
-    if (ui->subjectTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
-        if (item->text(0) == "study") {
-
-            /* add a subject to the data node of the tree */
-            QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            newItem->setText(0, "seriesID");
-            newItem->setData(0, Qt::UserRole, "series");
-
-            item->addChild(newItem);
-
-            RefreshSubjectTable();
-        }
-    }
+void MainWindow::on_btnAddSeries_clicked() {
+    AddSeries();
 }
 
-
-/* ------------------------------------------------------------ */
-/* ----- on_action_New_package_triggered ---------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_action_New_package_triggered()
-{
-    NewPackage();
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- on_actionOpen_triggered ------------------------------ */
-/* ------------------------------------------------------------ */
-void MainWindow::on_actionOpen_triggered()
-{
-    /* open a squirrel file */
-    QString filename;
-    QString m;
-    filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
-    sqrl->filePath = filename;
-    bool success = sqrl->read(filename, m);
-    ui->txtOutput->appendPlainText(m);
-    if (success) {
-        ui->txtOutput->appendPlainText("Successfuly read squirrel file");
-    }
-    else {
-        ui->txtOutput->appendPlainText("Unable to read squirrel file");
-    }
-
-    RefreshPackageDetails();
-}
-
-
-/* ------------------------------------------------------------ */
 /* ----- on_btnNewPackage_clicked ----------------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_btnNewPackage_clicked()
-{
+void MainWindow::on_btnNewPackage_clicked() {
     NewPackage();
 }
 
-
-/* ------------------------------------------------------------ */
 /* ----- on_btnEditPackageDetails_clicked --------------------- */
-/* ------------------------------------------------------------ */
-void MainWindow::on_btnEditPackageDetails_clicked()
-{
+void MainWindow::on_btnEditPackageDetails_clicked() {
     EditPackageDetails();
 }
 
-
-void MainWindow::on_btnAddAnalysis_clicked()
-{
-
-}
-
-
-void MainWindow::on_btnAddDrug_clicked()
-{
-    /* get selected subject */
-    if (ui->subjectTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
-        if (item->data(0,Qt::UserRole) == "subject") {
-
-            /* add a drug to the node */
-            QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            newItem->setData(0, Qt::UserRole, "drug");
-            newItem->setText(0, "Drug");
-
-            item->addChild(newItem);
-
-            RefreshSubjectTable();
-        }
-    }
-}
-
-
-void MainWindow::on_btnAddMeasure_clicked()
-{
-    /* get selected subject */
-    if (ui->subjectTree->selectedItems().size() == 1) {
-        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
-        if (item->data(0,Qt::UserRole) == "subject") {
-            QString subjectID = item->text(0);
-
-            squirrelSubject sqrlSubject;
-            sqrl->GetSubject(subjectID, sqrlSubject);
-
-            squirrelMeasure sqrlMeasure;
-            sqrlMeasure.measureName = "Measure";
-
-            sqrlSubject.addMeasure(sqrlMeasure);
-
-            /* add a measure to the node */
-            //QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            //newItem->setData(0, Qt::UserRole, "measure");
-            //newItem->setText(0, "Measure");
-
-            //item->addChild(newItem);
-
-            RefreshSubjectTable();
-        }
-    }
-}
-
-
-void MainWindow::on_btnAddExperiment_clicked()
-{
+/* ----- on_btnAddAnalysis_clicked ---------------------------- */
+void MainWindow::on_btnAddAnalysis_clicked() {
 
 }
 
+/* ----- on_btnAddDrug_clicked -------------------------------- */
+void MainWindow::on_btnAddDrug_clicked() {
+    AddDrug();
+}
 
-void MainWindow::on_btnAddPipeline_clicked()
-{
+/* ----- on_btnAddMeasure_clicked ----------------------------- */
+void MainWindow::on_btnAddMeasure_clicked() {
+    AddMeasure();
+}
 
+void MainWindow::on_btnAddExperiment_clicked() {
+
+}
+
+void MainWindow::on_btnAddPipeline_clicked() {
+
+}
+
+void MainWindow::on_btnAddDICOM_clicked() {
+    AddDICOM();
+}
+
+void MainWindow::on_btnOpenPackage_clicked() {
+    OpenPackage();
+}
+
+void MainWindow::on_btnClosePackage_clicked() {
+    ClosePackage();
+}
+
+void MainWindow::on_subjectTree_itemClicked(QTreeWidgetItem *item, int column) {
+    RefreshTopInfoTable();
+}
+
+void MainWindow::on_subjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous) {
+    RefreshTopInfoTable();
+}
+
+void MainWindow::on_subjectTree_itemChanged(QTreeWidgetItem *item, int column) {
+    RefreshTopInfoTable();
 }
 
 
 /* ------------------------------------------------------------ */
-/* ----- on_btnAddDICOM_clicked ------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::on_btnAddDICOM_clicked()
-{
-    QString dicomdir;
-    dicomdir = QFileDialog::getExistingDirectory(this, tr("Select DICOM directory"), "/");
-
-    if (dicomdir != "") {
-        ui->lblStatus->setText("<font color='blue'>Reading DICOM directory</font>");
-        qApp->processEvents();
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-
-        /* create the dicom object to read the DICOM dir */
-        dicom dcm;
-        QString m;
-        dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
-
-        QApplication::restoreOverrideCursor();
-        ui->lblStatus->setText("Done reading DICOM directory");
-
-        RefreshSubjectTable();
-
-        ui->txtOutput->appendPlainText(m);
-    }
-}
-
+/* Functions
+/* ------------------------------------------------------------ */
+/* ------------------------------------------------------------ */
 
 /* ------------------------------------------------------------ */
 /* ----- RefreshTopInfoTable ---------------------------------- */
@@ -676,72 +572,165 @@ bool MainWindow::ClosePackage() {
     return false;
 }
 
-void MainWindow::on_action_Save_package_triggered()
-{
 
-}
+/* ------------------------------------------------------------ */
+/* ----- AddDICOM --------------------------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::AddDICOM() {
+    QString dicomdir;
+    dicomdir = QFileDialog::getExistingDirectory(this, tr("Select DICOM directory"), "/");
 
+    if (dicomdir != "") {
+        ui->lblStatus->setText("<font color='blue'>Reading DICOM directory</font>");
+        qApp->processEvents();
+        QApplication::setOverrideCursor(Qt::WaitCursor);
 
-void MainWindow::on_action_Help_triggered()
-{
+        /* create the dicom object to read the DICOM dir */
+        dicom dcm;
+        QString m;
+        dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
 
-}
+        QApplication::restoreOverrideCursor();
+        ui->lblStatus->setText("Done reading DICOM directory");
 
+        RefreshSubjectTable();
 
-void MainWindow::on_action_About_triggered()
-{
-    About *about = new About();
-    about->exec();
-}
-
-
-void MainWindow::on_actionValidate_triggered()
-{
-
-}
-
-
-void MainWindow::on_actionClose_triggered()
-{
-
-}
-
-
-void MainWindow::on_btnOpenPackage_clicked()
-{
-	OpenPackage();
-}
-
-
-void MainWindow::on_btnClosePackage_clicked()
-{
-	ClosePackage();
+        ui->txtOutput->appendPlainText(m);
+    }
 }
 
 
 /* ------------------------------------------------------------ */
-/* ----- on_subjectTree_itemClicked --------------------------- */
+/* ----- AddSubject ------------------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::on_subjectTree_itemClicked(QTreeWidgetItem *item, int column)
-{
-    RefreshTopInfoTable();
+void MainWindow::AddSubject() {
+
+    subjectDialog *subjectInfo = new subjectDialog();
+    if (subjectInfo->exec()) {
+    }
+
+    /* add the subject to the squirrel object */
+    squirrelSubject sqrlSubject;
+    sqrlSubject.ID = "S1234ABC";
+    sqrl->addSubject(sqrlSubject);
+
+    RefreshSubjectTable();
 }
 
 
 /* ------------------------------------------------------------ */
-/* ----- on_subjectTree_currentItemChanged -------------------- */
+/* ----- AddStudy --------------------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::on_subjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
-{
-    RefreshTopInfoTable();
+void MainWindow::AddStudy() {
+    /* get selected subject */
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
+        if (item->data(0,Qt::UserRole) == "subject") {
+
+            /* add a subject to the data node of the tree */
+            QTreeWidgetItem *newItem = new QTreeWidgetItem();
+            newItem->setData(0, Qt::UserRole, "study");
+            newItem->setText(0, "StudyN");
+
+            item->addChild(newItem);
+
+            RefreshSubjectTable();
+        }
+    }
 }
 
 
 /* ------------------------------------------------------------ */
-/* ----- on_subjectTree_itemChanged --------------------------- */
+/* ----- AddSeries -------------------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::on_subjectTree_itemChanged(QTreeWidgetItem *item, int column)
-{
-    RefreshTopInfoTable();
+void MainWindow::AddSeries() {
+    /* get selected study */
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
+        if (item->text(0) == "study") {
+
+            /* add a subject to the data node of the tree */
+            QTreeWidgetItem *newItem = new QTreeWidgetItem();
+            newItem->setText(0, "seriesID");
+            newItem->setData(0, Qt::UserRole, "series");
+
+            item->addChild(newItem);
+
+            RefreshSubjectTable();
+        }
+    }
 }
 
+
+/* ------------------------------------------------------------ */
+/* ----- AddDrug ---------------------------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::AddDrug() {
+    /* get selected subject */
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
+        if (item->data(0,Qt::UserRole) == "subject") {
+
+            /* add a drug to the node */
+            QTreeWidgetItem *newItem = new QTreeWidgetItem();
+            newItem->setData(0, Qt::UserRole, "drug");
+            newItem->setText(0, "Drug");
+
+            item->addChild(newItem);
+
+            RefreshSubjectTable();
+        }
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddMeasure ------------------------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::AddMeasure() {
+    /* get selected subject */
+    if (ui->subjectTree->selectedItems().size() == 1) {
+        QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
+        if (item->data(0,Qt::UserRole) == "subject") {
+            QString subjectID = item->text(0);
+
+            squirrelSubject sqrlSubject;
+            sqrl->GetSubject(subjectID, sqrlSubject);
+
+            squirrelMeasure sqrlMeasure;
+            sqrlMeasure.measureName = "Measure";
+
+            sqrlSubject.addMeasure(sqrlMeasure);
+
+            /* add a measure to the node */
+            //QTreeWidgetItem *newItem = new QTreeWidgetItem();
+            //newItem->setData(0, Qt::UserRole, "measure");
+            //newItem->setText(0, "Measure");
+
+            //item->addChild(newItem);
+
+            RefreshSubjectTable();
+        }
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddAnalysis ------------------------------------------ */
+/* ------------------------------------------------------------ */
+void MainWindow::AddAnalysis() {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddExperiment ---------------------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::AddExperiment() {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddPipeline ------------------------------------------ */
+/* ------------------------------------------------------------ */
+void MainWindow::AddPipeline() {
+}
