@@ -12,21 +12,21 @@ SOURCES += \
     aboutDialog.cpp \
     main.cpp \
     mainwindow.cpp \
-    packagedialog.cpp \
-    subjectDialog.cpp
+    objectDialog.cpp \
+    packagedialog.cpp
 
 HEADERS += \
     aboutDialog.h \
     mainwindow.h \
-    packagedialog.h \
-    subjectDialog.h
+    objectDialog.h \
+    packagedialog.h
 
 FORMS += \
     aboutDialog.ui \
     mainwindow.ui \
     objectDetails.ui \
-    packagedialog.ui \
-    subjectDialog.ui
+    objectDialog.ui \
+    packagedialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

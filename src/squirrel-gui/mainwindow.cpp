@@ -23,7 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "packagedialog.h"
-#include "subjectDialog.h"
+#include "objectDialog.h"
 #include "aboutDialog.h"
 #include <QDebug>
 #include <QFileDialog>
@@ -96,51 +96,44 @@ void MainWindow::on_actionClose_triggered() {
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
 
-/* ----- on_btnAddSubject_clicked ----------------------------- */
 void MainWindow::on_btnAddSubject_clicked() {
     AddSubject();
 }
 
-/* ----- on_btnAddStudy_clicked ------------------------------- */
 void MainWindow::on_btnAddStudy_clicked() {
+    AddStudy();
 }
 
-/* ----- on_btnAddSeries_clicked ------------------------------ */
 void MainWindow::on_btnAddSeries_clicked() {
     AddSeries();
 }
 
-/* ----- on_btnNewPackage_clicked ----------------------------- */
 void MainWindow::on_btnNewPackage_clicked() {
     NewPackage();
 }
 
-/* ----- on_btnEditPackageDetails_clicked --------------------- */
 void MainWindow::on_btnEditPackageDetails_clicked() {
     EditPackageDetails();
 }
 
-/* ----- on_btnAddAnalysis_clicked ---------------------------- */
 void MainWindow::on_btnAddAnalysis_clicked() {
-
+    AddAnalysis();
 }
 
-/* ----- on_btnAddDrug_clicked -------------------------------- */
 void MainWindow::on_btnAddDrug_clicked() {
     AddDrug();
 }
 
-/* ----- on_btnAddMeasure_clicked ----------------------------- */
 void MainWindow::on_btnAddMeasure_clicked() {
     AddMeasure();
 }
 
 void MainWindow::on_btnAddExperiment_clicked() {
-
+    AddExperiment();
 }
 
 void MainWindow::on_btnAddPipeline_clicked() {
-
+    AddPipeline();
 }
 
 void MainWindow::on_btnAddDICOM_clicked() {
@@ -605,14 +598,20 @@ void MainWindow::AddDICOM() {
 /* ------------------------------------------------------------ */
 void MainWindow::AddSubject() {
 
-    subjectDialog *subjectInfo = new subjectDialog();
+    objectDialog *subjectInfo = new objectDialog("subject");
     if (subjectInfo->exec()) {
+        /* add the subject to the squirrel object */
+        squirrelSubject sqrlSubject;
+        sqrlSubject.ID = subjectInfo->GetValue("ID");
+        sqrlSubject.alternateIDs = subjectInfo->GetValue("alternateIDs").split(",");
+        sqrlSubject.GUID = subjectInfo->GetValue("GUID");
+        sqrlSubject.dateOfBirth.fromString(subjectInfo->GetValue("dateOfBirth"), "yyyy-MM-dd");
+        sqrlSubject.sex = subjectInfo->GetValue("sex");
+        sqrlSubject.gender = subjectInfo->GetValue("gender");
+        sqrlSubject.ethnicity1 = subjectInfo->GetValue("ethnicity1");
+        sqrlSubject.ethnicity2 = subjectInfo->GetValue("ethnicity2");
+        sqrl->addSubject(sqrlSubject);
     }
-
-    /* add the subject to the squirrel object */
-    squirrelSubject sqrlSubject;
-    sqrlSubject.ID = "S1234ABC";
-    sqrl->addSubject(sqrlSubject);
 
     RefreshSubjectTable();
 }
