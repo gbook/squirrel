@@ -214,6 +214,7 @@ void MainWindow::OpenPackage()
 
     /* create an empty squirrel object */
 	sqrl = new squirrel();
+    sqrlValid = true;
 
 	/* open a squirrel file */
 	QString filename;
@@ -247,6 +248,7 @@ bool MainWindow::NewPackage() {
 
 	/* create an empty squirrel object */
 	sqrl = new squirrel();
+    sqrlValid = true;
 
     packageDialog *packageInfo = new packageDialog();
     if (packageInfo->exec()) {
@@ -480,7 +482,18 @@ void MainWindow::DisplayStudyDetails(QString subjectID, int studyNum) {
 
         /* load subject details */
         QStringList variables, values;
-        variables.append("ID"); values.append(QString("%1").arg(sqrlStudy.number));
+        variables.append("number"); values.append(QString("%1").arg(sqrlStudy.number));
+        variables.append("dateTime"); values.append(sqrlStudy.dateTime.toString("yyyy-MM-dd hh:mm:ss"));
+        variables.append("ageAtStudy"); values.append(QString("%1").arg(sqrlStudy.ageAtStudy));
+        variables.append("height"); values.append(QString("%1").arg(sqrlStudy.height));
+        variables.append("weight"); values.append(QString("%1").arg(sqrlStudy.weight));
+        variables.append("modality"); values.append(sqrlStudy.modality);
+        variables.append("description"); values.append(sqrlStudy.description);
+        variables.append("studyUID"); values.append(sqrlStudy.studyUID);
+        variables.append("visitType"); values.append(sqrlStudy.visitType);
+        variables.append("dayNumber"); values.append(sqrlStudy.dayNumber);
+        variables.append("timePoint"); values.append(sqrlStudy.timePoint);
+        variables.append("equipment"); values.append(sqrlStudy.equipment);
 
         /* clear table */
         ui->subjectDetailsTable->setRowCount(0);
@@ -509,7 +522,20 @@ void MainWindow::DisplaySeriesDetails(QString subjectID, int studyNum, int serie
 
         /* load subject details */
         QStringList variables, values;
-        variables.append("ID"); values.append(QString("%1").arg(sqrlSeries.number));
+        variables.append("number"); values.append(QString("%1").arg(sqrlSeries.number));
+        variables.append("dateTime"); values.append(sqrlSeries.dateTime.toString("yyyy-MM-dd hh:mm:ss"));
+        variables.append("seriesUID"); values.append(sqrlSeries.seriesUID);
+        variables.append("description"); values.append(sqrlSeries.description);
+        variables.append("protocol"); values.append(sqrlSeries.protocol);
+        variables.append("numFiles"); values.append(QString("%1").arg(sqrlSeries.numFiles));
+        variables.append("size"); values.append(QString("%1").arg(sqrlSeries.size));
+        variables.append("numBehFiles"); values.append(QString("%1").arg(sqrlSeries.numBehFiles));
+        variables.append("behSize"); values.append(QString("%1").arg(sqrlSeries.behSize));
+        variables.append("params"); values.append("...");
+        variables.append("stagedFiles"); values.append("...");
+        variables.append("stagedBehFiles"); values.append("...");
+        variables.append("experimentList"); values.append("...");
+        variables.append("virtualPath"); values.append(sqrlSeries.virtualPath);
 
         /* clear table */
         ui->subjectDetailsTable->setRowCount(0);
@@ -600,6 +626,13 @@ void MainWindow::AddSubject() {
 
     objectDialog *subjectInfo = new objectDialog("subject");
     if (subjectInfo->exec()) {
+
+        /* create an empty squirrel object if it doesn't exist already */
+        if (!sqrlValid) {
+            sqrl = new squirrel();
+            sqrlValid = true;
+        }
+
         /* add the subject to the squirrel object */
         squirrelSubject sqrlSubject;
         sqrlSubject.ID = subjectInfo->GetValue("ID");
@@ -621,17 +654,40 @@ void MainWindow::AddSubject() {
 /* ----- AddStudy --------------------------------------------- */
 /* ------------------------------------------------------------ */
 void MainWindow::AddStudy() {
-    /* get selected subject */
+    /* get selected item */
     if (ui->subjectTree->selectedItems().size() == 1) {
+
+        /* make sure we're adding this study to an existing subject */
         QTreeWidgetItem *item = ui->subjectTree->selectedItems()[0];
         if (item->data(0,Qt::UserRole) == "subject") {
 
-            /* add a subject to the data node of the tree */
-            QTreeWidgetItem *newItem = new QTreeWidgetItem();
-            newItem->setData(0, Qt::UserRole, "study");
-            newItem->setText(0, "StudyN");
+            /* get squirrel subject */
+            squirrelSubject sqrlSubject;
+            if (sqrl->GetSubject(item->text(0), sqrlSubject)) {
 
-            item->addChild(newItem);
+                /* subject exists. show the study object dialog and add the study */
+                objectDialog *studyInfo = new objectDialog("study");
+                if (studyInfo->exec()) {
+
+                    /* add the subject to the squirrel object */
+                    squirrelStudy sqrlStudy;
+                    sqrlStudy.number = studyInfo->GetValue("number").toInt();
+                    sqrlStudy.dateTime.fromString(studyInfo->GetValue("dateTime"), "yyyy-MM-dd hh:mm:ss");
+                    sqrlStudy.ageAtStudy = studyInfo->GetValue("ageAtStudy").toDouble();
+                    sqrlStudy.height = studyInfo->GetValue("height").toDouble();
+                    sqrlStudy.weight = studyInfo->GetValue("weight").toDouble();
+                    sqrlStudy.modality = studyInfo->GetValue("modality");
+                    sqrlStudy.description = studyInfo->GetValue("description");
+                    sqrlStudy.studyUID = studyInfo->GetValue("studyUID");
+                    sqrlStudy.visitType = studyInfo->GetValue("visitType");
+                    sqrlStudy.dayNumber = studyInfo->GetValue("dayNumber");
+                    sqrlStudy.timePoint = studyInfo->GetValue("timePoint");
+                    sqrlStudy.equipment = studyInfo->GetValue("equipment");
+                    sqrlStudy.virtualPath = studyInfo->GetValue("virtualPath");
+
+                    sqrlSubject.addStudy(sqrlStudy);
+                }
+            }
 
             RefreshSubjectTable();
         }

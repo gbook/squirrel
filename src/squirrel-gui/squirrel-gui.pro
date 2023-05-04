@@ -72,3 +72,8 @@ DEPENDPATH += $$SQUIRRELBIN
 *msvc* { # visual studio spec filter
     QMAKE_CXXFLAGS += -MP
 }
+
+DISTFILES +=
+
+RESOURCES += \
+    squirrel.qrc

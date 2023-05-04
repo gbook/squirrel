@@ -71,6 +71,7 @@ private:
 
     /* the main squirrel object */
 	squirrel *sqrl;
+    bool sqrlValid = false;
 
 	void OpenPackage();
 	bool NewPackage();

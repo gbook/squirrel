@@ -54,14 +54,20 @@ objectDialog::objectDialog(QString objectType, QWidget *parent) :
         ui->objectTable->setRowCount(currentRow + 1);
         ui->objectTable->setItem(currentRow, 0, new QTableWidgetItem(variables[i]));
         ui->objectTable->setItem(currentRow, 1, new QTableWidgetItem(values[i]));
+        ui->objectTable->item(currentRow, 0)->setFlags(ui->objectTable->item(currentRow, 0)->flags() ^ Qt::ItemIsEditable);
     }
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- GetValue --------------------------------------------- */
+/* ------------------------------------------------------------ */
 QString objectDialog::GetValue(QString variable) {
+
     for (int i=0; i<ui->objectTable->rowCount(); i++) {
         if (ui->objectTable->item(i,0)->text() == variable) {
-            return ui->objectTable->item(i,1)->text();
+            QString value = ui->objectTable->item(i,1)->text();
+            return value;
         }
     }
     return "";
