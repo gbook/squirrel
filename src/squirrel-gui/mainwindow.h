@@ -92,8 +92,10 @@ private:
     void AddExperiment();
     void AddPipeline();
 
-    void RefreshTopInfoTable();
-    void RefreshSubjectTable();
+    void RefreshSubjectInfoTable();
+    void RefreshSubjectsTable();
+    void RefreshExperimentsTable();
+    void RefreshPipelinesTable();
     void RefreshPackageDetails();
     void EnableDisableSubjectButtons();
 };

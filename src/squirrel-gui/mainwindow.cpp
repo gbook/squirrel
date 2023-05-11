@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->subjectTree->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
     ui->experimentsTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
+    ui->pipelinesTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
 
 }
 
@@ -51,7 +52,7 @@ MainWindow::~MainWindow()
 
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
-/* top level menu options
+/* top level menu options                                       */
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
 
@@ -92,7 +93,7 @@ void MainWindow::on_actionClose_triggered() {
 
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
-/* GUI events
+/* GUI events                                                   */
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
 
@@ -149,28 +150,28 @@ void MainWindow::on_btnClosePackage_clicked() {
 }
 
 void MainWindow::on_subjectTree_itemClicked(QTreeWidgetItem *item, int column) {
-    RefreshTopInfoTable();
+    RefreshSubjectInfoTable();
 }
 
 void MainWindow::on_subjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous) {
-    RefreshTopInfoTable();
+    RefreshSubjectInfoTable();
 }
 
 void MainWindow::on_subjectTree_itemChanged(QTreeWidgetItem *item, int column) {
-    RefreshTopInfoTable();
+    RefreshSubjectInfoTable();
 }
 
 
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
-/* Functions
+/* Functions                                                    */
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
 
 /* ------------------------------------------------------------ */
 /* ----- RefreshTopInfoTable ---------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::RefreshTopInfoTable() {
+void MainWindow::RefreshSubjectInfoTable() {
     EnableDisableSubjectButtons();
 
     /* get selected study */
@@ -232,7 +233,9 @@ void MainWindow::OpenPackage()
 	}
 
 	RefreshPackageDetails();
-    RefreshSubjectTable();
+    RefreshSubjectsTable();
+    RefreshExperimentsTable();
+    RefreshPipelinesTable();
 
     ui->lblStatus->setText("Finished");
     QApplication::restoreOverrideCursor();
@@ -328,7 +331,7 @@ void MainWindow::RefreshPackageDetails() {
 /* ------------------------------------------------------------ */
 /* ----- RefreshSubjectTable ---------------------------------- */
 /* ------------------------------------------------------------ */
-void MainWindow::RefreshSubjectTable() {
+void MainWindow::RefreshSubjectsTable() {
 
     /* clear all existing rows in the treeControl */
     ui->subjectTree->clear();
@@ -397,6 +400,72 @@ void MainWindow::RefreshSubjectTable() {
         }
 
         /* iterate through the measures */
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RefreshExperimentsTable ------------------------------ */
+/* ------------------------------------------------------------ */
+void MainWindow::RefreshExperimentsTable() {
+
+    /* clear all existing rows in the treeControl (except for the header) */
+    for (int i=1; i<ui->experimentsTable->rowCount(); i++) {
+        ui->experimentsTable->removeRow(i);
+    }
+
+    QList<squirrelExperiment> experiments;
+    experiments = sqrl->experimentList;
+
+    ui->tabWidget->setTabText(2, QString("Experiments (%1)").arg(experiments.size()));
+
+    if (experiments.size() > 0) {
+        /* iterate through all experiments */
+        for (int i=0; i < experiments.size(); i++) {
+
+            squirrelExperiment exp = experiments[i];
+
+            qDebug().noquote() << QString("Working on experiment %1").arg(exp.experimentName);
+
+            /* add experiment to the table */
+            int currentRow = ui->experimentsTable->rowCount();
+            ui->experimentsTable->setRowCount(currentRow + 1);
+            ui->experimentsTable->setItem(currentRow, 0, new QTableWidgetItem(exp.experimentName));
+            ui->experimentsTable->setItem(currentRow, 1, new QTableWidgetItem(exp.numFiles));
+        }
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RefreshPipelinesTable -------------------------------- */
+/* ------------------------------------------------------------ */
+void MainWindow::RefreshPipelinesTable() {
+
+    /* clear all existing rows in the treeControl (except for the header) */
+    for (int i=1; i<ui->pipelinesTable->rowCount(); i++) {
+        ui->pipelinesTable->removeRow(i);
+    }
+
+    QList<squirrelPipeline> pipelines;
+    pipelines = sqrl->pipelineList;
+
+    if (pipelines.size() > 0) {
+        ui->tabWidget->setTabText(3, QString("Pipelines (%1)").arg(pipelines.size()));
+
+        /* iterate through all pipelines */
+        for (int i=0; i < pipelines.size(); i++) {
+
+            squirrelPipeline pip = pipelines[i];
+
+            qDebug().noquote() << QString("Working on pipeline %1").arg(pip.pipelineName);
+
+            /* add pipeline to the table */
+            int currentRow = ui->pipelinesTable->rowCount();
+            ui->pipelinesTable->setRowCount(currentRow + 1);
+            ui->pipelinesTable->setItem(currentRow, 0, new QTableWidgetItem(pip.pipelineName));
+            ui->pipelinesTable->setItem(currentRow, 1, new QTableWidgetItem(pip.createDate.toString()));
+        }
     }
 }
 
@@ -557,9 +626,14 @@ void MainWindow::DisplaySeriesDetails(QString subjectID, int studyNum, int serie
 /* ----- ClosePackage ----------------------------------------- */
 /* ------------------------------------------------------------ */
 bool MainWindow::ClosePackage() {
+
+    bool retVal = false;
+
     if (sqrl->okToDelete()) {
+        ui->txtOutput->appendHtml("<b>Closing package</b> - deleting tmp directory [" + sqrl->GetTempDir() + "]");
         delete sqrl;
-        return true;
+        sqrlValid = false;
+        retVal = true;
     }
     else {
         QMessageBox msgBox;
@@ -571,16 +645,19 @@ bool MainWindow::ClosePackage() {
 
         switch (ret) {
             case QMessageBox::Save:
-                // Save was clicked - save if the package was valid and an existing. prompt for filename if the package was new
-                return true;
+                // "Save" was clicked - save if the package was valid and an existing. prompt for filename if the package was new
+                retVal = true;
                 break;
             case QMessageBox::Discard:
-                // Don't Save was clicked - delete the package
-                return true;
+                // "Dont Save" was clicked - delete the package
+                ui->txtOutput->appendHtml("Not saving package. Deleting tmp directory [" + sqrl->GetTempDir() + "]");
+                delete sqrl;
+                sqrlValid = false;
+                retVal = true;
                 break;
             case QMessageBox::Cancel:
-                // Cancel was clicked - leave the function without doing anything
-                return false;
+                // "Cancel" was clicked - leave the function without doing anything
+                retVal = false;
                 break;
             default:
                 // should never be reached
@@ -588,7 +665,33 @@ bool MainWindow::ClosePackage() {
         }
     }
 
-    return false;
+    /* clean up the GUI */
+    if (retVal) {
+
+        /* clear package info */
+        ui->lblPackagePath->clear();
+        ui->lblPackageName->clear();
+        ui->lblPackageDesc->clear();
+        ui->lblPackageDate->clear();
+        ui->lblPackageDirFormat->clear();
+        ui->lblPackageDataFormat->clear();
+        ui->lblTempPath->clear();
+
+        /* clear subject tree */
+        ui->subjectTree->clear();
+
+        /* clear experiments table */
+        for (int i=1; i<ui->experimentsTable->rowCount(); i++) {
+            ui->experimentsTable->removeRow(i);
+        }
+
+        /* clear pipelines table */
+        for (int i=1; i<ui->pipelinesTable->rowCount(); i++) {
+            ui->pipelinesTable->removeRow(i);
+        }
+    }
+
+    return retVal;
 }
 
 
@@ -612,7 +715,7 @@ void MainWindow::AddDICOM() {
         QApplication::restoreOverrideCursor();
         ui->lblStatus->setText("Done reading DICOM directory");
 
-        RefreshSubjectTable();
+        RefreshSubjectsTable();
 
         ui->txtOutput->appendPlainText(m);
     }
@@ -646,7 +749,7 @@ void MainWindow::AddSubject() {
         sqrl->addSubject(sqrlSubject);
     }
 
-    RefreshSubjectTable();
+    RefreshSubjectsTable();
 }
 
 
@@ -689,7 +792,7 @@ void MainWindow::AddStudy() {
                 }
             }
 
-            RefreshSubjectTable();
+            RefreshSubjectsTable();
         }
     }
 }
@@ -711,7 +814,7 @@ void MainWindow::AddSeries() {
 
             item->addChild(newItem);
 
-            RefreshSubjectTable();
+            RefreshSubjectsTable();
         }
     }
 }
@@ -733,7 +836,7 @@ void MainWindow::AddDrug() {
 
             item->addChild(newItem);
 
-            RefreshSubjectTable();
+            RefreshSubjectsTable();
         }
     }
 }
@@ -764,7 +867,7 @@ void MainWindow::AddMeasure() {
 
             //item->addChild(newItem);
 
-            RefreshSubjectTable();
+            RefreshSubjectsTable();
         }
     }
 }

@@ -50,7 +50,7 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
     json["level"] = level;
 
     json["parentPipelines"] = parentPipelines.join(",");
-    json["completeFiles"] = QJsonArray::fromStringList(completeFiles.split(","));
+    json["completeFiles"] = QJsonArray::fromStringList(completeFiles);
 
     json["dataCopyMethod"] = dataCopyMethod;
     json["directory"] = directory;
@@ -149,7 +149,7 @@ void squirrelPipeline::PrintPipeline() {
     Print(QString("       PipelineName: %1").arg(level));
 
     Print(QString("       PipelineName: %1").arg(parentPipelines.join(",")));
-    Print(QString("       PipelineName: %1").arg(completeFiles));
+    Print(QString("       PipelineName: %1").arg(completeFiles.join(",")));
 
     Print(QString("       PipelineName: %1").arg(dataCopyMethod));
     Print(QString("       PipelineName: %1").arg(directory));
