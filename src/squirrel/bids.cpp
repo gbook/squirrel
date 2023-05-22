@@ -39,4 +39,23 @@ bids::bids()
 /* ---------------------------------------------------------------------------- */
 bool LoadToSquirrel(QString bidsdir, squirrel *sqrl) {
 
+    /* check if directory exists */
+
+    /* load entire directory contents? */
+
+    /* 1 - check for all .json files in the root directory, read into consolidated JSON object */
+
+    /* 2 - get list of sub-* directories and read participants.tsv */
+
+        /* 3 - for each subject, read all of the ses-* directories and read sessions.tsv */
+
+            /* 4 - for each session, read directories and scans.tsv */
+
+                /* for each scan... */
+                    /* map the BIDS thing to an actual modality: MapBIDStoModality() */
+                    /* parse the file names to get the protocol and run number */
+                    /* read the .json file for all the parameters */
+                    /* the real modalitity might be in one of the .json files */
+
+    /* check for a 'derivatives' directory, which are analyses */
 }
