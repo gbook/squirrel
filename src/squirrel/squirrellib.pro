@@ -23,6 +23,7 @@ DEFINES += SQUIRREL_BUILD
 #INCLUDEPATH += $$PWD/../nidb
 
 SOURCES += \
+	bids.cpp \
 	squirrelImageIO.cpp \
 	utils.cpp \
 	convert.cpp \
@@ -45,6 +46,7 @@ SOURCES += \
 #!isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+	bids.h \
 	squirrelImageIO.h \
 	squirrelVersion.h \
 	utils.h \
