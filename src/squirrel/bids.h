@@ -32,7 +32,7 @@ class bids
 public:
     bids();
 
-    bool LoadToSquirrel(QString bidsdir, squirrel *sqrl);
+    bool LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg);
 };
 
 #endif // BIDS_H

@@ -37,25 +37,39 @@ bids::bids()
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadToSquirrel ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool LoadToSquirrel(QString bidsdir, squirrel *sqrl) {
+bool LoadToSquirrel(QString dir, squirrel *sqrl, QString msg) {
+
+    QStringList msgs;
 
     /* check if directory exists */
+    QDir d(dir);
+    if (!d.exists()) {
+        msgs << QString("Directory [%1] does not exist").arg(dir);
+        msg = msgs.join("\n");
+        return false;
+    }
 
-    /* load entire directory contents? */
 
-    /* 1 - check for all .json files in the root directory, read into consolidated JSON object */
+    /* check for all .json files in the root directory, read into consolidated JSON object
+       call it bids.json, with each file in it's own object ? */
+    QStringList rootfiles = FindAllFiles(dir, "*", false);
 
     /* 2 - get list of sub-* directories and read participants.tsv */
+    foreach (QString rootfile, rootfiles) {
+        QFileInfo rootfi(rootfile);
 
         /* 3 - for each subject, read all of the ses-* directories and read sessions.tsv */
+        if (rootfi.isDir() && (rootfi.fileName().startsWith("sub-"))) {
+            QStringList subfiles = FindAllFiles(rootfi.absoluteFilePath(), "*", false);
 
             /* 4 - for each session, read directories and scans.tsv */
 
                 /* for each scan... */
                     /* map the BIDS thing to an actual modality: MapBIDStoModality() */
-                    /* parse the file names to get the protocol and run number */
-                    /* read the .json file for all the parameters */
+                    /* parse the file names --> protocol and run/series number */
+                    /* read the .json file for all the parameters --> params.json, modality, maybe other info */
                     /* the real modalitity might be in one of the .json files */
+    }
 
     /* check for a 'derivatives' directory, which are analyses */
 }
