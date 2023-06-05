@@ -49,27 +49,41 @@ bool LoadToSquirrel(QString dir, squirrel *sqrl, QString msg) {
         return false;
     }
 
-
     /* check for all .json files in the root directory, read into consolidated JSON object
        call it bids.json, with each file in it's own object ? */
     QStringList rootfiles = FindAllFiles(dir, "*", false);
 
-    /* 2 - get list of sub-* directories and read participants.tsv */
-    foreach (QString rootfile, rootfiles) {
-        QFileInfo rootfi(rootfile);
+    /* read the participants.tsv, should be in the root */
 
-        /* 3 - for each subject, read all of the ses-* directories and read sessions.tsv */
-        if (rootfi.isDir() && (rootfi.fileName().startsWith("sub-"))) {
-            QStringList subfiles = FindAllFiles(rootfi.absoluteFilePath(), "*", false);
+    /* get list of directories in the root and see which are named 'sub-*' */
+    QStringList subjdirs = FindAllFiles(dir, "sub-*", false);
+    foreach (QString subjfile, subjdirs) {
+        QFileInfo subjfileinfo(subjfile);
 
+        /* 3 - for each subject... */
+        if (subjfileinfo.isDir()) {
+
+            /* get all the files inside of the subject directory */
+            QStringList subfiles = FindAllFiles(subjfileinfo.absoluteFilePath(), "*", false);
+
+            QStringList sesdirs = FindAllFiles(subjfileinfo.absoluteFilePath(), "ses-*", false);
+            foreach (QString sesfile, subjdirs) {
+                QFileInfo sesfileinfo(subjfile);
+
+            /* ... read all of the ses-* directories and read sessions.tsv */
             /* 4 - for each session, read directories and scans.tsv */
+            //if (rootfi.isDir() && (rootfi.fileName().startsWith("sub-"))) {
+            //    QStringList subfiles = FindAllFiles(rootfi.absoluteFilePath(), "*", false);
 
                 /* for each scan... */
                     /* map the BIDS thing to an actual modality: MapBIDStoModality() */
                     /* parse the file names --> protocol and run/series number */
                     /* read the .json file for all the parameters --> params.json, modality, maybe other info */
                     /* the real modalitity might be in one of the .json files */
+            }
+        }
     }
 
     /* check for a 'derivatives' directory, which are analyses */
+
 }
