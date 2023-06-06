@@ -33,6 +33,10 @@ public:
     bids();
 
     bool LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg);
+
+    bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m);
+    bool LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl, QString &m);
+    bool LoadSessionDir(QString sesdir, squirrel *sqrl, QString &m);
 };
 
 #endif // BIDS_H
