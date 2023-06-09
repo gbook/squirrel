@@ -1,22 +1,13 @@
-# Use this file to build libsquirrel
+# Use this file to build squirrel utils
 
 QT -= gui
 
-CONFIG += c++17 console
+CONFIG += c++17 cmdline
 CONFIG -= app_bundle
 CONFIG += silent
 
-TARGET = squirrel
-TEMPLATE = lib
 DEFINES += SQUIRREL_BUILD
-#win32:CONFIG += dll
-#win32:CONFIG += lib
-*msvc* {
-    #LIBS += Advapi32.lib Setupapi.lib
-    CONFIG -= dll
-    CONFIG += shared static
-    DESTDIR = ../../bin/squirrel
-}
+
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
