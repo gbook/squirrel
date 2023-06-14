@@ -15,3 +15,4 @@ src/squirrel/squirrellib.pro.user
 src/squirrel/squirrellib.pro.user
 src/squirrel/squirrellib.pro.user
 src/squirrel/squirrel.pro.user
+*.user

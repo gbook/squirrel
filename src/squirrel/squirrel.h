@@ -32,6 +32,8 @@
 #include "squirrelPipeline.h"
 #include "squirrelMeasure.h"
 #include "squirrelDrug.h"
+#include "squirrelGroupAnalysis.h"
+#include "squirrelDataDictionary.h"
 #include "squirrelVersion.h"
 
 /**
@@ -74,6 +76,10 @@ public:
     QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
     QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
     QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
+    QList<squirrelGroupAnalysis> groupAnalysisList; /*!< List of groupAnalyses within this package */
+
+    /* data dictionary (just a single object, not array) */
+    squirrelDataDictionary dataDictionary;
 
     /* searching/retrieval functions */
     bool GetSubject(QString ID, squirrelSubject &sqrlSubject);
