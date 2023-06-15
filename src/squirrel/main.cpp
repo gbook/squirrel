@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     debug = p.isSet(optDebug);
     quiet = p.isSet(optQuiet);
     QString paramOutputFile = p.value(optOutputFile).trimmed();
-    QString paramInputFile = p.value(optInputFile).trimmed();
+    QString paramInput = p.value(optInputFile).trimmed();
     QString paramOutputDataFormat = p.value(optOutputDataFormat).trimmed();
     QString paramOutputDirFormat = p.value(optOutputDirFormat).trimmed();
 
@@ -101,17 +101,17 @@ int main(int argc, char *argv[])
 
     /* ---------- Run the validate tool ---------- */
     if (tool == "validate") {
-        if (paramInputFile.trimmed() == "") {
+        if (paramInput.trimmed() == "") {
             Print("*** Input file blank ***");
         }
-        else if (!QFile::exists(paramInputFile)) {
-            Print(QString("*** Input file [%1] does not exist ***").arg(paramInputFile));
+        else if (!QFile::exists(paramInput)) {
+            Print(QString("*** Input file [%1] does not exist ***").arg(paramInput));
         }
         else {
             /* create squirrel object and validate */
             squirrel *sqrl = new squirrel();
             QString m;
-            if (sqrl->read(paramInputFile, m, true)) {
+            if (sqrl->read(paramInput, m, true)) {
                 Print("Valid squirrel file");
             }
             else {
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 
             /* 1) load the DICOM data to a squirrel object */
             QString m;
-            dcm->LoadToSquirrel(paramInputFile, bindir, sqrl, m);
+            dcm->LoadToSquirrel(paramInput, bindir, sqrl, m);
 
             /* 2) write the squirrel file */
             QString m2;
@@ -155,8 +155,7 @@ int main(int argc, char *argv[])
     /* ---------- Run the bids2squirrel tool ---------- */
     else if (tool == "bids2squirrel") {
         /* check if the infile directory exists */
-        QFileInfo ininfo(paramInputFile);
-        QDir indir = ininfo.path();
+        QDir indir(paramInput);
         if (!indir.exists()) {
             Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
         }
