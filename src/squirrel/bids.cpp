@@ -53,6 +53,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg) {
 
     /* check for all .json files in the root directory */
     QStringList rootfiles = FindAllFiles(dir, "*", false);
+    msgs << QString("%1() Found [%2] root files matching '%3/*'").arg(__FUNCTION__).arg(rootfiles.size()).arg(dir);
     m = "";
     LoadRootFiles(rootfiles, sqrl, m);
     msgs << m;
@@ -101,13 +102,21 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg) {
 }
 
 
+/* ---------------------------------------------------------------------------- */
+/* ----- LoadRootFiles -------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
 bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m) {
     /* read into consolidated JSON object and call it bids.json, with each file in it's own object */
     /* read the participants.tsv, should be in the root */
 
+    QStringList msgs;
+    msgs << QString("%1() Entering function").arg(__FUNCTION__);
+
     foreach (QString f, rootfiles) {
         QFileInfo fi(f);
         QString filename = fi.fileName();
+
+        msgs << QString("%1() Found file [%2]").arg(__FUNCTION__).arg(filename);
 
         /* possible files in the root dir
             dataset_description.json
@@ -127,14 +136,23 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m) {
         }
     }
 
+    m = msgs.join("\n");
     return true;
 }
 
 
+/* ---------------------------------------------------------------------------- */
+/* ----- LoadSubjectFiles ----------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
 bool bids::LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl, QString &m) {
+    QStringList msgs;
+    msgs << QString("%1() Entering function").arg(__FUNCTION__);
+
     foreach (QString f, subjfiles) {
         QFileInfo fi(f);
         QString filename = fi.fileName();
+
+        msgs << QString("%1() Found file [%2]").arg(__FUNCTION__).arg(filename);
 
         /* possible files in the subject root dir
             sub-*-sessions.tsv
@@ -143,11 +161,18 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl, QString &m) {
         }
     }
 
+    m = msgs.join("\n");
     return true;
 }
 
 
+/* ---------------------------------------------------------------------------- */
+/* ----- LoadSessionDir ------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
 bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl, QString &m) {
+
+    QStringList msgs;
+    msgs << QString("%1() Entering function").arg(__FUNCTION__);
 
     /* possible directories
         anat
@@ -181,5 +206,6 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl, QString &m) {
     /* read the .json file for all the parameters --> params.json, modality, maybe other info */
     /* the real modalitity might be in one of the .json files */
 
+    m = msgs.join("\n");
     return true;
 }
