@@ -2,7 +2,7 @@
 
 # global build variables
 if [ -z "$1" ]; then
-	QMAKEBIN=~/Qt/6.5.0/gcc_64/bin/qmake
+	QMAKEBIN=~/Qt/6.5.1/gcc_64/bin/qmake
 else
 	QMAKEBIN=$1
 fi
@@ -32,7 +32,7 @@ mkdir -p $BUILDDIR
 # ----- build pre-requisites -----
 
 # build gdcm (make sure cmake 3 is installed)
-if [ ! -d "$BUILDDIR/gdcm" ]; then
+#if [ ! -d "$BUILDDIR/gdcm" ]; then
 	command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x. Install using 'yum install cmake' or 'apt-get cmake'.\n"; exit 1; }
 
 	echo -e "\ngdcm not built. Building gdcm now\n"
@@ -42,9 +42,9 @@ if [ ! -d "$BUILDDIR/gdcm" ]; then
 	cd $BUILDDIR/gdcm
 	cmake -DGDCM_BUILD_APPLICATIONS:STRING=NO -DGDCM_BUILD_DOCBOOK_MANPAGES:BOOL=OFF -DGDCM_BUILD_SHARED_LIBS:STRING=YES -DGDCM_BUILD_TESTING:STRING=NO -DGDCM_BUILD_EXAMPLES:STRING=NO $SRCDIR/gdcm
 	make -j 16
-else
-	echo -e "\ngdcm already built in $BUILDDIR/gdcm\n"
-fi
+#else
+#	echo -e "\ngdcm already built in $BUILDDIR/gdcm\n"
+#fi
 
 # ----- build squirrel library -----
 echo -e "\nBuilding squirrel library\n"
