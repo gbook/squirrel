@@ -38,11 +38,10 @@ bids::bids()
 /* ----- LoadToSquirrel ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 bool bids::LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg) {
-
-    //msgs << QString("%1() ").arg(__FUNCTION__);
-
     QStringList msgs;
     QString m;
+
+    msgs << QString("%1() Entering function. dir [%2]").arg(__FUNCTION__).arg(dir);
 
     /* check if directory exists */
     QDir d(dir);

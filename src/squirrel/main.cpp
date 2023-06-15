@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     else if (tool == "bids2squirrel") {
         /* check if the infile directory exists */
         QFileInfo ininfo(paramInputFile);
-        QDir indir = ininfo.absolutePath();
+        QDir indir = ininfo.path();
         if (!indir.exists()) {
             Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
         }
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
             bids *bds = new bids();
 
             QString m;
-            bds->LoadToSquirrel(indir.absolutePath(), sqrl, m);
+            bds->LoadToSquirrel(indir.path(), sqrl, m);
 
             /* display progress or messages */
             Print(m);
