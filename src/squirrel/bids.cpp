@@ -117,7 +117,6 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m) {
         QString filename = fi.fileName();
 
         msgs << QString("%1() Found file [%2]").arg(__FUNCTION__).arg(filename);
-
         /* possible files in the root dir
             dataset_description.json
             participants.json
@@ -132,7 +131,17 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m) {
             desc-aparcaseg_dseg.tsv
             acq-*_<modality>.json (modality is something like T1w, dwi, and will match a directory inside each sub-* directory)
         */
-        if (filename == "") {
+
+        if ((filename == "dataset_description.json") || (filename == "README") || (filename == "README.md") || (filename == "CHANGES"))  {
+            /* this goes into the squirrel package object */
+            /* maybe put it in
+             * package->imported->BIDS_datasetdescription
+             * package->imported->BIDS_README
+             * package->imported->BIDS_CHANGES
+             */
+        }
+        else if (filename.startsWith("task-")) {
+            /* this goes into the squirrel experiments object */
         }
     }
 
