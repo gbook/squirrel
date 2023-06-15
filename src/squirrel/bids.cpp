@@ -39,13 +39,15 @@ bids::bids()
 /* ---------------------------------------------------------------------------- */
 bool bids::LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg) {
 
+    //msgs << QString("%1() ").arg(__FUNCTION__);
+
     QStringList msgs;
     QString m;
 
     /* check if directory exists */
     QDir d(dir);
     if (!d.exists()) {
-        msgs << QString("Directory [%1] does not exist").arg(dir);
+        msgs << QString("%1() Directory [%2] does not exist").arg(__FUNCTION__).arg(dir);
         msg = msgs.join("\n");
         return false;
     }
@@ -58,16 +60,21 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg) {
 
     /* get list of directories in the root named 'sub-*' */
     QStringList subjdirs = FindAllDirs(dir, "sub-*", false);
+
+    msgs << QString("%1() Found [%2] subject directories matching '%3/sub-*'").arg(__FUNCTION__).arg(subjdirs.size()).arg(dir);
     foreach (QString subjdir, subjdirs) {
 
         /* get all the FILES inside of the subject directory */
         QStringList subjfiles = FindAllFiles(subjdir, "*", false);
+        msgs << QString("%1() Found [%2] subject root files matching '%3/*'").arg(__FUNCTION__).arg(subjfiles.size()).arg(subjdir);
+
         m = "";
         LoadSubjectFiles(subjfiles, sqrl, m);
         msgs << m;
 
         /* get a list of ses-* DIRS, if there are any */
         QStringList sesdirs = FindAllDirs(subjdir, "ses-*", false);
+        msgs << QString("%1() Found [%2] session directories matching '%3/ses-*'").arg(__FUNCTION__).arg(sesdirs.size()).arg(subjdir);
         if (sesdirs.size() > 0) {
             foreach (QString sesdir, sesdirs) {
                 LoadSessionDir(sesdir, sqrl, m);

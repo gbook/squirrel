@@ -26,6 +26,7 @@
 #include "squirrelVersion.h"
 #include "validate.h"
 #include "dicom.h"
+#include "bids.h"
 #include "squirrel.h"
 
 int main(int argc, char *argv[])
@@ -153,7 +154,27 @@ int main(int argc, char *argv[])
     }
     /* ---------- Run the bids2squirrel tool ---------- */
     else if (tool == "bids2squirrel") {
+        /* check if the infile directory exists */
+        QFileInfo ininfo(paramInputFile);
+        QDir indir = ininfo.absolutePath();
+        if (!indir.exists()) {
+            Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
+        }
+        else {
+            /* create a squirrel object */
+            squirrel *sqrl = new squirrel();
 
+            /* create a BIDS object, and start reading the directory */
+            bids *bds = new bids();
+
+            QString m;
+            bds->LoadToSquirrel(indir.absolutePath(), sqrl, m);
+
+            /* display progress or messages */
+            Print(m);
+
+            /* save the squirrel object */
+        }
     }
     /* ---------- Run the squirrel2bids tool ---------- */
     else if (tool == "squirrel2bids") {
