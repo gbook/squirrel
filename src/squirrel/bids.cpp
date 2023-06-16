@@ -95,7 +95,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg) {
 
     /* check for a 'stimuli' directory, which are experiments */
 
-    /* check for a 'phenotype' directory, which are experiments */
+    /* check for a 'phenotype' directory, which are ... subject demographics? */
 
     msg = msgs.join("\n");
     return true;
@@ -132,13 +132,14 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m) {
             acq-*_<modality>.json (modality is something like T1w, dwi, and will match a directory inside each sub-* directory)
         */
 
-        if ((filename == "dataset_description.json") || (filename == "README") || (filename == "README.md") || (filename == "CHANGES"))  {
-            /* this goes into the squirrel package object */
-            /* maybe put it in
-             * package->imported->BIDS_datasetdescription
-             * package->imported->BIDS_README
-             * package->imported->BIDS_CHANGES
-             */
+        if (filename == "dataset_description.json") {
+            sqrl->description = ReadTextFileToString(f);
+        }
+        else if ((filename == "README") || (filename == "README.md")) {
+            sqrl->readme = ReadTextFileToString(f);
+        }
+        else if (filename == "CHANGES") {
+            sqrl->changes = ReadTextFileToString(f);
         }
         else if (filename.startsWith("task-")) {
             /* this goes into the squirrel experiments object */

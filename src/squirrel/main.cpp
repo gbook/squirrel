@@ -154,12 +154,26 @@ int main(int argc, char *argv[])
     }
     /* ---------- Run the bids2squirrel tool ---------- */
     else if (tool == "bids2squirrel") {
+
+        Print(QString("Running bids2squirrel on input directory [%1]").arg(paramInput));
+        Print(QString("Output file [%1]").arg(paramOutputFile));
+
         /* check if the infile directory exists */
         QDir indir(paramInput);
         if (!indir.exists()) {
             Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
         }
+        else if (paramInput == "") {
+            Print("Input directory not specified. Use the -i <indir> option to specify the input directory");
+        }
         else {
+            QString outputfile = paramOutputFile;
+
+            if (paramOutputFile == "") {
+                Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
+                outputfile = QString(paramInput + "/squirrel.zip");
+            }
+
             /* create a squirrel object */
             squirrel *sqrl = new squirrel();
 
@@ -173,6 +187,11 @@ int main(int argc, char *argv[])
             Print(m);
 
             /* save the squirrel object */
+            QString outpath;
+            sqrl->filePath = outputfile;
+            sqrl->print();
+            sqrl->write(paramInput, outpath,m);
+            Print(m);
         }
     }
     /* ---------- Run the squirrel2bids tool ---------- */

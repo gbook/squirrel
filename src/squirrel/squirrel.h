@@ -69,6 +69,10 @@ public:
     QString seriesDirFormat; /*!< orig, seq */
     QString dataFormat; /*!< orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz */
     QString filePath; /*!< full path to the zip file */
+    QString license;
+    QString readme;
+    QString changes;
+    QString notes; /* JSON string of notes */
     qint64 GetUnzipSize();
     qint64 GetNumFiles();
 
