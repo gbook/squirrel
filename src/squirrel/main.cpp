@@ -26,6 +26,7 @@
 #include "squirrelVersion.h"
 #include "validate.h"
 #include "dicom.h"
+#include "bids.h"
 #include "squirrel.h"
 
 int main(int argc, char *argv[])
@@ -74,7 +75,7 @@ int main(int argc, char *argv[])
     debug = p.isSet(optDebug);
     quiet = p.isSet(optQuiet);
     QString paramOutputFile = p.value(optOutputFile).trimmed();
-    QString paramInputFile = p.value(optInputFile).trimmed();
+    QString paramInput = p.value(optInputFile).trimmed();
     QString paramOutputDataFormat = p.value(optOutputDataFormat).trimmed();
     QString paramOutputDirFormat = p.value(optOutputDirFormat).trimmed();
 
@@ -100,17 +101,17 @@ int main(int argc, char *argv[])
 
     /* ---------- Run the validate tool ---------- */
     if (tool == "validate") {
-        if (paramInputFile.trimmed() == "") {
+        if (paramInput.trimmed() == "") {
             Print("*** Input file blank ***");
         }
-        else if (!QFile::exists(paramInputFile)) {
-            Print(QString("*** Input file [%1] does not exist ***").arg(paramInputFile));
+        else if (!QFile::exists(paramInput)) {
+            Print(QString("*** Input file [%1] does not exist ***").arg(paramInput));
         }
         else {
             /* create squirrel object and validate */
             squirrel *sqrl = new squirrel();
             QString m;
-            if (sqrl->read(paramInputFile, m, true)) {
+            if (sqrl->read(paramInput, m, true)) {
                 Print("Valid squirrel file");
             }
             else {
@@ -139,7 +140,7 @@ int main(int argc, char *argv[])
 
             /* 1) load the DICOM data to a squirrel object */
             QString m;
-            dcm->LoadToSquirrel(paramInputFile, bindir, sqrl, m);
+            dcm->LoadToSquirrel(paramInput, bindir, sqrl, m);
 
             /* 2) write the squirrel file */
             QString m2;
@@ -154,6 +155,44 @@ int main(int argc, char *argv[])
     /* ---------- Run the bids2squirrel tool ---------- */
     else if (tool == "bids2squirrel") {
 
+        Print(QString("Running bids2squirrel on input directory [%1]").arg(paramInput));
+        Print(QString("Output file [%1]").arg(paramOutputFile));
+
+        /* check if the infile directory exists */
+        QDir indir(paramInput);
+        if (!indir.exists()) {
+            Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
+        }
+        else if (paramInput == "") {
+            Print("Input directory not specified. Use the -i <indir> option to specify the input directory");
+        }
+        else {
+            QString outputfile = paramOutputFile;
+
+            if (paramOutputFile == "") {
+                Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
+                outputfile = QString(paramInput + "/squirrel.zip");
+            }
+
+            /* create a squirrel object */
+            squirrel *sqrl = new squirrel();
+
+            /* create a BIDS object, and start reading the directory */
+            bids *bds = new bids();
+
+            QString m;
+            bds->LoadToSquirrel(indir.path(), sqrl, m);
+
+            /* display progress or messages */
+            Print(m);
+
+            /* save the squirrel object */
+            QString outpath;
+            sqrl->filePath = outputfile;
+            sqrl->print();
+            sqrl->write(paramInput, outpath,m);
+            Print(m);
+        }
     }
     /* ---------- Run the squirrel2bids tool ---------- */
     else if (tool == "squirrel2bids") {

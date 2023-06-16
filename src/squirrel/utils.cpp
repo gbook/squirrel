@@ -958,6 +958,27 @@ QStringList ReadTextFileIntoArray(QString filepath, bool ignoreEmptyLines) {
 
 
 /* ---------------------------------------------------------- */
+/* --------- ReadTextFileToString -------------------------- */
+/* ---------------------------------------------------------- */
+QString ReadTextFileToString(QString filepath) {
+    QString a;
+
+    QFile inputFile(filepath);
+    inputFile.open(QIODevice::ReadOnly);
+    if (inputFile.isOpen()) {
+        QTextStream in(&inputFile);
+
+        QString line;
+        while (in.readLineInto(&line)) {
+            a.append(line);
+        }
+    }
+
+    return a;
+}
+
+
+/* ---------------------------------------------------------- */
 /* --------- Mean ------------------------------------------- */
 /* ---------------------------------------------------------- */
 /**

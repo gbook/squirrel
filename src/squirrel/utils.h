@@ -88,6 +88,7 @@ bool chmod(QString f, QString perm);
 QString UnzipDirectory(QString dir, bool recurse=false);
 bool WriteTextFile(QString filepath, QString str, bool append=true);
 QStringList ReadTextFileIntoArray(QString filepath, bool ignoreEmptyLines=true);
+QString ReadTextFileToString(QString filepath);
 bool BatchRenameFiles(QString dir, QString seriesnum, QString studynum, QString uid, int &numfilesrenamed, QString &msg);
 bool DirectoryExists(QString dir);
 bool FileExists(QString f);
