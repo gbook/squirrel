@@ -144,6 +144,12 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m) {
         else if (filename.startsWith("task-")) {
             /* this goes into the squirrel experiments object */
         }
+        else if (filename == "participants.tsv") {
+            /* this goes into the subjects object */
+            if (!LoadParticipantsFile(f, sqrl, m)) {
+                msgs << "Error loading participants.tsv";
+            }
+        }
     }
 
     m = msgs.join("\n");
@@ -217,5 +223,26 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl, QString &m) {
     /* the real modalitity might be in one of the .json files */
 
     m = msgs.join("\n");
+    return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- LoadParticipantFile -------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+bool bids::LoadParticipantsFile(QString f, squirrel *sqrl, QString &m) {
+    QStringList lines = ReadTextFileIntoArray(f);
+
+    int i=1;
+    QStringList cols;
+    foreach (QString line, lines) {
+        if (i == 1) {
+            cols = line.split("\t");
+        }
+        else {
+            QStringList parts = line.split("\t");
+        }
+        i++;
+    }
     return true;
 }

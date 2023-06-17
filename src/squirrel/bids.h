@@ -37,6 +37,8 @@ public:
     bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m);
     bool LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl, QString &m);
     bool LoadSessionDir(QString sesdir, squirrel *sqrl, QString &m);
+
+    bool LoadParticipantsFile(QString f, squirrel *sqrl, QString &m);
 };
 
 #endif // BIDS_H
