@@ -47,8 +47,8 @@ public:
     squirrel();
     ~squirrel();
 
-    bool read(QString filename, QString &m, bool validateOnly=false);
-    bool write(QString outpath, QString &filepath, QString &m, bool debug=false);
+    bool read(QString filename, bool validateOnly=false);
+    bool write(QString outpath, QString &filepath, bool debug=false);
     bool validate();
     void print();
 
@@ -101,13 +101,17 @@ public:
 	bool valid() { return isValid; }
 	bool okToDelete() { return isOkToDelete; }
 
+    void Log(QString s, QString func);
+    QString GetLog() { return log; }
+
 private:
     void PrintPackage();
     bool MakeTempDir(QString &dir);
-    QString Log(QString m, QString f);
+    //QString Log(QString m, QString f);
     QString workingDir;
     QString logfile;
     QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */
+    QString log;
 
 	bool isValid;
 	bool isOkToDelete;

@@ -32,13 +32,13 @@ class bids
 public:
     bids();
 
-    bool LoadToSquirrel(QString dir, squirrel *sqrl, QString &msg);
+    bool LoadToSquirrel(QString dir, squirrel *sqrl);
 
-    bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl, QString &m);
-    bool LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl, QString &m);
-    bool LoadSessionDir(QString sesdir, squirrel *sqrl, QString &m);
+    bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl);
+    bool LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl);
+    bool LoadSessionDir(QString sesdir, squirrel *sqrl);
 
-    bool LoadParticipantsFile(QString f, squirrel *sqrl, QString &m);
+    bool LoadParticipantsFile(QString f, squirrel *sqrl);
 };
 
 #endif // BIDS_H

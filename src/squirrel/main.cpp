@@ -110,12 +110,11 @@ int main(int argc, char *argv[])
         else {
             /* create squirrel object and validate */
             squirrel *sqrl = new squirrel();
-            QString m;
-            if (sqrl->read(paramInput, m, true)) {
-                Print("Valid squirrel file");
+            if (sqrl->read(paramInput, true)) {
+                sqrl->Log("Valid squirrel file", __FUNCTION__);
             }
             else {
-                Print(QString("*** Invalid squirrel file [%1] ***").arg(m));
+                sqrl->Log("*** Invalid squirrel file ***", __FUNCTION__);
             }
 
             //delete v;
@@ -145,7 +144,7 @@ int main(int argc, char *argv[])
             /* 2) write the squirrel file */
             QString m2;
             QString filepath;
-            sqrl->write(paramOutputFile, filepath, m2, debug);
+            sqrl->write(paramOutputFile, filepath, debug);
 
             delete dcm;
             delete sqrl;
@@ -180,18 +179,15 @@ int main(int argc, char *argv[])
             /* create a BIDS object, and start reading the directory */
             bids *bds = new bids();
 
-            QString m;
-            bds->LoadToSquirrel(indir.path(), sqrl, m);
+            bds->LoadToSquirrel(indir.path(), sqrl);
 
             /* display progress or messages */
-            Print(m);
 
             /* save the squirrel object */
             QString outpath;
             sqrl->filePath = outputfile;
             sqrl->print();
-            sqrl->write(paramInput, outpath,m);
-            Print(m);
+            sqrl->write(paramInput, outpath);
         }
     }
     /* ---------- Run the squirrel2bids tool ---------- */
