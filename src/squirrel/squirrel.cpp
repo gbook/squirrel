@@ -82,8 +82,6 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     /* check if file exists */
     if (!FileExists(filepath)) {
         Log(QString("File " + filepath + " does not exist"), __FUNCTION__);
-        //PrependQStringList(msgs, "read() ");
-        //m = msgs.join("\n");
         return false;
     }
 
@@ -98,14 +96,12 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     Log(output, __FUNCTION__);
     if (!output.contains("squirrel.json")) {
         Log(QString("File " + filepath + " does not appear to be a squirrel package"), __FUNCTION__);
-        //PrependQStringList(msgs, "read() ");
-        //m = msgs.join("\n");
         return false;
     }
 
     /* create a working directory */
     MakeTempDir(workingDir);
-    msgs << QString("Created temp directory [" + workingDir + "]");
+    Log(QString("Created temp directory [" + workingDir + "]"), __FUNCTION__);
 
     /* unzip the .zip to the working dir */
     #ifdef Q_OS_WINDOWS
@@ -114,7 +110,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
         systemstring = QString("unzip " + filepath + " -d " + workingDir);
     #endif
     output = SystemCommand(systemstring, true);
-    msgs << output;
+    Log(output, __FUNCTION__);
 
     /* read from .json file */
     QString jsonStr;

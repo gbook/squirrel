@@ -74,6 +74,7 @@ double Variance(QList<double> a);
 double StdDev(QList<double> a);
 
 /* file and directory operations */
+bool CopyFile(QString f, QString dir);
 bool MakePath(QString p, QString &msg, bool perm777=true);
 bool RemoveDir(QString p, QString &msg);
 QStringList FindAllFiles(QString dir, QString pattern, bool recursive=false);

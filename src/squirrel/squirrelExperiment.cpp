@@ -21,6 +21,7 @@
   ------------------------------------------------------------------------------ */
 
 #include "squirrelExperiment.h"
+#include "utils.h"
 
 squirrelExperiment::squirrelExperiment()
 {
@@ -39,4 +40,37 @@ QJsonObject squirrelExperiment::ToJSON() {
 	json["size"] = size;
 
     return json;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddFiles --------------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelExperiment::AddFiles(QStringList files, QString destDir) {
+    /* make sure the experiment name is not blank */
+    if (experimentName == "") {
+        return false;
+    }
+    /* copy this to the packageRoot/destDir directory */
+    QString dir = QString("%1/%2").arg(packageroot).arg(destDir);
+    foreach (QString f, files) {
+        CopyFile(f, dir);
+    }
+    /* create the experiment path on disk and set the experiment path in  */
+    //foreach
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddDir ----------------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelExperiment::AddDir(QString dir, QString destDir, bool recurse) {
+    /* make sure the experiment name is not blank */
+    if (experimentName == "") {
+        return false;
+    }
+
+    return true;
 }

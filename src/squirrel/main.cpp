@@ -138,8 +138,7 @@ int main(int argc, char *argv[])
             sqrl->seriesDirFormat = paramOutputDirFormat;
 
             /* 1) load the DICOM data to a squirrel object */
-            QString m;
-            dcm->LoadToSquirrel(paramInput, bindir, sqrl, m);
+            dcm->LoadToSquirrel(paramInput, bindir, sqrl);
 
             /* 2) write the squirrel file */
             QString m2;

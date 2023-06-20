@@ -134,6 +134,7 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
         }
         else if (filename.startsWith("task-")) {
             /* this goes into the squirrel experiments object */
+            LoadTaskFile(f, sqrl);
         }
         else if (filename == "participants.tsv") {
             /* this goes into the subjects object */
@@ -217,6 +218,8 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
 /* ----- LoadParticipantFile -------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
+    /* do we need to read the .json file? There's not much in there that isn't already specified here */
+
     QString file = ReadTextFileToString(f);
 
     indexedHash tsv;
@@ -268,4 +271,21 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
     }
 
     return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- LoadTaskFile --------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
+    QString str = ReadTextFileToString(f);
+    QJsonDocument d = QJsonDocument::fromJson(str.toUtf8());
+    QJsonObject root = d.object();
+
+    QString experimentName = root.value("TaskName").toString();
+    double tr = root.value("RepetitionTime").toDouble();
+
+    squirrelExperiment sqrlExp;
+    sqrlExp.experimentName = experimentName;
+    //sqrlExp.
 }

@@ -39,6 +39,7 @@ public:
     bool LoadSessionDir(QString sesdir, squirrel *sqrl);
 
     bool LoadParticipantsFile(QString f, squirrel *sqrl);
+    bool LoadTaskFile(QString f, squirrel *sqrl);
 };
 
 #endif // BIDS_H

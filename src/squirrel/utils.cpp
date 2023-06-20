@@ -1212,3 +1212,18 @@ void PrependQStringList(QStringList &list, QString s) {
         list[i] = s + list[i];
     }
 }
+
+
+/* ---------------------------------------------------------- */
+/* --------- CopyFile --------------------------------------- */
+/* ---------------------------------------------------------- */
+bool CopyFile(QString f, QString dir) {
+    QFileInfo file(f);
+
+    if (QFile::copy(f, QString("%1/%2").arg(dir).arg(file.fileName()))) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
