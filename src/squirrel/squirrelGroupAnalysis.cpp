@@ -48,20 +48,20 @@ QJsonObject squirrelGroupAnalysis::ToJSON() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- PrintAnalysis ---------------------------------------- */
+/* ----- PrintGroupAnalysis ----------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrelGroupAnalysis::PrintAnalysis
+ * @brief squirrelGroupAnalysis::PrintGroupAnalysis
  */
-void squirrelGroupAnalysis::PrintAnalysis() {
+void squirrelGroupAnalysis::PrintGroupAnalysis() {
 
-    Print("-- GROUPANALYSIS----------");
-    Print(QString("       PipelineName: %1").arg(pipelineName));
-    Print(QString("       PipelineVersion: %1").arg(pipelineVersion));
-    Print(QString("       StartDate: %1").arg(startDate.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("       EndDate: %1").arg(endDate.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("       Numfiles: %1").arg(numfiles));
-    Print(QString("       Size: %1").arg(size));
-    Print(QString("       VirtualPath: %1").arg(virtualPath));
+    Print("-- GROUPANALYSIS ----------");
+    Print(QString("\tPipelineName: %1").arg(pipelineName));
+    Print(QString("\tPipelineVersion: %1").arg(pipelineVersion));
+    Print(QString("\tStartDate: %1").arg(startDate.toString("yyyy-MM-dd HH:mm:ss")));
+    Print(QString("\tEndDate: %1").arg(endDate.toString("yyyy-MM-dd HH:mm:ss")));
+    Print(QString("\tNumfiles: %1").arg(numfiles));
+    Print(QString("\tSize: %1").arg(size));
+    Print(QString("\tVirtualPath: %1").arg(virtualPath));
 
 }

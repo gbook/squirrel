@@ -33,7 +33,7 @@ class squirrelGroupAnalysis
 public:
     squirrelGroupAnalysis();
     QJsonObject ToJSON();
-    void PrintAnalysis();
+    void PrintGroupAnalysis();
 
     QString pipelineName; /*!< name of the pipeline */
     int pipelineVersion; /*!< pipeline version */

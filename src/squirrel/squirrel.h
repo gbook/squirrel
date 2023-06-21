@@ -101,6 +101,12 @@ public:
 	bool valid() { return isValid; }
 	bool okToDelete() { return isOkToDelete; }
 
+    /* function to manipulate, add files */
+    bool AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir="");
+    bool AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir="");
+    bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
+    bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
+
     void Log(QString s, QString func);
     QString GetLog() { return log; }
 

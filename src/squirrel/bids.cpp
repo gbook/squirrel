@@ -63,7 +63,8 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         QStringList subjfiles = FindAllFiles(subjdir, "*", false);
         sqrl->Log(QString("Found [%1] subject root files matching '%2/*'").arg(subjfiles.size()).arg(subjdir), __FUNCTION__);
 
-        LoadSubjectFiles(subjfiles, sqrl);
+        QString ID = subjdir;
+        LoadSubjectFiles(subjfiles, subjdir, sqrl);
 
         /* get a list of ses-* DIRS, if there are any */
         QStringList sesdirs = FindAllDirs(subjdir, "ses-*", false);
@@ -151,7 +152,7 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadSubjectFiles ----------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool bids::LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl) {
+bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
     sqrl->Log("Entering function", __FUNCTION__);
 
     foreach (QString f, subjfiles) {
@@ -162,8 +163,47 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, squirrel *sqrl) {
 
         /* possible files in the subject root dir
             sub-*-sessions.tsv
+
+            There's not a lot whole lot of information in this file, but it seems to contain analysis
+            or behavioral information... So let's put it in the analysis object
+            But, we need to create an empty study and pipeline for these files, because the BIDS analysis files are
+            not associated with a session/study or pipeline
         */
-        if (filename == "") {
+        if (filename.endsWith("_scans.tsv")) {
+
+            /* get the subject */
+            squirrelSubject sqrlSubject;
+            sqrl->GetSubject(ID, sqrlSubject);
+
+            /* create a session/study and add it to the subject */
+            squirrelStudy sqrlStudy;
+            sqrlStudy.number = sqrlSubject.GetNextStudyNum();
+            sqrlSubject.addStudy(sqrlStudy);
+
+            /* create an analysis */
+            squirrelAnalysis sqrlAnalysis;
+            sqrlAnalysis.pipelineName = "analysis";
+            sqrlAnalysis.lastMessage = "BIDS imported analysis file";
+            sqrlStudy.addAnalysis(sqrlAnalysis);
+
+            QStringList files;
+            files.append(f);
+            sqrl->AddAnalysisFiles(ID, sqrlStudy.number, "analysis", files);
+            sqrl->Log(QString("Added [%1] files to analysis [%2]").arg(files.size()).arg("analysis"), __FUNCTION__);
+
+            /* not sure we need to read this file in... just copying it to analysis should be
+             * sufficient. But what is the analysis called? */
+            //QString str = ReadTextFileToString(f);
+            //indexedHash tsv;
+            //QStringList cols;
+            //QString m;
+
+            //if (ParseTSV(str, tsv, cols, m)) {
+            //    sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+            //    for (int i=0; i<tsv.size(); i++) {
+            //        QString id = tsv[i]["participant_id"];
+            //    }
+            //}
         }
     }
 
@@ -240,6 +280,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
             squirrelSubject sqrlSubj;
             sqrlSubj.ID = id;
             sqrlSubj.sex = sex;
+            sqrlSubj.gender = sex;
 
             /* add handedness as a measure */
             squirrelMeasure sqrlMeas;
@@ -278,14 +319,30 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
 /* ----- LoadTaskFile --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
+
+    QFileInfo fi(f);
+    QString filename = fi.fileName();
+    filename.replace("task-", "");
+    filename.replace(".json", "");
+    filename.replace("_events", "");
+    filename.replace("_bold", "");
     QString str = ReadTextFileToString(f);
     QJsonDocument d = QJsonDocument::fromJson(str.toUtf8());
     QJsonObject root = d.object();
 
-    QString experimentName = root.value("TaskName").toString();
-    double tr = root.value("RepetitionTime").toDouble();
+    QString experimentName = root.value("TaskName").toString().toLower();
+    if (experimentName == "")
+        experimentName = filename;
 
+    //double tr = root.value("RepetitionTime").toDouble();
+
+    QStringList files;
+    files.append(f);
     squirrelExperiment sqrlExp;
     sqrlExp.experimentName = experimentName;
-    //sqrlExp.
+    sqrlExp.path = QString("%1/%2").arg(sqrl->GetTempDir()).arg(experimentName);
+    sqrl->AddExperimentFiles(experimentName, files);
+    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.path), __FUNCTION__);
+
+    return true;
 }

@@ -121,19 +121,19 @@ bool squirrelStudy::addAnalysis(squirrelAnalysis a) {
 void squirrelStudy::PrintStudy() {
 
 	Print("------ STUDY ----------");
-	Print(QString("       number: %1").arg(number));
-	Print(QString("       dateTime: %1").arg(dateTime.toString()));
-	Print(QString("       ageAtStudy: %1").arg(ageAtStudy));
-	Print(QString("       Height: %1 m").arg(height));
-	Print(QString("       Weight: %1 kg").arg(weight));
-	Print(QString("       Modality: %1").arg(modality));
-	Print(QString("       Description: %1").arg(description));
-	Print(QString("       StudyUID: %1").arg(studyUID));
-	Print(QString("       VisitType: %1").arg(visitType));
-	Print(QString("       DayNumber: %1").arg(dayNumber));
-	Print(QString("       TimePoint: %1").arg(timePoint));
-	Print(QString("       Equipment: %1").arg(equipment));
-	Print(QString("       Path: %1").arg(virtualPath));
+    Print(QString("\t\t\tnumber: %1").arg(number));
+    Print(QString("\t\t\tdateTime: %1").arg(dateTime.toString()));
+    Print(QString("\t\t\tageAtStudy: %1").arg(ageAtStudy));
+    Print(QString("\t\t\tHeight: %1 m").arg(height));
+    Print(QString("\t\t\tWeight: %1 kg").arg(weight));
+    Print(QString("\t\t\tModality: %1").arg(modality));
+    Print(QString("\t\t\tDescription: %1").arg(description));
+    Print(QString("\t\t\tStudyUID: %1").arg(studyUID));
+    Print(QString("\t\t\tVisitType: %1").arg(visitType));
+    Print(QString("\t\t\tDayNumber: %1").arg(dayNumber));
+    Print(QString("\t\t\tTimePoint: %1").arg(timePoint));
+    Print(QString("\t\t\tEquipment: %1").arg(equipment));
+    Print(QString("\t\t\tPath: %1").arg(virtualPath));
 }
 
 

@@ -125,6 +125,21 @@ bool squirrelSubject::addDrug(squirrelDrug m) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetNextStudyNum -------------------------------------- */
+/* ------------------------------------------------------------ */
+qint64 squirrelSubject::GetNextStudyNum() {
+
+    /* find the current highest study number */
+    qint64 maxnum = 0;
+    for (int i=0; i<studyList.size(); i++)
+        if (studyList.at(i).number > maxnum)
+            maxnum = studyList.at(i).number;
+
+    return maxnum+1;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintSubject ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -133,14 +148,14 @@ bool squirrelSubject::addDrug(squirrelDrug m) {
 void squirrelSubject::PrintSubject() {
 
     Print("---- SUBJECT ----------");
-    Print(QString("     ID: %1").arg(ID));
-	Print(QString("     AlternateIDs: %1").arg(alternateIDs.join(",")));
-    Print(QString("     GUID: %1").arg(GUID));
-    Print(QString("     Sex: %1").arg(sex));
-    Print(QString("     Gender: %1").arg(gender));
-	Print(QString("     dateOfBirth: %1").arg(dateOfBirth.toString()));
-    Print(QString("     Ethnicity1: %1").arg(ethnicity1));
-    Print(QString("     Ethnicity2: %1").arg(ethnicity2));
+    Print(QString("\t\tID: %1").arg(ID));
+    Print(QString("\t\tAlternateIDs: %1").arg(alternateIDs.join(",")));
+    Print(QString("\t\tGUID: %1").arg(GUID));
+    Print(QString("\t\tSex: %1").arg(sex));
+    Print(QString("\t\tGender: %1").arg(gender));
+    Print(QString("\t\tdateOfBirth: %1").arg(dateOfBirth.toString()));
+    Print(QString("\t\tEthnicity1: %1").arg(ethnicity1));
+    Print(QString("\t\tEthnicity2: %1").arg(ethnicity2));
 }
 
 

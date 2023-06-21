@@ -34,14 +34,12 @@ class squirrelExperiment
 public:
 	squirrelExperiment();
     QJsonObject ToJSON();
+    void PrintExperiment();
 
     QString experimentName; /*!< experiment name (required) */
     qint64 numFiles; /*!< number of experiment files (required) */
     qint64 size; /*!< total size in bytes of the experiment files (required) */
     QString path; /*!< path to the experiment files, relative to the package root (required) */
-
-    bool AddFiles(QStringList files, QString destDir="");
-    bool AddDir(QString dir, QString destDir="", bool recurse=false);
 };
 
 #endif // SQUIRRELEXPERIMENT_H

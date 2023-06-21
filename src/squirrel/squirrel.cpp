@@ -874,14 +874,14 @@ bool squirrel::removeSubject(QString ID) {
  */
 void squirrel::PrintPackage() {
     Print("-- SQUIRREL PACKAGE ----------");
-    Print(QString("   Date: %1").arg(datetime.toString()));
-    Print(QString("   Description: %1").arg(description));
-    Print(QString("   Name: %1").arg(name));
-    Print(QString("   Version: %1").arg(version));
-    Print(QString("   subjectDirFormat: %1").arg(subjectDirFormat));
-    Print(QString("   studyDirFormat: %1").arg(studyDirFormat));
-    Print(QString("   seriesDirFormat: %1").arg(seriesDirFormat));
-    Print(QString("   dataFormat: %1").arg(dataFormat));
+    Print(QString("Date: %1").arg(datetime.toString()));
+    Print(QString("Description: %1").arg(description));
+    Print(QString("Name: %1").arg(name));
+    Print(QString("Version: %1").arg(version));
+    Print(QString("subjectDirFormat: %1").arg(subjectDirFormat));
+    Print(QString("studyDirFormat: %1").arg(studyDirFormat));
+    Print(QString("seriesDirFormat: %1").arg(seriesDirFormat));
+    Print(QString("dataFormat: %1").arg(dataFormat));
 }
 
 
@@ -1172,4 +1172,94 @@ void squirrel::Log(QString s, QString func) {
         log.append(QString("%1() %2\n").arg(func).arg(s));
         Print(QString("%1() %2").arg(func).arg(s));
     }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddSeriesFiles --------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir) {
+
+    /* make sure the subject info is not blank */
+    if (ID == "") return false;
+    if (studyNum < 1) return false;
+    if (seriesNum < 1) return false;
+
+    /* create the experiment path on disk and set the experiment path in  */
+    QString dir = QString("%1/data/%2/%3/%4").arg(workingDir).arg(ID).arg(studyNum).arg(seriesNum);
+    QString m;
+    MakePath(dir, m);
+    foreach (QString f, files) {
+        /* copy this to the packageRoot/destDir directory */
+        CopyFile(f, dir);
+    }
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddAnalysisFiles ------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir) {
+
+    /* make sure the subject info is not blank */
+    if (ID == "") return false;
+    if (studyNum < 1) return false;
+    if (pipelineName == "") return false;
+
+    /* create the experiment path on disk and set the experiment path in  */
+    QString dir = QString("%1/data/%2/%3/%4").arg(workingDir).arg(ID).arg(studyNum).arg(pipelineName);
+    QString m;
+    MakePath(dir, m);
+    foreach (QString f, files) {
+        /* copy this to the packageRoot/destDir directory */
+        CopyFile(f, dir);
+    }
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddPipelineFiles ------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::AddPipelineFiles(QString pipelineName, QStringList files, QString destDir) {
+
+    /* make sure the experiment name is not blank */
+    if (pipelineName == "") {
+        return false;
+    }
+    /* create the experiment path on disk and set the experiment path in  */
+    QString dir = QString("%1/experiments/%2/%3").arg(workingDir).arg(pipelineName).arg(destDir);
+    QString m;
+    MakePath(dir, m);
+    foreach (QString f, files) {
+        /* copy this to the packageRoot/destDir directory */
+        CopyFile(f, dir);
+    }
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- AddExperimentFiles ----------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::AddExperimentFiles(QString experimentName, QStringList files, QString destDir) {
+
+    /* make sure the experiment name is not blank */
+    if (experimentName == "") {
+        return false;
+    }
+    /* create the experiment path on disk and set the experiment path in  */
+    QString dir = QString("%1/experiments/%2/%3").arg(workingDir).arg(experimentName).arg(destDir);
+    QString m;
+    MakePath(dir, m);
+    foreach (QString f, files) {
+        /* copy this to the packageRoot/destDir directory */
+        CopyFile(f, dir);
+    }
+
+    return true;
 }

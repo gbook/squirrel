@@ -76,14 +76,14 @@ squirrelSeries::squirrelSeries()
  */
 void squirrelSeries::PrintSeries() {
     Print("-------- SERIES ----------");
-    Print(QString("         SeriesUID: %1").arg(seriesUID));
-	Print(QString("         SeriesNum: %1").arg(number));
-    Print(QString("         Description: %1").arg(description));
-    Print(QString("         Protocol: %1").arg(protocol));
-    Print(QString("         NumFiles: %1").arg(numFiles));
-    Print(QString("         Size: %1").arg(size));
-	Print(QString("         NumBehFiles: %1").arg(numBehFiles));
-	Print(QString("         BehSize: %1").arg(behSize));
+    Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
+    Print(QString("\t\t\t\tSeriesNum: %1").arg(number));
+    Print(QString("\t\t\t\tDescription: %1").arg(description));
+    Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
+    Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
+    Print(QString("\t\t\t\tSize: %1").arg(size));
+    Print(QString("\t\t\t\tNumBehFiles: %1").arg(numBehFiles));
+    Print(QString("\t\t\t\tBehSize: %1").arg(behSize));
 }
 
 

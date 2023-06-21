@@ -44,33 +44,15 @@ QJsonObject squirrelExperiment::ToJSON() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- AddFiles --------------------------------------------- */
+/* ----- PrintExperiment -------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrelExperiment::AddFiles(QStringList files, QString destDir) {
-    /* make sure the experiment name is not blank */
-    if (experimentName == "") {
-        return false;
-    }
-    /* copy this to the packageRoot/destDir directory */
-    QString dir = QString("%1/%2").arg(packageroot).arg(destDir);
-    foreach (QString f, files) {
-        CopyFile(f, dir);
-    }
-    /* create the experiment path on disk and set the experiment path in  */
-    //foreach
+/**
+ * @brief squirrelExperiment::PrintExperiment
+ */
+void squirrelExperiment::PrintExperiment() {
 
-    return true;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- AddDir ----------------------------------------------- */
-/* ------------------------------------------------------------ */
-bool squirrelExperiment::AddDir(QString dir, QString destDir, bool recurse) {
-    /* make sure the experiment name is not blank */
-    if (experimentName == "") {
-        return false;
-    }
-
-    return true;
+    Print("-- EXPERIMENT ----------");
+    Print(QString("\tExperimentName: %1").arg(experimentName));
+    Print(QString("\tnumfiles: %1").arg(numFiles));
+    Print(QString("\tsize: %1").arg(size));
 }
