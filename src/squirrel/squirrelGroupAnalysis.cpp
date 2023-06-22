@@ -55,7 +55,7 @@ QJsonObject squirrelGroupAnalysis::ToJSON() {
  */
 void squirrelGroupAnalysis::PrintGroupAnalysis() {
 
-    Print("-- GROUPANALYSIS ----------");
+    Print("\t----- GROUPANALYSIS ------");
     Print(QString("\tPipelineName: %1").arg(pipelineName));
     Print(QString("\tPipelineVersion: %1").arg(pipelineVersion));
     Print(QString("\tStartDate: %1").arg(startDate.toString("yyyy-MM-dd HH:mm:ss")));

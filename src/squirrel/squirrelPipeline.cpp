@@ -140,7 +140,7 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
  */
 void squirrelPipeline::PrintPipeline() {
 
-    Print("-- PIPELINE ----------");
+    Print("\t----- PIPELINE -----");
 
     Print(QString("\tPipelineName: %1").arg(pipelineName));
     Print(QString("\tPipelineName: %1").arg(description));

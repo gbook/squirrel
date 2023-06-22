@@ -64,7 +64,7 @@ QJsonObject squirrelAnalysis::ToJSON() {
  */
 void squirrelAnalysis::PrintAnalysis() {
 
-	Print("-- ANALYSIS----------");
+    Print("\t\t\t\t----- ANALYSIS -----");
     Print(QString("\t\t\t\tPipelineName: %1").arg(pipelineName));
     Print(QString("\t\t\t\tPipelineVersion: %1").arg(pipelineVersion));
     Print(QString("\t\t\t\tClusterStartDate: %1").arg(clusterStartDate.toString("yyyy-MM-dd HH:mm:ss")));

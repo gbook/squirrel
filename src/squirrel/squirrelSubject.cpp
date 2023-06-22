@@ -50,7 +50,7 @@ bool squirrelSubject::addStudy(squirrelStudy s) {
     /* check if this study already exists, by UID */
     bool exists = false;
     for (int i=0; i<studyList.size(); i++)
-		if (studyList.at(i).studyUID == s.studyUID)
+        if (studyList[i].studyUID == s.studyUID)
             exists = true;
 
     /* if it doesn't exist, append it */
@@ -125,15 +125,15 @@ bool squirrelSubject::addDrug(squirrelDrug m) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetNextStudyNum -------------------------------------- */
+/* ----- GetNextStudyNumber ----------------------------------- */
 /* ------------------------------------------------------------ */
-qint64 squirrelSubject::GetNextStudyNum() {
+qint64 squirrelSubject::GetNextStudyNumber() {
 
     /* find the current highest study number */
     qint64 maxnum = 0;
     for (int i=0; i<studyList.size(); i++)
-        if (studyList.at(i).number > maxnum)
-            maxnum = studyList.at(i).number;
+        if (studyList[i].number > maxnum)
+            maxnum = studyList[i].number;
 
     return maxnum+1;
 }
@@ -147,7 +147,7 @@ qint64 squirrelSubject::GetNextStudyNum() {
  */
 void squirrelSubject::PrintSubject() {
 
-    Print("---- SUBJECT ----------");
+    Print("\t\t----- SUBJECT -----");
     Print(QString("\t\tID: %1").arg(ID));
     Print(QString("\t\tAlternateIDs: %1").arg(alternateIDs.join(",")));
     Print(QString("\t\tGUID: %1").arg(GUID));

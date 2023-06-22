@@ -87,7 +87,9 @@ public:
 
     /* searching/retrieval functions */
     bool GetSubject(QString ID, squirrelSubject &sqrlSubject);
+    int GetSubjectIndex(QString ID);
     bool GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy);
+    int GetStudyIndex(QString ID, int studyNum);
     bool GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries);
     bool GetSubjectList(QList<squirrelSubject> &subjects);
     bool GetStudyList(QString ID, QList<squirrelStudy> &studies);

@@ -64,7 +64,7 @@ QJsonObject squirrelDrug::ToJSON() {
  */
 void squirrelDrug::PrintDrug() {
 
-	Print("-- DRUG----------");
+    Print("\t\t\t----- DRUG -----");
     Print(QString("\t\t\tDrugName: %1").arg(drugName));
     Print(QString("\t\t\tDateStart: %1").arg(dateStart.toString("yyyy-MM-dd HH:mm:ss")));
     Print(QString("\t\t\tDateEnd: %1").arg(dateEnd.toString("yyyy-MM-dd HH:mm:ss")));

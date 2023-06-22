@@ -75,7 +75,7 @@ squirrelSeries::squirrelSeries()
  * @brief series::PrintSeries
  */
 void squirrelSeries::PrintSeries() {
-    Print("-------- SERIES ----------");
+    Print("\t\t\t\t----- SERIES -----");
     Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
     Print(QString("\t\t\t\tSeriesNum: %1").arg(number));
     Print(QString("\t\t\t\tDescription: %1").arg(description));

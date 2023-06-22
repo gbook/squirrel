@@ -71,12 +71,14 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         sqrl->Log(QString("Found [%1] session directories matching '%2/ses-*'").arg(sesdirs.size()).arg(subjdir), __FUNCTION__);
         if (sesdirs.size() > 0) {
             foreach (QString sesdir, sesdirs) {
-                LoadSessionDir(sesdir, sqrl);
+                QString sespath = QString("%1/%2/%3").arg(dir).arg(subjdir).arg(sesdir);
+                LoadSessionDir(sespath, sqrl);
             }
         }
         else {
             /* if there are no ses-* directories, then the session must be in the root subject directory */
-            LoadSessionDir(subjdir, sqrl);
+            QString sespath = QString("%1/%2").arg(dir).arg(subjdir);
+            LoadSessionDir(sespath, sqrl);
         }
 
     }
@@ -99,10 +101,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 /* ----- LoadRootFiles -------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
-    /* read into consolidated JSON object and call it bids.json, with each file in it's own object */
-    /* read the participants.tsv, should be in the root */
-
-    sqrl->Log("Entering function", __FUNCTION__);
+    sqrl->Log(QString("Entering function to process [%1] root files").arg(rootfiles.size()), __FUNCTION__);
 
     foreach (QString f, rootfiles) {
         QFileInfo fi(f);
@@ -177,7 +176,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 
             /* create a session/study and add it to the subject */
             squirrelStudy sqrlStudy;
-            sqrlStudy.number = sqrlSubject.GetNextStudyNum();
+            sqrlStudy.number = sqrlSubject.GetNextStudyNumber();
             sqrlSubject.addStudy(sqrlStudy);
 
             /* create an analysis */
@@ -216,13 +215,12 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
 
-    sqrl->Log("Entering function", __FUNCTION__);
+    //sqrl->Log(QString("Entering function to load session dir [%1]").arg(sesdir), __FUNCTION__);
 
     /* possible directories
         anat
         func
         figures
-        anat
         fmap
         ieeg
         perf
@@ -232,17 +230,83 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
     */
 
     /* get list of all dirs in this sesdir */
+    QStringList sesdirs = FindAllDirs(sesdir, "*", false);
+    sqrl->Log(QString("Found [%1] directories in [%2/*]").arg(sesdirs.size()).arg(sesdir), __FUNCTION__);
+    if (sesdirs.size() > 0) {
+        foreach (QString dir, sesdirs) {
+            QString datadir = QString("%1/%2").arg(sesdir).arg(dir);
+            QStringList files = FindAllFiles(datadir, "*", false);
+            sqrl->Log(QString("Found [%1] files in '%2'").arg(files.size()).arg(datadir), __FUNCTION__);
 
-    /*if (dirname == "anat") {
+            /* now do something with the files, depending on what they are */
+            if ((dir == "anat") || (dir == "func") || (dir == "fmap") || (dir == "perf")) {
+                foreach (QString f, files) {
+
+                    sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
+
+                    QString filename = QFileInfo(f).fileName();
+                    filename.replace(".nii.gz", "");
+                    filename.replace(".nii", "");
+                    QString ID = filename.section("_", 0,0);
+                    QString protocol = filename.section("_", -1);
+                    int studyNum = 1;
+                    qint64 seriesNum = 1;
+
+                    /* get the subject index */
+                    int subjectIndex = sqrl->GetSubjectIndex(ID);
+                    if (subjectIndex > -1)
+                        sqrl->Log(QString("Found subjectIndex [%1] by ID [%2]").arg(subjectIndex).arg(ID), __FUNCTION__);
+                    else
+                        sqrl->Log(QString("Unable to find subject by ID [%1]").arg(ID), __FUNCTION__);
+
+                    /* check if this study exists */
+                    int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
+                    if (studyIndex > -1)
+                        sqrl->Log(QString("Found studyIndex [%1] by ID [%2] and studyNum [%3]").arg(studyIndex).arg(ID).arg(studyNum), __FUNCTION__);
+                    else
+                        sqrl->Log(QString("Unable to find study by ID [%1] and studyNum [%2]").arg(ID).arg(studyNum), __FUNCTION__);
+
+                    if (studyIndex > -1) {
+                        /* study exists, so let's add a series to it */
+                        seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
+                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    }
+                    else {
+                        /* study doesn't exist, so create it */
+                        squirrelStudy study2;
+                        study2.number = studyNum;
+                        study2.modality = "MR";
+
+                        /* create the series and add it to the study */
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        study2.addSeries(series);
+
+                        /* add the study to the subject */
+                        if (!sqrl->subjectList[subjectIndex].addStudy(study2))
+                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                    }
+
+                    /* now that the subject/study/series exist, add the file(s) */
+                    QStringList files;
+                    files << QString(f);
+                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files);
+                }
+            }
+            else if (dir == "func") {
+            }
+            else if (dir == "figures") {
+            }
+            else {
+            }
+        }
     }
-    else if (dirname == "func") {
-    }
-    else if (dirname == "figures") {
-    }
-    else if (dirname == "anat") {
-    }
-    else {
-    }*/
 
     /* for each scan... */
     /* map the BIDS thing to an actual modality: MapBIDStoModality() */

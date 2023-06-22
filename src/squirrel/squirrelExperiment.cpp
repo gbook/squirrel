@@ -51,7 +51,7 @@ QJsonObject squirrelExperiment::ToJSON() {
  */
 void squirrelExperiment::PrintExperiment() {
 
-    Print("-- EXPERIMENT ----------");
+    Print("\t----- EXPERIMENT -----");
     Print(QString("\tExperimentName: %1").arg(experimentName));
     Print(QString("\tnumfiles: %1").arg(numFiles));
     Print(QString("\tsize: %1").arg(size));

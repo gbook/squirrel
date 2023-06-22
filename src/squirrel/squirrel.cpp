@@ -43,6 +43,7 @@ squirrel::squirrel()
     dataFormat = "nifti4dgz";
     isOkToDelete = true;
 
+    MakeTempDir(workingDir);
     Log("Created squirrel object", __FUNCTION__);
 }
 
@@ -690,6 +691,7 @@ void squirrel::print() {
         sub.PrintSubject();
 
         /* iterate through studies */
+        //Log(QString("Iterating through [%1] studies").arg(sub.studyList.size()), __FUNCTION__);
         for (int j=0; j < sub.studyList.size(); j++) {
 
             squirrelStudy stud = sub.studyList[j];
@@ -952,6 +954,22 @@ bool squirrel::GetSubject(QString ID, squirrelSubject &sqrlSubject) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetSubjectIndex -------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::GetSubjectIndex(QString ID) {
+
+    /* find subject by ID */
+    for (int i=0; i < subjectList.size(); i++) {
+        if (subjectList[i].ID == ID) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- GetStudy --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -986,6 +1004,27 @@ bool squirrel::GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy) {
     }
 
     return false;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetStudyIndex ---------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::GetStudyIndex(QString ID, int studyNum) {
+
+    /* first, find subject by ID */
+    for (int i=0; i < subjectList.size(); i++) {
+        if (subjectList[i].ID == ID) {
+            /* next, find study by number */
+            for (int j=0; j < subjectList[i].studyList.size(); j++) {
+                if (subjectList[i].studyList[j].number == studyNum) {
+                    return j;
+                }
+            }
+        }
+    }
+
+    return -1;
 }
 
 
@@ -1191,6 +1230,7 @@ bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringLi
     MakePath(dir, m);
     foreach (QString f, files) {
         /* copy this to the packageRoot/destDir directory */
+        Log(QString("Copying file [%1] to [%2]").arg(f).arg(dir), __FUNCTION__);
         CopyFile(f, dir);
     }
 

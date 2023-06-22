@@ -44,7 +44,7 @@ public:
 	bool addStudy(squirrelStudy s);
 	bool addMeasure(squirrelMeasure m);
 	bool addDrug(squirrelDrug d);
-    qint64 GetNextStudyNum();
+    qint64 GetNextStudyNumber();
 	void PrintSubject();
 	QJsonObject ToJSON();
 

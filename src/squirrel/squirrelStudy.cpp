@@ -80,8 +80,7 @@ bool squirrelStudy::addSeries(squirrelSeries s) {
 	size = seriesList.size();
 
 	/* create a copy of the object before appending */
-	squirrelSeries *s2 = new squirrelSeries(s);
-	seriesList.append(*s2);
+    seriesList.append(s);
 
     if (seriesList.size() > size)
         return true;
@@ -113,6 +112,21 @@ bool squirrelStudy::addAnalysis(squirrelAnalysis a) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetNextSeriesNumber ---------------------------------- */
+/* ------------------------------------------------------------ */
+qint64 squirrelStudy::GetNextSeriesNumber() {
+
+    /* find the current highest series number */
+    qint64 maxnum = 0;
+    for (int i=0; i<seriesList.size(); i++)
+        if (seriesList[i].number > maxnum)
+            maxnum = seriesList[i].number;
+
+    return maxnum+1;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintStudy ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -120,7 +134,7 @@ bool squirrelStudy::addAnalysis(squirrelAnalysis a) {
  */
 void squirrelStudy::PrintStudy() {
 
-	Print("------ STUDY ----------");
+    Print("\t\t\t----- STUDY -----");
     Print(QString("\t\t\tnumber: %1").arg(number));
     Print(QString("\t\t\tdateTime: %1").arg(dateTime.toString()));
     Print(QString("\t\t\tageAtStudy: %1").arg(ageAtStudy));

@@ -43,6 +43,7 @@ public:
 
     bool addSeries(squirrelSeries s);
     bool addAnalysis(squirrelAnalysis a);
+    qint64 GetNextSeriesNumber();
     void PrintStudy();
     QJsonObject ToJSON();
 
