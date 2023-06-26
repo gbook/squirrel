@@ -39,40 +39,12 @@ squirrelStudy::squirrelStudy()
 
 
 /* ------------------------------------------------------------ */
-/* ----- squirrelStudy ---------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelStudy::squirrelStudy
- * @param s
- * Copy constructor
- */
-squirrelStudy::squirrelStudy(const squirrelStudy& s)
-{
-	ageAtStudy = s.ageAtStudy;
-	analysisList = s.analysisList;
-	dateTime = s.dateTime;
-	dayNumber = s.dayNumber;
-	description = s.description;
-	equipment = s.equipment;
-	height = s.height;
-	modality = s.modality;
-	number = s.number;
-	seriesList = s.seriesList;
-	studyUID = s.studyUID;
-	timePoint = s.timePoint;
-	virtualPath = s.virtualPath;
-	visitType = s.visitType;
-	weight = s.weight;
-}
-
-
-/* ------------------------------------------------------------ */
 /* ----- addSeries -------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief study::addSeries
- * @param s
- * @return true if series was added, false if not added
+ * @brief Add series to this study
+ * @param s squirrelSeries to be added
+ * @return true if series was added, false otherwise
  */
 bool squirrelStudy::addSeries(squirrelSeries s) {
 	/* check size of the series list before and after adding */
@@ -93,9 +65,9 @@ bool squirrelStudy::addSeries(squirrelSeries s) {
 /* ----- addAnalysis ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief study::addAnalysis
- * @param a
- * @return true if analysis was added, false if not added
+ * @brief Add an analysis to this study
+ * @param a squirrelAnalysis to be added
+ * @return true if analysis was added, false otherwise
  */
 bool squirrelStudy::addAnalysis(squirrelAnalysis a) {
 
@@ -114,6 +86,10 @@ bool squirrelStudy::addAnalysis(squirrelAnalysis a) {
 /* ------------------------------------------------------------ */
 /* ----- GetNextSeriesNumber ---------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get the next series number for this study
+ * @return the next series number
+ */
 qint64 squirrelStudy::GetNextSeriesNumber() {
 
     /* find the current highest series number */
@@ -130,7 +106,7 @@ qint64 squirrelStudy::GetNextSeriesNumber() {
 /* ----- PrintStudy ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief study::PrintStudy
+ * @brief Print study details
  */
 void squirrelStudy::PrintStudy() {
 
@@ -155,8 +131,8 @@ void squirrelStudy::PrintStudy() {
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrelStudy::ToJSON
- * @return QJsonObject
+ * @brief Get a JSON object for this study
+ * @return JSON object containing the study
  */
 QJsonObject squirrelStudy::ToJSON() {
 	QJsonObject json;

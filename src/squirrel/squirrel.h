@@ -85,11 +85,16 @@ public:
     /* data dictionary (just a single object, not array) */
     squirrelDataDictionary dataDictionary;
 
-    /* searching/retrieval functions */
-    bool GetSubject(QString ID, squirrelSubject &sqrlSubject);
+    /* searching/retrieval, get index */
     int GetSubjectIndex(QString ID);
-    bool GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy);
     int GetStudyIndex(QString ID, int studyNum);
+    int GetSeriesIndex(QString ID, int studyNum, int seriesNum);
+    int GetExperimentIndex(QString experimentName);
+    int GetPipelineIndex(QString pipelineName);
+
+    /* searching/retrieval functions - get copies */
+    bool GetSubject(QString ID, squirrelSubject &sqrlSubject);
+    bool GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy);
     bool GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries);
     bool GetSubjectList(QList<squirrelSubject> &subjects);
     bool GetStudyList(QString ID, QList<squirrelStudy> &studies);
@@ -99,23 +104,25 @@ public:
     bool GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis);
     bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
     bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
+
+    /* validation functions */
     QString GetTempDir();
 	bool valid() { return isValid; }
 	bool okToDelete() { return isOkToDelete; }
 
-    /* function to manipulate, add files */
+    /* functions to manipulate, add files */
     bool AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir="");
     bool AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir="");
     bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
     bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
 
+    /* logging */
     void Log(QString s, QString func);
     QString GetLog() { return log; }
 
 private:
     void PrintPackage();
     bool MakeTempDir(QString &dir);
-    //QString Log(QString m, QString f);
     QString workingDir;
     QString logfile;
     QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */

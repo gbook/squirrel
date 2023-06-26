@@ -1,0 +1,231 @@
+\hypertarget{classsquirrel_subject}{}\doxysection{squirrel\+Subject Class Reference}
+\label{classsquirrel_subject}\index{squirrelSubject@{squirrelSubject}}
+
+
+The subject class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Subject.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classsquirrel_subject_a72a44dba58ac29ef26caf40957015660}{add\+Study}} (\mbox{\hyperlink{classsquirrel_study}{squirrel\+Study}} s)
+\begin{DoxyCompactList}\small\item\em Add a study to this subject. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_subject_af20ca33232677581ca50d4eba1eaa222}{add\+Measure}} (\mbox{\hyperlink{classsquirrel_measure}{squirrel\+Measure}} m)
+\begin{DoxyCompactList}\small\item\em Add a measure to this subject. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_subject_a0932c0e191253f06e8bc3fffc2ac3f97}{add\+Drug}} (\mbox{\hyperlink{classsquirrel_drug}{squirrel\+Drug}} d)
+\begin{DoxyCompactList}\small\item\em Add a drug to this subject. \end{DoxyCompactList}\item 
+qint64 \mbox{\hyperlink{classsquirrel_subject_a50cd7cf2f67c009ca2286a0641ceb601}{Get\+Next\+Study\+Number}} ()
+\begin{DoxyCompactList}\small\item\em Gets the next study number for this subject. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsquirrel_subject_a17cdbc7ade8c00e79af1c126e4dbb0d0}\label{classsquirrel_subject_a17cdbc7ade8c00e79af1c126e4dbb0d0}} 
+void \mbox{\hyperlink{classsquirrel_subject_a17cdbc7ade8c00e79af1c126e4dbb0d0}{Print\+Subject}} ()
+\begin{DoxyCompactList}\small\item\em Print subject details. \end{DoxyCompactList}\item 
+Q\+Json\+Object \mbox{\hyperlink{classsquirrel_subject_ae73cfdc5fb4ef1feb676640bd991468c}{To\+J\+S\+ON}} ()
+\begin{DoxyCompactList}\small\item\em Get J\+S\+ON object for this subject. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_acd78cc4a92ec0bd45ed0ed263ea0e3a4}{ID}}
+\item 
+Q\+String\+List \mbox{\hyperlink{classsquirrel_subject_a241cf480e299bc00d0b60ab8495b8b07}{alternate\+I\+Ds}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_aeb1cc91a12b18be80cb54fd58f7e0cf9}{G\+U\+ID}}
+\item 
+Q\+Date \mbox{\hyperlink{classsquirrel_subject_a13083b9b451d4c0274b7d2e23190a165}{date\+Of\+Birth}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_a5041b44033d67dace72c4218d8e72122}{sex}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_ad0ddf9ae887ea07652e1efc7d6a354cc}{gender}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_ae454d2fb446d1cc560940704420f20d0}{ethnicity1}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_a74ad8b0f66bc13eac2f021d219bbc710}{ethnicity2}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_a4a538f92bc31f84c32fd48a0e07f0e28}{dirpath}}
+\item 
+Q\+List$<$ \mbox{\hyperlink{classsquirrel_study}{squirrel\+Study}} $>$ \mbox{\hyperlink{classsquirrel_subject_a8b0fc3561a3587b79bc2e2cf067ae4e6}{study\+List}}
+\item 
+Q\+List$<$ \mbox{\hyperlink{classsquirrel_measure}{squirrel\+Measure}} $>$ \mbox{\hyperlink{classsquirrel_subject_aaa1a0b8ac7c0ad97f333a5b5a1e19794}{measure\+List}}
+\item 
+Q\+List$<$ \mbox{\hyperlink{classsquirrel_drug}{squirrel\+Drug}} $>$ \mbox{\hyperlink{classsquirrel_subject_aca637ebbcfeff18b257aa5ae33a67e1b}{drug\+List}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_subject_a1b131de659a84f830b78e85b3be61935}{virtual\+Path}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The subject class. 
+
+contains details of a subject 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classsquirrel_subject_a0932c0e191253f06e8bc3fffc2ac3f97}\label{classsquirrel_subject_a0932c0e191253f06e8bc3fffc2ac3f97}} 
+\index{squirrelSubject@{squirrelSubject}!addDrug@{addDrug}}
+\index{addDrug@{addDrug}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{addDrug()}{addDrug()}}
+{\footnotesize\ttfamily bool squirrel\+Subject\+::add\+Drug (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsquirrel_drug}{squirrel\+Drug}}}]{d }\end{DoxyParamCaption})}
+
+
+
+Add a drug to this subject. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & \mbox{\hyperlink{classsquirrel_drug}{squirrel\+Drug}} to be added \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if added, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_subject_af20ca33232677581ca50d4eba1eaa222}\label{classsquirrel_subject_af20ca33232677581ca50d4eba1eaa222}} 
+\index{squirrelSubject@{squirrelSubject}!addMeasure@{addMeasure}}
+\index{addMeasure@{addMeasure}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{addMeasure()}{addMeasure()}}
+{\footnotesize\ttfamily bool squirrel\+Subject\+::add\+Measure (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsquirrel_measure}{squirrel\+Measure}}}]{m }\end{DoxyParamCaption})}
+
+
+
+Add a measure to this subject. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & \mbox{\hyperlink{classsquirrel_measure}{squirrel\+Measure}} to be added \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if added, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_subject_a72a44dba58ac29ef26caf40957015660}\label{classsquirrel_subject_a72a44dba58ac29ef26caf40957015660}} 
+\index{squirrelSubject@{squirrelSubject}!addStudy@{addStudy}}
+\index{addStudy@{addStudy}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{addStudy()}{addStudy()}}
+{\footnotesize\ttfamily bool squirrel\+Subject\+::add\+Study (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsquirrel_study}{squirrel\+Study}}}]{s }\end{DoxyParamCaption})}
+
+
+
+Add a study to this subject. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \mbox{\hyperlink{classsquirrel_study}{squirrel\+Study}} to be added \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if added, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_subject_a50cd7cf2f67c009ca2286a0641ceb601}\label{classsquirrel_subject_a50cd7cf2f67c009ca2286a0641ceb601}} 
+\index{squirrelSubject@{squirrelSubject}!GetNextStudyNumber@{GetNextStudyNumber}}
+\index{GetNextStudyNumber@{GetNextStudyNumber}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{GetNextStudyNumber()}{GetNextStudyNumber()}}
+{\footnotesize\ttfamily qint64 squirrel\+Subject\+::\+Get\+Next\+Study\+Number (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Gets the next study number for this subject. 
+
+\begin{DoxyReturn}{Returns}
+the next study number 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_subject_ae73cfdc5fb4ef1feb676640bd991468c}\label{classsquirrel_subject_ae73cfdc5fb4ef1feb676640bd991468c}} 
+\index{squirrelSubject@{squirrelSubject}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Subject\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get J\+S\+ON object for this subject. 
+
+\begin{DoxyReturn}{Returns}
+a J\+S\+ON object containing the entire subject 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classsquirrel_subject_a241cf480e299bc00d0b60ab8495b8b07}\label{classsquirrel_subject_a241cf480e299bc00d0b60ab8495b8b07}} 
+\index{squirrelSubject@{squirrelSubject}!alternateIDs@{alternateIDs}}
+\index{alternateIDs@{alternateIDs}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{alternateIDs}{alternateIDs}}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Subject\+::alternate\+I\+Ds}
+
+List of alternate subject I\+Ds \mbox{\Hypertarget{classsquirrel_subject_a13083b9b451d4c0274b7d2e23190a165}\label{classsquirrel_subject_a13083b9b451d4c0274b7d2e23190a165}} 
+\index{squirrelSubject@{squirrelSubject}!dateOfBirth@{dateOfBirth}}
+\index{dateOfBirth@{dateOfBirth}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{dateOfBirth}{dateOfBirth}}
+{\footnotesize\ttfamily Q\+Date squirrel\+Subject\+::date\+Of\+Birth}
+
+Date of birth. Not required, but can be useful to calculate age during studies. Can also contain only year, or only year and month \mbox{\Hypertarget{classsquirrel_subject_a4a538f92bc31f84c32fd48a0e07f0e28}\label{classsquirrel_subject_a4a538f92bc31f84c32fd48a0e07f0e28}} 
+\index{squirrelSubject@{squirrelSubject}!dirpath@{dirpath}}
+\index{dirpath@{dirpath}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{dirpath}{dirpath}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::dirpath}
+
+Relative path to the subject data \mbox{\Hypertarget{classsquirrel_subject_aca637ebbcfeff18b257aa5ae33a67e1b}\label{classsquirrel_subject_aca637ebbcfeff18b257aa5ae33a67e1b}} 
+\index{squirrelSubject@{squirrelSubject}!drugList@{drugList}}
+\index{drugList@{drugList}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{drugList}{drugList}}
+{\footnotesize\ttfamily Q\+List$<$\mbox{\hyperlink{classsquirrel_drug}{squirrel\+Drug}}$>$ squirrel\+Subject\+::drug\+List}
+
+List of drugs attached to this subject \mbox{\Hypertarget{classsquirrel_subject_ae454d2fb446d1cc560940704420f20d0}\label{classsquirrel_subject_ae454d2fb446d1cc560940704420f20d0}} 
+\index{squirrelSubject@{squirrelSubject}!ethnicity1@{ethnicity1}}
+\index{ethnicity1@{ethnicity1}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{ethnicity1}{ethnicity1}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::ethnicity1}
+
+Ethnicity\+: hispanic, non-\/hispanic \mbox{\Hypertarget{classsquirrel_subject_a74ad8b0f66bc13eac2f021d219bbc710}\label{classsquirrel_subject_a74ad8b0f66bc13eac2f021d219bbc710}} 
+\index{squirrelSubject@{squirrelSubject}!ethnicity2@{ethnicity2}}
+\index{ethnicity2@{ethnicity2}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{ethnicity2}{ethnicity2}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::ethnicity2}
+
+Race\+: americanindian, asian, black, hispanic, islander, white \mbox{\Hypertarget{classsquirrel_subject_ad0ddf9ae887ea07652e1efc7d6a354cc}\label{classsquirrel_subject_ad0ddf9ae887ea07652e1efc7d6a354cc}} 
+\index{squirrelSubject@{squirrelSubject}!gender@{gender}}
+\index{gender@{gender}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{gender}{gender}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::gender}
+
+Gender identity \mbox{\Hypertarget{classsquirrel_subject_aeb1cc91a12b18be80cb54fd58f7e0cf9}\label{classsquirrel_subject_aeb1cc91a12b18be80cb54fd58f7e0cf9}} 
+\index{squirrelSubject@{squirrelSubject}!GUID@{GUID}}
+\index{GUID@{GUID}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{GUID}{GUID}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::\+G\+U\+ID}
+
+globally unique identifier, from N\+I\+MH\textquotesingle{}s N\+DA \mbox{\Hypertarget{classsquirrel_subject_acd78cc4a92ec0bd45ed0ed263ea0e3a4}\label{classsquirrel_subject_acd78cc4a92ec0bd45ed0ed263ea0e3a4}} 
+\index{squirrelSubject@{squirrelSubject}!ID@{ID}}
+\index{ID@{ID}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{ID}{ID}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::\+ID}
+
+--- Unique identifier --- Must be unique within the squirrel package \mbox{\Hypertarget{classsquirrel_subject_aaa1a0b8ac7c0ad97f333a5b5a1e19794}\label{classsquirrel_subject_aaa1a0b8ac7c0ad97f333a5b5a1e19794}} 
+\index{squirrelSubject@{squirrelSubject}!measureList@{measureList}}
+\index{measureList@{measureList}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{measureList}{measureList}}
+{\footnotesize\ttfamily Q\+List$<$\mbox{\hyperlink{classsquirrel_measure}{squirrel\+Measure}}$>$ squirrel\+Subject\+::measure\+List}
+
+List of measures (variables) attached to this subject \mbox{\Hypertarget{classsquirrel_subject_a5041b44033d67dace72c4218d8e72122}\label{classsquirrel_subject_a5041b44033d67dace72c4218d8e72122}} 
+\index{squirrelSubject@{squirrelSubject}!sex@{sex}}
+\index{sex@{sex}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{sex}{sex}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::sex}
+
+Sex at birth (biological sex) \mbox{\Hypertarget{classsquirrel_subject_a8b0fc3561a3587b79bc2e2cf067ae4e6}\label{classsquirrel_subject_a8b0fc3561a3587b79bc2e2cf067ae4e6}} 
+\index{squirrelSubject@{squirrelSubject}!studyList@{studyList}}
+\index{studyList@{studyList}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{studyList}{studyList}}
+{\footnotesize\ttfamily Q\+List$<$\mbox{\hyperlink{classsquirrel_study}{squirrel\+Study}}$>$ squirrel\+Subject\+::study\+List}
+
+List of studies attached to this subject \mbox{\Hypertarget{classsquirrel_subject_a1b131de659a84f830b78e85b3be61935}\label{classsquirrel_subject_a1b131de659a84f830b78e85b3be61935}} 
+\index{squirrelSubject@{squirrelSubject}!virtualPath@{virtualPath}}
+\index{virtualPath@{virtualPath}!squirrelSubject@{squirrelSubject}}
+\doxysubsubsection{\texorpdfstring{virtualPath}{virtualPath}}
+{\footnotesize\ttfamily Q\+String squirrel\+Subject\+::virtual\+Path}
+
+path within the squirrel package, no leading slash 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/squirrel/src/squirrel/squirrel\+Subject.\+h\item 
+C\+:/squirrel/src/squirrel/squirrel\+Subject.\+cpp\end{DoxyCompactItemize}

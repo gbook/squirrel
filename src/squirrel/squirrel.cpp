@@ -69,7 +69,7 @@ squirrel::~squirrel()
 /* ----- read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::read Reads a squirrel package
+ * @brief Reads a squirrel package into memory from disk
  * @param filename Full filepath of the package to read
  * @return true if package was successfully read, false otherwise
  */
@@ -664,7 +664,7 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
 /* ----- validate --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::validate
+ * @brief Validate if a squirrel package is readable
  * @return true if valid squirrel file, false otherwise
  */
 bool squirrel::validate() {
@@ -677,7 +677,7 @@ bool squirrel::validate() {
 /* ----- print ------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief print
+ * @brief Print the details of a package, including all objects
  */
 void squirrel::print() {
 
@@ -732,6 +732,10 @@ void squirrel::print() {
 /* ------------------------------------------------------------ */
 /* ----- GetUnzipSize ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get the unzipped size of the squirrel package in bytes
+ * @return unzipped size of the squirrel package in bytes
+ */
 qint64 squirrel::GetUnzipSize() {
 
     qint64 unzipSize(0);
@@ -761,6 +765,10 @@ qint64 squirrel::GetUnzipSize() {
 /* ------------------------------------------------------------ */
 /* ----- GetNumFiles ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get the number of files in the squirrel package
+ * @return total number of files in the package
+ */
 qint64 squirrel::GetNumFiles() {
 
     qint64 numFiles(0);
@@ -786,9 +794,9 @@ qint64 squirrel::GetNumFiles() {
 /* ----- addSubject ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::addSubject
- * @param subj
- * @return true if added, false if not added
+ * @brief Add a subject to the package
+ * @param subj squirrelSubject to be added
+ * @return true if added, false otherwise
  */
 bool squirrel::addSubject(squirrelSubject subj) {
 
@@ -808,9 +816,9 @@ bool squirrel::addSubject(squirrelSubject subj) {
 /* ----- addPipeline ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::addPipeline
- * @param pipe
- * @return true if added, false if not added
+ * @brief Add a pipeline to the package
+ * @param pipe squirrelPipeline to be added
+ * @return true if added, false otherwise
  */
 bool squirrel::addPipeline(squirrelPipeline pipe) {
 
@@ -830,8 +838,8 @@ bool squirrel::addPipeline(squirrelPipeline pipe) {
 /* ----- addExperiment ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::addExperiment
- * @param exp
+ * @brief Add an experiment to the package
+ * @param exp a squirrelExperiment to be added
  * @return true if added, false if not added
  */
 bool squirrel::addExperiment(squirrelExperiment exp) {
@@ -852,9 +860,9 @@ bool squirrel::addExperiment(squirrelExperiment exp) {
 /* ----- removeSubject ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::removeSubject
- * @param ID
- * @return true if subject found and removed, false is subject not found
+ * @brief Removed a subject, by ID, from the package
+ * @param ID subject ID to be removed
+ * @return true if subject found and removed, false otherwise
  */
 bool squirrel::removeSubject(QString ID) {
 
@@ -872,7 +880,7 @@ bool squirrel::removeSubject(QString ID) {
 /* ----- PrintPackage ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintPackage
+ * @brief Print package details
  */
 void squirrel::PrintPackage() {
     Print("-- SQUIRREL PACKAGE ----------");
@@ -916,27 +924,151 @@ bool squirrel::MakeTempDir(QString &dir) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- Log -------------------------------------------------- */
+/* ----- GetSubjectIndex -------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::Log
- * @return the log message for continued use
+ * @brief Search for index of a subject
+ * @param ID subject ID
+ * @return index of the subject, if found. -1 if not found
  */
-//QString squirrel::Log(QString m, QString f) {
-//    m = QString("\tsquirrel.%1() %2").arg(f).arg(m);
-//    Print(m);
-//    AppendCustomLog(logfile, m);
-//    return m;
-//}
+int squirrel::GetSubjectIndex(QString ID) {
+
+    /* find subject by ID */
+    for (int i=0; i < subjectList.size(); i++) {
+        if (subjectList[i].ID == ID) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetStudyIndex ---------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Search for index of a study
+ * @param ID subject ID
+ * @param studyNum study number
+ * @return index of the study if found, -1 otherwise
+ */
+int squirrel::GetStudyIndex(QString ID, int studyNum) {
+
+    /* first, find subject by ID */
+    for (int i=0; i < subjectList.size(); i++) {
+        if (subjectList[i].ID == ID) {
+            /* next, find study by number */
+            for (int j=0; j < subjectList[i].studyList.size(); j++) {
+                if (subjectList[i].studyList[j].number == studyNum) {
+                    return j;
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetSeriesIndex --------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Search for index of a series
+ * @param ID subject ID
+ * @param studyNum study number
+ * @param seriesNum series number
+ * @return index of the series if found, -1 otherwise
+ */
+int squirrel::GetSeriesIndex(QString ID, int studyNum, int seriesNum) {
+    squirrelSubject sqrlSubject;
+    squirrelStudy sqrlStudy;
+    bool subjectFound = false;
+    bool studyFound = false;
+
+    /* first, find subject by ID */
+    for (int i=0; i < subjectList.size(); i++) {
+        if (subjectList[i].ID == ID) {
+            sqrlSubject = subjectList[i];
+            subjectFound = true;
+            break;
+        }
+    }
+
+    /* next, find study by number */
+    if (subjectFound) {
+        for (int j=0; j < sqrlSubject.studyList.size(); j++) {
+            if (sqrlSubject.studyList[j].number == studyNum) {
+                sqrlStudy = sqrlSubject.studyList[j];
+                studyFound = true;
+                break;
+            }
+        }
+    }
+
+    /* then, find series by number */
+    if (studyFound) {
+        for (int k=0; k < sqrlStudy.seriesList.size(); k++) {
+            if (sqrlStudy.seriesList[k].number == seriesNum) {
+                return k;
+            }
+        }
+    }
+
+    return -1;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetPipelineIndex ------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Search for index of a pipeline
+ * @param pipelineName pipeline name
+ * @return index of pipeline if found, -1 otherwise
+ */
+int squirrel::GetPipelineIndex(QString pipelineName) {
+
+    /* find pipeline by name */
+    for (int i=0; i < pipelineList.size(); i++) {
+        if (pipelineList[i].pipelineName == pipelineName) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetExperimentIndex ----------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Search for index of an experiment
+ * @param experimentName experiment name
+ * @return index of experiment if found, -1 otherwise
+ */
+int squirrel::GetExperimentIndex(QString experimentName) {
+
+    /* find experiment by name */
+    for (int i=0; i < experimentList.size(); i++) {
+        if (experimentList[i].experimentName == experimentName) {
+            return i;
+        }
+    }
+
+    return -1;
+}
 
 
 /* ------------------------------------------------------------ */
 /* ----- GetSubject ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetSubject - Finds a subject object by subjectID
- * @param ID - subjectID
- * @param sqrlSubject
+ * @brief Search for and get a copy of a subject
+ * @param ID subject ID
+ * @param sqrlSubject copy of squirrelSubject object
  * @return true if found, false otherwise
  */
 bool squirrel::GetSubject(QString ID, squirrelSubject &sqrlSubject) {
@@ -954,29 +1086,13 @@ bool squirrel::GetSubject(QString ID, squirrelSubject &sqrlSubject) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetSubjectIndex -------------------------------------- */
-/* ------------------------------------------------------------ */
-int squirrel::GetSubjectIndex(QString ID) {
-
-    /* find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
 /* ----- GetStudy --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetStudy - Finds a study by subjectID and studyNumber
- * @param ID - subjectID
- * @param studyNum - studyNumber
- * @param sqrlStudy - squirrelStudy object if found
+ * @brief Search for and get a copy of a study
+ * @param ID subjectID
+ * @param studyNum studyNumber
+ * @param sqrlStudy copy of squirrelStudy object
  * @return true if found, false otherwise
  */
 bool squirrel::GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy) {
@@ -1008,29 +1124,16 @@ bool squirrel::GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetStudyIndex ---------------------------------------- */
-/* ------------------------------------------------------------ */
-int squirrel::GetStudyIndex(QString ID, int studyNum) {
-
-    /* first, find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            /* next, find study by number */
-            for (int j=0; j < subjectList[i].studyList.size(); j++) {
-                if (subjectList[i].studyList[j].number == studyNum) {
-                    return j;
-                }
-            }
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
 /* ----- GetSeries -------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for and get a copy of a series
+ * @param ID subject ID
+ * @param studyNum study number
+ * @param seriesNum series number
+ * @param sqrlSeries copy of squirrelSeries object
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries) {
     squirrelSubject sqrlSubject;
     squirrelStudy sqrlStudy;
@@ -1074,6 +1177,11 @@ bool squirrel::GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries
 /* ------------------------------------------------------------ */
 /* ----- GetSubjectList --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get a copy of the list of subjects
+ * @param subjects QList of squirrelSubject objects
+ * @return always true, even if empty
+ */
 bool squirrel::GetSubjectList(QList<squirrelSubject> &subjects) {
 
     subjects = subjectList;
@@ -1085,6 +1193,12 @@ bool squirrel::GetSubjectList(QList<squirrelSubject> &subjects) {
 /* ------------------------------------------------------------ */
 /* ----- GetStudyList ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for and get a copy of a list of studies
+ * @param ID subject ID
+ * @param studies QList of squirrelStudy objects
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetStudyList(QString ID, QList<squirrelStudy> &studies) {
     squirrelSubject sqrlSubj;
 
@@ -1100,6 +1214,13 @@ bool squirrel::GetStudyList(QString ID, QList<squirrelStudy> &studies) {
 /* ------------------------------------------------------------ */
 /* ----- GetSeriesList ---------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for a get a copy of a list of series
+ * @param ID subject ID
+ * @param studyNum study number
+ * @param series QList of squirrelSeries objects
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series) {
     squirrelStudy sqrlStudy;
     if (GetStudy(ID, studyNum, sqrlStudy)) {
@@ -1114,6 +1235,12 @@ bool squirrel::GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &se
 /* ------------------------------------------------------------ */
 /* ----- GetDrugList ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for an get a copy of a list of drugs
+ * @param ID subject ID
+ * @param drugs QList of squirrelDrug objects
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetDrugList(QString ID, QList<squirrelDrug> &drugs) {
     squirrelSubject sqrlSubj;
 
@@ -1129,6 +1256,12 @@ bool squirrel::GetDrugList(QString ID, QList<squirrelDrug> &drugs) {
 /* ------------------------------------------------------------ */
 /* ----- GetMeasureList --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for and get a copy of a list of measure objects
+ * @param ID subject ID
+ * @param measures QList of squirrelMeasure objects
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetMeasureList(QString ID, QList<squirrelMeasure> &measures) {
     squirrelSubject sqrlSubj;
 
@@ -1144,6 +1277,14 @@ bool squirrel::GetMeasureList(QString ID, QList<squirrelMeasure> &measures) {
 /* ------------------------------------------------------------ */
 /* ----- GetAnalysis ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for and get a copy of an analysis
+ * @param ID subject ID
+ * @param studyNum study number
+ * @param pipelineName pipeline name
+ * @param sqrlAnalysis copy of a squirrelAnalysis object
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis) {
     squirrelStudy sqrlStudy;
     if (GetStudy(ID, studyNum, sqrlStudy)) {
@@ -1164,6 +1305,12 @@ bool squirrel::GetAnalysis(QString ID, int studyNum, QString pipelineName, squir
 /* ------------------------------------------------------------ */
 /* ----- GetPipeline ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for and get a copy of a pipeline
+ * @param pipelineName pipeline name
+ * @param sqrlPipeline copy of a squirrelPipeline object
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline) {
 
     /* find pipeline by name */
@@ -1181,6 +1328,12 @@ bool squirrel::GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline)
 /* ------------------------------------------------------------ */
 /* ----- GetExperiment ---------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Search for a get a copy of an experiment
+ * @param experimentName experiment name
+ * @param sqrlExperiment copy of a squirrelExperiment object
+ * @return true if found, false otherwise
+ */
 bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment) {
 
     /* find experiment by name */
@@ -1198,6 +1351,10 @@ bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExp
 /* ------------------------------------------------------------ */
 /* ----- GetTempDir ------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get the automatically created temp directory
+ * @return the temp directory
+ */
 QString squirrel::GetTempDir() {
     return workingDir;
 }
@@ -1206,6 +1363,11 @@ QString squirrel::GetTempDir() {
 /* ------------------------------------------------------------ */
 /* ----- Log -------------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Record a log - prints to screen and stores in log string
+ * @param s log message
+ * @param func function that called this function
+ */
 void squirrel::Log(QString s, QString func) {
     if (s.trimmed() != "") {
         log.append(QString("%1() %2\n").arg(func).arg(s));
@@ -1217,6 +1379,15 @@ void squirrel::Log(QString s, QString func) {
 /* ------------------------------------------------------------ */
 /* ----- AddSeriesFiles --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Add files to a series. This function also copies the files to the staging/temp directory
+ * @param ID subject ID
+ * @param studyNum study number
+ * @param seriesNum series number
+ * @param files list of files to be added
+ * @param destDir sub-directory within the series staging directory
+ * @return true if successful, false otherwise
+ */
 bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir) {
 
     /* make sure the subject info is not blank */
@@ -1241,6 +1412,15 @@ bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringLi
 /* ------------------------------------------------------------ */
 /* ----- AddAnalysisFiles ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Add files to an analysis. This function also copies the files to the staging/temp directory
+ * @param ID subject ID
+ * @param studyNum study number
+ * @param pipelineName pipeline name
+ * @param files list of files to be added
+ * @param destDir sub-directory within the analysis staging directory
+ * @return true if successful, false otherwise
+ */
 bool squirrel::AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir) {
 
     /* make sure the subject info is not blank */
@@ -1264,6 +1444,13 @@ bool squirrel::AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, 
 /* ------------------------------------------------------------ */
 /* ----- AddPipelineFiles ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Add files to a pipeline. This function also copies the files to the staging/temp directory
+ * @param pipelineName pipeline name
+ * @param files list of files to be added
+ * @param destDir sub-directory within the analysis staging directory
+ * @return true if successful, false otherwise
+ */
 bool squirrel::AddPipelineFiles(QString pipelineName, QStringList files, QString destDir) {
 
     /* make sure the experiment name is not blank */
@@ -1286,6 +1473,13 @@ bool squirrel::AddPipelineFiles(QString pipelineName, QStringList files, QString
 /* ------------------------------------------------------------ */
 /* ----- AddExperimentFiles ----------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Add files to an experiment. This function also copies the files to the staging/temp directory
+ * @param experimentName experiment name
+ * @param files list of files to be added
+ * @param destDir sub-directory within the analysis staging directory
+ * @return true if successful, false otherwise
+ */
 bool squirrel::AddExperimentFiles(QString experimentName, QStringList files, QString destDir) {
 
     /* make sure the experiment name is not blank */

@@ -40,6 +40,14 @@ squirrelPipeline::squirrelPipeline()
 /* ---------------------------------------------------------- */
 /* if path is specified, write the full JSON object to that
  * path and return a small JSON object */
+
+/**
+ * @brief Get JSON object describing the pipeline
+ * @param path if a path is specified, the full JSON object is written
+ * to that path and a smaller JSON object is returned
+ * @return JSON object
+ */
+
 QJsonObject squirrelPipeline::ToJSON(QString path) {
     QJsonObject json;
 
@@ -136,7 +144,7 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
 /* ----- PrintPipeline ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrelPipeline::PrintPipeline
+ * @brief Print pipeline details
  */
 void squirrelPipeline::PrintPipeline() {
 

@@ -1,0 +1,179 @@
+\hypertarget{classsquirrel_series}{}\doxysection{squirrel\+Series Class Reference}
+\label{classsquirrel_series}\index{squirrelSeries@{squirrelSeries}}
+
+
+The series class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Series.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsquirrel_series_adf0c3524f2f9d2b3bb7bf6c60f584c86}\label{classsquirrel_series_adf0c3524f2f9d2b3bb7bf6c60f584c86}} 
+void \mbox{\hyperlink{classsquirrel_series_adf0c3524f2f9d2b3bb7bf6c60f584c86}{Print\+Series}} ()
+\begin{DoxyCompactList}\small\item\em Print the series details. \end{DoxyCompactList}\item 
+Q\+Json\+Object \mbox{\hyperlink{classsquirrel_series_a2edaad24c5c20e66ef96b48e86515a69}{To\+J\+S\+ON}} ()
+\begin{DoxyCompactList}\small\item\em Get a J\+S\+ON object for the entire series. \end{DoxyCompactList}\item 
+Q\+Json\+Object \mbox{\hyperlink{classsquirrel_series_a9fe6c2798c4de5b8351ab09c0f3c0baf}{Params\+To\+J\+S\+ON}} ()
+\begin{DoxyCompactList}\small\item\em Get series params in J\+S\+ON format, likely M\+RI sequence params. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_series_ac78b79e74685f7a0f471ec8ab0511369}{number}}
+\item 
+Q\+Date\+Time \mbox{\hyperlink{classsquirrel_series_a5ffb2c7de63a9a204d8c1eb8a03405e5}{date\+Time}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_series_ac1cb9c6d5afa054fc9ec1c8b5e0272e0}{series\+U\+ID}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_series_a422cdf7a00de7d02d6bc5924da59e604}{description}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_series_a4585dd931aee8a4a923ae7a7b84c77d7}{protocol}}
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_series_affa6d0b50ebd162da43803ee08b96026}{num\+Files}}
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_series_a9e906319ff0dcbfb7b864f749b23ba60}{size}}
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_series_a3d9e8fb3af007ba0c78d021c2058796f}{num\+Beh\+Files}}
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_series_a8313f0d594f1afba40f26ba4fc610205}{beh\+Size}}
+\item 
+Q\+Hash$<$ Q\+String, Q\+String $>$ \mbox{\hyperlink{classsquirrel_series_a064f009bfab65d36653177f9c3daeb67}{params}}
+\item 
+Q\+String\+List \mbox{\hyperlink{classsquirrel_series_a442ad2f1e9631ac17d4ba6ddcdb0809c}{staged\+Files}}
+\item 
+Q\+String\+List \mbox{\hyperlink{classsquirrel_series_a73768263e2ca3bcc5d7787f8f1b44062}{staged\+Beh\+Files}}
+\item 
+Q\+String\+List \mbox{\hyperlink{classsquirrel_series_a65ba5038aa75ce12c42260a90c852eab}{experiment\+List}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_series_a2b2c63c16f5529fa256a1ef8d145ec69}{virtual\+Path}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The series class. 
+
+provides details of a series 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classsquirrel_series_a9fe6c2798c4de5b8351ab09c0f3c0baf}\label{classsquirrel_series_a9fe6c2798c4de5b8351ab09c0f3c0baf}} 
+\index{squirrelSeries@{squirrelSeries}!ParamsToJSON@{ParamsToJSON}}
+\index{ParamsToJSON@{ParamsToJSON}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{ParamsToJSON()}{ParamsToJSON()}}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Series\+::\+Params\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get series params in J\+S\+ON format, likely M\+RI sequence params. 
+
+\begin{DoxyReturn}{Returns}
+J\+S\+ON object containing series params 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_series_a2edaad24c5c20e66ef96b48e86515a69}\label{classsquirrel_series_a2edaad24c5c20e66ef96b48e86515a69}} 
+\index{squirrelSeries@{squirrelSeries}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Series\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get a J\+S\+ON object for the entire series. 
+
+\begin{DoxyReturn}{Returns}
+J\+S\+ON object 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classsquirrel_series_a8313f0d594f1afba40f26ba4fc610205}\label{classsquirrel_series_a8313f0d594f1afba40f26ba4fc610205}} 
+\index{squirrelSeries@{squirrelSeries}!behSize@{behSize}}
+\index{behSize@{behSize}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{behSize}{behSize}}
+{\footnotesize\ttfamily qint64 squirrel\+Series\+::beh\+Size}
+
+total size in bytes of the beh data \mbox{\Hypertarget{classsquirrel_series_a5ffb2c7de63a9a204d8c1eb8a03405e5}\label{classsquirrel_series_a5ffb2c7de63a9a204d8c1eb8a03405e5}} 
+\index{squirrelSeries@{squirrelSeries}!dateTime@{dateTime}}
+\index{dateTime@{dateTime}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{dateTime}{dateTime}}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Series\+::date\+Time}
+
+Series datetime \mbox{\Hypertarget{classsquirrel_series_a422cdf7a00de7d02d6bc5924da59e604}\label{classsquirrel_series_a422cdf7a00de7d02d6bc5924da59e604}} 
+\index{squirrelSeries@{squirrelSeries}!description@{description}}
+\index{description@{description}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{description}{description}}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::description}
+
+Description of the series \mbox{\Hypertarget{classsquirrel_series_a65ba5038aa75ce12c42260a90c852eab}\label{classsquirrel_series_a65ba5038aa75ce12c42260a90c852eab}} 
+\index{squirrelSeries@{squirrelSeries}!experimentList@{experimentList}}
+\index{experimentList@{experimentList}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{experimentList}{experimentList}}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::experiment\+List}
+
+List of experiment names attached to this series \mbox{\Hypertarget{classsquirrel_series_a3d9e8fb3af007ba0c78d021c2058796f}\label{classsquirrel_series_a3d9e8fb3af007ba0c78d021c2058796f}} 
+\index{squirrelSeries@{squirrelSeries}!numBehFiles@{numBehFiles}}
+\index{numBehFiles@{numBehFiles}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{numBehFiles}{numBehFiles}}
+{\footnotesize\ttfamily qint64 squirrel\+Series\+::num\+Beh\+Files}
+
+Number of files associated with the behavioral data \mbox{\Hypertarget{classsquirrel_series_ac78b79e74685f7a0f471ec8ab0511369}\label{classsquirrel_series_ac78b79e74685f7a0f471ec8ab0511369}} 
+\index{squirrelSeries@{squirrelSeries}!number@{number}}
+\index{number@{number}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{number}{number}}
+{\footnotesize\ttfamily qint64 squirrel\+Series\+::number}
+
+Series number. must be unique to the study \mbox{\Hypertarget{classsquirrel_series_affa6d0b50ebd162da43803ee08b96026}\label{classsquirrel_series_affa6d0b50ebd162da43803ee08b96026}} 
+\index{squirrelSeries@{squirrelSeries}!numFiles@{numFiles}}
+\index{numFiles@{numFiles}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{numFiles}{numFiles}}
+{\footnotesize\ttfamily qint64 squirrel\+Series\+::num\+Files}
+
+Number of files associated with the series \mbox{\Hypertarget{classsquirrel_series_a064f009bfab65d36653177f9c3daeb67}\label{classsquirrel_series_a064f009bfab65d36653177f9c3daeb67}} 
+\index{squirrelSeries@{squirrelSeries}!params@{params}}
+\index{params@{params}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{params}{params}}
+{\footnotesize\ttfamily Q\+Hash$<$Q\+String, Q\+String$>$ squirrel\+Series\+::params}
+
+Hash containing experimental parameters. eg MR params \mbox{\Hypertarget{classsquirrel_series_a4585dd931aee8a4a923ae7a7b84c77d7}\label{classsquirrel_series_a4585dd931aee8a4a923ae7a7b84c77d7}} 
+\index{squirrelSeries@{squirrelSeries}!protocol@{protocol}}
+\index{protocol@{protocol}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{protocol}{protocol}}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::protocol}
+
+Protocol (may differ from description) \mbox{\Hypertarget{classsquirrel_series_ac1cb9c6d5afa054fc9ec1c8b5e0272e0}\label{classsquirrel_series_ac1cb9c6d5afa054fc9ec1c8b5e0272e0}} 
+\index{squirrelSeries@{squirrelSeries}!seriesUID@{seriesUID}}
+\index{seriesUID@{seriesUID}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{seriesUID}{seriesUID}}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::series\+U\+ID}
+
+Series\+Instance\+U\+ID \mbox{\Hypertarget{classsquirrel_series_a9e906319ff0dcbfb7b864f749b23ba60}\label{classsquirrel_series_a9e906319ff0dcbfb7b864f749b23ba60}} 
+\index{squirrelSeries@{squirrelSeries}!size@{size}}
+\index{size@{size}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily qint64 squirrel\+Series\+::size}
+
+total size in bytes of the series \mbox{\Hypertarget{classsquirrel_series_a73768263e2ca3bcc5d7787f8f1b44062}\label{classsquirrel_series_a73768263e2ca3bcc5d7787f8f1b44062}} 
+\index{squirrelSeries@{squirrelSeries}!stagedBehFiles@{stagedBehFiles}}
+\index{stagedBehFiles@{stagedBehFiles}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{stagedBehFiles}{stagedBehFiles}}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::staged\+Beh\+Files}
+
+staged beh file list\+: list of raw files in their own directories before the package is zipped up \mbox{\Hypertarget{classsquirrel_series_a442ad2f1e9631ac17d4ba6ddcdb0809c}\label{classsquirrel_series_a442ad2f1e9631ac17d4ba6ddcdb0809c}} 
+\index{squirrelSeries@{squirrelSeries}!stagedFiles@{stagedFiles}}
+\index{stagedFiles@{stagedFiles}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{stagedFiles}{stagedFiles}}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::staged\+Files}
+
+staged file list\+: list of raw files in their own directories before the package is zipped up \mbox{\Hypertarget{classsquirrel_series_a2b2c63c16f5529fa256a1ef8d145ec69}\label{classsquirrel_series_a2b2c63c16f5529fa256a1ef8d145ec69}} 
+\index{squirrelSeries@{squirrelSeries}!virtualPath@{virtualPath}}
+\index{virtualPath@{virtualPath}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{\texorpdfstring{virtualPath}{virtualPath}}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::virtual\+Path}
+
+path within the squirrel package, no leading slash 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/squirrel/src/squirrel/squirrel\+Series.\+h\item 
+C\+:/squirrel/src/squirrel/squirrel\+Series.\+cpp\end{DoxyCompactItemize}

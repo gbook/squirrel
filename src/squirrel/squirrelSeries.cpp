@@ -44,35 +44,10 @@ squirrelSeries::squirrelSeries()
 
 
 /* ------------------------------------------------------------ */
-/* ----- AddExperiment ---------------------------------------- */
-/* ------------------------------------------------------------ */
-// /**
-// * @brief series::AddExperiment
-// * @param s
-// * @return
-// */
-//bool series::AddExperiment(experiment *e) {
-
-    /* check size of the study list before and after adding */
-//    qint64 size = experimentList.size();
-
-    /* check if this study already exists, by UID */
-
-//    /* if it doesn't exist, append it */
-//    experimentList.append(e);
-
-//    if (experimentList.size() > size)
-//        return true;
-//    else
-//        return false;
-//}
-
-
-/* ------------------------------------------------------------ */
 /* ----- PrintSeries ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief series::PrintSeries
+ * @brief Print the series details
  */
 void squirrelSeries::PrintSeries() {
     Print("\t\t\t\t----- SERIES -----");
@@ -90,6 +65,10 @@ void squirrelSeries::PrintSeries() {
 /* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get a JSON object for the entire series
+ * @return JSON object
+ */
 QJsonObject squirrelSeries::ToJSON() {
     QJsonObject json;
 
@@ -117,6 +96,10 @@ QJsonObject squirrelSeries::ToJSON() {
 /* ------------------------------------------------------------ */
 /* ----- ParamsToJSON ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get series params in JSON format, likely MRI sequence params
+ * @return JSON object containing series params
+ */
 QJsonObject squirrelSeries::ParamsToJSON() {
 	QJsonObject json;
 

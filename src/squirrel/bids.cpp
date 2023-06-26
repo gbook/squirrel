@@ -37,6 +37,12 @@ bids::bids()
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadToSquirrel ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Load a BIDS directory into a squirrel object
+ * @param dir path to the BIDS directory
+ * @param sqrl squirrel object
+ * @return true if loaded successfully, false otherwise
+ */
 bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
     sqrl->Log(QString("Entering function. dir [%1]").arg(dir), __FUNCTION__);
@@ -100,6 +106,12 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadRootFiles -------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Load the files contained in the root of the BIDS directory
+ * @param rootfiles list of files
+ * @param sqrl squirrel object
+ * @return true if successful, false if any errors
+ */
 bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
     sqrl->Log(QString("Entering function to process [%1] root files").arg(rootfiles.size()), __FUNCTION__);
 
@@ -151,6 +163,13 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadSubjectFiles ----------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Load the files contained in the subject's directory in the BIDS object
+ * @param subjfiles list of subject files
+ * @param ID BIDS ID of this subject
+ * @param sqrl squirrel object
+ * @return true
+ */
 bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
     sqrl->Log("Entering function", __FUNCTION__);
 
@@ -213,6 +232,12 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadSessionDir ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Load the files in a session directory
+ * @param sesdir the session directory
+ * @param sqrl squirrel object
+ * @return true
+ */
 bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
 
     //sqrl->Log(QString("Entering function to load session dir [%1]").arg(sesdir), __FUNCTION__);
@@ -254,17 +279,9 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
 
                     /* get the subject index */
                     int subjectIndex = sqrl->GetSubjectIndex(ID);
-                    if (subjectIndex > -1)
-                        sqrl->Log(QString("Found subjectIndex [%1] by ID [%2]").arg(subjectIndex).arg(ID), __FUNCTION__);
-                    else
-                        sqrl->Log(QString("Unable to find subject by ID [%1]").arg(ID), __FUNCTION__);
 
                     /* check if this study exists */
                     int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
-                    if (studyIndex > -1)
-                        sqrl->Log(QString("Found studyIndex [%1] by ID [%2] and studyNum [%3]").arg(studyIndex).arg(ID).arg(studyNum), __FUNCTION__);
-                    else
-                        sqrl->Log(QString("Unable to find study by ID [%1] and studyNum [%2]").arg(ID).arg(studyNum), __FUNCTION__);
 
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
@@ -321,6 +338,12 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadParticipantFile -------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Loads the participants.tsv file
+ * @param f the path to the file
+ * @param sqrl squirrel object
+ * @return true if successful, false otherwise
+ */
 bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
     /* do we need to read the .json file? There's not much in there that isn't already specified here */
 
@@ -382,6 +405,12 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /* ----- LoadTaskFile --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Load a file containing task information
+ * @param f the file path
+ * @param sqrl squirrel object
+ * @return true if successful, false otherwise
+ */
 bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
 
     QFileInfo fi(f);

@@ -1,0 +1,65 @@
+\hypertarget{classsquirrel_image_i_o}{}\doxysection{squirrel\+Image\+IO Class Reference}
+\label{classsquirrel_image_i_o}\index{squirrelImageIO@{squirrelImageIO}}
+
+
+The \mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Image\+I\+O.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}{squirrel\+Image\+IO}} ()
+\item 
+\mbox{\hyperlink{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}{$\sim$squirrel\+Image\+IO}} ()
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a}\label{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a}} 
+bool {\bfseries Convert\+Dicom} (Q\+String filetype, Q\+String indir, Q\+String outdir, Q\+String bindir, bool gzip, Q\+String uid, Q\+String studynum, Q\+String seriesnum, Q\+String datatype, int \&numfilesconv, int \&numfilesrenamed, Q\+String \&msg)
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764}\label{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764}} 
+bool {\bfseries Is\+D\+I\+C\+O\+M\+File} (Q\+String f)
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343}\label{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343}} 
+bool {\bfseries Anonymize\+Dir} (Q\+String dir, int anonlevel, Q\+String randstr1, Q\+String randstr2, Q\+String \&msg)
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35}\label{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35}} 
+bool {\bfseries Anonymize\+Dicom\+File} (gdcm\+::\+Anonymizer \&anon, Q\+String infile, Q\+String outfile, std\+::vector$<$ gdcm\+::\+Tag $>$ const \&empty\+\_\+tags, std\+::vector$<$ gdcm\+::\+Tag $>$ const \&remove\+\_\+tags, std\+::vector$<$ std\+::pair$<$ gdcm\+::\+Tag, std\+::string $>$ $>$ const \&replace\+\_\+tags, Q\+String \&msg)
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3}\label{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3}} 
+Q\+String {\bfseries Get\+Dicom\+Modality} (Q\+String f)
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2}\label{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2}} 
+void {\bfseries Get\+File\+Type} (Q\+String f, Q\+String \&file\+Type, Q\+String \&file\+Modality, Q\+String \&file\+Patient\+ID, Q\+String \&file\+Protocol)
+\item 
+\mbox{\Hypertarget{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2}\label{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2}} 
+bool {\bfseries Get\+Image\+File\+Tags} (Q\+String f, Q\+String bindir, bool enablecsa, Q\+Hash$<$ Q\+String, Q\+String $>$ \&tags, Q\+String \&msg)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} class. 
+
+\mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} class provides functions to read image headers such as D\+I\+C\+OM, P\+A\+R/\+R\+EC, and other formats 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}\label{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}} 
+\index{squirrelImageIO@{squirrelImageIO}!squirrelImageIO@{squirrelImageIO}}
+\index{squirrelImageIO@{squirrelImageIO}!squirrelImageIO@{squirrelImageIO}}
+\doxysubsubsection{\texorpdfstring{squirrelImageIO()}{squirrelImageIO()}}
+{\footnotesize\ttfamily squirrel\+Image\+I\+O\+::squirrel\+Image\+IO (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} constructor \mbox{\Hypertarget{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}\label{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}} 
+\index{squirrelImageIO@{squirrelImageIO}!````~squirrelImageIO@{$\sim$squirrelImageIO}}
+\index{````~squirrelImageIO@{$\sim$squirrelImageIO}!squirrelImageIO@{squirrelImageIO}}
+\doxysubsubsection{\texorpdfstring{$\sim$squirrelImageIO()}{~squirrelImageIO()}}
+{\footnotesize\ttfamily squirrel\+Image\+I\+O\+::$\sim$squirrel\+Image\+IO (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} destructor 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/squirrel/src/squirrel/squirrel\+Image\+I\+O.\+h\item 
+C\+:/squirrel/src/squirrel/squirrel\+Image\+I\+O.\+cpp\end{DoxyCompactItemize}

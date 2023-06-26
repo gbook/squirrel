@@ -1,0 +1,220 @@
+\hypertarget{classsquirrel_study}{}\doxysection{squirrel\+Study Class Reference}
+\label{classsquirrel_study}\index{squirrelStudy@{squirrelStudy}}
+
+
+The study class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Study.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsquirrel_study_a0c22f2f1aaf9bd2c88e98974412b95ce}\label{classsquirrel_study_a0c22f2f1aaf9bd2c88e98974412b95ce}} 
+{\bfseries squirrel\+Study} (const \mbox{\hyperlink{classsquirrel_study}{squirrel\+Study}} \&s)
+\item 
+bool \mbox{\hyperlink{classsquirrel_study_a6c4be3c1b7b16fb970ffb4a44b1653ca}{add\+Series}} (\mbox{\hyperlink{classsquirrel_series}{squirrel\+Series}} s)
+\begin{DoxyCompactList}\small\item\em Add series to this study. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_study_aa549a680577165a41e5e505289f73a74}{add\+Analysis}} (\mbox{\hyperlink{classsquirrel_analysis}{squirrel\+Analysis}} a)
+\begin{DoxyCompactList}\small\item\em Add an analysis to this study. \end{DoxyCompactList}\item 
+qint64 \mbox{\hyperlink{classsquirrel_study_afaecab00754b6c69acc970a7c0333bf9}{Get\+Next\+Series\+Number}} ()
+\begin{DoxyCompactList}\small\item\em Get the next series number for this study. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsquirrel_study_ac57b39f8f3ba7dffbd7255836295261b}\label{classsquirrel_study_ac57b39f8f3ba7dffbd7255836295261b}} 
+void \mbox{\hyperlink{classsquirrel_study_ac57b39f8f3ba7dffbd7255836295261b}{Print\+Study}} ()
+\begin{DoxyCompactList}\small\item\em Print study details. \end{DoxyCompactList}\item 
+Q\+Json\+Object \mbox{\hyperlink{classsquirrel_study_aa6630468472212319a9fefdab8a2f38a}{To\+J\+S\+ON}} ()
+\begin{DoxyCompactList}\small\item\em Get a J\+S\+ON object for this study. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classsquirrel_study_a00bc77dc017c15ee8cb76ffd96b4e040}{number}}
+\item 
+Q\+Date\+Time \mbox{\hyperlink{classsquirrel_study_a78602266cb5f7dcbde75336dc719164b}{date\+Time}}
+\item 
+\mbox{\Hypertarget{classsquirrel_study_ab1ebbad3a8b4799ab0eafe8ccee22002}\label{classsquirrel_study_ab1ebbad3a8b4799ab0eafe8ccee22002}} 
+double {\bfseries age\+At\+Study}
+\item 
+double \mbox{\hyperlink{classsquirrel_study_aa15004ee2448406273bd7ef0b615e627}{height}}
+\item 
+double \mbox{\hyperlink{classsquirrel_study_a6d13e4230520895b1d67707747dbfdc0}{weight}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_adaa59c802cd6ebfd5433597b028b5dba}{modality}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_a94edffd5d00d2f945de490649fe5f4a2}{description}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_a354e790979a6e860ec4dc06eab94fae8}{study\+U\+ID}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_aa8db05232e1ce6addd5e185edf03cf7d}{visit\+Type}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_aca4378051edf7600772dc392d442b4de}{day\+Number}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_ad5916b41e5fb01374ca5a603d305f8a0}{time\+Point}}
+\item 
+\mbox{\Hypertarget{classsquirrel_study_a08c6e121c53a04223f681ef1dae76325}\label{classsquirrel_study_a08c6e121c53a04223f681ef1dae76325}} 
+Q\+String {\bfseries equipment}
+\item 
+Q\+List$<$ \mbox{\hyperlink{classsquirrel_series}{squirrel\+Series}} $>$ \mbox{\hyperlink{classsquirrel_study_ad3eb52823cd9d8441a0f8f04b21b3efe}{series\+List}}
+\item 
+Q\+List$<$ \mbox{\hyperlink{classsquirrel_analysis}{squirrel\+Analysis}} $>$ \mbox{\hyperlink{classsquirrel_study_a8b9c7647e1cad34e790e0f9a90e13b6d}{analysis\+List}}
+\item 
+Q\+String \mbox{\hyperlink{classsquirrel_study_a0442629bf4c6586cb34260c54b9d8c2e}{virtual\+Path}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The study class. 
+
+provides details of a study 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classsquirrel_study_aa549a680577165a41e5e505289f73a74}\label{classsquirrel_study_aa549a680577165a41e5e505289f73a74}} 
+\index{squirrelStudy@{squirrelStudy}!addAnalysis@{addAnalysis}}
+\index{addAnalysis@{addAnalysis}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{addAnalysis()}{addAnalysis()}}
+{\footnotesize\ttfamily bool squirrel\+Study\+::add\+Analysis (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsquirrel_analysis}{squirrel\+Analysis}}}]{a }\end{DoxyParamCaption})}
+
+
+
+Add an analysis to this study. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & \mbox{\hyperlink{classsquirrel_analysis}{squirrel\+Analysis}} to be added \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if analysis was added, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_study_a6c4be3c1b7b16fb970ffb4a44b1653ca}\label{classsquirrel_study_a6c4be3c1b7b16fb970ffb4a44b1653ca}} 
+\index{squirrelStudy@{squirrelStudy}!addSeries@{addSeries}}
+\index{addSeries@{addSeries}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{addSeries()}{addSeries()}}
+{\footnotesize\ttfamily bool squirrel\+Study\+::add\+Series (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classsquirrel_series}{squirrel\+Series}}}]{s }\end{DoxyParamCaption})}
+
+
+
+Add series to this study. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \mbox{\hyperlink{classsquirrel_series}{squirrel\+Series}} to be added \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if series was added, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_study_afaecab00754b6c69acc970a7c0333bf9}\label{classsquirrel_study_afaecab00754b6c69acc970a7c0333bf9}} 
+\index{squirrelStudy@{squirrelStudy}!GetNextSeriesNumber@{GetNextSeriesNumber}}
+\index{GetNextSeriesNumber@{GetNextSeriesNumber}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{GetNextSeriesNumber()}{GetNextSeriesNumber()}}
+{\footnotesize\ttfamily qint64 squirrel\+Study\+::\+Get\+Next\+Series\+Number (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get the next series number for this study. 
+
+\begin{DoxyReturn}{Returns}
+the next series number 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsquirrel_study_aa6630468472212319a9fefdab8a2f38a}\label{classsquirrel_study_aa6630468472212319a9fefdab8a2f38a}} 
+\index{squirrelStudy@{squirrelStudy}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Study\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get a J\+S\+ON object for this study. 
+
+\begin{DoxyReturn}{Returns}
+J\+S\+ON object containing the study 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classsquirrel_study_a8b9c7647e1cad34e790e0f9a90e13b6d}\label{classsquirrel_study_a8b9c7647e1cad34e790e0f9a90e13b6d}} 
+\index{squirrelStudy@{squirrelStudy}!analysisList@{analysisList}}
+\index{analysisList@{analysisList}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{analysisList}{analysisList}}
+{\footnotesize\ttfamily Q\+List$<$\mbox{\hyperlink{classsquirrel_analysis}{squirrel\+Analysis}}$>$ squirrel\+Study\+::analysis\+List}
+
+List of analyses attached to this study \mbox{\Hypertarget{classsquirrel_study_a78602266cb5f7dcbde75336dc719164b}\label{classsquirrel_study_a78602266cb5f7dcbde75336dc719164b}} 
+\index{squirrelStudy@{squirrelStudy}!dateTime@{dateTime}}
+\index{dateTime@{dateTime}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{dateTime}{dateTime}}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Study\+::date\+Time}
+
+start datetime of the study \mbox{\Hypertarget{classsquirrel_study_aca4378051edf7600772dc392d442b4de}\label{classsquirrel_study_aca4378051edf7600772dc392d442b4de}} 
+\index{squirrelStudy@{squirrelStudy}!dayNumber@{dayNumber}}
+\index{dayNumber@{dayNumber}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{dayNumber}{dayNumber}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::day\+Number}
+
+Day number for repeated studies or clinical trials. eg. 6 for \textquotesingle{}day 6\textquotesingle{} \mbox{\Hypertarget{classsquirrel_study_a94edffd5d00d2f945de490649fe5f4a2}\label{classsquirrel_study_a94edffd5d00d2f945de490649fe5f4a2}} 
+\index{squirrelStudy@{squirrelStudy}!description@{description}}
+\index{description@{description}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{description}{description}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::description}
+
+Description of the imaging study \mbox{\Hypertarget{classsquirrel_study_aa15004ee2448406273bd7ef0b615e627}\label{classsquirrel_study_aa15004ee2448406273bd7ef0b615e627}} 
+\index{squirrelStudy@{squirrelStudy}!height@{height}}
+\index{height@{height}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{height}{height}}
+{\footnotesize\ttfamily double squirrel\+Study\+::height}
+
+height in meters \mbox{\Hypertarget{classsquirrel_study_adaa59c802cd6ebfd5433597b028b5dba}\label{classsquirrel_study_adaa59c802cd6ebfd5433597b028b5dba}} 
+\index{squirrelStudy@{squirrelStudy}!modality@{modality}}
+\index{modality@{modality}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{modality}{modality}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::modality}
+
+study modality \mbox{\Hypertarget{classsquirrel_study_a00bc77dc017c15ee8cb76ffd96b4e040}\label{classsquirrel_study_a00bc77dc017c15ee8cb76ffd96b4e040}} 
+\index{squirrelStudy@{squirrelStudy}!number@{number}}
+\index{number@{number}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{number}{number}}
+{\footnotesize\ttfamily int squirrel\+Study\+::number}
+
+Unique study number. Must be unique within the subject \mbox{\Hypertarget{classsquirrel_study_ad3eb52823cd9d8441a0f8f04b21b3efe}\label{classsquirrel_study_ad3eb52823cd9d8441a0f8f04b21b3efe}} 
+\index{squirrelStudy@{squirrelStudy}!seriesList@{seriesList}}
+\index{seriesList@{seriesList}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{seriesList}{seriesList}}
+{\footnotesize\ttfamily Q\+List$<$\mbox{\hyperlink{classsquirrel_series}{squirrel\+Series}}$>$ squirrel\+Study\+::series\+List}
+
+List of series attached to this study \mbox{\Hypertarget{classsquirrel_study_a354e790979a6e860ec4dc06eab94fae8}\label{classsquirrel_study_a354e790979a6e860ec4dc06eab94fae8}} 
+\index{squirrelStudy@{squirrelStudy}!studyUID@{studyUID}}
+\index{studyUID@{studyUID}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{studyUID}{studyUID}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::study\+U\+ID}
+
+Study\+Instance\+U\+ID \mbox{\Hypertarget{classsquirrel_study_ad5916b41e5fb01374ca5a603d305f8a0}\label{classsquirrel_study_ad5916b41e5fb01374ca5a603d305f8a0}} 
+\index{squirrelStudy@{squirrelStudy}!timePoint@{timePoint}}
+\index{timePoint@{timePoint}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{timePoint}{timePoint}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::time\+Point}
+
+Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study \mbox{\Hypertarget{classsquirrel_study_a0442629bf4c6586cb34260c54b9d8c2e}\label{classsquirrel_study_a0442629bf4c6586cb34260c54b9d8c2e}} 
+\index{squirrelStudy@{squirrelStudy}!virtualPath@{virtualPath}}
+\index{virtualPath@{virtualPath}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{virtualPath}{virtualPath}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::virtual\+Path}
+
+path within the squirrel package, no leading slash \mbox{\Hypertarget{classsquirrel_study_aa8db05232e1ce6addd5e185edf03cf7d}\label{classsquirrel_study_aa8db05232e1ce6addd5e185edf03cf7d}} 
+\index{squirrelStudy@{squirrelStudy}!visitType@{visitType}}
+\index{visitType@{visitType}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{visitType}{visitType}}
+{\footnotesize\ttfamily Q\+String squirrel\+Study\+::visit\+Type}
+
+Description of the visit, eg. pre, post \mbox{\Hypertarget{classsquirrel_study_a6d13e4230520895b1d67707747dbfdc0}\label{classsquirrel_study_a6d13e4230520895b1d67707747dbfdc0}} 
+\index{squirrelStudy@{squirrelStudy}!weight@{weight}}
+\index{weight@{weight}!squirrelStudy@{squirrelStudy}}
+\doxysubsubsection{\texorpdfstring{weight}{weight}}
+{\footnotesize\ttfamily double squirrel\+Study\+::weight}
+
+weight in kg 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/squirrel/src/squirrel/squirrel\+Study.\+h\item 
+C\+:/squirrel/src/squirrel/squirrel\+Study.\+cpp\end{DoxyCompactItemize}

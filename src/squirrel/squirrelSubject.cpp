@@ -38,8 +38,8 @@ squirrelSubject::squirrelSubject() {
 /* ----- addStudy --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief subject::addStudy
- * @param s
+ * @brief Add a study to this subject
+ * @param s squirrelStudy to be added
  * @return true if added, false otherwise
  */
 bool squirrelSubject::addStudy(squirrelStudy s) {
@@ -68,8 +68,8 @@ bool squirrelSubject::addStudy(squirrelStudy s) {
 /* ----- addMeasure ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief subject::addMeasure
- * @param s
+ * @brief Add a measure to this subject
+ * @param m squirrelMeasure to be added
  * @return true if added, false otherwise
  */
 bool squirrelSubject::addMeasure(squirrelMeasure m) {
@@ -98,11 +98,11 @@ bool squirrelSubject::addMeasure(squirrelMeasure m) {
 /* ----- addDrug ---------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief subject::addDrug
- * @param s
+ * @brief Add a drug to this subject
+ * @param d squirrelDrug to be added
  * @return true if added, false otherwise
  */
-bool squirrelSubject::addDrug(squirrelDrug m) {
+bool squirrelSubject::addDrug(squirrelDrug d) {
 
 	/* check size of the drug list before and after adding */
 	qint64 size = drugList.size();
@@ -115,7 +115,7 @@ bool squirrelSubject::addDrug(squirrelDrug m) {
 
 	/* if it doesn't exist, append it */
 	if (!exists)
-		drugList.append(m);
+        drugList.append(d);
 
 	if (drugList.size() > size)
 		return true;
@@ -127,6 +127,10 @@ bool squirrelSubject::addDrug(squirrelDrug m) {
 /* ------------------------------------------------------------ */
 /* ----- GetNextStudyNumber ----------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Gets the next study number for this subject
+ * @return the next study number
+ */
 qint64 squirrelSubject::GetNextStudyNumber() {
 
     /* find the current highest study number */
@@ -143,7 +147,7 @@ qint64 squirrelSubject::GetNextStudyNumber() {
 /* ----- PrintSubject ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief subject::PrintSubject
+ * @brief Print subject details
  */
 void squirrelSubject::PrintSubject() {
 
@@ -162,6 +166,10 @@ void squirrelSubject::PrintSubject() {
 /* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get JSON object for this subject
+ * @return a JSON object containing the entire subject
+ */
 QJsonObject squirrelSubject::ToJSON() {
     QJsonObject json;
 
