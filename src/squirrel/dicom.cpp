@@ -35,11 +35,11 @@ dicom::dicom()
 /* ----- LoadToSquirrel ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
- * @brief dicom::ReadDirectory
- * @param dir
- * @param nFiles
- * @param m
- * @return
+ * @brief Recursively load DICOM files found in a directory
+ * @param dir the directory to load
+ * @param binpath path to the dcm2nii executable
+ * @param sqrl squirrel object
+ * @return true if successful, false otherwise
  */
 bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
 

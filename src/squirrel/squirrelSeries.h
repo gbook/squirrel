@@ -59,8 +59,6 @@ public:
     QStringList experimentList; /*!< List of experiment names attached to this series */
 
     QString virtualPath; /*!< path within the squirrel package, no leading slash */
-
-    //QString stagingPath; /*!< absolute path to the staging area for this series. This is also used if reading a DICOM directory */
 };
 
 #endif // SQUIRRELSERIES_H

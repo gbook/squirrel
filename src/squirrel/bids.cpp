@@ -45,7 +45,7 @@ bids::bids()
  */
 bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
-    sqrl->Log(QString("Entering function. dir [%1]").arg(dir), __FUNCTION__);
+    //sqrl->Log(QString("Entering function. dir [%1]").arg(dir), __FUNCTION__);
 
     /* check if directory exists */
     QDir d(dir);
@@ -113,7 +113,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
  * @return true if successful, false if any errors
  */
 bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
-    sqrl->Log(QString("Entering function to process [%1] root files").arg(rootfiles.size()), __FUNCTION__);
+    //sqrl->Log(QString("Entering function to process [%1] root files").arg(rootfiles.size()), __FUNCTION__);
 
     foreach (QString f, rootfiles) {
         QFileInfo fi(f);
@@ -136,7 +136,17 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
         */
 
         if (filename == "dataset_description.json") {
-            sqrl->description = ReadTextFileToString(f);
+            QString desc = ReadTextFileToString(f);
+            desc.replace("\"","");
+            desc.replace("\\\"","");
+            desc.replace("{","");
+            desc.replace("}","");
+            desc.replace(":", " : ");
+            desc.replace("\\n", "");
+            desc.replace("\\\\", "");
+            desc.replace(QRegularExpression("\\\\n"), "");
+            desc.replace(QRegularExpression("\\n"), "");
+            sqrl->description = desc;
         }
         else if ((filename == "README") || (filename == "README.md")) {
             sqrl->readme = ReadTextFileToString(f);
@@ -171,7 +181,7 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
  * @return true
  */
 bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
-    sqrl->Log("Entering function", __FUNCTION__);
+    //sqrl->Log("Entering function", __FUNCTION__);
 
     foreach (QString f, subjfiles) {
         QFileInfo fi(f);
@@ -269,11 +279,19 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
 
                     sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
 
+                    /* ignore the *events.tsv files, they'll be handled with the .nii.gz */
+                    if (f.endsWith("events.tsv")) {
+                        sqrl->Log(QString("Ignoring [%1]").arg(f), __FUNCTION__);
+                        continue;
+                    }
+
                     QString filename = QFileInfo(f).fileName();
                     filename.replace(".nii.gz", "");
                     filename.replace(".nii", "");
                     QString ID = filename.section("_", 0,0);
                     QString protocol = filename.section("_", -1);
+                    QString run = filename.section("_", -2);
+                    protocol += run;
                     int studyNum = 1;
                     qint64 seriesNum = 1;
 
@@ -311,9 +329,15 @@ bool bids::LoadSessionDir(QString sesdir, squirrel *sqrl) {
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
-                    QStringList files;
-                    files << QString(f);
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files);
+                    QStringList files2;
+                    files2.append(f);
+                    if (f.endsWith("bold.nii.gz")) {
+                        QString tf = f;
+                        tf.replace("bold.nii.gz", "events.tsv");
+                        files2.append(tf);
+                    }
+                    qDebug() << files2;
+                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "func") {
@@ -433,9 +457,9 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
     files.append(f);
     squirrelExperiment sqrlExp;
     sqrlExp.experimentName = experimentName;
-    sqrlExp.path = QString("%1/%2").arg(sqrl->GetTempDir()).arg(experimentName);
+    sqrlExp.virtualPath = QString("%1/%2").arg(sqrl->GetTempDir()).arg(experimentName);
     sqrl->AddExperimentFiles(experimentName, files);
-    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.path), __FUNCTION__);
+    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.virtualPath), __FUNCTION__);
 
     return true;
 }

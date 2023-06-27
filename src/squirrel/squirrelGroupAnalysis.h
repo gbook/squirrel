@@ -42,9 +42,7 @@ public:
     qint64 numfiles;
     qint64 size; /*!< disk size in bytes of the analysis */
 
-private:
     QString virtualPath; /*!< path within the squirrel package, no leading slash */
-
 };
 
 #endif // SQUIRRELGROUPANALYSIS_H

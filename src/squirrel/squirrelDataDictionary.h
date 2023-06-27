@@ -23,11 +23,14 @@
 #ifndef SQUIRRELDATADICTIONARY_H
 #define SQUIRRELDATADICTIONARY_H
 
+#include <QString>
 
 class squirrelDataDictionary
 {
 public:
     squirrelDataDictionary();
+
+    QString virtualPath; /*!< path within the squirrel package, no leading slash */
 };
 
 #endif // SQUIRRELDATADICTIONARY_H

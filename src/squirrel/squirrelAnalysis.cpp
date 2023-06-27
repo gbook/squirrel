@@ -60,7 +60,7 @@ QJsonObject squirrelAnalysis::ToJSON() {
 /* ----- PrintAnalysis ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrelAnalysis::PrintAnalysis
+ * @brief Print the analysis details
  */
 void squirrelAnalysis::PrintAnalysis() {
 

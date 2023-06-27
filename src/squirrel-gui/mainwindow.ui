@@ -201,8 +201,17 @@
             </item>
             <item row="1" column="1">
              <widget class="QLabel" name="lblPackageDesc">
+              <property name="maximumSize">
+               <size>
+                <width>400</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="text">
                <string/>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->subjectTree->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
     ui->experimentsTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
     ui->pipelinesTable->setStyleSheet("QHeaderView::section { background-color:#444; color: #fff}");
-
 }
 
 /**
@@ -219,11 +218,11 @@ void MainWindow::OpenPackage()
 
 	/* open a squirrel file */
 	QString filename;
-	QString m;
+    //QString m;
 	filename = QFileDialog::getOpenFileName(this, tr("Open squirrel package"), "/", tr("Squirrel packages (*.zip)"));
 	sqrl->filePath = filename;
-	bool success = sqrl->read(filename, m);
-	ui->txtOutput->appendPlainText(m);
+    bool success = sqrl->read(filename);
+    ui->txtOutput->appendPlainText(sqrl->GetLog());
 	if (success) {
 		ui->txtOutput->appendPlainText("Successfuly read squirrel file");
         ui->txtOutput->appendHtml("<span style='color: green'><b>Successfuly</b> read squirrel file</span>");
@@ -709,15 +708,12 @@ void MainWindow::AddDICOM() {
 
         /* create the dicom object to read the DICOM dir */
         dicom dcm;
-        QString m;
-        dcm.LoadToSquirrel(dicomdir, "", sqrl, m);
+        dcm.LoadToSquirrel(dicomdir, "", sqrl);
 
         QApplication::restoreOverrideCursor();
         ui->lblStatus->setText("Done reading DICOM directory");
 
         RefreshSubjectsTable();
-
-        ui->txtOutput->appendPlainText(m);
     }
 }
 

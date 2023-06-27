@@ -126,7 +126,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     QJsonObject root = d.object();
 
     /* get the package info */
-    QJsonValue pkgVal = root.value("_package");
+    QJsonValue pkgVal = root.value("package");
     QJsonObject pkgObj = pkgVal.toObject();
     description = pkgObj["description"].toString();
     datetime.fromString(pkgObj["datetime"].toString());
@@ -415,7 +415,7 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
     Log("Beginning writing of squirrel package", __FUNCTION__);
 
     /* create temp directory */
-    MakeTempDir(workingDir);
+    //MakeTempDir(workingDir);
     Log(QString("Created working directory [" + workingDir + "]"), __FUNCTION__);
 
     /* ----- 1) write data. And set the relative paths in the objects ----- */
@@ -581,7 +581,7 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
     pkgInfo["format"] = format;
     pkgInfo["version"] = version;
 
-    root["_package"] = pkgInfo;
+    root["package"] = pkgInfo;
 
     QJsonObject data;
     QJsonArray JSONsubjects;
@@ -629,7 +629,13 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
     if (!zipfile.endsWith(".zip"))
         zipfile += ".zip";
 
-    QString systemstring = "cd " + workingDir + "; zip -1rv " + zipfile + " .";
+    QString systemstring;
+    #ifdef Q_OS_WINDOWS
+        systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipfile + "\" \"" + workingDir + "/*\"");
+    #else
+        systemstring = "zip -1rv " + zipfile + ".";
+    #endif
+
     Log("Beginning zipping package...", __FUNCTION__);
     if (debug) {
         Log(SystemCommand(systemstring), __FUNCTION__);
