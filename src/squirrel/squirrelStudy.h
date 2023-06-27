@@ -47,11 +47,11 @@ public:
     QJsonObject ToJSON();
 
     /* study info */
-    int number; /*!< Unique study number. Must be unique within the subject */
+    int number = -1; /*!< Unique study number. Must be unique within the subject */
     QDateTime dateTime; /*!< start datetime of the study */
-    double ageAtStudy;
-    double height; /*!< height in meters */
-    double weight; /*!< weight in kg */
+    double ageAtStudy = 0.0;
+    double height = 0.0; /*!< height in meters */
+    double weight = 0.0; /*!< weight in kg */
     QString modality; /*!< study modality */
     QString description; /*!< Description of the imaging study */
     QString studyUID; /*!< StudyInstanceUID */

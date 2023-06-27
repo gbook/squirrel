@@ -36,7 +36,7 @@ public:
 
     bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl);
     bool LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl);
-    bool LoadSessionDir(QString sesdir, squirrel *sqrl);
+    bool LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl);
 
     bool LoadParticipantsFile(QString f, squirrel *sqrl);
     bool LoadTaskFile(QString f, squirrel *sqrl);
