@@ -144,16 +144,7 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
         */
 
         if (filename == "dataset_description.json") {
-            QString desc = ReadTextFileToString(f);
-            desc.replace("\"","");
-            desc.replace("\\\"","");
-            desc.replace("{","");
-            desc.replace("}","");
-            desc.replace(":", " : ");
-            desc.replace("\\n", "");
-            desc.replace("\\\\", "");
-            desc.replace(QRegularExpression("\\\\n"), "");
-            desc.replace(QRegularExpression("\\n"), "");
+            QString desc = CleanJSON(ReadTextFileToString(f));
             sqrl->description = desc;
         }
         else if ((filename == "README") || (filename == "README.md")) {
@@ -227,20 +218,28 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
             sqrl->AddAnalysisFiles(ID, sqrlStudy.number, "analysis", files);
             sqrl->Log(QString("Added [%1] files to analysis [%2]").arg(files.size()).arg("analysis"), __FUNCTION__);
 
-            /* not sure we need to read this file in... just copying it to analysis should be
-             * sufficient. But what is the analysis called? */
-            //QString str = ReadTextFileToString(f);
-            //indexedHash tsv;
-            //QStringList cols;
-            //QString m;
-
-            //if (ParseTSV(str, tsv, cols, m)) {
-            //    sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
-            //    for (int i=0; i<tsv.size(); i++) {
-            //        QString id = tsv[i]["participant_id"];
-            //    }
-            //}
         }
+        else if (f.endsWith("_sessions.tsv")) {
+
+            /* load this information into a hash. the second column is likely the session date
+             * ses-01 value
+             * ses-02 value
+             */
+            QString filestr = ReadTextFileToString(f);
+
+            indexedHash tsv;
+            QStringList cols;
+            QString m;
+
+            if (ParseTSV(filestr, tsv, cols, m)) {
+                sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+                for (int i=0; i<tsv.size(); i++) {
+                    QString sesid = tsv[i]["session_id"];
+                    QString datetime = tsv[i]["acq_time"];
+                }
+            }
+        }
+
     }
 
     return true;
@@ -258,9 +257,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
  */
 bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
-    //sqrl->Log(QString("Entering function to load session dir [%1]").arg(sesdir), __FUNCTION__);
-
-    /* possible directories
+    /* possible directories:
         anat
         func
         figures
@@ -271,6 +268,9 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
         micr
         motion
     */
+
+    /* for loading the JSON files containing paramaters */
+    QHash<QString, QString> params;
 
     /* get list of all dirs in this sesdir */
     QStringList sesdirs = FindAllDirs(sesdir, "*", false);
@@ -338,11 +338,8 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
             else if (dir == "func") {
                 foreach (QString f, files) {
 
-                    sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
-
                     /* ignore the *events.tsv files, they'll be handled with the .nii.gz */
                     if (f.endsWith("events.tsv")) {
-                        sqrl->Log(QString("Ignoring [%1]. It will be added later.").arg(f), __FUNCTION__);
                         continue;
                     }
 
@@ -402,15 +399,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                 }
             }
             else if (dir == "pet") {
-                int studyNum = -1;
-
                 foreach (QString f, files) {
 
-                    //sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
+                    if (f.endsWith("pet.json"))
+                        params = sqrl->ReadParamsFile(f);
 
-                    /* ignore the *.json files, they'll be handled with the .nii.gz later */
+                    /* ignore the *.json and event.tsv files, they'll be handled with the .nii.gz later */
                     if ((f.endsWith("pet.json")) || (f.endsWith("events.tsv")) || (f.endsWith("events.json"))) {
-                        sqrl->Log(QString("Ignoring [%1]. It will be added later").arg(f), __FUNCTION__);
                         continue;
                     }
 
@@ -421,7 +416,6 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     QString protocol = filename.section("_", -1);
                     QString run = filename.section("_", -2);
                     QString visit = filename.section("_", 1, 1);
-                    protocol += run;
                     int subjectIndex = sqrl->GetSubjectIndex(ID);
                     if (studyNum < 0)
                         studyNum = 1;
@@ -437,6 +431,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
+                        series.params = params;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
                             sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
@@ -451,6 +446,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
+                        series.params = params;
                         study2.addSeries(series);
 
                         /* add the study to the subject */
@@ -474,18 +470,222 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
-            else if (dir == "figures") {
+            else if (dir == "micr") {
+                foreach (QString f, files) {
+
+                    if (f.endsWith("SEM.json"))
+                        params = sqrl->ReadParamsFile(f);
+
+                    /* ignore the *.json and event.tsv files, they'll be handled with the .nii.gz later */
+                    if ((f.endsWith("micr.json")) || (f.endsWith("events.tsv")) || (f.endsWith("events.json"))) {
+                        continue;
+                    }
+
+                    QString filename = QFileInfo(f).fileName();
+                    QString ID = filename.section("_", 0,0);
+                    QString protocol = filename.section("_", -1);
+                    QString run = filename.section("_", -2);
+                    QString visit = filename.section("_", 1, 1);
+                    int subjectIndex = sqrl->GetSubjectIndex(ID);
+                    if (studyNum < 0)
+                        studyNum = 1;
+                    qint64 seriesNum = 1;
+
+                    /* check if this study exists */
+                    int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
+
+                    if (studyIndex > -1) {
+                        /* study exists, so let's add a series to it */
+                        seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
+                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    }
+                    else {
+                        /* study doesn't exist, so create it */
+                        squirrelStudy study2;
+                        study2.number = studyNum;
+                        study2.modality = "MICR";
+                        study2.visitType = visit;
+
+                        /* create the series and add it to the study */
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        study2.addSeries(series);
+
+                        /* add the study to the subject */
+                        if (!sqrl->subjectList[subjectIndex].addStudy(study2))
+                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                    }
+
+                    /* now that the subject/study/series exist, add the file(s) */
+                    QStringList files2;
+                    files2.append(f);
+                    if (f.endsWith("pet.nii.gz")) {
+                        /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
+                        QString tf = f;
+                        tf.replace("pet.nii.gz", "pet.json");
+                        files2.append(tf);
+                        tf.replace("pet.json", "events.json");
+                        files2.append(tf);
+                        tf.replace("events.json", "events.tsv");
+                        files2.append(tf);
+                    }
+                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                }
+            }
+            else if (dir == "motion") {
+                /* just copy all the files into the study */
+                foreach (QString f, files) {
+
+                    if (f.endsWith("motion.json"))
+                        params = sqrl->ReadParamsFile(f);
+
+                    /* ignore some files here, they'll be handled with the _motion.tsv file later on */
+                    if ( (f.endsWith("channels.tsv")) || (f.endsWith("motion.json")) ) {
+                        continue;
+                    }
+
+                    QString filename = QFileInfo(f).fileName();
+                    filename.replace("_motion.tsv", "");
+                    QString ID = filename.section("_", 0,0); /* first part after splitting by _ */
+                    QString protocol = filename.section("_", 2, 2); /* second part after splitting by _ */
+                    QString run = filename.section("_", -2);
+                    QString visit = filename.section("_", 1, 1);
+                    int subjectIndex = sqrl->GetSubjectIndex(ID);
+                    if (studyNum < 0)
+                        studyNum = 1;
+                    qint64 seriesNum = 1;
+
+                    /* check if this study exists */
+                    int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
+
+                    if (studyIndex > -1) {
+                        /* study exists, so let's add a series to it */
+                        seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
+                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    }
+                    else {
+                        /* study doesn't exist, so create it */
+                        squirrelStudy study2;
+                        study2.number = studyNum;
+                        study2.modality = "MOTION";
+                        study2.visitType = visit;
+
+                        /* create the series and add it to the study */
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        study2.addSeries(series);
+
+                        /* add the study to the subject */
+                        if (!sqrl->subjectList[subjectIndex].addStudy(study2))
+                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                    }
+
+                    /* now that the subject/study/series exist, add the file(s) */
+                    QStringList files2;
+                    if (f.endsWith("motion.tsv")) {
+                        /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
+                        QString tf = f;
+                        tf.replace("motion.tsv", "channels.tsv");
+                        files2.append(tf);
+                        tf.replace("channels.tsv", "motion.json");
+                        files2.append(tf);
+                    }
+                    files2.append(f);
+                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                }
+            }
+            else if (dir == "eeg") {
+                /* just copy all the files into the study */
+                foreach (QString f, files) {
+
+                    if (f.endsWith("eeg.json"))
+                        params = sqrl->ReadParamsFile(f);
+
+                    /* the only file we care about is the *.edf. All other files will be handled later on */
+                    if ( (f.endsWith("channels.tsv")) || (f.endsWith("eeg.json")) || (f.endsWith("events.tsv")) ) {
+                        continue;
+                    }
+
+                    QString filename = QFileInfo(f).fileName();
+                    filename.replace("_eeg.edf", "");
+                    QString ID = filename.section("_", 0,0); /* first part after splitting by _ */
+                    QString protocol = filename.section("_", 2, 2); /* second part after splitting by _ */
+                    QString run = filename.section("_", -2);
+                    QString visit = filename.section("_", 1, 1);
+                    int subjectIndex = sqrl->GetSubjectIndex(ID);
+                    if (studyNum < 0)
+                        studyNum = 1;
+                    qint64 seriesNum = 1;
+
+                    /* check if this study exists */
+                    int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
+
+                    if (studyIndex > -1) {
+                        /* study exists, so let's add a series to it */
+                        seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
+                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    }
+                    else {
+                        /* study doesn't exist, so create it */
+                        squirrelStudy study2;
+                        study2.number = studyNum;
+                        study2.modality = "MOTION";
+                        study2.visitType = visit;
+
+                        /* create the series and add it to the study */
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        study2.addSeries(series);
+
+                        /* add the study to the subject */
+                        if (!sqrl->subjectList[subjectIndex].addStudy(study2))
+                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                    }
+
+                    /* now that the subject/study/series exist, add the file(s) */
+                    QStringList files2;
+                    if (f.endsWith("eed.edf")) {
+                        /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
+                        QString tf = f;
+                        tf.replace("eeg.edf", "channels.tsv");
+                        files2.append(tf);
+                        tf.replace("channels.tsv", "eeg.json");
+                        files2.append(tf);
+                        tf.replace("eeg.json", "events.tsv");
+                        files2.append(tf);
+                    }
+                    files2.append(f);
+                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                }
             }
             else {
             }
         }
     }
-
-    /* for each scan... */
-    /* map the BIDS thing to an actual modality: MapBIDStoModality() */
-    /* parse the file names --> protocol and run/series number */
-    /* read the .json file for all the parameters --> params.json, modality, maybe other info */
-    /* the real modalitity might be in one of the .json files */
 
     return true;
 }

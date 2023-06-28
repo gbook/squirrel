@@ -991,6 +991,27 @@ bool ParseTSV(QString tsv, indexedHash &table, QStringList &columns, QString &ms
 
 
 /* ---------------------------------------------------------- */
+/* --------- CleanJSON -------------------------------------- */
+/* ---------------------------------------------------------- */
+QString CleanJSON(QString s) {
+    s.replace("\"","");
+    s.replace("\\\"","");
+    s.replace("{","");
+    s.replace("}","");
+    s.replace(":", " : ");
+    s.replace("\\n", "");
+    s.replace("\\t", "");
+    s.replace("\\\\", "");
+    s.replace(QRegularExpression("\\\\n"), "");
+    s.replace(QRegularExpression("\\n"), "");
+    s.replace(QRegularExpression("\\\\t"), "");
+    s.replace(QRegularExpression("\\t"), "");
+
+    return s;
+}
+
+
+/* ---------------------------------------------------------- */
 /* --------- WriteTextFile ---------------------------------- */
 /* ---------------------------------------------------------- */
 bool WriteTextFile(QString filepath, QString str, bool append) {

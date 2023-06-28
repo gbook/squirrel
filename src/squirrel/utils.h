@@ -65,7 +65,7 @@ bool IsNumber(QString s);
 QString WrapText(QString s, int col);
 bool ParseCSV(QString csv, indexedHash &table, QStringList &columns, QString &msg);
 bool ParseTSV(QString tsv, indexedHash &table, QStringList &columns, QString &msg);
-
+QString CleanJSON(QString s);
 double GetPatientAge(QString PatientAgeStr, QString StudyDate, QString PatientBirthDate);
 
 /* math */

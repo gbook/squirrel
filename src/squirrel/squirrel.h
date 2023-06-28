@@ -116,6 +116,9 @@ public:
     bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
     bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
 
+    /* functions to read special files */
+    QHash<QString, QString> ReadParamsFile(QString f);
+
     /* logging */
     void Log(QString s, QString func);
     QString GetLog() { return log; }

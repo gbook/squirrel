@@ -201,23 +201,24 @@ bool squirrel::read(QString filepath, bool validateOnly) {
                 sqrlSeries.numBehFiles = jsonSeries["behNumFiles"].toInteger();
 
                 /* read any params from the data/Subject/Study/Series/params.json file */
-                QString jsonStr2;
-                QFile file;
-                file.setFileName(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
-                file.open(QIODevice::ReadOnly | QIODevice::Text);
-                jsonStr2 = file.readAll();
-                file.close();
+                //QString jsonStr2;
+                //QFile file;
+                //file.setFileName(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
+                //file.open(QIODevice::ReadOnly | QIODevice::Text);
+                //jsonStr2 = file.readAll();
+                //file.close();
 
                 /* get the JSON document and root object */
-                QJsonDocument d = QJsonDocument::fromJson(jsonStr2.toUtf8());
+                //QJsonDocument d = QJsonDocument::fromJson(jsonStr2.toUtf8());
 
-                QHash<QString, QString> tags;
+                //QHash<QString, QString> tags;
 
-                QJsonObject json = d.object();
-                foreach(const QString& key, json.keys()) {
-                    tags[key] = json.value(key).toString();
-                }
-                sqrlSeries.params = tags;
+                //QJsonObject json = d.object();
+                //foreach(const QString& key, json.keys()) {
+                //    tags[key] = json.value(key).toString();
+                //}
+
+                sqrlSeries.params = ReadParamsFile(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
 
                 /* add this series to the study */
                 sqrlStudy.addSeries(sqrlSeries);
@@ -1502,4 +1503,34 @@ bool squirrel::AddExperimentFiles(QString experimentName, QStringList files, QSt
     }
 
     return true;
+}
+
+/* ------------------------------------------------------------ */
+/* ----- ReadParamsFile --------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Reads a JSON key/value pair file into a hash
+ * @param f JSON file
+ * @return list of key/value pairs
+ */
+QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
+
+    QString jsonStr;
+    QFile file;
+    file.setFileName(f);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    jsonStr = file.readAll();
+    file.close();
+
+    /* get the JSON document and root object */
+    QJsonDocument d = QJsonDocument::fromJson(jsonStr.toUtf8());
+
+    QHash<QString, QString> tags;
+
+    QJsonObject json = d.object();
+    foreach(const QString& key, json.keys()) {
+        tags[key] = json.value(key).toString();
+    }
+    return tags;
+
 }

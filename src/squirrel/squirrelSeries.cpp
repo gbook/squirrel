@@ -27,9 +27,9 @@ squirrelSeries::squirrelSeries()
 {
 	number = 0;
 	dateTime = QDateTime::currentDateTime();
-	seriesUID = "Uninitialized";
-	description = "Uninitialized";
-	protocol = "Uninitialized";
+    seriesUID = "";
+    description = "";
+    protocol = "";
 	numFiles = 0;
 	size = 0;
 	numBehFiles = 0;
