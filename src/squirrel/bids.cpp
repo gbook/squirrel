@@ -232,7 +232,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
             QString m;
 
             if (ParseTSV(filestr, tsv, cols, m)) {
-                sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+                //sqrl->Log(QString("Successfuly read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
                 for (int i=0; i<tsv.size(); i++) {
                     QString sesid = tsv[i]["session_id"];
                     QString datetime = tsv[i]["acq_time"];
@@ -346,9 +346,10 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     QString filename = QFileInfo(f).fileName();
                     filename.replace(".nii.gz", "");
                     filename.replace(".nii", "");
+                    filename.replace(".tsv.gz", "");
                     QString ID = filename.section("_", 0,0);
-                    QString protocol = filename.section("_", -1);
-                    QString run = filename.section("_", -2);
+                    QString protocol = filename.section("_", 2, 2);
+                    QString run = filename.section("_", -1);
                     QString visit = filename.section("_", 1, 1);
                     protocol += run;
                     int subjectIndex = sqrl->GetSubjectIndex(ID);
@@ -682,7 +683,62 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
+            else if (dir == "beh") {
+                /* just copy all the files into the study */
+                foreach (QString f, files) {
+
+                    QString filename = QFileInfo(f).fileName();
+                    filename.replace("_eeg.edf", "");
+                    QString ID = filename.section("_", 0,0); /* first part after splitting by _ */
+                    QString protocol = filename.section("_", 2, 2); /* second part after splitting by _ */
+                    QString run = filename.section("_", -2);
+                    QString visit = filename.section("_", 1, 1);
+                    int subjectIndex = sqrl->GetSubjectIndex(ID);
+                    if (studyNum < 0)
+                        studyNum = 1;
+                    qint64 seriesNum = 1;
+
+                    /* check if this study exists */
+                    int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
+
+                    if (studyIndex > -1) {
+                        /* study exists, so let's add a series to it */
+                        seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
+                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    }
+                    else {
+                        /* study doesn't exist, so create it */
+                        squirrelStudy study2;
+                        study2.number = studyNum;
+                        study2.modality = "TASK";
+                        study2.visitType = visit;
+
+                        /* create the series and add it to the study */
+                        squirrelSeries series;
+                        series.number = seriesNum;
+                        series.protocol = protocol;
+                        series.params = params;
+                        study2.addSeries(series);
+
+                        /* add the study to the subject */
+                        if (!sqrl->subjectList[subjectIndex].addStudy(study2))
+                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                    }
+
+                    /* now that the subject/study/series exist, add the file(s) */
+                    QStringList files2;
+                    files2.append(f);
+                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                }
+            }
             else {
+                sqrl->Log(QString("'modality' directory [%1] not handled yet").arg(dir), __FUNCTION__);
             }
         }
     }
@@ -710,7 +766,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
     QString m;
 
     if (ParseTSV(file, tsv, cols, m)) {
-        sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+        //sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
         for (int i=0; i<tsv.size(); i++) {
             QString id = tsv[i]["participant_id"];
             QString age = tsv[i]["age"];
@@ -773,6 +829,7 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
     QString filename = fi.fileName();
     filename.replace("task-", "");
     filename.replace(".json", "");
+    filename.replace(".tsv", "");
     filename.replace("_events", "");
     filename.replace("_bold", "");
     QString str = ReadTextFileToString(f);
@@ -789,7 +846,8 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
     files.append(f);
     squirrelExperiment sqrlExp;
     sqrlExp.experimentName = experimentName;
-    sqrlExp.virtualPath = QString("%1/%2").arg(sqrl->GetTempDir()).arg(experimentName);
+    sqrlExp.virtualPath = QString("%1/experiments/%2").arg(sqrl->GetTempDir()).arg(experimentName);
+    sqrl->experimentList.append(sqrlExp);
     sqrl->AddExperimentFiles(experimentName, files);
     sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.virtualPath), __FUNCTION__);
 

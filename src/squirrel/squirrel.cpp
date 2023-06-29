@@ -607,6 +607,7 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
     }
 
     /* add experiments */
+    Log(QString("Adding [%1] experiments to JSON file").arg(experimentList.size()), __FUNCTION__);
     if (experimentList.size() > 0) {
         QJsonArray JSONexperiments;
         for (int i=0; i < experimentList.size(); i++) {
@@ -732,6 +733,18 @@ void squirrel::print() {
             squirrelDrug drug = sub.drugList[j];
             drug.PrintDrug();
         }
+    }
+
+    /* iterate through pipelines */
+    for (int i=0; i < pipelineList.size(); i++) {
+        squirrelPipeline pipe = pipelineList[i];
+        pipe.PrintPipeline();
+    }
+
+    /* iterate through experiments */
+    for (int i=0; i < experimentList.size(); i++) {
+        squirrelExperiment exp = experimentList[i];
+        exp.PrintExperiment();
     }
 }
 
