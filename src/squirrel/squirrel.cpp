@@ -407,7 +407,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
  *                  - 'seq' - Use sequentially generated numbers for series directories
  * @return true if package was successfully written, false otherwise
  */
-bool squirrel::write(QString outpath, QString &filepath, bool debug) {
+bool squirrel::write(QString outpath, QString &filepath) {
 
     /* create the log file */
     QFileInfo finfo(outpath);
@@ -639,13 +639,7 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
     #endif
 
     Log("Beginning zipping package...", __FUNCTION__);
-    if (debug) {
-        Log(SystemCommand(systemstring), __FUNCTION__);
-    }
-    else {
-        SystemCommand(systemstring, false);
-    }
-
+    SystemCommand(systemstring, false);
     Log("Finished zipping package...", __FUNCTION__);
 
     if (FileExists(zipfile)) {
@@ -662,6 +656,7 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
     }
     else {
         Log("Error creating zip file [" + zipfile + "]", __FUNCTION__);
+        return false;
     }
 
     return true;

@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
             /* 2) write the squirrel file */
             QString m2;
             QString filepath;
-            sqrl->write(paramOutputFile, filepath, debug);
+            sqrl->write(paramOutputFile, filepath);
 
             delete dcm;
             delete sqrl;

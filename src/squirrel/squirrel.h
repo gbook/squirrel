@@ -48,7 +48,7 @@ public:
     ~squirrel();
 
     bool read(QString filename, bool validateOnly=false);
-    bool write(QString outpath, QString &filepath, bool debug=false);
+    bool write(QString outpath, QString &filepath);
     bool validate();
     void print();
 
