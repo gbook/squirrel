@@ -24,13 +24,33 @@
 #define SQUIRRELDATADICTIONARY_H
 
 #include <QString>
+#include <QJsonObject>
+#include <QJsonArray>
+
+struct dataDictionaryItem {
+    QString type;
+    QString variableName;
+    QString desc;
+    QString keyValue; /*!< 'key1=value2, key2=value2' ... example '1=Male, 2=Female' */
+    int expectedTimepoints; /*!< expected number of timepoints */
+    double rangeLow; /*!< for numeric values, the lower limit */
+    double rangeHigh; /*!< for numeric values, the higher limit */
+};
 
 class squirrelDataDictionary
 {
 public:
     squirrelDataDictionary();
 
-    QString virtualPath; /*!< path within the squirrel package, no leading slash */
+    QJsonObject ToJSON();
+    void PrintDataDictionary();
+
+    QList<dataDictionaryItem> dictItems; /*!< List of data dictionary items */
+
+    qint64 numfiles;
+    qint64 size; /*!< disk size in bytes of the data dictionary */
+
+    QString virtualPath = "data-dictionary"; /*!< path within the squirrel package, no leading slash */
 };
 
 #endif // SQUIRRELDATADICTIONARY_H

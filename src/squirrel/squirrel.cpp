@@ -548,9 +548,9 @@ bool squirrel::write(QString outpath, QString &filepath, bool debug) {
 
                 /* get the number of files and size of the series */
                 qint64 c(0), b(0);
-                Log(QString("Running GetDirSizeAndFileCount() on [%1]").arg(seriesPath), __FUNCTION__);
+                //Log(QString("Running GetDirSizeAndFileCount() on [%1]").arg(seriesPath), __FUNCTION__);
                 GetDirSizeAndFileCount(seriesPath, c, b, false);
-                Log(QString("GetDirSizeAndFileCount() found  [%1] files   [%2] bytes").arg(c).arg(b), __FUNCTION__);
+                //Log(QString("GetDirSizeAndFileCount() found  [%1] files   [%2] bytes").arg(c).arg(b), __FUNCTION__);
                 subjectList[i].studyList[j].seriesList[k].numFiles = c;
                 subjectList[i].studyList[j].seriesList[k].size = b;
 

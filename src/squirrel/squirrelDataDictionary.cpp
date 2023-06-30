@@ -27,3 +27,53 @@ squirrelDataDictionary::squirrelDataDictionary()
 {
 
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- ToJSON ----------------------------------------------- */
+/* ------------------------------------------------------------ */
+QJsonObject squirrelDataDictionary::ToJSON() {
+
+    QJsonObject json;
+
+    QJsonArray jsonItems;
+    foreach (dataDictionaryItem item, dictItems) {
+        QJsonObject jsonItem;
+        jsonItem["type"] = item.type;
+        jsonItem["variableName"] = item.variableName;
+        jsonItem["desc"] = item.desc;
+        jsonItem["keyValue"] = item.keyValue;
+        jsonItem["expectedTimepoints"] = item.expectedTimepoints;
+        jsonItem["rangeLow"] = item.rangeLow;
+        jsonItem["rangeHigh"] = item.rangeHigh;
+        jsonItems.append(jsonItem);
+    }
+
+    json["numfiles"] = numfiles;
+    json["size"] = size;
+    json["virtualPath"] = virtualPath;
+    json["data-dictionary-items"] = jsonItems;
+
+    return json;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintDataDictionary ---------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelDataDictionary::PrintDataDictionary
+ */
+void squirrelDataDictionary::PrintDataDictionary() {
+
+    Print("\t----- DATADICTIONARY ------");
+    Print(QString("\tNumFiles: %1").arg(numfiles));
+    Print(QString("\tSize: %1").arg(size));
+    Print(QString("\tVirtualPath: %1").arg(virtualPath));
+
+    int i = 0;
+    foreach (dataDictionaryItem item, dictItems) {
+        Print(QString("\tItem [%1]\ttype [%2]\tvariableName [%3]\ttype [%4]\ttype [%5]\ttype [%6]\ttype [%7]\ttype [%8]").arg(i).arg(item.type).arg(item.variableName).arg(item.desc).arg(item.keyValue).arg(item.expectedTimepoints).arg(item.rangeLow).arg(item.rangeHigh));
+        i++;
+    }
+}
