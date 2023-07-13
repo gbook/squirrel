@@ -224,8 +224,8 @@ void MainWindow::OpenPackage()
     bool success = sqrl->read(filename);
     ui->txtOutput->appendPlainText(sqrl->GetLog());
 	if (success) {
-		ui->txtOutput->appendPlainText("Successfuly read squirrel file");
-        ui->txtOutput->appendHtml("<span style='color: green'><b>Successfuly</b> read squirrel file</span>");
+		ui->txtOutput->appendPlainText("Successfully read squirrel file");
+        ui->txtOutput->appendHtml("<span style='color: green'><b>Successfully</b> read squirrel file</span>");
 	}
 	else {
 		ui->txtOutput->appendPlainText("Unable to read squirrel file");

@@ -232,7 +232,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
             QString m;
 
             if (ParseTSV(filestr, tsv, cols, m)) {
-                //sqrl->Log(QString("Successfuly read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+                //sqrl->Log(QString("Successfully read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
                 for (int i=0; i<tsv.size(); i++) {
                     QString sesid = tsv[i]["session_id"];
                     QString datetime = tsv[i]["acq_time"];
@@ -269,7 +269,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
         motion
     */
 
-    /* for loading the JSON files containing paramaters */
+    /* for loading the JSON files containing parameters */
     QHash<QString, QString> params;
 
     /* get list of all dirs in this sesdir */
