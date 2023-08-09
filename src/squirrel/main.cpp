@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
         }
         else {
             dicom *dcm = new dicom();
-            squirrel *sqrl = new squirrel();
+            squirrel *sqrl = new squirrel(debug);
             sqrl->dataFormat = paramOutputDataFormat;
             sqrl->subjectDirFormat = paramOutputDirFormat;
             sqrl->studyDirFormat = paramOutputDirFormat;
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
             dcm->LoadToSquirrel(paramInput, bindir, sqrl);
 
             /* 2) write the squirrel file */
-            QString m2;
+            //QString m2;
             QString filepath;
             sqrl->write(paramOutputFile, filepath);
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
             }
 
             /* create a squirrel object */
-            squirrel *sqrl = new squirrel();
+            squirrel *sqrl = new squirrel(debug);
 
             /* create a BIDS object, and start reading the directory */
             bids *bds = new bids();
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
             /* save the squirrel object */
             QString outpath;
             sqrl->filePath = outputfile;
-            sqrl->print();
+            //sqrl->print();
             sqrl->write(paramInput, outpath);
         }
     }

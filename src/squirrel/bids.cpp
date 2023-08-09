@@ -45,38 +45,38 @@ bids::bids()
  */
 bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
-    //sqrl->Log(QString("Entering function. dir [%1]").arg(dir), __FUNCTION__);
+    sqrl->Log(QString("Loading BIDS from [%1]").arg(dir), __FUNCTION__);
 
     /* check if directory exists */
     QDir d(dir);
     if (!d.exists()) {
-        sqrl->Log(QString("Directory [%1] does not exist").arg(dir), __FUNCTION__);
+        sqrl->Log(QString("Error. Directory [%1] does not exist").arg(dir), __FUNCTION__);
         return false;
     }
 
     /* check for all .json files in the root directory */
     QStringList rootfiles = FindAllFiles(dir, "*", false);
-    sqrl->Log(QString("Found [%1] root files matching '%2/*'").arg(rootfiles.size()).arg(dir), __FUNCTION__);
+    sqrl->Log(QString("Found [%1] root files matching '%2/*'").arg(rootfiles.size()).arg(dir), __FUNCTION__, true);
     LoadRootFiles(rootfiles, sqrl);
 
     /* get list of directories in the root named 'sub-*' */
     QStringList subjdirs = FindAllDirs(dir, "sub-*", false);
 
-    sqrl->Log(QString("Found [%1] subject directories matching '%2/sub-*'").arg(subjdirs.size()).arg(dir), __FUNCTION__);
+    sqrl->Log(QString("Found [%1] subject directories matching '%2/sub-*'").arg(subjdirs.size()).arg(dir), __FUNCTION__, true);
     foreach (QString subjdir, subjdirs) {
 
         QString subjpath = QString("%1/%2").arg(dir).arg(subjdir);
 
         /* get all the FILES inside of the subject directory */
         QStringList subjfiles = FindAllFiles(subjpath, "*", false);
-        sqrl->Log(QString("Found [%1] subject root files matching '%2/*'").arg(subjfiles.size()).arg(subjdir), __FUNCTION__);
+        sqrl->Log(QString("Found [%1] subject root files matching '%2/*'").arg(subjfiles.size()).arg(subjdir), __FUNCTION__, true);
 
         QString ID = subjdir;
         LoadSubjectFiles(subjfiles, subjdir, sqrl);
 
         /* get a list of ses-* DIRS, if there are any */
         QStringList sesdirs = FindAllDirs(subjpath, "ses-*", false);
-        sqrl->Log(QString("Found [%1] session directories matching '%2/ses-*'").arg(sesdirs.size()).arg(subjdir), __FUNCTION__);
+        sqrl->Log(QString("Found [%1] session directories matching '%2/ses-*'").arg(sesdirs.size()).arg(subjdir), __FUNCTION__, true);
         if (sesdirs.size() > 0) {
             foreach (QString sesdir, sesdirs) {
                 /* each session will become its own study */
@@ -84,7 +84,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
                 int subjectIndex = sqrl->GetSubjectIndex(subjdir);
                 int studyNum = sqrl->subjectList[subjectIndex].GetNextStudyNumber();
 
-                sqrl->Log(QString("Loading session path [%1] into study [%2]").arg(sespath).arg(studyNum), __FUNCTION__);
+                sqrl->Log(QString("Loading session path [%1] into study [%2]").arg(sespath).arg(studyNum), __FUNCTION__, true);
 
                 LoadSessionDir(sespath, studyNum, sqrl);
             }
@@ -121,7 +121,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
  * @return true if successful, false if any errors
  */
 bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
-    //sqrl->Log(QString("Entering function to process [%1] root files").arg(rootfiles.size()), __FUNCTION__);
+    sqrl->Log(QString("Loading [%1] files from the BIDS root directory").arg(rootfiles.size()), __FUNCTION__);
 
     foreach (QString f, rootfiles) {
         QFileInfo fi(f);
@@ -180,7 +180,7 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
  * @return true
  */
 bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
-    //sqrl->Log("Entering function", __FUNCTION__);
+    sqrl->Log(QString("Loading subject [%1] files for ID [%2]").arg(subjfiles.size()).arg(ID), __FUNCTION__);
 
     foreach (QString f, subjfiles) {
         QFileInfo fi(f);
@@ -256,6 +256,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
  * @return true
  */
 bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
+    sqrl->Log(QString("Reading BIDS session directory [%1] --> into squirrel study [%2]").arg(sesdir).arg(studyNum), __FUNCTION__);
 
     /* possible directories:
         anat
@@ -274,18 +275,18 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
     /* get list of all dirs in this sesdir */
     QStringList sesdirs = FindAllDirs(sesdir, "*", false);
-    sqrl->Log(QString("Found [%1] directories in [%2/*]").arg(sesdirs.size()).arg(sesdir), __FUNCTION__);
+    sqrl->Log(QString("Found [%1] directories in [%2/*]").arg(sesdirs.size()).arg(sesdir), __FUNCTION__, true);
     if (sesdirs.size() > 0) {
         foreach (QString dir, sesdirs) {
             QString datadir = QString("%1/%2").arg(sesdir).arg(dir);
             QStringList files = FindAllFiles(datadir, "*", false);
-            sqrl->Log(QString("Found [%1] files in '%2'").arg(files.size()).arg(datadir), __FUNCTION__);
+            sqrl->Log(QString("Found [%1] files in '%2'").arg(files.size()).arg(datadir), __FUNCTION__, true);
 
             /* now do something with the files, depending on what they are */
             if ((dir == "anat") || (dir == "fmap") || (dir == "perf")) {
                 foreach (QString f, files) {
 
-                    sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
+                    sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__, true);
 
                     QString filename = QFileInfo(f).fileName();
                     filename.replace(".nii.gz", "");
@@ -304,12 +305,12 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error. Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -326,7 +327,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error. Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -363,12 +364,12 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error. Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -385,7 +386,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error. Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -428,13 +429,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         series.params = params;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error. Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -452,7 +453,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error. Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -498,13 +499,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         series.params = params;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error. Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -522,7 +523,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error. Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -570,13 +571,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         series.params = params;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error: Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -594,7 +595,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error: Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -640,13 +641,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         series.params = params;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error: Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -664,7 +665,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error: Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -704,13 +705,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     if (studyIndex > -1) {
                         /* study exists, so let's add a series to it */
                         seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__);
+                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
                         squirrelSeries series;
                         series.number = seriesNum;
                         series.protocol = protocol;
                         series.params = params;
                         if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                            sqrl->Log(QString("Error: Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
                     }
                     else {
                         /* study doesn't exist, so create it */
@@ -728,7 +729,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
 
                         /* add the study to the subject */
                         if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Unable to add study!", __FUNCTION__);
+                            sqrl->Log("Error: Unable to add study!", __FUNCTION__);
                     }
 
                     /* now that the subject/study/series exist, add the file(s) */
@@ -738,7 +739,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                 }
             }
             else {
-                sqrl->Log(QString("'modality' directory [%1] not handled yet").arg(dir), __FUNCTION__);
+                sqrl->Log(QString("Notice! modality directory [%1] not handled yet").arg(dir), __FUNCTION__);
             }
         }
     }
@@ -758,6 +759,8 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
  */
 bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
     /* do we need to read the .json file? There's not much in there that isn't already specified here */
+
+    sqrl->Log(QString("Reading participants file [%1]").arg(f), __FUNCTION__);
 
     QString file = ReadTextFileToString(f);
 
@@ -807,7 +810,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
         }
     }
     else {
-        sqrl->Log(QString("Error reading tsv file [%1] message [%2]").arg(f).arg(m), __FUNCTION__);
+        sqrl->Log(QString("Error: Unable to read .tsv file [%1] message [%2]").arg(f).arg(m), __FUNCTION__);
     }
 
     return true;
@@ -824,6 +827,8 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
  * @return true if successful, false otherwise
  */
 bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
+
+    sqrl->Log(QString("Reading task file [%1]").arg(f), __FUNCTION__);
 
     QFileInfo fi(f);
     QString filename = fi.fileName();
@@ -849,7 +854,7 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
     sqrlExp.virtualPath = QString("%1/experiments/%2").arg(sqrl->GetTempDir()).arg(experimentName);
     sqrl->experimentList.append(sqrlExp);
     sqrl->AddExperimentFiles(experimentName, files);
-    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.virtualPath), __FUNCTION__);
+    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.virtualPath), __FUNCTION__, true);
 
     return true;
 }
