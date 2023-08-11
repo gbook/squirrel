@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         }
         else {
             /* create squirrel object and validate */
-            squirrel *sqrl = new squirrel();
+            squirrel *sqrl = new squirrel(debug);
             if (sqrl->read(paramInput, true)) {
                 sqrl->Log("Valid squirrel file", __FUNCTION__);
             }

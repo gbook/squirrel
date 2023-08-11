@@ -1373,7 +1373,8 @@ QString squirrel::GetTempDir() {
  * @param dbg is this is a debug message, to be displayed only if debug is enabled at the command line
  */
 void squirrel::Log(QString s, QString func, bool dbg) {
-    if ((!debug) || (debug && dbg)) {
+    //Print(QString("debug[%1]  dbg [%2]").arg(debug).arg(dbg));
+    if (debug != dbg) {
         if (s.trimmed() != "") {
             log.append(QString("%1() %2\n").arg(func).arg(s));
             Print(QString("%1() %2").arg(func).arg(s));
