@@ -44,7 +44,7 @@
 class squirrel
 {
 public:
-    squirrel();
+    squirrel(bool dbg=false);
     ~squirrel();
 
     bool read(QString filename, bool validateOnly=false);
@@ -120,8 +120,9 @@ public:
     QHash<QString, QString> ReadParamsFile(QString f);
 
     /* logging */
-    void Log(QString s, QString func);
+    void Log(QString s, QString func, bool dbg=false);
     QString GetLog() { return log; }
+    bool GetDebug() { return debug; }
 
 private:
     void PrintPackage();
@@ -131,6 +132,7 @@ private:
     QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */
     QString log;
 
+    bool debug;
 	bool isValid;
 	bool isOkToDelete;
 };

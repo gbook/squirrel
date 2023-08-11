@@ -30,7 +30,7 @@
 /**
  * @brief squirrel::squirrel
  */
-squirrel::squirrel()
+squirrel::squirrel(bool dbg)
 {
     datetime = QDateTime::currentDateTime();
     description = "Uninitialized squirrel package";
@@ -42,9 +42,10 @@ squirrel::squirrel()
     seriesDirFormat = "orig";
     dataFormat = "nifti4dgz";
     isOkToDelete = true;
+    debug = dbg;
 
     MakeTempDir(workingDir);
-    Log("Created squirrel object", __FUNCTION__);
+    Log(QString("Created squirrel object. Working dir [%1]").arg(workingDir), __FUNCTION__);
 }
 
 
@@ -59,7 +60,7 @@ squirrel::~squirrel()
     if (isValid && (workingDir.size() > 20)) {
         QString m;
         RemoveDir(workingDir, m);
-        Log(QString("Removed directory [%1] [%2]").arg(workingDir).arg(m), __FUNCTION__);
+        Log(QString("Removed working directory [%1]. Message [%2]").arg(workingDir).arg(m), __FUNCTION__);
     }
     Log("Deleting squirrel object", __FUNCTION__);
 }
@@ -76,13 +77,13 @@ squirrel::~squirrel()
 bool squirrel::read(QString filepath, bool validateOnly) {
 
     if (validateOnly)
-        Log(QString("Validating " + filepath), __FUNCTION__);
+        Log(QString("Validating [%1]").arg(filepath), __FUNCTION__);
     else
-        Log(QString("Reading " + filepath), __FUNCTION__);
+        Log(QString("Reading squirrel file [%1]. Using working directory [%2]").arg(filepath).arg(workingDir), __FUNCTION__);
 
     /* check if file exists */
     if (!FileExists(filepath)) {
-        Log(QString("File " + filepath + " does not exist"), __FUNCTION__);
+        Log(QString("File %1 does not exist").arg(filepath), __FUNCTION__);
         return false;
     }
 
@@ -100,10 +101,6 @@ bool squirrel::read(QString filepath, bool validateOnly) {
         return false;
     }
 
-    /* create a working directory */
-    MakeTempDir(workingDir);
-    Log(QString("Created temp directory [" + workingDir + "]"), __FUNCTION__);
-
     /* unzip the .zip to the working dir */
     #ifdef Q_OS_WINDOWS
         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + filepath + "\" -o\"" + workingDir + "\" -y");
@@ -111,7 +108,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
         systemstring = QString("unzip " + filepath + " -d " + workingDir);
     #endif
     output = SystemCommand(systemstring, true);
-    Log(output, __FUNCTION__);
+    Log(output, __FUNCTION__, true);
 
     /* read from .json file */
     QString jsonStr;
@@ -161,7 +158,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
         sqrlSubject.ethnicity2 = jsonSubject["ethnicity2"].toString();
         sqrlSubject.virtualPath = jsonSubject["path"].toString();
 
-        Log(QString("Found subject [" + sqrlSubject.ID + "]"), __FUNCTION__);
+        Log(QString("Reading subject [%1]").arg(sqrlSubject.ID), __FUNCTION__);
 
         /* loop through and read all studies */
         QJsonArray jsonStudies = jsonSubject["studies"].toArray();
@@ -221,7 +218,9 @@ bool squirrel::read(QString filepath, bool validateOnly) {
                 sqrlSeries.params = ReadParamsFile(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
 
                 /* add this series to the study */
-                sqrlStudy.addSeries(sqrlSeries);
+                if (sqrlStudy.addSeries(sqrlSeries)) {
+                    Log(QString("Added series [%1]").arg(sqrlSeries.number), __FUNCTION__);
+                }
             }
 
             /* add this study to the subject */
@@ -232,7 +231,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
 
         /* read all measures */
         QJsonArray jsonMeasures = jsonSubject["measures"].toArray();
-        Log(QString("Found [%1] measures").arg(jsonMeasures.size()), __FUNCTION__);
+        Log(QString("Reading [%1] measures").arg(jsonMeasures.size()), __FUNCTION__);
         for (auto v : jsonMeasures) {
             QJsonObject jsonMeasure = v.toObject();
             squirrelMeasure sqrlMeasure;
@@ -251,7 +250,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
 
         /* read all drugs */
         QJsonArray jsonDrugs = jsonSubject["drugs"].toArray();
-        Log(QString("Found [%1] drugs").arg(jsonDrugs.size()), __FUNCTION__);
+        Log(QString("Reading [%1] drugs").arg(jsonDrugs.size()), __FUNCTION__);
         for (auto v : jsonDrugs) {
             QJsonObject jsonDrug = v.toObject();
             squirrelDrug sqrlDrug;
@@ -285,7 +284,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     /* read all experiments */
     QJsonArray jsonExperiments;
     jsonExperiments = root["experiments"].toArray();
-    Log(QString("Found [%1] experiments").arg(jsonExperiments.size()), __FUNCTION__);
+    Log(QString("Reading [%1] experiments").arg(jsonExperiments.size()), __FUNCTION__);
     for (auto v : jsonExperiments) {
         QJsonObject jsonExperiment = v.toObject();
         squirrelExperiment sqrlExperiment;
@@ -300,7 +299,7 @@ bool squirrel::read(QString filepath, bool validateOnly) {
     /* read all pipelines */
     QJsonArray jsonPipelines;
     jsonPipelines = root["pipelines"].toArray();
-    Log(QString("Found [%1] pipelines").arg(jsonPipelines.size()), __FUNCTION__);
+    Log(QString("Reading [%1] pipelines").arg(jsonPipelines.size()), __FUNCTION__);
     for (auto v : jsonPipelines) {
         QJsonObject jsonPipeline = v.toObject();
         squirrelPipeline sqrlPipeline;
@@ -413,11 +412,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
     QFileInfo finfo(outpath);
     logfile = QString(finfo.absolutePath() + "/squirrel-" + CreateLogDate() + ".log");
 
-    Log("Beginning writing of squirrel package", __FUNCTION__);
-
-    /* create temp directory */
-    //MakeTempDir(workingDir);
-    Log(QString("Created working directory [" + workingDir + "]"), __FUNCTION__);
+    Log(QString("Writing squirrel package. Working dir [%1]. Outpath [%2]. logfile [%3]").arg(workingDir).arg(outpath).arg(logfile), __FUNCTION__);
 
     /* ----- 1) write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
@@ -428,17 +423,15 @@ bool squirrel::write(QString outpath, QString &filepath) {
         QString subjDir;
         if (subjectDirFormat == "orig") {
             subjDir = sub.ID;
-            Log(QString("sub.ID [" + sub.ID + "]"), __FUNCTION__);
         }
         else {
             subjDir = QString("%1").arg(i+1); /* start the numbering at 1 instead of 0 */
         }
+        Log(QString("Writing subject [%1]").arg(subjDir), __FUNCTION__, true);
 
         subjDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
         QString vPath = QString("data/%1").arg(subjDir);
         subjectList[i].virtualPath = vPath;
-
-        Log(QString("Working on subject [" + subjDir + "]"), __FUNCTION__);
 
         /* iterate through studies */
         for (int j=0; j < sub.studyList.size(); j++) {
@@ -455,7 +448,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
             QString vPath = QString("data/%1/%2").arg(subjDir).arg(studyDir);
             subjectList[i].studyList[j].virtualPath = vPath;
 
-            Log(QString("Working on study [" + studyDir + "]"), __FUNCTION__);
+            Log(QString("Writing study [%1]").arg(studyDir), __FUNCTION__);
 
             /* iterate through series */
             for (int k=0; k < stud.seriesList.size(); k++) {
@@ -476,13 +469,10 @@ bool squirrel::write(QString outpath, QString &filepath) {
                 QString seriesPath = QString("%1/%2").arg(workingDir).arg(subjectList[i].studyList[j].seriesList[k].virtualPath);
                 MakePath(seriesPath,m);
 
-                Log(QString("Working on series [" + seriesDir + "]"), __FUNCTION__);
-                Log(QString("Package data format [" + dataFormat + "]"), __FUNCTION__);
+                Log(QString("Writing series [%1]. Data format [%2]").arg(seriesDir).arg(dataFormat), __FUNCTION__);
 
                 /* orig vs other formats */
                 if (dataFormat == "orig") {
-                    Log(QString("Squirrel: dataformat original [%1]").arg(dataFormat), __FUNCTION__);
-
                     /* copy all of the series files to the temp directory */
                     foreach (QString f, ser.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
@@ -490,7 +480,6 @@ bool squirrel::write(QString outpath, QString &filepath) {
                     }
                 }
                 else if ((dataFormat == "anon") || (dataFormat == "anonfull")) {
-                    Log(QString("Squirrel: dataformat anonymize [%1]").arg(dataFormat), __FUNCTION__);
                     /* create temp directory */
                     QString td;
                     MakeTempDir(td);
@@ -519,9 +508,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                     RemoveDir(td, m2);
                 }
                 else if (dataFormat.contains("nifti")) {
-                    Log(QString("dataformat nifti [%1]").arg(dataFormat), __FUNCTION__);
                     int numConv(0), numRename(0);
-                    //QString format = dataFormat.left(5);
                     bool gzip;
                     if (dataFormat.contains("gz"))
                         gzip = true;
@@ -544,7 +531,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                     }
                 }
                 else
-                    Log(QString("dataFormat not found [%1]").arg(dataFormat), __FUNCTION__);
+                    Log(QString("dataFormat [%1] not recognized").arg(dataFormat), __FUNCTION__);
 
                 /* get the number of files and size of the series */
                 qint64 c(0), b(0);
@@ -597,10 +584,10 @@ bool squirrel::write(QString outpath, QString &filepath) {
     /* add pipelines */
     Log(QString("Adding [%1] pipelines to JSON file").arg(pipelineList.size()), __FUNCTION__);
     if (pipelineList.size() > 0) {
-        Log(QString("Adding pipelines to JSON file"), __FUNCTION__);
         QJsonArray JSONpipelines;
         for (int i=0; i < pipelineList.size(); i++) {
             JSONpipelines.append(pipelineList[i].ToJSON(workingDir));
+            Log(QString("Added pipeline [%1]").arg(pipelineList[i].pipelineName), __FUNCTION__);
         }
         root["numPipelines"] = JSONpipelines.size();
         root["pipelines"] = JSONpipelines;
@@ -612,6 +599,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
         QJsonArray JSONexperiments;
         for (int i=0; i < experimentList.size(); i++) {
             JSONexperiments.append(experimentList[i].ToJSON());
+            Log(QString("Added experiment [%1]").arg(experimentList[i].experimentName), __FUNCTION__);
         }
         root["numExperiments"] = JSONexperiments.size();
         root["experiments"] = JSONexperiments;
@@ -624,7 +612,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
     fout.write(j);
     fout.close();
 
-    Log(QString("Wrote %1/squirrel.json").arg(workingDir), __FUNCTION__);
+    Log(QString("Wrote main JSON file [%1/squirrel.json]").arg(workingDir), __FUNCTION__);
 
     /* zip the temp directory into the output file */
     QString zipfile = outpath;
@@ -1382,11 +1370,14 @@ QString squirrel::GetTempDir() {
  * @brief Record a log - prints to screen and stores in log string
  * @param s log message
  * @param func function that called this function
+ * @param dbg is this is a debug message, to be displayed only if debug is enabled at the command line
  */
-void squirrel::Log(QString s, QString func) {
-    if (s.trimmed() != "") {
-        log.append(QString("%1() %2\n").arg(func).arg(s));
-        Print(QString("%1() %2").arg(func).arg(s));
+void squirrel::Log(QString s, QString func, bool dbg) {
+    if ((!debug) || (debug && dbg)) {
+        if (s.trimmed() != "") {
+            log.append(QString("%1() %2\n").arg(func).arg(s));
+            Print(QString("%1() %2").arg(func).arg(s));
+        }
     }
 }
 
@@ -1416,7 +1407,7 @@ bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringLi
     MakePath(dir, m);
     foreach (QString f, files) {
         /* copy this to the packageRoot/destDir directory */
-        Log(QString("Copying file [%1] to [%2]").arg(f).arg(dir), __FUNCTION__);
+        Log(QString("Copying file [%1] to [%2]").arg(f).arg(dir), __FUNCTION__, debug);
         CopyFile(f, dir);
     }
 

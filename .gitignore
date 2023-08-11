@@ -18,4 +18,7 @@ src/squirrel/squirrel.pro.user
 *.user
 src/squirrel/squirrel.pro.user.0a56b21
 src/squirrel/squirrel.pro.user.6926030
-src/squirrel/squirrel.pro.user
+src/squirrel/squirrel.pro.user.0a56b21
+src/squirrel/squirrel_wrap.c
+src/squirrel/squirrel.py
+src/squirrel/squirrel.pro.user.0a56b21
