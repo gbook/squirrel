@@ -517,17 +517,17 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
                     /* get path of first file to be converted */
                     if (ser.stagedFiles.size() > 0) {
-                        Log(QString("Converting [%1] files to nifti").arg(ser.stagedFiles.size()), __FUNCTION__);
+                        Log(QString("Converting [%1] files to nifti").arg(ser.stagedFiles.size()), __FUNCTION__, true);
 
                         QFileInfo f(ser.stagedFiles[0]);
                         QString origSeriesPath = f.absoluteDir().absolutePath();
                         squirrelImageIO io;
                         QString m3;
                         io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, subjDir, studyDir, seriesDir, "dicom", numConv, numRename, m3);
-                        Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
+                        Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__, true);
                     }
                     else {
-                        Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__);
+                        Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__, true);
                     }
                 }
                 else
@@ -548,7 +548,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                 QFile fout(QString("%1/params.json").arg(seriesPath));
                 if (fout.open(QIODevice::WriteOnly)) {
                     fout.write(j);
-                    Log(QString("Wrote %1/params.json").arg(seriesPath), __FUNCTION__);
+                    Log(QString("Wrote %1/params.json").arg(seriesPath), __FUNCTION__, true);
                 }
                 else {
                     Log(QString("Error writing [%1]").arg(fout.fileName()), __FUNCTION__);
@@ -559,6 +559,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
     }
 
     /* ----- 2) write .json file ----- */
+    Log("Creating JSON file...", __FUNCTION__);
     /* create JSON object */
     QJsonObject root;
 
@@ -582,24 +583,24 @@ bool squirrel::write(QString outpath, QString &filepath) {
     root["data"] = data;
 
     /* add pipelines */
-    Log(QString("Adding [%1] pipelines to JSON file").arg(pipelineList.size()), __FUNCTION__);
     if (pipelineList.size() > 0) {
+        Log(QString("Adding [%1] pipelines...").arg(pipelineList.size()), __FUNCTION__);
         QJsonArray JSONpipelines;
         for (int i=0; i < pipelineList.size(); i++) {
             JSONpipelines.append(pipelineList[i].ToJSON(workingDir));
-            Log(QString("Added pipeline [%1]").arg(pipelineList[i].pipelineName), __FUNCTION__);
+            Log(QString("Added pipeline [%1]").arg(pipelineList[i].pipelineName), __FUNCTION__, true);
         }
         root["numPipelines"] = JSONpipelines.size();
         root["pipelines"] = JSONpipelines;
     }
 
     /* add experiments */
-    Log(QString("Adding [%1] experiments to JSON file").arg(experimentList.size()), __FUNCTION__);
     if (experimentList.size() > 0) {
+        Log(QString("Adding [%1] experiments...").arg(experimentList.size()), __FUNCTION__);
         QJsonArray JSONexperiments;
         for (int i=0; i < experimentList.size(); i++) {
             JSONexperiments.append(experimentList[i].ToJSON());
-            Log(QString("Added experiment [%1]").arg(experimentList[i].experimentName), __FUNCTION__);
+            Log(QString("Added experiment [%1]").arg(experimentList[i].experimentName), __FUNCTION__, true);
         }
         root["numExperiments"] = JSONexperiments.size();
         root["experiments"] = JSONexperiments;
@@ -1374,7 +1375,7 @@ QString squirrel::GetTempDir() {
  */
 void squirrel::Log(QString s, QString func, bool dbg) {
     //Print(QString("debug[%1]  dbg [%2]").arg(debug).arg(dbg));
-    if (debug != dbg) {
+    if ((!dbg) || (debug && dbg)) {
         if (s.trimmed() != "") {
             log.append(QString("%1() %2\n").arg(func).arg(s));
             Print(QString("%1() %2").arg(func).arg(s));
@@ -1408,7 +1409,7 @@ bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringLi
     MakePath(dir, m);
     foreach (QString f, files) {
         /* copy this to the packageRoot/destDir directory */
-        Log(QString("Copying file [%1] to [%2]").arg(f).arg(dir), __FUNCTION__, debug);
+        Log(QString("Copying file [%1] to [%2]").arg(f).arg(dir), __FUNCTION__, true);
         CopyFile(f, dir);
     }
 
