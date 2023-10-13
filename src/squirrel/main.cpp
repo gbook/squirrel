@@ -54,13 +54,15 @@ int main(int argc, char *argv[])
 
     /* command line options that take values */
     QCommandLineOption optInputFile(QStringList() << "i" << "in", "Input file/directory", "in");
-    QCommandLineOption optOutputFile(QStringList() << "o" << "out", "Output file", "out");
+    QCommandLineOption optOutputFile(QStringList() << "o" << "out", "Output file/directory", "out");
     QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format, if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "outputdataformat");
     QCommandLineOption optOutputDirFormat(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "outputdirformat");
+    QCommandLineOption optOutputPackageFormat(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "outputpackageformat");
     p.addOption(optOutputFile);
     p.addOption(optInputFile);
     p.addOption(optOutputDataFormat);
     p.addOption(optOutputDirFormat);
+    p.addOption(optOutputPackageFormat);
 
     /* Process the actual command line arguments given by the user */
     p.process(a);
@@ -78,13 +80,14 @@ int main(int argc, char *argv[])
     QString paramInput = p.value(optInputFile).trimmed();
     QString paramOutputDataFormat = p.value(optOutputDataFormat).trimmed();
     QString paramOutputDirFormat = p.value(optOutputDirFormat).trimmed();
+    QString paramOutputPackageFormat = p.value(optOutputPackageFormat).trimmed();
 
     QStringList tools = { "dicom2squirrel", "validate", "bids2squirrel", "squirrel2bids" };
 
     /* now check the command line parameters passed in, to see if they are calling a valid module */
     if (!tools.contains(tool)) {
         if (tool != "")
-            std::cout << QString("Error: unrecognized option [%1]\n").arg(tool).toStdString().c_str();
+            std::cout << QString("***** Error: unrecognized option [%1] *****\n").arg(tool).toStdString().c_str();
 
         std::cout << p.helpText().toStdString().c_str();
         return 0;
@@ -116,8 +119,6 @@ int main(int argc, char *argv[])
             else {
                 sqrl->Log("*** Invalid squirrel file ***", __FUNCTION__);
             }
-
-            //delete v;
         }
     }
     /* ---------- Run the dicom2squirrel tool ---------- */
@@ -136,12 +137,12 @@ int main(int argc, char *argv[])
             sqrl->subjectDirFormat = paramOutputDirFormat;
             sqrl->studyDirFormat = paramOutputDirFormat;
             sqrl->seriesDirFormat = paramOutputDirFormat;
+            sqrl->packageFormat = paramOutputPackageFormat;
 
             /* 1) load the DICOM data to a squirrel object */
             dcm->LoadToSquirrel(paramInput, bindir, sqrl);
 
             /* 2) write the squirrel file */
-            //QString m2;
             QString filepath;
             sqrl->write(paramOutputFile, filepath);
 
@@ -168,8 +169,8 @@ int main(int argc, char *argv[])
             QString outputfile = paramOutputFile;
 
             if (paramOutputFile == "") {
-                Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
                 outputfile = QString(paramInput + "/squirrel.zip");
+                Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
             }
 
             /* create a squirrel object */
@@ -194,7 +195,7 @@ int main(int argc, char *argv[])
 
     }
 
-    Print("\n\nExiting squirrel utils");
+    Print("\nExiting squirrel utils");
     a.exit();
     return 0;
 }
