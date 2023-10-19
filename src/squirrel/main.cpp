@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     p.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsOptions);
     p.addHelpOption();
     p.addVersionOption();
-    p.addPositionalArgument("tool", "Available tools:  validate  dicom2squirrel  bids2squirrel  squirrel2bids");
+    p.addPositionalArgument("tool", "Available tools:  validate  dicom2squirrel  bids2squirrel  squirrel2bids  modify  list");
 
     /* command line flag options */
     QCommandLineOption optDebug(QStringList() << "d" << "debug", "Enable debugging");
@@ -53,22 +53,35 @@ int main(int argc, char *argv[])
     p.addOption(optQuiet);
 
     /* command line options that take values */
-    QCommandLineOption optInputFile(QStringList() << "i" << "in", "Input file/directory", "in");
-    QCommandLineOption optOutputFile(QStringList() << "o" << "out", "Output file/directory", "out");
+    QCommandLineOption optInputFile(QStringList() << "i" << "in", "Input file/directory", "input file/dir");
+    QCommandLineOption optOutputFile(QStringList() << "o" << "out", "Output file/directory", "output file/dir");
     QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format, if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "outputdataformat");
     QCommandLineOption optOutputDirFormat(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "outputdirformat");
     QCommandLineOption optOutputPackageFormat(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "outputpackageformat");
+    QCommandLineOption optRenumberIDs(QStringList() << "renumber-ids", "Renumber IDs in zero-padded format #####. Existing IDs are moved to subject alt-IDs field");
+    QCommandLineOption optListSubjects(QStringList() << "list-subjects", "Print a list of subjects");
+    QCommandLineOption optListStudies(QStringList() << "list-studies", "Print a list of studies for a subject", "subjectid");
+    QCommandLineOption optListSeries(QStringList() << "list-series", "Print a list series for a study", "subjectid,studynum");
+    QCommandLineOption optListDetails(QStringList() << "list-details", "Include details when printing lists");
     p.addOption(optOutputFile);
     p.addOption(optInputFile);
     p.addOption(optOutputDataFormat);
     p.addOption(optOutputDirFormat);
     p.addOption(optOutputPackageFormat);
+    p.addOption(optRenumberIDs);
+    p.addOption(optListSubjects);
+    p.addOption(optListStudies);
+    p.addOption(optListSeries);
+    p.addOption(optListDetails);
 
     /* Process the actual command line arguments given by the user */
     p.process(a);
 
     QString tool;
     bool debug, quiet;
+    bool renumberIDs;
+    bool listDetails;
+    bool listSubjects;
 
     const QStringList args = p.positionalArguments();
     if (args.size() > 0)
@@ -81,8 +94,13 @@ int main(int argc, char *argv[])
     QString paramOutputDataFormat = p.value(optOutputDataFormat).trimmed();
     QString paramOutputDirFormat = p.value(optOutputDirFormat).trimmed();
     QString paramOutputPackageFormat = p.value(optOutputPackageFormat).trimmed();
+    listSubjects = p.isSet(optListSubjects);
+    QString paramSubjectID = p.value(optListStudies).trimmed();
+    QString paramSubjectIDStudyNum = p.value(optListSeries).trimmed();
+    renumberIDs = p.isSet(optRenumberIDs);
+    listDetails = p.isSet(optListDetails);
 
-    QStringList tools = { "dicom2squirrel", "validate", "bids2squirrel", "squirrel2bids" };
+    QStringList tools = { "dicom2squirrel", "validate", "bids2squirrel", "squirrel2bids", "modify", "list" };
 
     /* now check the command line parameters passed in, to see if they are calling a valid module */
     if (!tools.contains(tool)) {
@@ -193,6 +211,41 @@ int main(int argc, char *argv[])
     /* ---------- Run the squirrel2bids tool ---------- */
     else if (tool == "squirrel2bids") {
 
+    }
+    /* ---------- Run the list tool ---------- */
+    else if (tool == "list") {
+        /* check if the infile exists */
+        QFile infile(paramInput);
+        if (!infile.exists()) {
+            Print(QString("Input file [%1] does not exist").arg(paramInput));
+        }
+        else {
+            squirrel *sqrl = new squirrel(debug);
+            sqrl->read(paramInput);
+
+            if (listSubjects) {
+                /* print list of all subjects */
+                sqrl->PrintSubjects(listDetails);
+            }
+            else if (paramSubjectID != "") {
+                /* print list of studies for this subjectID */
+                sqrl->PrintStudies(paramSubjectID, listDetails);
+            }
+            else if (paramSubjectIDStudyNum != "") {
+                QStringList parts = paramSubjectIDStudyNum.split(",");
+                if (parts.size() == 2) {
+                    QString subjectID = parts[0];
+                    int studyNum = parts[1].toInt();
+                    /* print list of studies for this subjectID, studynum */
+                    sqrl->PrintSeries(subjectID, studyNum, listDetails);
+                }
+                else {
+                    Print("Incorrect argument " + paramSubjectIDStudyNum + " for parameter --list-series");
+                }
+            }
+
+            delete sqrl;
+        }
     }
 
     Print("\nExiting squirrel utils");

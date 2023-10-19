@@ -125,6 +125,11 @@ public:
     QString GetLog() { return log; }
     bool GetDebug() { return debug; }
 
+    /* printing of information to console */
+    void PrintSubjects(bool details=false);
+    void PrintStudies(QString subjectID, bool details=false);
+    void PrintSeries(QString subjectID, int studyNum, bool details=false);
+
 private:
     void PrintPackage();
     bool MakeTempDir(QString &dir);
