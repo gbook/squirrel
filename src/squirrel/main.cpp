@@ -62,6 +62,12 @@ int main(int argc, char *argv[])
     QCommandLineOption optListSubjects(QStringList() << "list-subjects", "Print a list of subjects");
     QCommandLineOption optListStudies(QStringList() << "list-studies", "Print a list of studies for a subject", "subjectid");
     QCommandLineOption optListSeries(QStringList() << "list-series", "Print a list series for a study", "subjectid,studynum");
+    QCommandLineOption optListDrugs(QStringList() << "list-drugs", "Print a list of drugs for a subject", "subjectid");
+    QCommandLineOption optListMeasures(QStringList() << "list-measures", "Print a list of measures for a subject", "subjectid");
+    QCommandLineOption optListExperiments(QStringList() << "list-experiments", "Print a list of experiments");
+    QCommandLineOption optListPipelines(QStringList() << "list-pipelines", "Print a list of pipelines");
+    QCommandLineOption optListGroupAnalyses(QStringList() << "list-groupanalyses", "Print a list of group analyses");
+    QCommandLineOption optListDataDictionary(QStringList() << "list-datadictionary", "Print the data dictionary");
     QCommandLineOption optListDetails(QStringList() << "list-details", "Include details when printing lists");
     p.addOption(optOutputFile);
     p.addOption(optInputFile);
@@ -73,6 +79,13 @@ int main(int argc, char *argv[])
     p.addOption(optListStudies);
     p.addOption(optListSeries);
     p.addOption(optListDetails);
+
+    p.addOption(optListDrugs);
+    p.addOption(optListMeasures);
+    p.addOption(optListExperiments);
+    p.addOption(optListPipelines);
+    p.addOption(optListGroupAnalyses);
+    p.addOption(optListDataDictionary);
 
     /* Process the actual command line arguments given by the user */
     p.process(a);
