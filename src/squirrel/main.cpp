@@ -55,37 +55,38 @@ int main(int argc, char *argv[])
     /* command line options that take values */
     QCommandLineOption optInputFile(QStringList() << "i" << "in", "Input file/directory", "input file/dir");
     QCommandLineOption optOutputFile(QStringList() << "o" << "out", "Output file/directory", "output file/dir");
-    QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format, if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "outputdataformat");
+    QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "outputdataformat");
     QCommandLineOption optOutputDirFormat(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "outputdirformat");
     QCommandLineOption optOutputPackageFormat(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "outputpackageformat");
     QCommandLineOption optRenumberIDs(QStringList() << "renumber-ids", "Renumber IDs in zero-padded format #####. Existing IDs are moved to subject alt-IDs field");
-    QCommandLineOption optListSubjects(QStringList() << "list-subjects", "Print a list of subjects");
-    QCommandLineOption optListStudies(QStringList() << "list-studies", "Print a list of studies for a subject", "subjectid");
-    QCommandLineOption optListSeries(QStringList() << "list-series", "Print a list series for a study", "subjectid,studynum");
-    QCommandLineOption optListDrugs(QStringList() << "list-drugs", "Print a list of drugs for a subject", "subjectid");
-    QCommandLineOption optListMeasures(QStringList() << "list-measures", "Print a list of measures for a subject", "subjectid");
-    QCommandLineOption optListExperiments(QStringList() << "list-experiments", "Print a list of experiments");
-    QCommandLineOption optListPipelines(QStringList() << "list-pipelines", "Print a list of pipelines");
-    QCommandLineOption optListGroupAnalyses(QStringList() << "list-groupanalyses", "Print a list of group analyses");
-    QCommandLineOption optListDataDictionary(QStringList() << "list-datadictionary", "Print the data dictionary");
-    QCommandLineOption optListDetails(QStringList() << "list-details", "Include details when printing lists");
+    QCommandLineOption optDicomDir(QStringList() << "add-dicom-dir", "Modify an existing squirrel package by adding in this DICOM directory. IDs will be automatically renumbered.", "dicomdir");
+    QCommandLineOption optListSubjects(QStringList() << "list-subjects", "Print a list of subjects.");
+    QCommandLineOption optListStudies(QStringList() << "list-studies", "Print a list of studies for a subject.", "subjectid");
+    QCommandLineOption optListSeries(QStringList() << "list-series", "Print a list series for a study.", "subjectid,studynum");
+    QCommandLineOption optListDrugs(QStringList() << "list-drugs", "Print a list of drugs for a subject.", "subjectid");
+    QCommandLineOption optListMeasures(QStringList() << "list-measures", "Print a list of measures for a subject.", "subjectid");
+    QCommandLineOption optListExperiments(QStringList() << "list-experiments", "Print a list of experiments.");
+    QCommandLineOption optListPipelines(QStringList() << "list-pipelines", "Print a list of pipelines.");
+    QCommandLineOption optListGroupAnalyses(QStringList() << "list-groupanalyses", "Print a list of group analyses.");
+    QCommandLineOption optListDataDictionary(QStringList() << "list-datadictionary", "Print the data dictionary.");
+    QCommandLineOption optListDetails(QStringList() << "list-details", "Include details when printing lists.");
     p.addOption(optOutputFile);
     p.addOption(optInputFile);
     p.addOption(optOutputDataFormat);
     p.addOption(optOutputDirFormat);
     p.addOption(optOutputPackageFormat);
     p.addOption(optRenumberIDs);
+    p.addOption(optDicomDir);
     p.addOption(optListSubjects);
     p.addOption(optListStudies);
     p.addOption(optListSeries);
-    p.addOption(optListDetails);
-
     p.addOption(optListDrugs);
     p.addOption(optListMeasures);
     p.addOption(optListExperiments);
     p.addOption(optListPipelines);
     p.addOption(optListGroupAnalyses);
     p.addOption(optListDataDictionary);
+    p.addOption(optListDetails);
 
     /* Process the actual command line arguments given by the user */
     p.process(a);
