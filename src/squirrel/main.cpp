@@ -55,20 +55,16 @@ int main(int argc, char *argv[])
     /* command line options that take values */
     QCommandLineOption optInputFile(QStringList() << "i" << "in", "Input file/directory", "input file/dir");
     QCommandLineOption optOutputFile(QStringList() << "o" << "out", "Output file/directory", "output file/dir");
-    QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "outputdataformat");
-    QCommandLineOption optOutputDirFormat(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "outputdirformat");
-    QCommandLineOption optOutputPackageFormat(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "outputpackageformat");
+    QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "dataformat");
+    QCommandLineOption optOutputDirFormat(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "dirformat");
+    QCommandLineOption optOutputPackageFormat(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "packageformat");
     QCommandLineOption optRenumberIDs(QStringList() << "renumber-ids", "Renumber IDs in zero-padded format #####. Existing IDs are moved to subject alt-IDs field");
     QCommandLineOption optDicomDir(QStringList() << "add-dicom-dir", "Modify an existing squirrel package by adding in this DICOM directory. IDs will be automatically renumbered.", "dicomdir");
-    QCommandLineOption optListSubjects(QStringList() << "list-subjects", "Print a list of subjects.");
-    QCommandLineOption optListStudies(QStringList() << "list-studies", "Print a list of studies for a subject.", "subjectid");
-    QCommandLineOption optListSeries(QStringList() << "list-series", "Print a list series for a study.", "subjectid,studynum");
-    QCommandLineOption optListDrugs(QStringList() << "list-drugs", "Print a list of drugs for a subject.", "subjectid");
-    QCommandLineOption optListMeasures(QStringList() << "list-measures", "Print a list of measures for a subject.", "subjectid");
-    QCommandLineOption optListExperiments(QStringList() << "list-experiments", "Print a list of experiments.");
-    QCommandLineOption optListPipelines(QStringList() << "list-pipelines", "Print a list of pipelines.");
-    QCommandLineOption optListGroupAnalyses(QStringList() << "list-groupanalyses", "Print a list of group analyses.");
-    QCommandLineOption optListDataDictionary(QStringList() << "list-datadictionary", "Print the data dictionary.");
+
+    QCommandLineOption optListObject(QStringList() << "list", "List an object [package  subjects  studies  series  experiments  pipelines  groupanalyses  datadictionary].", "object");
+    QCommandLineOption optSubjectID(QStringList() << "subject-id", "Subject ID.", "subjectid");
+    QCommandLineOption optStudyNum(QStringList() << "study-num", "Study ID.", "studynum");
+
     QCommandLineOption optListDetails(QStringList() << "list-details", "Include details when printing lists.");
     p.addOption(optOutputFile);
     p.addOption(optInputFile);
@@ -77,15 +73,10 @@ int main(int argc, char *argv[])
     p.addOption(optOutputPackageFormat);
     p.addOption(optRenumberIDs);
     p.addOption(optDicomDir);
-    p.addOption(optListSubjects);
-    p.addOption(optListStudies);
-    p.addOption(optListSeries);
-    p.addOption(optListDrugs);
-    p.addOption(optListMeasures);
-    p.addOption(optListExperiments);
-    p.addOption(optListPipelines);
-    p.addOption(optListGroupAnalyses);
-    p.addOption(optListDataDictionary);
+
+    p.addOption(optListObject);
+    p.addOption(optSubjectID);
+    p.addOption(optStudyNum);
     p.addOption(optListDetails);
 
     /* Process the actual command line arguments given by the user */
@@ -95,7 +86,6 @@ int main(int argc, char *argv[])
     bool debug, quiet;
     bool renumberIDs;
     bool listDetails;
-    bool listSubjects;
 
     const QStringList args = p.positionalArguments();
     if (args.size() > 0)
@@ -108,11 +98,14 @@ int main(int argc, char *argv[])
     QString paramOutputDataFormat = p.value(optOutputDataFormat).trimmed();
     QString paramOutputDirFormat = p.value(optOutputDirFormat).trimmed();
     QString paramOutputPackageFormat = p.value(optOutputPackageFormat).trimmed();
-    listSubjects = p.isSet(optListSubjects);
-    QString paramSubjectID = p.value(optListStudies).trimmed();
-    QString paramSubjectIDStudyNum = p.value(optListSeries).trimmed();
+    QString paramListObject = p.value(optListObject);
+    QString paramSubjectID = p.value(optSubjectID).trimmed();
+    QString paramStudyNum = p.value(optStudyNum).trimmed();
     renumberIDs = p.isSet(optRenumberIDs);
     listDetails = p.isSet(optListDetails);
+
+    if (quiet)
+        debug = false;
 
     QStringList tools = { "dicom2squirrel", "validate", "bids2squirrel", "squirrel2bids", "modify", "list" };
 
@@ -145,7 +138,7 @@ int main(int argc, char *argv[])
         else {
             /* create squirrel object and validate */
             squirrel *sqrl = new squirrel(debug);
-            if (sqrl->read(paramInput, true)) {
+            if (sqrl->read(paramInput, true, true)) {
                 sqrl->Log("Valid squirrel file", __FUNCTION__);
             }
             else {
@@ -164,7 +157,7 @@ int main(int argc, char *argv[])
         }
         else {
             dicom *dcm = new dicom();
-            squirrel *sqrl = new squirrel(debug);
+            squirrel *sqrl = new squirrel(debug, quiet);
             sqrl->dataFormat = paramOutputDataFormat;
             sqrl->subjectDirFormat = paramOutputDirFormat;
             sqrl->studyDirFormat = paramOutputDirFormat;
@@ -228,41 +221,57 @@ int main(int argc, char *argv[])
     }
     /* ---------- Run the list tool ---------- */
     else if (tool == "list") {
+
+        //Print("--subject-id " + paramSubjectID);
+        //if (quiet)
+        //    Print("-q option is set");
+        //else
+        //    Print("-q option is not set");
+
         /* check if the infile exists */
         QFile infile(paramInput);
         if (!infile.exists()) {
             Print(QString("Input file [%1] does not exist").arg(paramInput));
         }
         else {
-            squirrel *sqrl = new squirrel(debug);
-            sqrl->read(paramInput);
+            squirrel *sqrl = new squirrel(debug, quiet);
+            sqrl->quiet = quiet;
+            sqrl->read(paramInput, true);
 
-            if (listSubjects) {
-                /* print list of all subjects */
+            //possible objects: subjects  studies  series  experiments  pipelines  groupanalyses  datadictionary
+
+            if (paramListObject == "package") {
+                sqrl->PrintPackage();
+            }
+            else if (paramListObject == "subjects") {
                 sqrl->PrintSubjects(listDetails);
             }
-            else if (paramSubjectID != "") {
-                /* print list of studies for this subjectID */
+            else if (paramListObject == "studies") {
                 sqrl->PrintStudies(paramSubjectID, listDetails);
             }
-            else if (paramSubjectIDStudyNum != "") {
-                QStringList parts = paramSubjectIDStudyNum.split(",");
-                if (parts.size() == 2) {
-                    QString subjectID = parts[0];
-                    int studyNum = parts[1].toInt();
-                    /* print list of studies for this subjectID, studynum */
-                    sqrl->PrintSeries(subjectID, studyNum, listDetails);
-                }
-                else {
-                    Print("Incorrect argument " + paramSubjectIDStudyNum + " for parameter --list-series");
-                }
+            else if (paramListObject == "series") {
+                sqrl->PrintSeries(paramSubjectID, paramStudyNum, listDetails);
+            }
+            else if (paramListObject == "experiments") {
+                sqrl->PrintExperiments(listDetails);
+            }
+            else if (paramListObject == "pipelines") {
+                sqrl->PrintPipelines(listDetails);
+            }
+            else if (paramListObject == "groupanalyses") {
+                sqrl->PrintGroupAnalyses(listDetails);
+            }
+            else if (paramListObject == "datadictionary") {
+                sqrl->PrintDataDictionary(listDetails);
             }
 
             delete sqrl;
         }
     }
 
-    Print("\nExiting squirrel utils");
+    if (!quiet)
+        Print("\nExiting squirrel utils");
+
     a.exit();
     return 0;
 }

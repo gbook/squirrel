@@ -30,7 +30,7 @@
 /**
  * @brief squirrel::squirrel
  */
-squirrel::squirrel(bool dbg)
+squirrel::squirrel(bool dbg, bool q)
 {
     datetime = QDateTime::currentDateTime();
     description = "Uninitialized squirrel package";
@@ -43,6 +43,7 @@ squirrel::squirrel(bool dbg)
     dataFormat = "nifti4dgz";
     isOkToDelete = true;
     debug = dbg;
+    quiet = q;
 
     MakeTempDir(workingDir);
     Log(QString("Created squirrel object. Working dir [%1]").arg(workingDir), __FUNCTION__);
@@ -74,7 +75,7 @@ squirrel::~squirrel()
  * @param filename Full filepath of the package to read
  * @return true if package was successfully read, false otherwise
  */
-bool squirrel::read(QString filepath, bool validateOnly) {
+bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
 
     if (validateOnly)
         Log(QString("Validating [%1]").arg(filepath), __FUNCTION__);
@@ -101,22 +102,40 @@ bool squirrel::read(QString filepath, bool validateOnly) {
         return false;
     }
 
-    /* unzip the .zip to the working dir */
-    #ifdef Q_OS_WINDOWS
-        systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + filepath + "\" -o\"" + workingDir + "\" -y");
-    #else
-        systemstring = QString("unzip " + filepath + " -d " + workingDir);
-    #endif
-    output = SystemCommand(systemstring, true);
-    Log(output, __FUNCTION__, true);
-
-    /* read from .json file */
+    /* get the header .json file (either by unzipping or extracting only the file) */
     QString jsonStr;
-    QFile file;
-    file.setFileName(workingDir + "/squirrel.json");
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    jsonStr = file.readAll();
-    file.close();
+    if (headerOnly) {
+        //Print("Reading header only");
+        #ifdef Q_OS_WINDOWS
+            systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + filepath + "\" -o\"" + workingDir + "\" squirrel.json -y");
+            Log(systemstring, __FUNCTION__, true);
+            output = SystemCommand(systemstring, true);
+            /* read from .json file */
+            jsonStr = ReadTextFileToString(workingDir + "/squirrel.json");
+            //Print(jsonStr);
+        #else
+            systemstring = QString("unzip -p " + filepath + " squirrel.json");
+            output = SystemCommand(systemstring, true);
+        #endif
+    }
+    else {
+        /* unzip the .zip to the working dir */
+        #ifdef Q_OS_WINDOWS
+            systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + filepath + "\" -o\"" + workingDir + "\" -y");
+        #else
+            systemstring = QString("unzip " + filepath + " -d " + workingDir);
+        #endif
+        output = SystemCommand(systemstring, true);
+        Log(output, __FUNCTION__, true);
+
+        /* read from .json file */
+        jsonStr = ReadTextFileToString(workingDir + "/squirrel.json");
+        //QFile file;
+        //file.setFileName(workingDir + "/squirrel.json");
+        //file.open(QIODevice::ReadOnly | QIODevice::Text);
+        //jsonStr = file.readAll();
+        //file.close();
+    }
 
     /* get the JSON document and root object */
     QJsonDocument d = QJsonDocument::fromJson(jsonStr.toUtf8());
@@ -215,7 +234,8 @@ bool squirrel::read(QString filepath, bool validateOnly) {
                 //    tags[key] = json.value(key).toString();
                 //}
 
-                sqrlSeries.params = ReadParamsFile(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
+                if (!headerOnly)
+                    sqrlSeries.params = ReadParamsFile(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
 
                 /* add this series to the study */
                 if (sqrlStudy.addSeries(sqrlSeries)) {
@@ -1375,10 +1395,12 @@ QString squirrel::GetTempDir() {
  */
 void squirrel::Log(QString s, QString func, bool dbg) {
     //Print(QString("debug[%1]  dbg [%2]").arg(debug).arg(dbg));
-    if ((!dbg) || (debug && dbg)) {
-        if (s.trimmed() != "") {
-            log.append(QString("%1() %2\n").arg(func).arg(s));
-            Print(QString("%1() %2").arg(func).arg(s));
+    if (!quiet) {
+        if ((!dbg) || (debug && dbg)) {
+            if (s.trimmed() != "") {
+                log.append(QString("%1() %2\n").arg(func).arg(s));
+                Print(QString("%1() %2").arg(func).arg(s));
+            }
         }
     }
 }
@@ -1541,6 +1563,19 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
 /* ----- PrintSubjects ---------------------------------------- */
 /* ------------------------------------------------------------ */
 void squirrel::PrintSubjects(bool details) {
+
+    if (details) {
+        foreach (squirrelSubject s, subjectList) {
+            s.PrintSubject();
+        }
+    }
+    else {
+        QStringList ids;
+        foreach (squirrelSubject s, subjectList) {
+            ids.append(s.ID);
+        }
+        Print(ids.join(" "));
+    }
 }
 
 
@@ -1548,11 +1583,81 @@ void squirrel::PrintSubjects(bool details) {
 /* ----- PrintStudies ----------------------------------------- */
 /* ------------------------------------------------------------ */
 void squirrel::PrintStudies(QString subjectID, bool details) {
+    if (details) {
+        squirrelSubject sqrlSubject;
+        if (GetSubject(subjectID, sqrlSubject)) {
+            foreach (squirrelStudy s, sqrlSubject.studyList) {
+                s.PrintStudy();
+            }
+        }
+    }
+    else {
+        QStringList studynums;
+        squirrelSubject sqrlSubject;
+        if (GetSubject(subjectID, sqrlSubject)) {
+            foreach (squirrelStudy s, sqrlSubject.studyList) {
+                studynums.append(QString("%1").arg(s.number));
+            }
+        }
+        Print(studynums.join(" "));
+    }
 }
 
 
 /* ------------------------------------------------------------ */
 /* ----- PrintSeries ------------------------------------------ */
 /* ------------------------------------------------------------ */
-void squirrel::PrintSeries(QString subjectID, int studyNum, bool details) {
+void squirrel::PrintSeries(QString subjectID, QString studyNum, bool details) {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintExperiments ------------------------------------- */
+/* ------------------------------------------------------------ */
+void squirrel::PrintExperiments(bool details) {
+    if (details) {
+        foreach (squirrelExperiment e, experimentList) {
+            e.PrintExperiment();
+        }
+    }
+    else {
+        QStringList exps;
+        foreach (squirrelExperiment e, experimentList) {
+            exps.append(e.experimentName);
+        }
+        Print(exps.join(" "));
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintPipelines --------------------------------------- */
+/* ------------------------------------------------------------ */
+void squirrel::PrintPipelines(bool details) {
+    if (details) {
+        foreach (squirrelPipeline p, pipelineList) {
+            p.PrintPipeline();
+        }
+    }
+    else {
+        QStringList pipes;
+        foreach (squirrelPipeline p, pipelineList) {
+            pipes.append(p.pipelineName);
+        }
+        Print(pipes.join(" "));
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintGroupAnalyses ----------------------------------- */
+/* ------------------------------------------------------------ */
+void squirrel::PrintGroupAnalyses(bool details) {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintDataDictionary ---------------------------------- */
+/* ------------------------------------------------------------ */
+void squirrel::PrintDataDictionary(bool details) {
 }

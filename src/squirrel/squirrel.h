@@ -44,10 +44,10 @@
 class squirrel
 {
 public:
-    squirrel(bool dbg=false);
+    squirrel(bool dbg=false, bool q=false);
     ~squirrel();
 
-    bool read(QString filename, bool validateOnly=false);
+    bool read(QString filename, bool headerOnly, bool validateOnly=false);
     bool write(QString outpath, QString &filepath);
     bool validate();
     void print();
@@ -124,14 +124,19 @@ public:
     void Log(QString s, QString func, bool dbg=false);
     QString GetLog() { return log; }
     bool GetDebug() { return debug; }
+    bool quiet=false;
 
     /* printing of information to console */
+    void PrintPackage();
     void PrintSubjects(bool details=false);
     void PrintStudies(QString subjectID, bool details=false);
-    void PrintSeries(QString subjectID, int studyNum, bool details=false);
+    void PrintSeries(QString subjectID, QString studyNum, bool details=false);
+    void PrintExperiments(bool details=false);
+    void PrintPipelines(bool details=false);
+    void PrintGroupAnalyses(bool details=false);
+    void PrintDataDictionary(bool details=false);
 
 private:
-    void PrintPackage();
     bool MakeTempDir(QString &dir);
     QString workingDir;
     QString logfile;
