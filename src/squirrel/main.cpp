@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     QString paramOutputPackageFormat = p.value(optOutputPackageFormat).trimmed();
     QString paramListObject = p.value(optListObject);
     QString paramSubjectID = p.value(optSubjectID).trimmed();
-    QString paramStudyNum = p.value(optStudyNum).trimmed();
+    int paramStudyNum = p.value(optStudyNum).trimmed().toInt();
     renumberIDs = p.isSet(optRenumberIDs);
     listDetails = p.isSet(optListDetails);
 
@@ -222,7 +222,8 @@ int main(int argc, char *argv[])
     /* ---------- Run the list tool ---------- */
     else if (tool == "list") {
 
-        //Print("--subject-id " + paramSubjectID);
+        Print("--subject-id " + paramSubjectID);
+        Print("--study-num " + paramStudyNum);
         //if (quiet)
         //    Print("-q option is set");
         //else

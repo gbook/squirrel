@@ -130,7 +130,7 @@ public:
     void PrintPackage();
     void PrintSubjects(bool details=false);
     void PrintStudies(QString subjectID, bool details=false);
-    void PrintSeries(QString subjectID, QString studyNum, bool details=false);
+    void PrintSeries(QString subjectID, int studyNum, bool details=false);
     void PrintExperiments(bool details=false);
     void PrintPipelines(bool details=false);
     void PrintGroupAnalyses(bool details=false);

@@ -1607,7 +1607,25 @@ void squirrel::PrintStudies(QString subjectID, bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintSeries ------------------------------------------ */
 /* ------------------------------------------------------------ */
-void squirrel::PrintSeries(QString subjectID, QString studyNum, bool details) {
+void squirrel::PrintSeries(QString subjectID, int studyNum, bool details) {
+    if (details) {
+        squirrelStudy sqrlStudy;
+        if (GetStudy(subjectID, studyNum, sqrlStudy)) {
+            foreach (squirrelSeries s, sqrlStudy.seriesList) {
+                s.PrintSeries();
+            }
+        }
+    }
+    else {
+        QStringList seriesnums;
+        squirrelStudy sqrlStudy;
+        if (GetStudy(subjectID, studyNum, sqrlStudy)) {
+            foreach (squirrelSeries s, sqrlStudy.seriesList) {
+                seriesnums.append(QString("%1").arg(s.number));
+            }
+        }
+        Print(seriesnums.join(" "));
+    }
 }
 
 
