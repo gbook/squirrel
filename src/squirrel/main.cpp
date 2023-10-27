@@ -222,8 +222,8 @@ int main(int argc, char *argv[])
     /* ---------- Run the list tool ---------- */
     else if (tool == "list") {
 
-        Print("--subject-id " + paramSubjectID);
-        Print("--study-num " + paramStudyNum);
+        //Print("--subject-id " + paramSubjectID);
+        //Print("--study-num " + paramStudyNum);
         //if (quiet)
         //    Print("-q option is set");
         //else

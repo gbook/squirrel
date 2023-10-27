@@ -74,8 +74,20 @@ public:
     QString readme;
     QString changes;
     QString notes; /* JSON string of notes */
+
+    /* package information */
     qint64 GetUnzipSize();
     qint64 GetNumFiles();
+    qint64 GetNumSubjects();
+    qint64 GetNumStudies();
+    qint64 GetNumSeries();
+    qint64 GetNumMeasures();
+    qint64 GetNumDrugs();
+    qint64 GetNumAnalyses();
+    qint64 GetNumExperiments();
+    qint64 GetNumPipelines();
+    qint64 GetNumGroupAnalyses();
+    qint64 GetNumDataDictionaryItems();
 
     /* subject, pipeline, and experiment data */
     QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
@@ -116,6 +128,7 @@ public:
     bool AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir="");
     bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
     bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
+    bool AddGroupAnalysisFiles(QString experimentName, QStringList files, QString destDir="");
 
     /* functions to read special files */
     QHash<QString, QString> ReadParamsFile(QString f);

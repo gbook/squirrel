@@ -28,7 +28,9 @@
 /* ----- squirrel --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::squirrel
+ * @brief squirrel::squirrel constructor
+ * @param dbg true for debug logging
+ * @param q true to turn off all output
  */
 squirrel::squirrel(bool dbg, bool q)
 {
@@ -71,11 +73,16 @@ squirrel::~squirrel()
 /* ----- read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Reads a squirrel package into memory from disk
- * @param filename Full filepath of the package to read
- * @return true if package was successfully read, false otherwise
+ * @brief Reads a squirrel package from disk
+ * @param filepath Full filepath of the package
+ * @param headerOnly true if only reading the header
+ * @param validateOnly true if validating the package
+ * @return
  */
 bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
+
+    /* set the package path */
+    filePath = filepath;
 
     if (validateOnly)
         Log(QString("Validating [%1]").arg(filepath), __FUNCTION__);
@@ -130,11 +137,6 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
 
         /* read from .json file */
         jsonStr = ReadTextFileToString(workingDir + "/squirrel.json");
-        //QFile file;
-        //file.setFileName(workingDir + "/squirrel.json");
-        //file.open(QIODevice::ReadOnly | QIODevice::Text);
-        //jsonStr = file.readAll();
-        //file.close();
     }
 
     /* get the JSON document and root object */
@@ -217,23 +219,6 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
                 sqrlSeries.numBehFiles = jsonSeries["behNumFiles"].toInteger();
 
                 /* read any params from the data/Subject/Study/Series/params.json file */
-                //QString jsonStr2;
-                //QFile file;
-                //file.setFileName(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
-                //file.open(QIODevice::ReadOnly | QIODevice::Text);
-                //jsonStr2 = file.readAll();
-                //file.close();
-
-                /* get the JSON document and root object */
-                //QJsonDocument d = QJsonDocument::fromJson(jsonStr2.toUtf8());
-
-                //QHash<QString, QString> tags;
-
-                //QJsonObject json = d.object();
-                //foreach(const QString& key, json.keys()) {
-                //    tags[key] = json.value(key).toString();
-                //}
-
                 if (!headerOnly)
                     sqrlSeries.params = ReadParamsFile(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
 
@@ -698,27 +683,22 @@ void squirrel::print() {
 
     /* iterate through subjects */
     for (int i=0; i < subjectList.size(); i++) {
-
         squirrelSubject sub = subjectList[i];
         sub.PrintSubject();
 
         /* iterate through studies */
-        //Log(QString("Iterating through [%1] studies").arg(sub.studyList.size()), __FUNCTION__);
         for (int j=0; j < sub.studyList.size(); j++) {
-
             squirrelStudy stud = sub.studyList[j];
             stud.PrintStudy();
 
             /* iterate through series */
             for (int k=0; k < stud.seriesList.size(); k++) {
-
                 squirrelSeries ser = stud.seriesList[k];
                 ser.PrintSeries();
             }
 
             /* iterate through analyses */
             for (int k=0; k < stud.analysisList.size(); k++) {
-
                 squirrelAnalysis an = stud.analysisList[k];
                 an.PrintAnalysis();
             }
@@ -726,14 +706,12 @@ void squirrel::print() {
 
         /* iterate through measures */
         for (int j=0; j < sub.measureList.size(); j++) {
-
             squirrelMeasure meas = sub.measureList[j];
             meas.PrintMeasure();
         }
 
         /* iterate through drugs */
         for (int j=0; j < sub.drugList.size(); j++) {
-
             squirrelDrug drug = sub.drugList[j];
             drug.PrintDrug();
         }
@@ -811,6 +789,167 @@ qint64 squirrel::GetNumFiles() {
         }
     }
     return numFiles;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumSubjects --------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumSubjects
+ * @return the number of subjects
+ */
+qint64 squirrel::GetNumSubjects() {
+    return subjectList.size();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumStudies ---------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumStudies
+ * @return the total number of studies in the package
+ */
+qint64 squirrel::GetNumStudies() {
+
+    qint64 numStudies(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        numStudies += subjectList[i].studyList.size();
+    }
+    return numStudies;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumSeries ----------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumSeries
+ * @return the total number of series in the package
+ */
+qint64 squirrel::GetNumSeries() {
+    qint64 numSeries(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        squirrelSubject sub = subjectList[i];
+        /* iterate through studies */
+        for (int j=0; j < sub.studyList.size(); j++) {
+            numSeries += sub.studyList[j].seriesList.size();
+        }
+    }
+    return numSeries;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumMeasures --------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumMeasures
+ * @return the total number of measure objects in the package
+ */
+qint64 squirrel::GetNumMeasures() {
+    qint64 numMeasures(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        numMeasures += subjectList[i].measureList.size();
+    }
+
+    return numMeasures;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumDrugs ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumDrugs
+ * @return the totel number of drug objects in the package
+ */
+qint64 squirrel::GetNumDrugs() {
+    qint64 numDrugs(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        numDrugs += subjectList[i].drugList.size();
+    }
+
+    return numDrugs;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumAnalyses --------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumAnalyses
+ * @return the total number of analysis objects in the package
+ */
+qint64 squirrel::GetNumAnalyses() {
+    qint64 numAnalyses(0);
+
+    /* iterate through subjects */
+    for (int i=0; i < subjectList.size(); i++) {
+        squirrelSubject sub = subjectList[i];
+        /* iterate through studies */
+        for (int j=0; j < sub.studyList.size(); j++) {
+            numAnalyses += sub.studyList[j].analysisList.size();
+        }
+    }
+    return numAnalyses;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumExperiments ------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumExperiments
+ * @return the number of experiments
+ */
+qint64 squirrel::GetNumExperiments() {
+    return experimentList.size();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumPipelines -------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumPipelines
+ * @return the number of pipelines
+ */
+qint64 squirrel::GetNumPipelines() {
+    return pipelineList.size();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumGroupAnalyses ---------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumGroupAnalyses
+ * @return the number of group analyses
+ */
+qint64 squirrel::GetNumGroupAnalyses() {
+    return groupAnalysisList.size();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNumDataDictionaryItems ---------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetNumDataDictionaryItems
+ * @return the number of data dictionary items
+ */
+qint64 squirrel::GetNumDataDictionaryItems() {
+    return dataDictionary.dictItems.size();
 }
 
 
@@ -907,15 +1046,27 @@ bool squirrel::removeSubject(QString ID) {
  * @brief Print package details
  */
 void squirrel::PrintPackage() {
-    Print("-- SQUIRREL PACKAGE ----------");
-    Print(QString("Date: %1").arg(datetime.toString()));
-    Print(QString("Description: %1").arg(description));
-    Print(QString("Name: %1").arg(name));
-    Print(QString("Version: %1").arg(version));
-    Print(QString("subjectDirFormat: %1").arg(subjectDirFormat));
-    Print(QString("studyDirFormat: %1").arg(studyDirFormat));
-    Print(QString("seriesDirFormat: %1").arg(seriesDirFormat));
-    Print(QString("dataFormat: %1").arg(dataFormat));
+
+    qint64 numSubjects = GetNumSubjects();
+    qint64 numStudies = GetNumStudies();
+    qint64 numSeries = GetNumSeries();
+    qint64 numMeasures(0);
+    qint64 numDrugs(0);
+    qint64 numAnalyses(0);
+    qint64 numExperiments(0);
+    qint64 numPipelines(0);
+    qint64 numGroupAnalyses(0);
+    qint64 numDataDictionaries = GetNumDataDictionaryItems();
+
+    Print("Squirrel Package: " + filePath);
+    Print(QString("  Date: %1").arg(datetime.toString()));
+    Print(QString("  Description: %1").arg(description));
+    Print(QString("  Name: %1").arg(name));
+    Print(QString("  Version: %1").arg(version));
+    Print(QString("  Directory Format (subject, study, series): %1, %2, %3").arg(subjectDirFormat).arg(studyDirFormat).arg(seriesDirFormat));
+    Print(QString("  Data Format: %1").arg(dataFormat));
+    Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetNumFiles()).arg(GetUnzipSize()));
+    Print(QString("  Objects:\n    %1 subjects\n    %2 studies\n    %3 series\n    %4 measures\n    %5 drugs\n    %6 analyses\n    %7 experiments\n    %8 pipelines\n    %9 group analyses\n    %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
 }
 
 
@@ -1562,6 +1713,10 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
 /* ------------------------------------------------------------ */
 /* ----- PrintSubjects ---------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintSubjects print list of subjects to stdout
+ * @param details true to print details, false to print list of subject IDs
+ */
 void squirrel::PrintSubjects(bool details) {
 
     if (details) {
@@ -1582,6 +1737,11 @@ void squirrel::PrintSubjects(bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintStudies ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintStudies print list of studies to the stdout
+ * @param subjectID the subject ID to print studies for
+ * @param details true to print details, false to print list of study numbers
+ */
 void squirrel::PrintStudies(QString subjectID, bool details) {
     if (details) {
         squirrelSubject sqrlSubject;
@@ -1607,6 +1767,12 @@ void squirrel::PrintStudies(QString subjectID, bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintSeries ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintSeries print list of series to stdout
+ * @param subjectID the subject ID
+ * @param studyNum the study number
+ * @param details true to print details, false to print list of series numbers
+ */
 void squirrel::PrintSeries(QString subjectID, int studyNum, bool details) {
     if (details) {
         squirrelStudy sqrlStudy;
@@ -1632,6 +1798,10 @@ void squirrel::PrintSeries(QString subjectID, int studyNum, bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintExperiments ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintExperiments
+ * @param details true to print details, false to print list of pipeline names
+ */
 void squirrel::PrintExperiments(bool details) {
     if (details) {
         foreach (squirrelExperiment e, experimentList) {
@@ -1651,6 +1821,10 @@ void squirrel::PrintExperiments(bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintPipelines --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintPipelines
+ * @param details true to print details, false to print list of pipeline names
+ */
 void squirrel::PrintPipelines(bool details) {
     if (details) {
         foreach (squirrelPipeline p, pipelineList) {

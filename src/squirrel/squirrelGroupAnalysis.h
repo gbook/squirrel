@@ -35,13 +35,15 @@ public:
     QJsonObject ToJSON();
     void PrintGroupAnalysis();
 
-    QString pipelineName; /*!< name of the pipeline */
-    int pipelineVersion; /*!< pipeline version */
-    QDateTime startDate; /*!< datetime the analysis was started, includes the setup time */
-    QDateTime endDate; /*!< datetime the analysis ended */
+    /* JSON elements */
+    QString groupAnalysisName; /*!< name of the group analysis */
+    QDateTime dateTime; /*!< datetime of the group analysis */
+    QString notes;
     qint64 numfiles;
     qint64 size; /*!< disk size in bytes of the analysis */
 
+    /* library variables */
+    QStringList stagedFiles; /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
     QString virtualPath; /*!< path within the squirrel package, no leading slash */
 };
 

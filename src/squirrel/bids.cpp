@@ -38,6 +38,10 @@ bids::bids()
 /* ----- LoadToSquirrel ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
+ * This function does its best to load an existing BIDS directory into a squirrel
+ * package. Due to the complex nature of BIDS structures and addendums, exact
+ * converstion of BIDS into squirrel may be incomplete
+ *
  * @brief Load a BIDS directory into a squirrel object
  * @param dir path to the BIDS directory
  * @param sqrl squirrel object
@@ -47,7 +51,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
     sqrl->Log(QString("Loading BIDS from [%1]").arg(dir), __FUNCTION__);
 
-    /* check if directory exists */
+    /* check if BIDS directory exists */
     QDir d(dir);
     if (!d.exists()) {
         sqrl->Log(QString("Error. Directory [%1] does not exist").arg(dir), __FUNCTION__);

@@ -120,6 +120,8 @@ public:
     QString primaryScript;
     QString secondaryScript;
 
+    QStringList stagedFiles; /*!< staged file list: list of files in their own original directories which will be copied in before the package is zipped up */
+
     QString virtualPath; /*!< path within the squirrel package, no leading slash */
 };
 
