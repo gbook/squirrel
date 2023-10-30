@@ -187,7 +187,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
             QJsonObject jsonStudy = v.toObject();
             squirrelStudy sqrlStudy;
 
-            sqrlStudy.number = jsonStudy["StudyNumber"].toInteger();
+            sqrlStudy.number = jsonStudy["StudyNumber"].toInt();
             sqrlStudy.dateTime.fromString(jsonStudy["StudyDatetime"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlStudy.ageAtStudy = jsonStudy["AgeAtStudy"].toDouble();
             sqrlStudy.height = jsonStudy["Height"].toDouble();
@@ -212,11 +212,12 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
                 sqrlSeries.seriesUID = jsonSeries["SeriesUID"].toString();
                 sqrlSeries.description = jsonSeries["Description"].toString();
                 sqrlSeries.protocol = jsonSeries["Protocol"].toString();
-                sqrlSeries.experimentList.append(jsonSeries["experiment"].toString());
-                sqrlSeries.size = jsonSeries["size"].toInteger();
-                sqrlSeries.numFiles = jsonSeries["numFiles"].toInteger();
-                sqrlSeries.behSize = jsonSeries["behSize"].toInteger();
-                sqrlSeries.numBehFiles = jsonSeries["behNumFiles"].toInteger();
+                sqrlSeries.experimentNames = jsonSeries["ExperimentNames"].toString().split(",");
+                sqrlSeries.size = jsonSeries["Size"].toInteger();
+                sqrlSeries.numFiles = jsonSeries["NumFiles"].toInteger();
+                sqrlSeries.behSize = jsonSeries["BehSize"].toInteger();
+                sqrlSeries.numBehFiles = jsonSeries["BehNumFiles"].toInteger();
+                sqrlSeries.virtualPath = jsonSeries["VirtualPath"].toString();
 
                 /* read any params from the data/Subject/Study/Series/params.json file */
                 if (!headerOnly)
@@ -225,6 +226,35 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
                 /* add this series to the study */
                 if (sqrlStudy.addSeries(sqrlSeries)) {
                     Log(QString("Added series [%1]").arg(sqrlSeries.number), __FUNCTION__);
+                }
+            }
+
+            /* loop through and read all analyses */
+            QJsonArray jsonAnalyses = jsonStudy["analyses"].toArray();
+            for (auto v : jsonAnalyses) {
+                QJsonObject jsonAnalyses = v.toObject();
+                squirrelAnalysis sqrlAnalysis;
+
+                sqrlAnalysis.pipelineName = jsonAnalyses["PipelineName"].toString();
+                sqrlAnalysis.pipelineVersion = jsonAnalyses["PipelineVersion"].toInt();
+                sqrlAnalysis.clusterStartDate.fromString(jsonAnalyses["ClusterStartDate"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.clusterEndDate.fromString(jsonAnalyses["ClusterEndDate"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.startDate.fromString(jsonAnalyses["StartDate"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.endDate.fromString(jsonAnalyses["EndDate"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.setupTime = jsonAnalyses["RunTime"].toInteger();
+                sqrlAnalysis.runTime = jsonAnalyses["RunTime"].toInteger();
+                sqrlAnalysis.numSeries = jsonAnalyses["NumSeries"].toInt();
+                sqrlAnalysis.status = jsonAnalyses["Status"].toString();
+                sqrlAnalysis.successful = jsonAnalyses["Successful"].toBool();
+                sqrlAnalysis.size = jsonAnalyses["Size"].toInteger();
+                sqrlAnalysis.hostname = jsonAnalyses["Hostname"].toString();
+                sqrlAnalysis.status = jsonAnalyses["Status"].toString();
+                sqrlAnalysis.lastMessage = jsonAnalyses["StatusMessage"].toString();
+                sqrlAnalysis.virtualPath = jsonAnalyses["VirtualPath"].toString();
+
+                /* add this analysis to the study */
+                if (sqrlStudy.addAnalysis(sqrlAnalysis)) {
+                    Log(QString("Added analysis [%1]").arg(sqrlAnalysis.pipelineName), __FUNCTION__);
                 }
             }
 
@@ -241,14 +271,15 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
             QJsonObject jsonMeasure = v.toObject();
             squirrelMeasure sqrlMeasure;
 
-            sqrlMeasure.dateEnd.fromString(jsonMeasure["dateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.dateStart.fromString(jsonMeasure["dateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.measureName = jsonMeasure["measureName"].toString();
-            sqrlMeasure.instrumentName = jsonMeasure["instrumentName"].toString();
-            sqrlMeasure.rater = jsonMeasure["rater"].toString();
-            sqrlMeasure.notes = jsonMeasure["notes"].toString();
-            sqrlMeasure.value = jsonMeasure["value"].toString();
-            sqrlMeasure.description = jsonMeasure["description"].toString();
+            sqrlMeasure.measureName = jsonMeasure["MeasureName"].toString();
+            sqrlMeasure.dateStart.fromString(jsonMeasure["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlMeasure.dateEnd.fromString(jsonMeasure["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlMeasure.instrumentName = jsonMeasure["InstrumentName"].toString();
+            sqrlMeasure.rater = jsonMeasure["Rater"].toString();
+            sqrlMeasure.notes = jsonMeasure["Notes"].toString();
+            sqrlMeasure.value = jsonMeasure["Value"].toString();
+            sqrlMeasure.description = jsonMeasure["Description"].toString();
+            sqrlMeasure.duration = jsonMeasure["Duration"].toDouble();
 
             sqrlSubject.addMeasure(sqrlMeasure);
         }
@@ -260,13 +291,13 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
             QJsonObject jsonDrug = v.toObject();
             squirrelDrug sqrlDrug;
 
-            sqrlDrug.dateEnd.fromString(jsonDrug["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlDrug.dateStart.fromString(jsonDrug["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlDrug.dateRecordEntry.fromString(jsonDrug["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlDrug.drugName = jsonDrug["DrugName"].toString();
+            sqrlDrug.dateStart.fromString(jsonDrug["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlDrug.dateEnd.fromString(jsonDrug["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlDrug.doseString = jsonDrug["DoseString"].toString();
             sqrlDrug.doseAmount = jsonDrug["DoseAmount"].toDouble();
             sqrlDrug.doseFrequency = jsonDrug["DoseFrequency"].toString();
-            sqrlDrug.route = jsonDrug["Route"].toString();
+            sqrlDrug.route = jsonDrug["AdministrationRoute"].toString();
             sqrlDrug.drugClass = jsonDrug["DrugClass"].toString();
             sqrlDrug.doseKey = jsonDrug["DoseKey"].toString();
             sqrlDrug.doseUnit = jsonDrug["DoseUnit"].toString();
@@ -276,6 +307,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
             sqrlDrug.description = jsonDrug["Description"].toString();
             sqrlDrug.rater = jsonDrug["Rater"].toString();
             sqrlDrug.notes = jsonDrug["Notes"].toString();
+            sqrlDrug.dateRecordEntry.fromString(jsonDrug["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
 
             sqrlSubject.addDrug(sqrlDrug);
         }
@@ -294,9 +326,10 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
         QJsonObject jsonExperiment = v.toObject();
         squirrelExperiment sqrlExperiment;
 
-        sqrlExperiment.experimentName = jsonExperiment["experimentName"].toString();
-        sqrlExperiment.numFiles = jsonExperiment["numFiles"].toInt();
-        sqrlExperiment.size = jsonExperiment["size"].toInt();
+        sqrlExperiment.experimentName = jsonExperiment["ExperimentName"].toString();
+        sqrlExperiment.numFiles = jsonExperiment["NumFiles"].toInt();
+        sqrlExperiment.size = jsonExperiment["Size"].toInt();
+        sqrlExperiment.virtualPath = jsonExperiment["VirtualPath"].toString();
 
         experimentList.append(sqrlExperiment);
     }
@@ -309,33 +342,38 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
         QJsonObject jsonPipeline = v.toObject();
         squirrelPipeline sqrlPipeline;
 
-        sqrlPipeline.clusterQueue = jsonPipeline["clusterQueue"].toString();
-        sqrlPipeline.clusterSubmitHost = jsonPipeline["clusterSubmitHost"].toString();
-        sqrlPipeline.clusterUser = jsonPipeline["clusterUser"].toString();
-        sqrlPipeline.createDate.fromString(jsonPipeline["createDate"].toString(), "yyyy-MM-dd hh:mm:ss");
-        sqrlPipeline.dataCopyMethod = jsonPipeline["dataCopyMethod"].toString();
-        sqrlPipeline.depDir = jsonPipeline["depDir"].toString();
-        sqrlPipeline.depLevel = jsonPipeline["depLevel"].toString();
-        sqrlPipeline.depLinkType = jsonPipeline["depLinkType"].toString();
-        sqrlPipeline.description = jsonPipeline["description"].toString();
-        sqrlPipeline.dirStructure = jsonPipeline["dirStructure"].toString();
-        sqrlPipeline.directory = jsonPipeline["directory"].toString();
-        sqrlPipeline.group = jsonPipeline["group"].toString();
-        sqrlPipeline.groupType = jsonPipeline["groupType"].toString();
-        sqrlPipeline.level = jsonPipeline["level"].toString();
-        sqrlPipeline.pipelineName = jsonPipeline["name"].toString();
-        sqrlPipeline.notes = jsonPipeline["notes"].toString();
-        sqrlPipeline.numConcurrentAnalyses = jsonPipeline["numConcurrentAnalyses"].toInt();
-        sqrlPipeline.parentPipelines = jsonPipeline["parentPipelines"].toString().split(",");
-        sqrlPipeline.resultScript = jsonPipeline["resultScript"].toString();
-        sqrlPipeline.submitDelay = jsonPipeline["submitDelay"].toInt();
-        sqrlPipeline.tmpDir = jsonPipeline["tmpDir"].toString();
-        sqrlPipeline.version = jsonPipeline["version"].toInt();
-        sqrlPipeline.flags.useProfile = jsonPipeline["useProfile"].toBool();
-        sqrlPipeline.flags.useTmpDir = jsonPipeline["useTmpDir"].toBool();
+        sqrlPipeline.clusterType = jsonPipeline["ClusterType"].toString();
+        sqrlPipeline.clusterUser = jsonPipeline["ClusterUser"].toString();
+        sqrlPipeline.clusterQueue = jsonPipeline["ClusterQueue"].toString();
+        sqrlPipeline.clusterSubmitHost = jsonPipeline["ClusterSubmitHost"].toString();
+        sqrlPipeline.createDate.fromString(jsonPipeline["CreateDate"].toString(), "yyyy-MM-dd hh:mm:ss");
+        sqrlPipeline.dataCopyMethod = jsonPipeline["DataCopyMethod"].toString();
+        sqrlPipeline.depDir = jsonPipeline["DepDir"].toString();
+        sqrlPipeline.depLevel = jsonPipeline["DepLevel"].toString();
+        sqrlPipeline.depLinkType = jsonPipeline["DepLinkType"].toString();
+        sqrlPipeline.description = jsonPipeline["Description"].toString();
+        sqrlPipeline.dirStructure = jsonPipeline["DirStructure"].toString();
+        sqrlPipeline.directory = jsonPipeline["Directory"].toString();
+        sqrlPipeline.group = jsonPipeline["Group"].toString();
+        sqrlPipeline.groupType = jsonPipeline["GroupType"].toString();
+        sqrlPipeline.level = jsonPipeline["Level"].toString();
+        sqrlPipeline.maxWallTime = jsonPipeline["MaxWallTime"].toInt();
+        sqrlPipeline.pipelineName = jsonPipeline["PipelineName"].toString();
+        sqrlPipeline.notes = jsonPipeline["Notes"].toString();
+        sqrlPipeline.numConcurrentAnalyses = jsonPipeline["NumConcurrentAnalyses"].toInt();
+        sqrlPipeline.parentPipelines = jsonPipeline["ParentPipelines"].toString().split(",");
+        sqrlPipeline.resultScript = jsonPipeline["ResultScript"].toString();
+        sqrlPipeline.submitDelay = jsonPipeline["SubmitDelay"].toInt();
+        sqrlPipeline.tmpDir = jsonPipeline["TempDir"].toString();
+        sqrlPipeline.flags.useProfile = jsonPipeline["UseProfile"].toBool();
+        sqrlPipeline.flags.useTmpDir = jsonPipeline["UseTempDir"].toBool();
+        sqrlPipeline.version = jsonPipeline["Version"].toInt();
+        sqrlPipeline.primaryScript = jsonPipeline["PrimaryScript"].toString();
+        sqrlPipeline.secondaryScript = jsonPipeline["SecondaryScript"].toString();
+        sqrlPipeline.virtualPath = jsonPipeline["VirtualPath"].toString();
 
         QJsonArray jsonCompleteFiles;
-        jsonCompleteFiles = jsonPipeline["completeFiles"].toArray();
+        jsonCompleteFiles = jsonPipeline["CompleteFiles"].toArray();
         for (auto v : jsonCompleteFiles) {
             sqrlPipeline.completeFiles.append(v.toString());
         }
@@ -346,27 +384,27 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
         for (auto v : jsonDataSteps) {
             QJsonObject jsonDataStep = v.toObject();
             dataStep ds;
-            ds.associationType = jsonDataStep["associationType"].toString();
-            ds.behDir = jsonDataStep["behDir"].toString();
-            ds.behFormat = jsonDataStep["behFormat"].toString();
-            ds.dataFormat = jsonDataStep["dataFormat"].toString();
-            ds.imageType = jsonDataStep["imageType"].toString();
-            ds.datalevel = jsonDataStep["dataLevel"].toString();
-            ds.location = jsonDataStep["location"].toString();
-            ds.modality = jsonDataStep["modality"].toString();
-            ds.numBOLDreps = jsonDataStep["numBOLDreps"].toString();
-            ds.numImagesCriteria = jsonDataStep["numImagesCriteria"].toString();
-            ds.order = jsonDataStep["order"].toInt();
-            ds.protocol = jsonDataStep["protocol"].toString();
-            ds.seriesCriteria = jsonDataStep["seriesCriteria"].toString();
-            ds.protocol = jsonDataStep["protocol"].toString();
-            ds.flags.enabled = jsonDataStep["enabled"].toBool();
-            ds.flags.optional = jsonDataStep["optional"].toBool();
-            ds.flags.gzip = jsonDataStep["gzip"].toBool();
-            ds.flags.usePhaseDir = jsonDataStep["usePhaseDir"].toBool();
-            ds.flags.useSeries = jsonDataStep["useSeries"].toBool();
-            ds.flags.preserveSeries = jsonDataStep["preserveSeries"].toBool();
-            ds.flags.primaryProtocol = jsonDataStep["primaryProtocol"].toBool();
+            ds.associationType = jsonDataStep["AssociationType"].toString();
+            ds.behDir = jsonDataStep["BehDir"].toString();
+            ds.behFormat = jsonDataStep["BehFormat"].toString();
+            ds.dataFormat = jsonDataStep["DataFormat"].toString();
+            ds.imageType = jsonDataStep["ImageType"].toString();
+            ds.datalevel = jsonDataStep["DataLevel"].toString();
+            ds.location = jsonDataStep["Location"].toString();
+            ds.modality = jsonDataStep["Modality"].toString();
+            ds.numBOLDreps = jsonDataStep["NumBOLDreps"].toString();
+            ds.numImagesCriteria = jsonDataStep["NumImagesCriteria"].toString();
+            ds.order = jsonDataStep["Order"].toInt();
+            ds.protocol = jsonDataStep["Protocol"].toString();
+            ds.seriesCriteria = jsonDataStep["SeriesCriteria"].toString();
+            ds.protocol = jsonDataStep["Protocol"].toString();
+            ds.flags.enabled = jsonDataStep["Enabled"].toBool();
+            ds.flags.optional = jsonDataStep["Optional"].toBool();
+            ds.flags.gzip = jsonDataStep["Gzip"].toBool();
+            ds.flags.usePhaseDir = jsonDataStep["UsePhaseDir"].toBool();
+            ds.flags.useSeries = jsonDataStep["UseSeries"].toBool();
+            ds.flags.preserveSeries = jsonDataStep["PreserveSeries"].toBool();
+            ds.flags.primaryProtocol = jsonDataStep["PrimaryProtocol"].toBool();
             sqrlPipeline.dataSteps.append(ds);
         }
         pipelineList.append(sqrlPipeline);
@@ -583,6 +621,19 @@ bool squirrel::write(QString outpath, QString &filepath) {
     for (int i=0; i < subjectList.size(); i++) {
         JSONsubjects.append(subjectList[i].ToJSON());
     }
+
+    /* add group-analyses */
+    if (groupAnalysisList.size() > 0) {
+        Log(QString("Adding [%1] group-analyses...").arg(groupAnalysisList.size()), __FUNCTION__);
+        QJsonArray JSONgroupanalyses;
+        for (int i=0; i < groupAnalysisList.size(); i++) {
+            JSONgroupanalyses.append(groupAnalysisList[i].ToJSON());
+            Log(QString("Added group-analysis [%1]").arg(groupAnalysisList[i].groupAnalysisName), __FUNCTION__, true);
+        }
+        data["NumGroupAnalyses"] = JSONgroupanalyses.size();
+        data["group-analysis"] = JSONgroupanalyses;
+    }
+
     data["NumSubjects"] = JSONsubjects.size();
     data["subjects"] = JSONsubjects;
     root["data"] = data;
@@ -609,18 +660,6 @@ bool squirrel::write(QString outpath, QString &filepath) {
         }
         root["NumExperiments"] = JSONexperiments.size();
         root["experiments"] = JSONexperiments;
-    }
-
-    /* add group-analyses */
-    if (groupAnalysisList.size() > 0) {
-        Log(QString("Adding [%1] group-analyses...").arg(groupAnalysisList.size()), __FUNCTION__);
-        QJsonArray JSONgroupanalyses;
-        for (int i=0; i < groupAnalysisList.size(); i++) {
-            JSONgroupanalyses.append(groupAnalysisList[i].ToJSON());
-            Log(QString("Added group-analysis [%1]").arg(groupAnalysisList[i].groupAnalysisName), __FUNCTION__, true);
-        }
-        root["NumGroupAnalyses"] = JSONgroupanalyses.size();
-        root["group-analysis"] = JSONgroupanalyses;
     }
 
     /* add data-dictionary */

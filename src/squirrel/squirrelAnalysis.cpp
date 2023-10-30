@@ -36,21 +36,21 @@ squirrelAnalysis::squirrelAnalysis()
 QJsonObject squirrelAnalysis::ToJSON() {
 	QJsonObject json;
 
-	json["pipelineName"] = pipelineName;
-	json["pipelineVersion"] = pipelineVersion;
-	json["clusterStartDate"] = clusterStartDate.toString("yyyy-MM-dd HH:mm:ss");
-	json["clusterEndDate"] = clusterEndDate.toString("yyyy-MM-dd HH:mm:ss");
-	json["startDate"] = startDate.toString("yyyy-MM-dd HH:mm:ss");
-	json["endDate"] = endDate.toString("yyyy-MM-dd HH:mm:ss");
-	json["setupTime"] = setupTime;
-	json["runTime"] = runTime;
-	json["numSeries"] = numSeries;
-	json["successful"] = successful;
-	json["size"] = size;
-	json["hostname"] = hostname;
-	json["status"] = status;
-	json["lastMessage"] = lastMessage;
-	json["virtualPath"] = virtualPath;
+    json["PipelineName"] = pipelineName;
+    json["PipelineVersion"] = pipelineVersion;
+    json["ClusterStartDate"] = clusterStartDate.toString("yyyy-MM-dd HH:mm:ss");
+    json["ClusterEndDate"] = clusterEndDate.toString("yyyy-MM-dd HH:mm:ss");
+    json["StartDate"] = startDate.toString("yyyy-MM-dd HH:mm:ss");
+    json["EndDate"] = endDate.toString("yyyy-MM-dd HH:mm:ss");
+    json["SetupTime"] = setupTime;
+    json["RunTime"] = runTime;
+    json["NumSeries"] = numSeries;
+    json["Successful"] = successful;
+    json["Size"] = size;
+    json["Hostname"] = hostname;
+    json["Status"] = status;
+    json["LastMessage"] = lastMessage;
+    json["VirtualPath"] = virtualPath;
 
 	return json;
 }

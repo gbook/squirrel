@@ -48,7 +48,7 @@ public:
     QString seriesUID;              /*!< SeriesInstanceUID */
     QString description;            /*!< Description of the series */
     QString protocol;               /*!< Protocol (may differ from description) */
-    QStringList experimentList;     /*!< List of experiment names attached to this series */
+    QStringList experimentNames;     /*!< List of experiment names attached to this series */
     qint64 numFiles = 0;            /*!< Number of files associated with the series */
     qint64 size = 0;                /*!< total size in bytes of the series */
     qint64 numBehFiles = 0;         /*!< Number of files associated with the behavioral data */

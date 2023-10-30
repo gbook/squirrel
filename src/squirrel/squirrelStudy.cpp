@@ -112,7 +112,7 @@ void squirrelStudy::PrintStudy() {
 
     Print("\t\t\t----- STUDY -----");
     Print(QString("\t\t\tNumber: %1").arg(number));
-    Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString()));
+    Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
     Print(QString("\t\t\tAgeAtStudy: %1").arg(ageAtStudy));
     Print(QString("\t\t\tHeight: %1 m").arg(height));
     Print(QString("\t\t\tWeight: %1 kg").arg(weight));
@@ -158,6 +158,14 @@ QJsonObject squirrelStudy::ToJSON() {
 	}
     json["NumSeries"] = JSONseries.size();
 	json["series"] = JSONseries;
+
+    /* add all the analyses */
+    QJsonArray JSONanalyses;
+    for (int i=0; i<analysisList.size(); i++) {
+        JSONanalyses.append(analysisList[i].ToJSON());
+    }
+    json["NumAnalyses"] = JSONanalyses.size();
+    json["analyses"] = JSONanalyses;
 
 	return json;
 }

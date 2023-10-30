@@ -51,12 +51,14 @@ squirrelSeries::squirrelSeries()
  */
 void squirrelSeries::PrintSeries() {
     Print("\t\t\t\t----- SERIES -----");
-    Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
     Print(QString("\t\t\t\tSeriesNumber: %1").arg(number));
+    Print(QString("\t\t\t\tSeriesDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
+    Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
     Print(QString("\t\t\t\tDescription: %1").arg(description));
     Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
-    Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
+    Print(QString("\t\t\t\tExperimentNames: %1").arg(experimentNames.join(",")));
     Print(QString("\t\t\t\tSize: %1").arg(size));
+    Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
     Print(QString("\t\t\t\tNumBehFiles: %1").arg(numBehFiles));
     Print(QString("\t\t\t\tBehSize: %1").arg(behSize));
 }
@@ -74,6 +76,7 @@ QJsonObject squirrelSeries::ToJSON() {
 
     json["SeriesNumber"] = number;
     json["SeriesDatetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    json["SeriesUID"] = seriesUID;
     json["Description"] = description;
     json["Protocol"] = protocol;
     json["NumFiles"] = numFiles;
@@ -83,11 +86,11 @@ QJsonObject squirrelSeries::ToJSON() {
     json["VirtualPath"] = virtualPath;
 
     QJsonArray JSONexperiments;
-    for (int i=0; i<experimentList.size(); i++) {
-		JSONexperiments.append(experimentList[i]);
+    for (int i=0; i<experimentNames.size(); i++) {
+        JSONexperiments.append(experimentNames[i]);
     }
 	if (JSONexperiments.size() > 0)
-		json["Experiments"] = JSONexperiments;
+        json["ExperimentNames"] = JSONexperiments;
 
     return json;
 }
