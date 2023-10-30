@@ -111,19 +111,19 @@ qint64 squirrelStudy::GetNextSeriesNumber() {
 void squirrelStudy::PrintStudy() {
 
     Print("\t\t\t----- STUDY -----");
-    Print(QString("\t\t\tnumber: %1").arg(number));
-    Print(QString("\t\t\tdateTime: %1").arg(dateTime.toString()));
-    Print(QString("\t\t\tageAtStudy: %1").arg(ageAtStudy));
+    Print(QString("\t\t\tNumber: %1").arg(number));
+    Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString()));
+    Print(QString("\t\t\tAgeAtStudy: %1").arg(ageAtStudy));
     Print(QString("\t\t\tHeight: %1 m").arg(height));
     Print(QString("\t\t\tWeight: %1 kg").arg(weight));
     Print(QString("\t\t\tModality: %1").arg(modality));
     Print(QString("\t\t\tDescription: %1").arg(description));
-    Print(QString("\t\t\tStudyUID: %1").arg(studyUID));
+    Print(QString("\t\t\tstudy-uid: %1").arg(studyUID));
     Print(QString("\t\t\tVisitType: %1").arg(visitType));
     Print(QString("\t\t\tDayNumber: %1").arg(dayNumber));
     Print(QString("\t\t\tTimePoint: %1").arg(timePoint));
     Print(QString("\t\t\tEquipment: %1").arg(equipment));
-    Print(QString("\t\t\tPath: %1").arg(virtualPath));
+    Print(QString("\t\t\tVirtualPath: %1").arg(virtualPath));
 }
 
 
@@ -137,26 +137,26 @@ void squirrelStudy::PrintStudy() {
 QJsonObject squirrelStudy::ToJSON() {
 	QJsonObject json;
 
-	json["number"] = number;
-	json["dateTime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-	json["ageAtStudy"] = ageAtStudy;
-	json["height"] = height;
-	json["weight"] = weight;
-	json["modality"] = modality;
-	json["description"] = description;
-	json["studyUID"] = studyUID;
-	json["visitType"] = visitType;
-	json["dayNumber"] = dayNumber;
-	json["timePoint"] = timePoint;
-	json["equipment"] = equipment;
-	json["path"] = virtualPath;
+    json["Number"] = number;
+    json["Datetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    json["AgeAtStudy"] = ageAtStudy;
+    json["Height"] = height;
+    json["Weight"] = weight;
+    json["Modality"] = modality;
+    json["Description"] = description;
+    json["StudyUID"] = studyUID;
+    json["VisitType"] = visitType;
+    json["DayNumber"] = dayNumber;
+    json["TimePoint"] = timePoint;
+    json["Equipment"] = equipment;
+    json["VirtualPath"] = virtualPath;
 
     /* add all the series */
 	QJsonArray JSONseries;
 	for (int i=0; i<seriesList.size(); i++) {
 		JSONseries.append(seriesList[i].ToJSON());
 	}
-	json["numSeries"] = JSONseries.size();
+    json["NumSeries"] = JSONseries.size();
 	json["series"] = JSONseries;
 
 	return json;

@@ -52,7 +52,7 @@ squirrelSeries::squirrelSeries()
 void squirrelSeries::PrintSeries() {
     Print("\t\t\t\t----- SERIES -----");
     Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
-    Print(QString("\t\t\t\tSeriesNum: %1").arg(number));
+    Print(QString("\t\t\t\tSeriesNumber: %1").arg(number));
     Print(QString("\t\t\t\tDescription: %1").arg(description));
     Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
     Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
@@ -72,15 +72,15 @@ void squirrelSeries::PrintSeries() {
 QJsonObject squirrelSeries::ToJSON() {
     QJsonObject json;
 
-	json["number"] = number;
-	json["seriesDateTime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-    json["description"] = description;
-    json["protocol"] = protocol;
-    json["numFiles"] = numFiles;
-    json["size"] = size;
-	json["numBehFiles"] = numBehFiles;
-	json["behSize"] = behSize;
-	json["path"] = virtualPath;
+    json["SeriesNumber"] = number;
+    json["SeriesDatetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    json["Description"] = description;
+    json["Protocol"] = protocol;
+    json["NumFiles"] = numFiles;
+    json["Size"] = size;
+    json["NumBehFiles"] = numBehFiles;
+    json["BehSize"] = behSize;
+    json["VirtualPath"] = virtualPath;
 
     QJsonArray JSONexperiments;
     for (int i=0; i<experimentList.size(); i++) {

@@ -42,23 +42,24 @@ public:
     QJsonObject ToJSON();
     QJsonObject ParamsToJSON();
 
-    /* subject info */
-    qint64 number = -1; /*!< Series number. must be unique to the study */
-    QDateTime dateTime; /*!< Series datetime */
-    QString seriesUID; /*!< SeriesInstanceUID */
-    QString description; /*!< Description of the series */
-    QString protocol; /*!< Protocol (may differ from description) */
-    qint64 numFiles = 0; /*!< Number of files associated with the series */
-    qint64 size = 0; /*!< total size in bytes of the series */
-    qint64 numBehFiles = 0; /*!< Number of files associated with the behavioral data */
-    qint64 behSize = 0; /*!< total size in bytes of the beh data */
+    /* JSON elements */
+    qint64 number = -1;             /*!< Series number. must be unique to the study */
+    QDateTime dateTime;             /*!< Series datetime */
+    QString seriesUID;              /*!< SeriesInstanceUID */
+    QString description;            /*!< Description of the series */
+    QString protocol;               /*!< Protocol (may differ from description) */
+    QStringList experimentList;     /*!< List of experiment names attached to this series */
+    qint64 numFiles = 0;            /*!< Number of files associated with the series */
+    qint64 size = 0;                /*!< total size in bytes of the series */
+    qint64 numBehFiles = 0;         /*!< Number of files associated with the behavioral data */
+    qint64 behSize = 0;             /*!< total size in bytes of the beh data */
     QHash<QString, QString> params; /*!< Hash containing experimental parameters. eg MR params */
-    QStringList stagedFiles; /*!< staged file list: list of raw files in their own directories before the package is zipped up */
-    QStringList stagedBehFiles; /*!< staged beh file list: list of raw files in their own directories before the package is zipped up */
+    QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
-    QStringList experimentList; /*!< List of experiment names attached to this series */
+    /* lib variables */
+    QStringList stagedFiles;        /*!< staged file list: list of raw files in their own directories before the package is zipped up */
+    QStringList stagedBehFiles;     /*!< staged beh file list: list of raw files in their own directories before the package is zipped up */
 
-    QString virtualPath; /*!< path within the squirrel package, no leading slash */
 };
 
 #endif // SQUIRRELSERIES_H

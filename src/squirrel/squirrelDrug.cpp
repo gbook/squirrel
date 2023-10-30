@@ -41,16 +41,16 @@ QJsonObject squirrelDrug::ToJSON() {
 	json["doseAmount"] = doseAmount;
 	json["doseFrequency"] = doseFrequency;
 	json["route"] = route;
-	json["type"] = type;
-	json["doseKey"] = doseKey;
-	json["doseUnit"] = doseUnit;
-	json["frequencyModifier"] = frequencyModifier;
-	json["frequencyValue"] = frequencyValue;
-	json["frequencyUnit"] = frequencyUnit;
-	json["description"] = description;
-	json["rater"] = rater;
-	json["notes"] = notes;
-	json["dateEntry"] = dateEntry.toString("yyyy-MM-dd HH:mm:ss");
+    json["DrugClass"] = drugClass;
+    json["DoseKey"] = doseKey;
+    json["DoseUnit"] = doseUnit;
+    json["FrequencyModifier"] = frequencyModifier;
+    json["FrequencyValue"] = frequencyValue;
+    json["FrequencyUnit"] = frequencyUnit;
+    json["Description"] = description;
+    json["Rater"] = rater;
+    json["Notes"] = notes;
+    json["DateRecordEntry"] = dateRecordEntry.toString("yyyy-MM-dd HH:mm:ss");
 
     return json;
 }
@@ -71,7 +71,7 @@ void squirrelDrug::PrintDrug() {
     Print(QString("\t\t\tDoseAmount: %1").arg(doseAmount));
     Print(QString("\t\t\tDoseFrequency: %1").arg(doseFrequency));
     Print(QString("\t\t\tRoute: %1").arg(route));
-    Print(QString("\t\t\tType: %1").arg(type));
+    Print(QString("\t\t\tDrugClass: %1").arg(drugClass));
     Print(QString("\t\t\tDoseKey: %1").arg(doseKey));
     Print(QString("\t\t\tDoseUnit: %1").arg(doseUnit));
     Print(QString("\t\t\tFrequencyModifier: %1").arg(frequencyModifier));
@@ -80,6 +80,6 @@ void squirrelDrug::PrintDrug() {
     Print(QString("\t\t\tDescription: %1").arg(description));
     Print(QString("\t\t\tRater: %1").arg(rater));
     Print(QString("\t\t\tNotes: %1").arg(notes));
-    Print(QString("\t\t\tDateEntry: %1").arg(dateEntry.toString("yyyy-MM-dd HH:mm:ss")));
+    Print(QString("\t\t\tDateRecordEntry: %1").arg(dateRecordEntry.toString("yyyy-MM-dd HH:mm:ss")));
 
 }

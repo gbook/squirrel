@@ -39,25 +39,28 @@ public:
     QJsonObject ToJSON();
 	void PrintDrug();
 
-    QString drugName; /*!< drug name (required) */
-    QDateTime dateStart; /*!< drug start date (required) */
-    QDateTime dateEnd; /*!< drug end date */
-    double doseAmount; /*!< dose amount (required) */
-    QString doseFrequency; /*!< string representation of dose frequency, ie '2 tablets daily' */
-    QString route; /*!< drug delivery route (oral, IV, IM, etc) */
-    QString type; /*!< drug class */
-    QString doseKey; /*!< for clinical trials, the dose key */
-    QString doseUnit; /*!< mg, g, ml, tablets, etc */
-    QString frequencyModifier; /*!< 'every' or 'times' */
-    double frequencyValue; /*!< the frequency as a number */
-    QString frequencyUnit; /*!< the time of the frequency: bolus, dose, second, minute, hour, day, week, month, year */
-    QString description; /*!< longer description of the drug and dosing */
-    QString rater; /*!< rater/experimenter/prescriber */
-    QString notes; /*!< freeform field for notes */
-    QDateTime dateEntry; /*!< date of the data entry */
-	QDateTime dateRecordEntry;
-	QDateTime dateRecordCreate;
-	QDateTime dateRecordModify;
+    /* JSON elements */
+    QString drugName;           /*!< drug name (required) */
+    QDateTime dateStart;        /*!< drug start date (required) */
+    QDateTime dateEnd;          /*!< drug end date */
+    QString doseString;         /*!< full dose string (example "tylenol 325mg twice daily by mouth") */
+    double doseAmount;          /*!< dose amount (required) */
+    QString doseFrequency;      /*!< string representation of dose frequency, ie '2 tablets daily' */
+    QString route;              /*!< drug delivery route (oral, IV, IM, etc) */
+    QString drugClass;          /*!< drug class */
+    QString doseKey;            /*!< for clinical trials, the dose key */
+    QString doseUnit;           /*!< mg, g, ml, tablets, etc */
+    QString frequencyModifier;  /*!< 'every' or 'times' */
+    double frequencyValue;      /*!< the frequency as a number */
+    QString frequencyUnit;      /*!< the time of the frequency: bolus, dose, second, minute, hour, day, week, month, year */
+    QString description;        /*!< longer description of the drug and dosing */
+    QString rater;              /*!< rater/experimenter/prescriber */
+    QString notes;              /*!< freeform field for notes */
+    QDateTime dateRecordEntry;  /*!< date of the data entry */
+
+    //QDateTime dateRecordEntry;
+    //QDateTime dateRecordCreate;
+    //QDateTime dateRecordModify;
 
 };
 

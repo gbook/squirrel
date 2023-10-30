@@ -35,13 +35,13 @@ squirrelGroupAnalysis::squirrelGroupAnalysis()
 QJsonObject squirrelGroupAnalysis::ToJSON() {
     QJsonObject json;
 
-    json["pipelineName"] = pipelineName;
-    json["pipelineVersion"] = pipelineVersion;
-    json["startDate"] = startDate.toString("yyyy-MM-dd HH:mm:ss");
-    json["endDate"] = endDate.toString("yyyy-MM-dd HH:mm:ss");
-    json["numfiles"] = numfiles;
-    json["size"] = size;
-    json["virtualPath"] = virtualPath;
+    json["GroupAnalysisName"] = groupAnalysisName;
+    json["Datetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    json["Description"] = description;
+    json["Notes"] = notes;
+    json["NumFiles"] = numfiles;
+    json["Size"] = size;
+    json["VirtualPath"] = virtualPath;
 
     return json;
 }
@@ -56,10 +56,10 @@ QJsonObject squirrelGroupAnalysis::ToJSON() {
 void squirrelGroupAnalysis::PrintGroupAnalysis() {
 
     Print("\t----- GROUPANALYSIS ------");
-    Print(QString("\tPipelineName: %1").arg(pipelineName));
-    Print(QString("\tPipelineVersion: %1").arg(pipelineVersion));
-    Print(QString("\tStartDate: %1").arg(startDate.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("\tEndDate: %1").arg(endDate.toString("yyyy-MM-dd HH:mm:ss")));
+    Print(QString("\tGroupAnalysisName: %1").arg(groupAnalysisName));
+    Print(QString("\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
+    Print(QString("\tDescription: %1").arg(description));
+    Print(QString("\tNotes: %1").arg(notes));
     Print(QString("\tNumfiles: %1").arg(numfiles));
     Print(QString("\tSize: %1").arg(size));
     Print(QString("\tVirtualPath: %1").arg(virtualPath));

@@ -51,65 +51,66 @@ squirrelPipeline::squirrelPipeline()
 QJsonObject squirrelPipeline::ToJSON(QString path) {
     QJsonObject json;
 
-    json["name"] = pipelineName;
-    json["description"] = description;
-    json["createDate"] = createDate.toString();
-    json["version"] = version;
-    json["level"] = level;
+    json["PipelineName"] = pipelineName;
+    json["Description"] = description;
+    json["CreateDate"] = createDate.toString();
+    json["PipelineVersion"] = version;
+    json["Level"] = level;
 
-    json["parentPipelines"] = parentPipelines.join(",");
-    json["completeFiles"] = QJsonArray::fromStringList(completeFiles);
+    json["ParentPipelines"] = parentPipelines.join(",");
+    json["CompleteFiles"] = QJsonArray::fromStringList(completeFiles);
 
-    json["dataCopyMethod"] = dataCopyMethod;
-    json["directory"] = directory;
-    json["dirStructure"] = dirStructure;
-    json["depLevel"] = depLevel;
-    json["depDir"] = depDir;
-    json["depLinkType"] = depLinkType;
-    json["group"] = group;
-    json["groupType"] = groupType;
-    json["notes"] = notes;
-    json["resultScript"] = resultScript;
-    json["tmpDir"] = tmpDir;
-    json["useTmpDir"] = flags.useTmpDir;
-    json["useProfile"] = flags.useProfile;
+    json["DataCopyMethod"] = dataCopyMethod;
+    json["Directory"] = directory;
+    json["DirStructure"] = dirStructure;
+    json["DepLevel"] = depLevel;
+    json["DepDir"] = depDir;
+    json["DepLinkType"] = depLinkType;
+    json["Group"] = group;
+    json["GroupType"] = groupType;
+    json["Notes"] = notes;
+    json["ResultScript"] = resultScript;
+    json["TempDir"] = tmpDir;
+    json["UseTempDir"] = flags.useTmpDir;
+    json["UseProfile"] = flags.useProfile;
 
-    json["clusterType"] = clusterType;
-    json["clusterUser"] = clusterUser;
-    json["clusterQueue"] = clusterQueue;
-    json["clusterSubmitHost"] = clusterSubmitHost;
-    json["maxWallTime"] = maxWallTime;
-    json["submitDelay"] = submitDelay;
-    json["numConcurrentAnalyses"] = numConcurrentAnalyses;
+    json["ClusterType"] = clusterType;
+    json["ClusterUser"] = clusterUser;
+    json["ClusterQueue"] = clusterQueue;
+    json["ClusterSubmitHost"] = clusterSubmitHost;
+    json["MaxWallTime"] = maxWallTime;
+    json["SubmitDelay"] = submitDelay;
+    json["NumConcurrentAnalyses"] = numConcurrentAnalyses;
+    json["VirtualPath"] = virtualPath;
 
     /* add the dataSteps */
     QJsonArray JSONdataSteps;
     for (int i=0; i < dataSteps.size(); i++) {
         QJsonObject dataStep;
-        dataStep["associationType"] = dataSteps[i].associationType;
-        dataStep["behDir"] = dataSteps[i].behDir;
-        dataStep["behFormat"] = dataSteps[i].behFormat;
-        dataStep["dataFormat"] = dataSteps[i].dataFormat;
-        dataStep["imageType"] = dataSteps[i].imageType;
-        dataStep["datalevel"] = dataSteps[i].datalevel;
-        dataStep["location"] = dataSteps[i].location;
-        dataStep["modality"] = dataSteps[i].modality;
-        dataStep["numBOLDreps"] = dataSteps[i].numBOLDreps;
-        dataStep["numImagesCriteria"] = dataSteps[i].numImagesCriteria;
-        dataStep["order"] = dataSteps[i].order;
-        dataStep["protocol"] = dataSteps[i].protocol;
-        dataStep["seriesCriteria"] = dataSteps[i].seriesCriteria;
-        dataStep["enabled"] = dataSteps[i].flags.enabled;
-        dataStep["optional"] = dataSteps[i].flags.optional;
-        dataStep["gzip"] = dataSteps[i].flags.gzip;
-        dataStep["preserveSeries"] = dataSteps[i].flags.preserveSeries;
-        dataStep["primaryProtocol"] = dataSteps[i].flags.primaryProtocol;
-        dataStep["usePhaseDir"] = dataSteps[i].flags.usePhaseDir;
-        dataStep["useSeries"] = dataSteps[i].flags.useSeries;
+        dataStep["AssociationType"] = dataSteps[i].associationType;
+        dataStep["BehDir"] = dataSteps[i].behDir;
+        dataStep["BehFormat"] = dataSteps[i].behFormat;
+        dataStep["DataFormat"] = dataSteps[i].dataFormat;
+        dataStep["ImageType"] = dataSteps[i].imageType;
+        dataStep["DataLevel"] = dataSteps[i].datalevel;
+        dataStep["Location"] = dataSteps[i].location;
+        dataStep["Modality"] = dataSteps[i].modality;
+        dataStep["NumBOLDreps"] = dataSteps[i].numBOLDreps;
+        dataStep["NumImagesCriteria"] = dataSteps[i].numImagesCriteria;
+        dataStep["Order"] = dataSteps[i].order;
+        dataStep["Protocol"] = dataSteps[i].protocol;
+        dataStep["SeriesCriteria"] = dataSteps[i].seriesCriteria;
+        dataStep["Enabled"] = dataSteps[i].flags.enabled;
+        dataStep["Optional"] = dataSteps[i].flags.optional;
+        dataStep["Gzip"] = dataSteps[i].flags.gzip;
+        dataStep["PreserveSeries"] = dataSteps[i].flags.preserveSeries;
+        dataStep["PrimaryProtocol"] = dataSteps[i].flags.primaryProtocol;
+        dataStep["UsePhaseDir"] = dataSteps[i].flags.usePhaseDir;
+        dataStep["UseSeries"] = dataSteps[i].flags.useSeries;
 
         JSONdataSteps.append(dataStep);
     }
-    json["numSubjects"] = JSONdataSteps.size();
+    json["NumDataSteps"] = JSONdataSteps.size();
     json["dataSteps"] = JSONdataSteps;
 
     /* write all pipeline info to path */

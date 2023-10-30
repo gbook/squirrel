@@ -27,7 +27,9 @@
 #include <QDateTime>
 #include <QJsonObject>
 
-
+/**
+ * @brief The squirrelGroupAnalysis class
+ */
 class squirrelGroupAnalysis
 {
 public:
@@ -36,15 +38,16 @@ public:
     void PrintGroupAnalysis();
 
     /* JSON elements */
-    QString groupAnalysisName; /*!< name of the group analysis */
-    QDateTime dateTime; /*!< datetime of the group analysis */
-    QString notes;
-    qint64 numfiles;
-    qint64 size; /*!< disk size in bytes of the analysis */
+    QString groupAnalysisName;  /*!< name of the group analysis */
+    QDateTime dateTime;         /*!< datetime of the group analysis */
+    QString description;        /*!< description of the group analysis */
+    QString notes;              /*!< notes about the group analysis */
+    qint64 numfiles;            /*!< number of files in the analysis */
+    qint64 size;                /*!< disk size in bytes of the analysis */
+    QString virtualPath;        /*!< path within the squirrel package, no leading slash */
 
-    /* library variables */
-    QStringList stagedFiles; /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
-    QString virtualPath; /*!< path within the squirrel package, no leading slash */
+    /* lib variables */
+    QStringList stagedFiles;    /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
 };
 
 #endif // SQUIRRELGROUPANALYSIS_H

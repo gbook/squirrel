@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
             sqrl->subjectDirFormat = paramOutputDirFormat;
             sqrl->studyDirFormat = paramOutputDirFormat;
             sqrl->seriesDirFormat = paramOutputDirFormat;
-            sqrl->packageFormat = paramOutputPackageFormat;
+            sqrl->format = paramOutputPackageFormat;
 
             /* 1) load the DICOM data to a squirrel object */
             dcm->LoadToSquirrel(paramInput, bindir, sqrl);

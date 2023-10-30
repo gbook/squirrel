@@ -57,23 +57,24 @@ public:
     bool addExperiment(squirrelExperiment exp);
     bool removeSubject(QString ID);
 
-    /* package data */
-    QDateTime datetime; /*!< datetime the package was created */
-    QString description; /*!< detailed description of the package */
-    QString name; /*!< name of the package */
-    QString NiDBversion; /*!< NiDB version that wrote this package */
-    QString version; /*!< squirrel version */
-    QString format; /*!< package format. will always be 'squirrel' */
-    QString subjectDirFormat; /*!< orig, seq */
-    QString studyDirFormat; /*!< orig, seq */
-    QString seriesDirFormat; /*!< orig, seq */
-    QString dataFormat; /*!< orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz */
-    QString packageFormat; /*!< dir, zip */
-    QString filePath; /*!< full path to the zip file */
-    QString license;
-    QString readme;
-    QString changes;
-    QString notes; /* JSON string of notes */
+    /* JSON elements */
+    QDateTime datetime;         /*!< datetime the package was created */
+    QString description;        /*!< detailed description of the package */
+    QString name;               /*!< name of the package */
+    QString NiDBversion;        /*!< NiDB version that wrote this package */
+    QString version;            /*!< squirrel version */
+    QString format;             /*!< 'dir' or 'zip' */
+    QString subjectDirFormat;   /*!< orig, seq */
+    QString studyDirFormat;     /*!< orig, seq */
+    QString seriesDirFormat;    /*!< orig, seq */
+    QString dataFormat;         /*!< orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz */
+    QString license;            /*!< a data usage license */
+    QString readme;             /*!< a README */
+    QString changes;            /*!< any changes since last package release */
+    QString notes;              /*!< JSON string of notes (may contain JSON sub-elements of 'import', 'merge', 'export') */
+
+    /* lib variables */
+    QString filePath;           /*!< full path to the zip file */
 
     /* package information */
     qint64 GetUnzipSize();

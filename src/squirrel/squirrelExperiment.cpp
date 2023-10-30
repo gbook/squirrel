@@ -35,9 +35,10 @@ squirrelExperiment::squirrelExperiment()
 QJsonObject squirrelExperiment::ToJSON() {
     QJsonObject json;
 
-	json["experimentName"] = experimentName;
-	json["numFiles"] = numFiles;
-	json["size"] = size;
+    json["ExperimentName"] = experimentName;
+    json["NumFiles"] = numFiles;
+    json["Size"] = size;
+    json["VirtualPath"] = virtualPath;
 
     return json;
 }
@@ -53,6 +54,7 @@ void squirrelExperiment::PrintExperiment() {
 
     Print("\t----- EXPERIMENT -----");
     Print(QString("\tExperimentName: %1").arg(experimentName));
-    Print(QString("\tnumfiles: %1").arg(numFiles));
-    Print(QString("\tsize: %1").arg(size));
+    Print(QString("\tNumfiles: %1").arg(numFiles));
+    Print(QString("\tSize: %1").arg(size));
+    Print(QString("\tVirtualPath: %1").arg(virtualPath));
 }

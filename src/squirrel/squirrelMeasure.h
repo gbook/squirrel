@@ -37,18 +37,21 @@ public:
     QJsonObject ToJSON();
 	void PrintMeasure();
 
-    QString measureName; /*!< measure name (required) */
-	QDateTime dateStart; /*!< start date of the measurement (required) */
-	QDateTime dateEnd; /*!< end date of the measurement */
-    QString instrumentName; /*!< name of the instrument (test, assessment, etc) from which this measure came */
-    QString rater; /*!< name or username of the person who rated the measure */
-    QString notes; /*!< notes about the measure */
-    QString value; /*!< value, in string or number stored as a string */
-    QString description; /*!< extended measurement description */
-	double duration; /*!< duration of the measure, in seconds */
-	QDateTime dateRecordEntry; /*!< date the record was entered (by a user, which may have occurred in a different database) */
-	QDateTime dateRecordCreate; /*!< date the record was created (in this database) */
-	QDateTime dateRecordModify; /*!< date the record was modified (in this database) */
+    /* JSON elements */
+    QString measureName;        /*!< measure name (required) */
+    QDateTime dateStart;        /*!< start date of the measurement (required) */
+    QDateTime dateEnd;          /*!< end date of the measurement */
+    QString instrumentName;     /*!< name of the instrument (test, assessment, etc) from which this measure came */
+    QString rater;              /*!< name or username of the person who rated the measure */
+    QString notes;              /*!< notes about the measure */
+    QString value;              /*!< value, in string or number stored as a string */
+    QString description;        /*!< extended measurement description */
+    double duration;            /*!< duration of the measure, in seconds */
+    QDateTime dateRecordEntry;  /*!< data entry date */
+
+    //QDateTime dateRecordEntry; /*!< date the record was entered (by a user, which may have occurred in a different database) */
+    //QDateTime dateRecordCreate; /*!< date the record was created (in this database) */
+    //QDateTime dateRecordModify; /*!< date the record was modified (in this database) */
 };
 
 #endif // SQUIRRELMEASURE_H

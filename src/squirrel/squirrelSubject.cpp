@@ -152,14 +152,15 @@ qint64 squirrelSubject::GetNextStudyNumber() {
 void squirrelSubject::PrintSubject() {
 
     Print("\t\t----- SUBJECT -----");
-    Print(QString("\t\tID: %1").arg(ID));
+    Print(QString("\t\tSubjectID: %1").arg(ID));
     Print(QString("\t\tAlternateIDs: %1").arg(alternateIDs.join(",")));
     Print(QString("\t\tGUID: %1").arg(GUID));
     Print(QString("\t\tSex: %1").arg(sex));
     Print(QString("\t\tGender: %1").arg(gender));
-    Print(QString("\t\tdateOfBirth: %1").arg(dateOfBirth.toString()));
+    Print(QString("\t\tDateOfBirth: %1").arg(dateOfBirth.toString()));
     Print(QString("\t\tEthnicity1: %1").arg(ethnicity1));
     Print(QString("\t\tEthnicity2: %1").arg(ethnicity2));
+    Print(QString("\t\tVirtualPath: %1").arg(ethnicity2));
 }
 
 
@@ -173,21 +174,21 @@ void squirrelSubject::PrintSubject() {
 QJsonObject squirrelSubject::ToJSON() {
     QJsonObject json;
 
-    json["ID"] = ID;
-	json["alternateIDs"] = QJsonArray::fromStringList(alternateIDs);
+    json["SubjectID"] = ID;
+    json["AlternateIDs"] = QJsonArray::fromStringList(alternateIDs);
     json["GUID"] = GUID;
-	json["dateOfBirth"] = dateOfBirth.toString("yyyy-MM-dd");
-    json["sex"] = sex;
-    json["gender"] = gender;
-    json["ethnicity1"] = ethnicity1;
-    json["ethnicity2"] = ethnicity2;
-	json["path"] = virtualPath;
+    json["DateOfBirth"] = dateOfBirth.toString("yyyy-MM-dd");
+    json["Sex"] = sex;
+    json["Gender"] = gender;
+    json["Ethnicity1"] = ethnicity1;
+    json["Ethnicity2"] = ethnicity2;
+    json["VirtualPath"] = virtualPath;
 
     QJsonArray JSONstudies;
     for (int i=0; i<studyList.size(); i++) {
         JSONstudies.append(studyList[i].ToJSON());
     }
-    json["numStudies"] = JSONstudies.size();
+    json["NumStudies"] = JSONstudies.size();
     json["studies"] = JSONstudies;
 
     /* add measures */
@@ -196,7 +197,7 @@ QJsonObject squirrelSubject::ToJSON() {
         for (int i=0; i < measureList.size(); i++) {
             JSONmeasures.append(measureList[i].ToJSON());
         }
-		json["numMeasures"] = JSONmeasures.size();
+        json["NumMeasures"] = JSONmeasures.size();
 		json["measures"] = JSONmeasures;
     }
 
@@ -206,7 +207,7 @@ QJsonObject squirrelSubject::ToJSON() {
         for (int i=0; i < drugList.size(); i++) {
             JSONdrugs.append(drugList[i].ToJSON());
         }
-		json["numDrugs"] = JSONdrugs.size();
+        json["NumDrugs"] = JSONdrugs.size();
 		json["drugs"] = JSONdrugs;
     }
 

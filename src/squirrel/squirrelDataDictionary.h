@@ -27,16 +27,23 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+/**
+ * @brief The dataDictionaryItem structure
+ */
 struct dataDictionaryItem {
-    QString type;
-    QString variableName;
-    QString desc;
-    QString keyValue; /*!< 'key1=value2, key2=value2' ... example '1=Male, 2=Female' */
+    QString type;           /*!< the variable type */
+    QString variableName;   /*!< the variable name */
+    QString desc;           /*!< longer variable description */
+    QString keyValue;       /*!< 'key1=value2, key2=value2' ... example '1=Male, 2=Female' */
     int expectedTimepoints; /*!< expected number of timepoints */
-    double rangeLow; /*!< for numeric values, the lower limit */
-    double rangeHigh; /*!< for numeric values, the higher limit */
+    double rangeLow;        /*!< for numeric values, the lower limit */
+    double rangeHigh;       /*!< for numeric values, the higher limit */
 };
 
+
+/**
+ * @brief The squirrelDataDictionary class
+ */
 class squirrelDataDictionary
 {
 public:
@@ -45,12 +52,14 @@ public:
     QJsonObject ToJSON();
     void PrintDataDictionary();
 
+    /* JSON elements */
     QList<dataDictionaryItem> dictItems; /*!< List of data dictionary items */
+    qint64 numfiles;                     /*!< total number of files */
+    qint64 size;                         /*!< disk size in bytes of the data dictionary */
 
-    qint64 numfiles;
-    qint64 size; /*!< disk size in bytes of the data dictionary */
-
-    QString virtualPath = "data-dictionary"; /*!< path within the squirrel package, no leading slash */
+    /* lib variables */
+    QString virtualPath = "data-dictionary";    /*!< path within the squirrel package, no leading slash */
+    QStringList stagedFiles;                    /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
 };
 
 #endif // SQUIRRELDATADICTIONARY_H

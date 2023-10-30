@@ -35,14 +35,15 @@ squirrelMeasure::squirrelMeasure()
 QJsonObject squirrelMeasure::ToJSON() {
     QJsonObject json;
 
-	json["measureName"] = measureName;
-	json["dateStart"] = dateStart.toString("yyyy-MM-dd HH:mm:ss");
-	json["dateEnd"] = dateEnd.toString("yyyy-MM-dd HH:mm:ss");
-	json["instrumentName"] = instrumentName;
-	json["rater"] = rater;
-	json["notes"] = notes;
-	json["value"] = value;
-	json["description"] = description;
+    json["MeasureName"] = measureName;
+    json["DateStart"] = dateStart.toString("yyyy-MM-dd HH:mm:ss");
+    json["DateEnd"] = dateEnd.toString("yyyy-MM-dd HH:mm:ss");
+    json["InstrumentName"] = instrumentName;
+    json["Rater"] = rater;
+    json["Notes"] = notes;
+    json["Value"] = value;
+    json["Description"] = description;
+    json["Duration"] = duration;
 
     return json;
 }
