@@ -47,7 +47,7 @@ public:
     QJsonObject ToJSON();
 
     /* JSON elements */
-    int number = -1;            /*!< Unique study number. Must be unique within the subject */
+    qint64 number = -1;            /*!< Unique study number. Must be unique within the subject */
     QDateTime dateTime;         /*!< start datetime of the study */
     double ageAtStudy = 0.0;    /*!< age in years at the time of the study */
     double height = 0.0;        /*!< height in meters */
