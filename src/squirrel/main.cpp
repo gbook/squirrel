@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     /* this whole section reads the command line parameters */
-    a.setApplicationVersion(QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN));
-    a.setApplicationName("Squirrel");
+    a.setApplicationVersion(QString("Build %1.%2.%3  (squirrellib %4.%5)").arg(UTIL_VERSION_MAJ).arg(UTIL_VERSION_MIN).arg(UTIL_BUILD_NUM).arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN));
+    a.setApplicationName("Squirrel Utilities");
 
     /* setup the command line parser */
     QCommandLineParser p;
