@@ -31,20 +31,13 @@ mkdir -p $BUILDDIR
 
 # ----- build pre-requisites -----
 
-# build gdcm (make sure cmake 3 is installed)
-#if [ ! -d "$BUILDDIR/gdcm" ]; then
-	command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x. Install using 'yum install cmake' or 'apt-get cmake'.\n"; exit 1; }
+command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x. Install using 'yum install cmake' or 'apt-get cmake'.\n"; exit 1; }
 
-	echo -e "\ngdcm not built. Building gdcm now\n"
-
-	mkdir -p $BUILDDIR/gdcm
-	mkdir -p $BUILDDIR/gdcm
-	cd $BUILDDIR/gdcm
-	cmake -DGDCM_BUILD_APPLICATIONS:STRING=NO -DGDCM_BUILD_DOCBOOK_MANPAGES:BOOL=OFF -DGDCM_BUILD_SHARED_LIBS:STRING=YES -DGDCM_BUILD_TESTING:STRING=NO -DGDCM_BUILD_EXAMPLES:STRING=NO $SRCDIR/gdcm
-	make -j 16
-#else
-#	echo -e "\ngdcm already built in $BUILDDIR/gdcm\n"
-#fi
+echo -e "\ngdcm not built. Building gdcm now\n"
+mkdir -p $BUILDDIR/gdcm
+cd $BUILDDIR/gdcm
+cmake -DGDCM_BUILD_APPLICATIONS:STRING=NO -DGDCM_BUILD_DOCBOOK_MANPAGES:BOOL=OFF -DGDCM_BUILD_SHARED_LIBS:STRING=YES -DGDCM_BUILD_TESTING:STRING=NO -DGDCM_BUILD_EXAMPLES:STRING=NO $SRCDIR/gdcm
+make -j 16
 
 # ----- build squirrel library -----
 echo -e "\nBuilding squirrel library\n"
@@ -53,10 +46,18 @@ $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec 
 cd $BUILDDIR/squirrel
 make -j 16
 
-# ----- build squirrel utilities -----
+# ----- build squirrel command line utilities -----
 echo -e "\nBuilding squirrel utilities\n"
-# create make file in the build directory
 echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
 $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
 cd $BUILDDIR/squirrel
 make -B -j 16
+
+# install
+# try to copy the binaries to their final locations (this may fail because it requires sudo)
+cd $ORIGDIR
+echo -e "\nCopying libsquirrel to /lib"
+sudo cp -uv bin/squirrel/libsquirrel* /lib/
+
+echo -e "\nCopying nidb to /usr/local/bin"
+sudo cp -uv bin/squirrel/squirrel /usr/local/bin/
