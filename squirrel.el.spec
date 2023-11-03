@@ -18,6 +18,9 @@ squirrel library and utilities is a data format to allow aggregation and dissemi
 %{_sourcedir}/build-rpm.sh ~/Qt/6.5.3/gcc_64/bin/qmake %{_sourcedir}/src %{_builddir}/bin
 
 %install # This section installs the files to the BUILDROOT dir, which is basically a copy of what the user's computer will look like after the RPM installs
+mkdir -p %{buildroot}/usr/local/bin
+mkdir -p %{buildroot}/usr/lib
+
 cp -f %{_builddir}/bin/squirrel/squirrel %{buildroot}/usr/local/bin/ # copy squirrel util binary
 cp -f %{_builddir}/bin/squirrel/libsquirrel.so.1 %{buildroot}/usr/lib/ # copy squirrel lib
 cp -f %{_builddir}/bin/gdcm/bin/libgdcmMSFF.so.3.0 %{buildroot}/usr/lib/ # copy GDCM libs
@@ -43,3 +46,4 @@ cp -f ~/Qt/6.5.3/gcc_64/lib/libicuuc.so.56 %{buildroot}/usr/lib/ # copy Qt libs
 # This section LISTS the files that are available once everything is installed, but this is NOT the specification for what files will be installed...
 %files
 /usr/lib/*
+/usr/local/bin/*
