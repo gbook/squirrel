@@ -1,0 +1,6 @@
+[codespell]
+skip = .git,*.pdf,*.svg,gdcm,*.js
+# ignore some latex lines/hits
+ignore-regex = (.*@extrac.*|^ *\\.*)
+# variables etc
+ignore-words-list = ser,pixelx,ot

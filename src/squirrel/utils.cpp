@@ -234,7 +234,7 @@ bool MakePath(QString p, QString &msg, bool perm777) {
         return false;
     }
     else
-        msg = "MakePath() Path already exists or was created successfuly [" + p + "]";
+        msg = "MakePath() Path already exists or was created successfully [" + p + "]";
 
     if (perm777)
         SystemCommand("chmod 777 " + p);
@@ -876,7 +876,7 @@ bool ParseCSV(QString csv, indexedHash &table, QStringList &columns, QString &ms
                         inQuotes = true;
                 }
 
-                /* check if we've hit the next comma, and therefor should end the previous variable */
+                /* check if we've hit the next comma, and therefore should end the previous variable */
                 if ((c == ',') && (!inQuotes)) {
                     table[row][cols[col]] = buffer.trimmed();
 
@@ -955,7 +955,7 @@ bool ParseTSV(QString tsv, indexedHash &table, QStringList &columns, QString &ms
                         inQuotes = true;
                 }
 
-                /* check if we've hit the next tab, and therefor should end the previous variable */
+                /* check if we've hit the next tab, and therefore should end the previous variable */
                 if ((c == '\t') && (!inQuotes)) {
                     table[row][cols[col]] = buffer.trimmed();
 
