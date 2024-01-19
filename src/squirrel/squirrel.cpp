@@ -48,6 +48,10 @@ squirrel::squirrel(bool dbg, bool q)
     quiet = q;
 
     MakeTempDir(workingDir);
+    dbFile = workingDir + "/squirrel.db";
+    DatabaseConnect();
+    InitializeDatabase();
+
     Log(QString("Created squirrel object. Working dir [%1]").arg(workingDir), __FUNCTION__);
 }
 
@@ -66,6 +70,72 @@ squirrel::~squirrel()
         Log(QString("Removed working directory [%1]. Message [%2]").arg(workingDir).arg(m), __FUNCTION__);
     }
     Log("Deleting squirrel object", __FUNCTION__);
+}
+
+
+/* ---------------------------------------------------------- */
+/* --------- DatabaseConnect -------------------------------- */
+/* ---------------------------------------------------------- */
+bool squirrel::DatabaseConnect() {
+
+    if (dbFile == "")
+        return false;
+
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(dbFile);
+
+    if (db.open()) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+/* ---------------------------------------------------------- */
+/* --------- InitializeDatabase ----------------------------- */
+/* ---------------------------------------------------------- */
+bool squirrel::InitializeDatabase() {
+    const char *sql =
+    #include "squirrel.sql"
+    ;
+
+    schema = QString(sql);
+    QSqlQuery q;
+    q.prepare(schema);
+    //q.bindValue(":module", module);
+    SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    Print(schema);
+    return true;
+}
+
+
+/* ---------------------------------------------------------- */
+/* --------- SQLQuery --------------------------------------- */
+/* ---------------------------------------------------------- */
+/* QSqlQuery object must already be prepared and bound before */
+/* being passed in to this function                           */
+QString squirrel::SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d) {
+
+    /* get the SQL string that will be run */
+    QString sql = q.executedQuery();
+    QVariantList list = q.boundValues();
+    for (int i=0; i < list.size(); ++i) {
+        sql += QString(" [" + list.at(i).toString() + "]");
+    }
+
+    /* run the query */
+    if (q.exec())
+        return sql;
+
+    /* if we get to this point, there is a SQL error */
+    QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(function).arg(file).arg(line).arg(sql).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
+    qDebug() << err;
+    qDebug() << q.lastError();
+
+    exit(0);
 }
 
 
