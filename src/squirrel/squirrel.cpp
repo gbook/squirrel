@@ -23,6 +23,7 @@
 #include "squirrel.h"
 #include "squirrelImageIO.h"
 #include "utils.h"
+#include "squirrel.sql.h"
 
 /* ------------------------------------------------------------ */
 /* ----- squirrel --------------------------------------------- */
@@ -82,12 +83,14 @@ bool squirrel::DatabaseConnect() {
         return false;
 
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbFile);
+    db.setDatabaseName(":memory:");
 
     if (db.open()) {
+        Print("Successfuly opened SQLite memory database");
         return true;
     }
     else {
+        Print(QString("Error opening SQLite memory database" + db.lastError().text()));
         return false;
     }
 }
@@ -97,17 +100,20 @@ bool squirrel::DatabaseConnect() {
 /* --------- InitializeDatabase ----------------------------- */
 /* ---------------------------------------------------------- */
 bool squirrel::InitializeDatabase() {
-    const char *sql =
-    #include "squirrel.sql"
-    ;
+    //const char *sql =
+    //#include "squirrel.sql"
+    //;
 
-    schema = QString(sql);
+    //schema = QString(sql);
     QSqlQuery q;
-    q.prepare(schema);
-    //q.bindValue(":module", module);
-    SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (!q.exec(schema)) {
+        QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(__FUNCTION__).arg(__FILE__).arg(__LINE__).arg(schema).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
+        qDebug() << err;
+        qDebug() << q.lastError();
+    }
+    //SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    Print(schema);
+    //Print(schema);
     return true;
 }
 
@@ -125,6 +131,8 @@ QString squirrel::SQLQuery(QSqlQuery &q, QString function, QString file, int lin
     for (int i=0; i < list.size(); ++i) {
         sql += QString(" [" + list.at(i).toString() + "]");
     }
+
+    Print(sql);
 
     /* run the query */
     if (q.exec())

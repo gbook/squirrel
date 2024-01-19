@@ -122,8 +122,8 @@ public:
 
     /* validation functions */
     QString GetTempDir();
-	bool valid() { return isValid; }
-	bool okToDelete() { return isOkToDelete; }
+    bool valid() { return isValid; }
+    bool okToDelete() { return isOkToDelete; }
 
     /* functions to manipulate, add files */
     bool AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir="");
@@ -164,11 +164,11 @@ private:
     QString log;
 
     QSqlDatabase db;
-    QString schema;
+    //QString schema;
 
     bool debug;
-	bool isValid;
-	bool isOkToDelete;
+    bool isValid;
+    bool isOkToDelete;
 };
 
 #endif // SQUIRREL_H

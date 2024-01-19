@@ -43,6 +43,7 @@ SOURCES += \
 
 HEADERS += \
 	bids.h \
+	squirrel.sql.h \
 	squirrelDataDictionary.h \
 	squirrelImageIO.h \
 	squirrelVersion.h \
