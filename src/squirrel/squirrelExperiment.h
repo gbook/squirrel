@@ -25,6 +25,7 @@
 #include <QString>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QtSql>
 
 /**
  * @brief The experiment class
@@ -36,14 +37,27 @@ public:
     QJsonObject ToJSON();
     void PrintExperiment();
 
-    /* JSON elements */
-    QString experimentName;     /*!< experiment name (required) */
-    qint64 numFiles;            /*!< number of experiment files (required) */
-    qint64 size;                /*!< total size in bytes of the experiment files (required) */
-    QString virtualPath;        /*!< path to the experiment files, relative to the package root (required) */
+    /* get elements */
+    QString experimentName();     /*!< experiment name (required) */
+    qint64 numFiles();            /*!< number of experiment files (required) */
+    qint64 size();                /*!< total size in bytes of the experiment files (required) */
+    QString virtualPath();        /*!< path to the experiment files, relative to the package root (required) */
 
-    /* lib variables */
-    QStringList stagedFiles;    /*!< staged file list - list of files in their own original paths which will be copied in before the package is zipped up */
+    /* set values */
+    void experimentName(QString val);
+    void numFiles(qint64 val);
+    void size(qint64 val);
+    void virtualPath(QString val);
+
+    /* lib functions */
+    QStringList stagedFiles();    /*!< staged file list - list of files in their own original paths which will be copied in before the package is zipped up */
+    void stagedFiles(QStringList list);
+
+    int objectID();
+    void objectID(int id);
+
+private:
+    QSqlQuery q;
 };
 
 #endif // SQUIRRELEXPERIMENT_H

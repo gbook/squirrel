@@ -28,6 +28,21 @@ squirrelExperiment::squirrelExperiment()
 
 }
 
+void squirrelExperiment::experimentName(QString val) {
+    q.prepare("select ExperimentName from experiment where ExperimentRowID = :id");
+    q.bindValue(":id", val);
+    SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+}
+
+void squirrelExperiment::numFiles(qint64 val) {
+}
+
+void squirrelExperiment::size(qint64 val) {
+}
+
+void squirrelExperiment::virtualPath(QString val) {
+}
+
 
 /* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */

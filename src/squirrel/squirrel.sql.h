@@ -1,236 +1,231 @@
+/* ------------------------------------------------------------------------------
+  Squirrel squirrel.sql.h
+  Copyright (C) 2004 - 2024
+  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
+  Olin Neuropsychiatry Research Center, Hartford Hospital
+  ------------------------------------------------------------------------------
+  GPLv3 License:
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ------------------------------------------------------------------------------ */
 #include <QString>
-QString schema("CREATE TABLE analysis (analysis_id int(11) NOT NULL, study_id int(11) NOT NULL, pipeline_id int(11) NOT NULL, analysis_date datetime NOT NULL, description varchar(255) DEFAULT NULL, size double NOT NULL DEFAULT 0, numfiles int(11) NOT NULL DEFAULT 0);" \
-"CREATE TABLE drugs (drug_id int(11) NOT NULL, subject_id int(11) NOT NULL, date_start int(11) DEFAULT NULL, date_end int(11) DEFAULT NULL, date_entry int(11) DEFAULT NULL, drug_name varchar(255) DEFAULT NULL, dose_description varchar(255) DEFAULT NULL, dose_key varchar(255) DEFAULT NULL);" \
-"CREATE TABLE experiments (experiment_id int(11) NOT NULL, package_id int(11) NOT NULL,experiment_name varchar(255) NOT NULL,size int(11) NOT NULL DEFAULT 0, numfiles int(11) NOT NULL DEFAULT 0);" \
-"CREATE TABLE groupanalysis (  groupanalysis_id int(11) NOT NULL,  package_id int(11) NOT NULL,  groupanalysis_name varchar(255) NOT NULL,  groupanalysis_desc text DEFAULT NULL,  groupanalysis_date datetime DEFAULT NULL,  numfiles int(11) NOT NULL DEFAULT 0,  size bigint(20) NOT NULL DEFAULT 0);" \
-               "CREATE TABLE measures (  measure_id int(11) NOT NULL,  subject_id int(11) NOT NULL,  date_start datetime DEFAULT NULL,  date_end datetime DEFAULT NULL,  instrument_name varchar(255) DEFAULT NULL,  rater varchar(255) DEFAULT NULL,  notes text DEFAULT NULL,  value text DEFAULT NULL,  description int(11) DEFAULT NULL);");
+#include <QStringList>
 
-// CREATE TABLE packages (
-//   package_id bigint(20) NOT NULL,
-//   user_id int(11) NOT NULL,
-//   pkg_name varchar(255) NOT NULL,
-//   pkg_desc text DEFAULT NULL,
-//   pkg_date datetime DEFAULT NULL,
-//   pkg_subjectdirformat enum('orig','seq') NOT NULL DEFAULT 'orig',
-//   pkg_studydirformat enum('orig','seq') NOT NULL DEFAULT 'orig',
-//   pkg_seriesdirformat enum('orig','seq') NOT NULL DEFAULT 'orig',
-//   pkg_dataformat enum('orig','anon','anonfull','nifti3d','nifti3dgz','nifti4d','nifti4dgz') NOT NULL DEFAULT 'orig',
-//   pkg_license text DEFAULT NULL,
-//   pkg_readme text DEFAULT NULL,
-//   pkg_changes text DEFAULT NULL,
-//   pkg_notes text DEFAULT NULL,
-//   pkg_path varchar(255) DEFAULT NULL
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/* Notes about this file:
+ *
+    SQLite does not support multiple statements for each query, so instead
+    each table must have it's own statement. This isn't too bad because we only
+    have 12 tables to create.
 
-// CREATE TABLE params (
-//   param_id int(11) NOT NULL,
-//   series_id int(11) NOT NULL,
-//   param_key varchar(255) DEFAULT NULL,
-//   param_value text DEFAULT NULL
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    Also, SQLite's datatype and table creation syntax is much simpler than
+    regular SQL
+ */
 
-// CREATE TABLE pipelines (
-//   pipeline_id int(11) NOT NULL,
-//   package_id int(11) NOT NULL,
-//   pipeline_name varchar(255) NOT NULL,
-//   description text DEFAULT NULL,
-//   pipeline_date datetime DEFAULT NULL,
-//   level int(11) DEFAULT NULL,
-//   primaryscript_name varchar(255) DEFAULT NULL,
-//   secondaryscript_name varchar(255) DEFAULT NULL
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+QStringList schemaCreateStatements;
 
-// CREATE TABLE series (
-//   series_id int(11) NOT NULL,
-//   study_id int(11) NOT NULL,
-//   series_num int(11) NOT NULL,
-//   series_datetime datetime NOT NULL,
-//   seriesuid varchar(255) DEFAULT NULL,
-//   description varchar(255) DEFAULT NULL,
-//   protocol varchar(255) DEFAULT NULL,
-//   experiment_id int(11) DEFAULT NULL,
-//   size bigint(20) NOT NULL DEFAULT 0,
-//   numfiles int(11) NOT NULL DEFAULT 0,
-//   behsize bigint(20) NOT NULL DEFAULT 0,
-//   behnumfiles int(11) NOT NULL DEFAULT 0
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+QString tableStagedFiles = QString("CREATE TABLE StageFiles"
+    "StagedFileRowID INTEGER PRIMARY KEY,"
+    "ObjectType TEXT,"
+    "ObjectRowID INTEGER,"
+    "StagedPath TEXT)");
 
-// CREATE TABLE studies (
-//   study_id int(11) NOT NULL,
-//   subject_id int(11) NOT NULL,
-//   number int(11) NOT NULL DEFAULT 0,
-//   datetime datetime DEFAULT NULL,
-//   age double NOT NULL DEFAULT 0,
-//   height double DEFAULT 0,
-//   weight double NOT NULL DEFAULT 0,
-//   modality varchar(255) DEFAULT NULL,
-//   description varchar(255) DEFAULT NULL,
-//   studyuid varchar(255) DEFAULT NULL,
-//   visittype varchar(255) DEFAULT NULL,
-//   daynumber int(11) DEFAULT NULL,
-//   timepoint int(11) DEFAULT NULL,
-//   equipment varchar(255) DEFAULT NULL
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+QString tableAnalysis = QString("CREATE TABLE Analysis ("
+    "AnalysisRowID INTEGER PRIMARY KEY,"
+    "StudyRowID INTEGER,"
+    "PipelineRowID INTEGER,"
+    "PipelineVersion INTEGER,"
+    "StartDate TEXT,"
+    "EndDate TEXT,"
+    "SetupTime INTEGER,"
+    "RunTime INTEGER,"
+    "NumSeries INTEGER,"
+    "Status TEXT,"
+    "Successful INTEGER,"
+    "Size INTEGER,"
+    "Hostname TEXT,"
+    "StatusMessage TEXT,"
+    "VirtualPath TEXT)");
 
-// CREATE TABLE subjects (
-//   subject_id int(11) NOT NULL,
-//   package_id int(11) NOT NULL,
-//   id varchar(255) DEFAULT NULL,
-//   altids text DEFAULT NULL,
-//   guid varchar(255) DEFAULT NULL,
-//   dob date DEFAULT NULL,
-//   sex enum('F','M','O','U') DEFAULT NULL,
-//   gender enum('F','M','O','U') DEFAULT NULL,
-//   ethnicity1 varchar(255) DEFAULT NULL,
-//   ethnicity2 varchar(255) DEFAULT NULL
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+QString tableDrug = QString("CREATE TABLE Drug ("
+    "DrugRowID INTEGER PRIMARY KEY,"
+    "SubjectRowID INTEGER,"
+    "DrugName TEXT,"
+    "DateStart TEXT,"
+    "DateEnd TEXT,"
+    "DateRecordEntry TEXT,"
+    "DoseString TEXT,"
+    "DoseAmount TEXT,"
+    "DoseFrequency TEXT,"
+    "AdministrationRoute TEXT,"
+    "DrugClass TEXT,"
+    "DoseKey TEXT,"
+    "DoseUnit TEXT,"
+    "FrequencyModifer TEXT,"
+    "FrequencyValue REAL,"
+    "FrequencyUnit TEXT,"
+    "Description TEXT,"
+    "Rater TEXT,"
+    "Notes TEXT)");
 
+QString tableExperiment = QString("CREATE TABLE Experiment ("
+    "ExperimentRowID INTEGER PRIMARY KEY,"
+    "PackageRowID INTEGER,"
+    "ExperimentName TEXT,"
+    "Size INTEGER,"
+    "NumFiles INTEGER,"
+    "VirtualPath TEXT)");
 
-// --
-// -- Indexes for table analysis
-// --
-// ALTER TABLE analysis
-//   ADD PRIMARY KEY (analysis_id);
+QString tableGroupAnalysis = QString("CREATE TABLE GroupAnalysis ("
+    "GroupAnalysisRowID INTEGER PRIMARY KEY,"
+    "PackageRowID INTEGER,"
+    "Name TEXT,"
+    "Description TEXT,"
+    "Datetime TEXT,"
+    "NumFiles INTEGER,"
+    "Size INTEGER,"
+    "VirtualPath TEXT)");
 
-// --
-// -- Indexes for table drugs
-// --
-// ALTER TABLE drugs
-//   ADD PRIMARY KEY (drug_id);
+QString tableMeasure = QString("CREATE TABLE Measure ("
+    "MeasureRowID INTEGER PRIMARY KEY,"
+    "SubjectRowID INTEGER,"
+    "MeasureName TEXT,"
+    "DateStart TEXT,"
+    "DateEnd TEXT,"
+    "InstrumentName TEXT,"
+    "Rater TEXT,"
+    "Notes TEXT,"
+    "Value TEXT,"
+    "Description TEXT)");
 
-// --
-// -- Indexes for table experiments
-// --
-// ALTER TABLE experiments
-//   ADD PRIMARY KEY (experiment_id);
+QString tablePackage = QString("CREATE TABLE Package ("
+    "PackageRowID INTEGER PRIMARY KEY,"
+    "Name TEXT,"
+    "Description TEXT,"
+    "Datetime TEXT,"
+    "SubjectDirFormat TEXT,"
+    "StudyDirFormat TEXT,"
+    "SeriesDirFormat TEXT,"
+    "PackageDataFormat TEXT,"
+    "License TEXT,"
+    "Readme TEXT,"
+    "Changes TEXT,"
+    "Notes TEXT)");
 
-// --
-// -- Indexes for table groupanalysis
-// --
-// ALTER TABLE groupanalysis
-//   ADD PRIMARY KEY (groupanalysis_id);
+QString tableParams = QString("CREATE TABLE Params ("
+    "ParamRowID INTEGER PRIMARY KEY,"
+    "SeriesRowID INTEGER,"
+    "ParamKey TEXT,"
+    "ParamValue TEXT)");
 
-// --
-// -- Indexes for table measures
-// --
-// ALTER TABLE measures
-//   ADD PRIMARY KEY (measure_id);
+QString tablePipeline = QString("CREATE TABLE Pipeline ("
+    "PipelineRowID INTEGER PRIMARY KEY,"
+    "PackageRowID INTEGER,"
+    "Name TEXT,"
+    "Description TEXT,"
+    "Datetime TEXT,"
+    "Level INTEGER,"
+    "PrimaryScript TEXT,"
+    "SecondaryScript TEXT,"
+    "Version INTEGER ,"
+    "CompleteFiles TEXT,"
+    "DataCopyMethod TEXT,"
+    "DependencyDirectory TEXT,"
+    "DependencyLevel TEXT,"
+    "DependencyLinkType TEXT,"
+    "DirStructure TEXT,"
+    "Directory TEXT,"
+    "GroupName TEXT,"
+    "GroupType TEXT,"
+    "Notes TEXT,"
+    "ResultScript TEXT,"
+    "TempDir TEXT,"
+    "FlagUseProfile INTEGER,"
+    "FlagUseTempDir INTEGER,"
+    "ClusterType TEXT,"
+    "ClusterUser TEXT,"
+    "ClusterQueue TEXT,"
+    "ClusterSubmitHost TEXT,"
+    "NumConcurrentAnalysis INTEGER,"
+    "MaxWallTime INTEGER,"
+    "SubmitDelay INTEGER,"
+    "VirtualPath TEXT)");
 
-// --
-// -- Indexes for table packages
-// --
-// ALTER TABLE packages
-//   ADD PRIMARY KEY (package_id);
+QString tablePipelineDataStep = QString("CREATE TABLE PipeplineDataStep ("
+    "DataStepRowID INTEGER PRIMARY KEY,"
+    "PipelineRowID INTEGER,"
+    "AssociationType TEXT,"
+    "BehDir TEXT,"
+    "BehFormat TEXT,"
+    "DataFormat TEXT,"
+    "ImageType TEXT,"
+    "DataLevel TEXT,"
+    "Location TEXT,"
+    "Modality TEXT,"
+    "NumBOLDReps TEXT,"
+    "NumImagesCriteria TEXT,"
+    "StepOrder INTEGER,"
+    "Protocol TEXT,"
+    "SeriesCriteria TEXT,"
+    "FlagEnabled INTEGER,"
+    "FlagOptional INTEGER,"
+    "FlagGzip INTEGER,"
+    "FlagPreserveSeriesNum INTEGER,"
+    "FlagPrimaryProtocol INTEGER,"
+    "FlagUsePhaseDir INTEGER,"
+    "FlagUseSeries INTEGER)");
 
-// --
-// -- Indexes for table params
-// --
-// ALTER TABLE params
-//   ADD PRIMARY KEY (param_id);
+QString tableSeries = QString("CREATE TABLE Series ("
+    "SeriesRowID INTEGER PRIMARY KEY,"
+    "StudyRowID INTEGER,"
+    "SeriesNum INTEGER,"
+    "Datetime TEXT,"
+    "SeriesUID TEXT,"
+    "Description TEXT,"
+    "Protocol TEXT,"
+    "ExperimentRowID INTEGER,"
+    "Size INTEGER,"
+    "NumFiles INTEGER,"
+    "BehSize INTEGER,"
+    "BehNumFiles INTEGER,"
+    "VirtualPath TEXT)");
 
-// --
-// -- Indexes for table pipelines
-// --
-// ALTER TABLE pipelines
-//   ADD PRIMARY KEY (pipeline_id);
+QString tableStudy = QString("CREATE TABLE Study ("
+    "StudyRowID INTEGER PRIMARY KEY,"
+    "SubjectRowID INTEGER,"
+    "StudyNumber INTEGER ,"
+    "Datetime TEXT,"
+    "Age REAL,"
+    "Height REAL,"
+    "Weight REAL,"
+    "Modality TEXT,"
+    "Description TEXT,"
+    "StudyUID TEXT,"
+    "VisitType TEXT,"
+    "DayNumber INTEGER,"
+    "Timepoint INTEGER,"
+    "Equipment TEXT,"
+    "VirtualPath TEXT)");
 
-// --
-// -- Indexes for table series
-// --
-// ALTER TABLE series
-//   ADD PRIMARY KEY (series_id);
-
-// --
-// -- Indexes for table studies
-// --
-// ALTER TABLE studies
-//   ADD PRIMARY KEY (study_id);
-
-// --
-// -- Indexes for table subjects
-// --
-// ALTER TABLE subjects
-//   ADD PRIMARY KEY (subject_id);
-
-// --
-// -- Indexes for table users
-// --
-// ALTER TABLE users
-//   ADD PRIMARY KEY (user_id);
-
-// --
-// -- AUTO_INCREMENT for dumped tables
-// --
-
-// --
-// -- AUTO_INCREMENT for table analysis
-// --
-// ALTER TABLE analysis
-//   MODIFY analysis_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table drugs
-// --
-// ALTER TABLE drugs
-//   MODIFY drug_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table experiments
-// --
-// ALTER TABLE experiments
-//   MODIFY experiment_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table groupanalysis
-// --
-// ALTER TABLE groupanalysis
-//   MODIFY groupanalysis_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table measures
-// --
-// ALTER TABLE measures
-//   MODIFY measure_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table packages
-// --
-// ALTER TABLE packages
-//   MODIFY package_id bigint(20) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table params
-// --
-// ALTER TABLE params
-//   MODIFY param_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table pipelines
-// --
-// ALTER TABLE pipelines
-//   MODIFY pipeline_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table series
-// --
-// ALTER TABLE series
-//   MODIFY series_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table studies
-// --
-// ALTER TABLE studies
-//   MODIFY study_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table subjects
-// --
-// ALTER TABLE subjects
-//   MODIFY subject_id int(11) NOT NULL AUTO_INCREMENT;
-
-// --
-// -- AUTO_INCREMENT for table users
-// --
-// ALTER TABLE users
-//   MODIFY user_id bigint(20) NOT NULL AUTO_INCREMENT;
-// COMMIT;
+QString tableSubject = QString("CREATE TABLE Subject ("
+    "SubjectRowID INTEGER PRIMARY KEY,"
+    "PackageRowID INTEGER,"
+    "ID TEXT,"
+    "AltIDs TEXT,"
+    "GUID TEXT,"
+    "DateOfBirth date,"
+    "Sex TEXT,"
+    "Gender TEXT,"
+    "Ethnicity1 TEXT,"
+    "Ethnicity2 TEXT,"
+    "VirtualPath TEXT)");

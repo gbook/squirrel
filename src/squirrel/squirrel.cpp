@@ -49,7 +49,6 @@ squirrel::squirrel(bool dbg, bool q)
     quiet = q;
 
     MakeTempDir(workingDir);
-    dbFile = workingDir + "/squirrel.db";
     DatabaseConnect();
     InitializeDatabase();
 
@@ -79,9 +78,6 @@ squirrel::~squirrel()
 /* ---------------------------------------------------------- */
 bool squirrel::DatabaseConnect() {
 
-    if (dbFile == "")
-        return false;
-
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(":memory:");
 
@@ -100,20 +96,44 @@ bool squirrel::DatabaseConnect() {
 /* --------- InitializeDatabase ----------------------------- */
 /* ---------------------------------------------------------- */
 bool squirrel::InitializeDatabase() {
-    //const char *sql =
-    //#include "squirrel.sql"
-    //;
 
-    //schema = QString(sql);
     QSqlQuery q;
-    if (!q.exec(schema)) {
-        QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(__FUNCTION__).arg(__FILE__).arg(__LINE__).arg(schema).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
-        qDebug() << err;
-        qDebug() << q.lastError();
-    }
-    //SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.prepare(tableAnalysis);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Analysis]"); } else { Print("Error creating table [Analysis]"); return false; }
 
-    //Print(schema);
+    q.prepare(tableDrug);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Drug]"); } else { Print("Error creating table [Drug]"); return false; }
+
+    q.prepare(tableExperiment);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Experiment]"); } else { Print("Error creating table [Experiment]"); return false; }
+
+    q.prepare(tableGroupAnalysis);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [GroupAnalysis]"); } else { Print("Error creating table [GroupAnalysis]"); return false; }
+
+    q.prepare(tableMeasure);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Measure]"); } else { Print("Error creating table [Measure]"); return false; }
+
+    q.prepare(tablePackage);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Package]"); } else { Print("Error creating table [Package]"); return false; }
+
+    q.prepare(tableParams);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Params]"); } else { Print("Error creating table [Params]"); return false; }
+
+    q.prepare(tablePipeline);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Pipeline]"); } else { Print("Error creating table [Pipeline]"); return false; }
+
+    q.prepare(tablePipelineDataStep);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [PipelineDataStep]"); } else { Print("Error creating table [PipelineDataStep]"); return false; }
+
+    q.prepare(tableSeries);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Series]"); } else { Print("Error creating table [Series]"); return false; }
+
+    q.prepare(tableStudy);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Study]"); } else { Print("Error creating table [Study]"); return false; }
+
+    q.prepare(tableSubject);
+    if (SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Print("Created table [Subject]"); } else { Print("Error creating table [Subject]"); return false; }
+
     return true;
 }
 
@@ -123,7 +143,7 @@ bool squirrel::InitializeDatabase() {
 /* ---------------------------------------------------------- */
 /* QSqlQuery object must already be prepared and bound before */
 /* being passed in to this function                           */
-QString squirrel::SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d) {
+bool squirrel::SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d) {
 
     /* get the SQL string that will be run */
     QString sql = q.executedQuery();
@@ -132,18 +152,20 @@ QString squirrel::SQLQuery(QSqlQuery &q, QString function, QString file, int lin
         sql += QString(" [" + list.at(i).toString() + "]");
     }
 
-    Print(sql);
+    if (d)
+        Print(sql);
 
     /* run the query */
     if (q.exec())
-        return sql;
+        return true;
+    else {
+        /* if we get to this point, there is a SQL error */
+        QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(function).arg(file).arg(line).arg(sql).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
+        qDebug() << err;
+        qDebug() << q.lastError();
 
-    /* if we get to this point, there is a SQL error */
-    QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(function).arg(file).arg(line).arg(sql).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
-    qDebug() << err;
-    qDebug() << q.lastError();
-
-    exit(0);
+        return false;
+    }
 }
 
 

@@ -155,11 +155,10 @@ private:
     bool MakeTempDir(QString &dir);
     bool DatabaseConnect();
     bool InitializeDatabase();
-    QString SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
+    bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
 
     QString workingDir;
     QString logfile;
-    QString dbFile;
     QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */
     QString log;
 
