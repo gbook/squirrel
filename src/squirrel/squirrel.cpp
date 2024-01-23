@@ -138,37 +138,6 @@ bool squirrel::InitializeDatabase() {
 }
 
 
-/* ---------------------------------------------------------- */
-/* --------- SQLQuery --------------------------------------- */
-/* ---------------------------------------------------------- */
-/* QSqlQuery object must already be prepared and bound before */
-/* being passed in to this function                           */
-bool squirrel::SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d) {
-
-    /* get the SQL string that will be run */
-    QString sql = q.executedQuery();
-    QVariantList list = q.boundValues();
-    for (int i=0; i < list.size(); ++i) {
-        sql += QString(" [" + list.at(i).toString() + "]");
-    }
-
-    if (d)
-        Print(sql);
-
-    /* run the query */
-    if (q.exec())
-        return true;
-    else {
-        /* if we get to this point, there is a SQL error */
-        QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(function).arg(file).arg(line).arg(sql).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
-        qDebug() << err;
-        qDebug() << q.lastError();
-
-        return false;
-    }
-}
-
-
 /* ------------------------------------------------------------ */
 /* ----- read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
@@ -750,17 +719,33 @@ bool squirrel::write(QString outpath, QString &filepath) {
         root["pipelines"] = JSONpipelines;
     }
 
-    /* add experiments */
-    if (experimentList.size() > 0) {
-        Log(QString("Adding [%1] experiments...").arg(experimentList.size()), __FUNCTION__);
+    /* add experiments -- get experiment list from database */
+    QList <int> expIDs = GetExperimentIDList();
+    if (expIDs.size() > 0) {
+        Log(QString("Adding [%1] experiments...").arg(expIDs.size()), __FUNCTION__);
         QJsonArray JSONexperiments;
-        for (int i=0; i < experimentList.size(); i++) {
-            JSONexperiments.append(experimentList[i].ToJSON());
-            Log(QString("Added experiment [%1]").arg(experimentList[i].experimentName), __FUNCTION__, true);
+        foreach (int id, expIDs) {
+            squirrelExperiment e;
+            e.SetObjectID(id);
+            if (e.Get()) {
+                JSONexperiments.append(e.ToJSON());
+                Log(QString("Added experiment [%1]").arg(e.experimentName), __FUNCTION__, true);
+            }
         }
         root["NumExperiments"] = JSONexperiments.size();
         root["experiments"] = JSONexperiments;
     }
+
+    //if (experimentList.size() > 0) {
+    //    Log(QString("Adding [%1] experiments...").arg(experimentList.size()), __FUNCTION__);
+    //    QJsonArray JSONexperiments;
+    //    for (int i=0; i < experimentList.size(); i++) {
+    //        JSONexperiments.append(experimentList[i].ToJSON());
+    //        Log(QString("Added experiment [%1]").arg(experimentList[i].experimentName), __FUNCTION__, true);
+    //    }
+    //    root["NumExperiments"] = JSONexperiments.size();
+    //    root["experiments"] = JSONexperiments;
+    //}
 
     /* add data-dictionary */
     if (dataDictionary.dictItems.size() > 0) {
@@ -1960,17 +1945,16 @@ void squirrel::PrintSeries(QString subjectID, int studyNum, bool details) {
  * @param details true to print details, false to print list of pipeline names
  */
 void squirrel::PrintExperiments(bool details) {
-    if (details) {
-        foreach (squirrelExperiment e, experimentList) {
-            e.PrintExperiment();
+    QList <int> ids = GetExperimentIDList();
+    foreach (int id, ids) {
+        squirrelExperiment e;
+        e.SetObjectID(id);
+        if (e.Get()) {
+            if (details)
+                e.PrintExperiment();
+            else
+                Print(e.experimentName);
         }
-    }
-    else {
-        QStringList exps;
-        foreach (squirrelExperiment e, experimentList) {
-            exps.append(e.experimentName);
-        }
-        Print(exps.join(" "));
     }
 }
 
@@ -2009,4 +1993,21 @@ void squirrel::PrintGroupAnalyses(bool details) {
 /* ----- PrintDataDictionary ---------------------------------- */
 /* ------------------------------------------------------------ */
 void squirrel::PrintDataDictionary(bool details) {
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetExperimentIDList ---------------------------------- */
+/* ------------------------------------------------------------ */
+QList<int> squirrel::GetExperimentIDList() {
+    QSqlQuery q;
+    QList<int> list;
+    q.prepare("select * from Experiments");
+    SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        while (q.next()) {
+            list.append(q.value("ExperimentRowID").toInt());
+        }
+    }
+    return list;
 }

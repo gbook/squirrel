@@ -119,6 +119,7 @@ public:
     bool GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis);
     bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
     bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
+    QList<int> GetExperimentIDList();
 
     /* validation functions */
     QString GetTempDir();
@@ -155,7 +156,6 @@ private:
     bool MakeTempDir(QString &dir);
     bool DatabaseConnect();
     bool InitializeDatabase();
-    bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
 
     QString workingDir;
     QString logfile;

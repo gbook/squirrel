@@ -29,6 +29,7 @@
 #include <QList>
 #include <QHash>
 #include <QDate>
+#include <QtSql>
 #include <QProcess>
 #include <QDirIterator>
 #include <QCryptographicHash>
@@ -97,5 +98,7 @@ bool FileExists(QString f);
 bool FileDirectoryExists(QString f);
 
 void PrependQStringList(QStringList &list, QString s);
+
+bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
 
 #endif // UTILS_H

@@ -33,30 +33,28 @@
 class squirrelExperiment
 {
 public:
-	squirrelExperiment();
-    QJsonObject ToJSON();
-    void PrintExperiment();
+    squirrelExperiment();
+    QJsonObject ToJSON();   /* returns a JSON object */
+    void PrintExperiment(); /* prints the object */
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
-    /* get elements */
-    QString experimentName();     /*!< experiment name (required) */
-    qint64 numFiles();            /*!< number of experiment files (required) */
-    qint64 size();                /*!< total size in bytes of the experiment files (required) */
-    QString virtualPath();        /*!< path to the experiment files, relative to the package root (required) */
-
-    /* set values */
-    void experimentName(QString val);
-    void numFiles(qint64 val);
-    void size(qint64 val);
-    void virtualPath(QString val);
-
-    /* lib functions */
-    QStringList stagedFiles();    /*!< staged file list - list of files in their own original paths which will be copied in before the package is zipped up */
-    void stagedFiles(QStringList list);
-
-    int objectID();
-    void objectID(int id);
+    /* data items */
+    QString experimentName;     /*!< experiment name (required) */
+    qint64 numFiles;            /*!< number of experiment files (required) */
+    qint64 size;                /*!< total size in bytes of the experiment files (required) */
+    QString virtualPath;        /*!< path to the experiment files, relative to the package root (required) */
+    qint64 packageRowID;        /*!< database row ID of the parent package */
+    QStringList stagedFiles;    /*!< staged file list - list of files in their own original paths which will be copied in before the package is zipped up */
 
 private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
     QSqlQuery q;
 };
 

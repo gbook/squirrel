@@ -20,11 +20,10 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ------------------------------------------------------------------------------ */
 #include <QString>
-#include <QStringList>
 
 /* Notes about this file:
  *
-    SQLite does not support multiple statements for each query, so instead
+    SQLite does not support multiple statements for each query. So instead,
     each table must have it's own statement. This isn't too bad because we only
     have 12 tables to create.
 
@@ -32,9 +31,7 @@
     regular SQL
  */
 
-QStringList schemaCreateStatements;
-
-QString tableStagedFiles = QString("CREATE TABLE StageFiles"
+QString tableStagedFiles = QString("CREATE TABLE StagedFiles"
     "StagedFileRowID INTEGER PRIMARY KEY,"
     "ObjectType TEXT,"
     "ObjectRowID INTEGER,"
@@ -55,7 +52,8 @@ QString tableAnalysis = QString("CREATE TABLE Analysis ("
     "Size INTEGER,"
     "Hostname TEXT,"
     "StatusMessage TEXT,"
-    "VirtualPath TEXT)");
+    "VirtualPath TEXT,"
+    "UNIQUE(StudyRowID, PipelineRowID, PipelineVersion))");
 
 QString tableDrug = QString("CREATE TABLE Drug ("
     "DrugRowID INTEGER PRIMARY KEY,"
@@ -80,16 +78,14 @@ QString tableDrug = QString("CREATE TABLE Drug ("
 
 QString tableExperiment = QString("CREATE TABLE Experiment ("
     "ExperimentRowID INTEGER PRIMARY KEY,"
-    "PackageRowID INTEGER,"
-    "ExperimentName TEXT,"
-    "Size INTEGER,"
-    "NumFiles INTEGER,"
+    "ExperimentName TEXT UNIQUE,"
+    "Size INTEGER DEFAULT 0,"
+    "NumFiles INTEGER DEFAULT 0,"
     "VirtualPath TEXT)");
 
 QString tableGroupAnalysis = QString("CREATE TABLE GroupAnalysis ("
     "GroupAnalysisRowID INTEGER PRIMARY KEY,"
-    "PackageRowID INTEGER,"
-    "Name TEXT,"
+    "Name TEXT UNIQUE,"
     "Description TEXT,"
     "Datetime TEXT,"
     "NumFiles INTEGER,"
@@ -110,13 +106,13 @@ QString tableMeasure = QString("CREATE TABLE Measure ("
 
 QString tablePackage = QString("CREATE TABLE Package ("
     "PackageRowID INTEGER PRIMARY KEY,"
-    "Name TEXT,"
+    "Name TEXT NOT NULL UNIQUE,"
     "Description TEXT,"
     "Datetime TEXT,"
-    "SubjectDirFormat TEXT,"
-    "StudyDirFormat TEXT,"
-    "SeriesDirFormat TEXT,"
-    "PackageDataFormat TEXT,"
+    "SubjectDirFormat TEXT DEFAULT 'orig',"
+    "StudyDirFormat TEXT DEFAULT 'orig',"
+    "SeriesDirFormat TEXT DEFAULT 'orig',"
+    "PackageDataFormat TEXT DEFAULT 'orig',"
     "License TEXT,"
     "Readme TEXT,"
     "Changes TEXT,"
@@ -126,11 +122,11 @@ QString tableParams = QString("CREATE TABLE Params ("
     "ParamRowID INTEGER PRIMARY KEY,"
     "SeriesRowID INTEGER,"
     "ParamKey TEXT,"
-    "ParamValue TEXT)");
+    "ParamValue TEXT,"
+    "UNIQUE(ParamKey, ParamValue))");
 
 QString tablePipeline = QString("CREATE TABLE Pipeline ("
     "PipelineRowID INTEGER PRIMARY KEY,"
-    "PackageRowID INTEGER,"
     "Name TEXT,"
     "Description TEXT,"
     "Datetime TEXT,"
@@ -159,7 +155,8 @@ QString tablePipeline = QString("CREATE TABLE Pipeline ("
     "NumConcurrentAnalysis INTEGER,"
     "MaxWallTime INTEGER,"
     "SubmitDelay INTEGER,"
-    "VirtualPath TEXT)");
+    "VirtualPath TEXT,"
+    "UNIQUE(Name, Version))");
 
 QString tablePipelineDataStep = QString("CREATE TABLE PipeplineDataStep ("
     "DataStepRowID INTEGER PRIMARY KEY,"
@@ -194,36 +191,37 @@ QString tableSeries = QString("CREATE TABLE Series ("
     "Description TEXT,"
     "Protocol TEXT,"
     "ExperimentRowID INTEGER,"
-    "Size INTEGER,"
-    "NumFiles INTEGER,"
-    "BehSize INTEGER,"
-    "BehNumFiles INTEGER,"
-    "VirtualPath TEXT)");
+    "Size INTEGER DEFAULT 0,"
+    "NumFiles INTEGER DEFAULT 0,"
+    "BehSize INTEGER DEFAULT 0,"
+    "BehNumFiles INTEGER DEFAULT 0,"
+    "VirtualPath TEXT,"
+    "UNIQUE(StudyRowID, SeriesNum))");
 
 QString tableStudy = QString("CREATE TABLE Study ("
     "StudyRowID INTEGER PRIMARY KEY,"
     "SubjectRowID INTEGER,"
     "StudyNumber INTEGER ,"
     "Datetime TEXT,"
-    "Age REAL,"
-    "Height REAL,"
-    "Weight REAL,"
+    "Age REAL DEFAULT 0.0,"
+    "Height REAL DEFAULT 0.0,"
+    "Weight REAL DEFAULT 0.0,"
     "Modality TEXT,"
     "Description TEXT,"
     "StudyUID TEXT,"
     "VisitType TEXT,"
-    "DayNumber INTEGER,"
-    "Timepoint INTEGER,"
+    "DayNumber INTEGER DEFAULT 0,"
+    "Timepoint INTEGER DEFAULT 0,"
     "Equipment TEXT,"
-    "VirtualPath TEXT)");
+    "VirtualPath TEXT,"
+    "UNIQUE(SubjectRowID, StudyNumber))");
 
 QString tableSubject = QString("CREATE TABLE Subject ("
     "SubjectRowID INTEGER PRIMARY KEY,"
-    "PackageRowID INTEGER,"
-    "ID TEXT,"
+    "ID TEXT NOT NULL UNIQUE,"
     "AltIDs TEXT,"
     "GUID TEXT,"
-    "DateOfBirth date,"
+    "DateOfBirth TEXT,"
     "Sex TEXT,"
     "Gender TEXT,"
     "Ethnicity1 TEXT,"
