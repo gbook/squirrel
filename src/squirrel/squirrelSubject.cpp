@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel subject.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -151,16 +151,16 @@ qint64 squirrelSubject::GetNextStudyNumber() {
  */
 void squirrelSubject::PrintSubject() {
 
-    Print("\t\t----- SUBJECT -----");
-    Print(QString("\t\tSubjectID: %1").arg(ID));
-    Print(QString("\t\tAlternateIDs: %1").arg(alternateIDs.join(",")));
-    Print(QString("\t\tGUID: %1").arg(GUID));
-    Print(QString("\t\tSex: %1").arg(sex));
-    Print(QString("\t\tGender: %1").arg(gender));
-    Print(QString("\t\tDateOfBirth: %1").arg(dateOfBirth.toString()));
-    Print(QString("\t\tEthnicity1: %1").arg(ethnicity1));
-    Print(QString("\t\tEthnicity2: %1").arg(ethnicity2));
-    Print(QString("\t\tVirtualPath: %1").arg(ethnicity2));
+    utils::Print("\t\t----- SUBJECT -----");
+    utils::Print(QString("\t\tSubjectID: %1").arg(ID));
+    utils::Print(QString("\t\tAlternateIDs: %1").arg(alternateIDs.join(",")));
+    utils::Print(QString("\t\tGUID: %1").arg(GUID));
+    utils::Print(QString("\t\tSex: %1").arg(sex));
+    utils::Print(QString("\t\tGender: %1").arg(gender));
+    utils::Print(QString("\t\tDateOfBirth: %1").arg(dateOfBirth.toString()));
+    utils::Print(QString("\t\tEthnicity1: %1").arg(ethnicity1));
+    utils::Print(QString("\t\tEthnicity2: %1").arg(ethnicity2));
+    utils::Print(QString("\t\tVirtualPath: %1").arg(ethnicity2));
 }
 
 

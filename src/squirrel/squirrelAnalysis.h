@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel analysis.h
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -23,6 +23,7 @@
 
 #ifndef SQUIRRELANALYSIS_H
 #define SQUIRRELANALYSIS_H
+#include <QtSql>
 #include <QString>
 #include <QDateTime>
 #include <QJsonObject>
@@ -36,8 +37,16 @@ public:
     squirrelAnalysis();
     QJsonObject ToJSON();
     void PrintAnalysis();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON variables */
+    qint64 studyRowID;          /*!< database row id of the parent study */
+    qint64 pipelineRowID;       /*!< database row id of the parent pipeline */
     QString pipelineName;       /*!< name of the pipeline */
     int pipelineVersion;        /*!< pipeline version */
     QDateTime clusterStartDate; /*!< datetime the analysis started running on the cluster */
@@ -56,6 +65,13 @@ public:
     /* lib variables */
     QString virtualPath;        /*!< path within the squirrel package, no leading slash */
     QStringList stagedFiles;    /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
+
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+    QSqlQuery q;
+
 };
 
 #endif // SQUIRRELANALYSIS_H

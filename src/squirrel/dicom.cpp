@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel dicom.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
     qint64 processedFileCount(0);
     qint64 foundFileCount(0);
     QString m;
-    QStringList files = FindAllFiles(dir, "*", true);
+    QStringList files = utils::FindAllFiles(dir, "*", true);
     //numFiles = files.size();
     foreach (QString f, files) {
         processedFileCount++;

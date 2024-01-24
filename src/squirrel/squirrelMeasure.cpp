@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel measure.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -67,5 +67,5 @@ void squirrelMeasure::PrintMeasure() {
     //Print(QString("\t\t\tValue: %1").arg(value));
     //Print(QString("\t\t\tDescription: %1").arg(description));
 
-    Print(QString("\t\t\tMEASURE\tName [%1]\tDateStart [%2]\tDateEnd [%3]\tInstrumentName [%4]\tRater [%5]\tNotes [%6]\tValue [%7]\tDescription [%8]").arg(measureName).arg(dateStart.toString()).arg(dateEnd.toString()).arg(instrumentName).arg(rater).arg(notes).arg(value).arg(description));
+    utils::Print(QString("\t\t\tMEASURE\tName [%1]\tDateStart [%2]\tDateEnd [%3]\tInstrumentName [%4]\tRater [%5]\tNotes [%6]\tValue [%7]\tDescription [%8]").arg(measureName).arg(dateStart.toString()).arg(dateEnd.toString()).arg(instrumentName).arg(rater).arg(notes).arg(value).arg(description));
 }

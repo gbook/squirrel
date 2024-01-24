@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel series.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -50,17 +50,17 @@ squirrelSeries::squirrelSeries()
  * @brief Print the series details
  */
 void squirrelSeries::PrintSeries() {
-    Print("\t\t\t\t----- SERIES -----");
-    Print(QString("\t\t\t\tSeriesNumber: %1").arg(number));
-    Print(QString("\t\t\t\tSeriesDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
-    Print(QString("\t\t\t\tDescription: %1").arg(description));
-    Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
-    Print(QString("\t\t\t\tExperimentNames: %1").arg(experimentNames.join(",")));
-    Print(QString("\t\t\t\tSize: %1").arg(size));
-    Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
-    Print(QString("\t\t\t\tNumBehFiles: %1").arg(numBehFiles));
-    Print(QString("\t\t\t\tBehSize: %1").arg(behSize));
+    utils::Print("\t\t\t\t----- SERIES -----");
+    utils::Print(QString("\t\t\t\tSeriesNumber: %1").arg(number));
+    utils::Print(QString("\t\t\t\tSeriesDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
+    utils::Print(QString("\t\t\t\tDescription: %1").arg(description));
+    utils::Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
+    utils::Print(QString("\t\t\t\tExperimentNames: %1").arg(experimentNames.join(",")));
+    utils::Print(QString("\t\t\t\tSize: %1").arg(size));
+    utils::Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
+    utils::Print(QString("\t\t\t\tNumBehFiles: %1").arg(numBehFiles));
+    utils::Print(QString("\t\t\t\tBehSize: %1").arg(behSize));
 }
 
 

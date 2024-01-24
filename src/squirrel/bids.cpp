@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel bids.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -59,12 +59,12 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
     }
 
     /* check for all .json files in the root directory */
-    QStringList rootfiles = FindAllFiles(dir, "*", false);
+    QStringList rootfiles = utils::FindAllFiles(dir, "*", false);
     sqrl->Log(QString("Found [%1] root files matching '%2/*'").arg(rootfiles.size()).arg(dir), __FUNCTION__, true);
     LoadRootFiles(rootfiles, sqrl);
 
     /* get list of directories in the root named 'sub-*' */
-    QStringList subjdirs = FindAllDirs(dir, "sub-*", false);
+    QStringList subjdirs = utils::FindAllDirs(dir, "sub-*", false);
 
     sqrl->Log(QString("Found [%1] subject directories matching '%2/sub-*'").arg(subjdirs.size()).arg(dir), __FUNCTION__, true);
     foreach (QString subjdir, subjdirs) {
@@ -72,14 +72,14 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         QString subjpath = QString("%1/%2").arg(dir).arg(subjdir);
 
         /* get all the FILES inside of the subject directory */
-        QStringList subjfiles = FindAllFiles(subjpath, "*", false);
+        QStringList subjfiles = utils::FindAllFiles(subjpath, "*", false);
         sqrl->Log(QString("Found [%1] subject root files matching '%2/*'").arg(subjfiles.size()).arg(subjdir), __FUNCTION__, true);
 
         QString ID = subjdir;
         LoadSubjectFiles(subjfiles, subjdir, sqrl);
 
         /* get a list of ses-* DIRS, if there are any */
-        QStringList sesdirs = FindAllDirs(subjpath, "ses-*", false);
+        QStringList sesdirs = utils::FindAllDirs(subjpath, "ses-*", false);
         sqrl->Log(QString("Found [%1] session directories matching '%2/ses-*'").arg(sesdirs.size()).arg(subjdir), __FUNCTION__, true);
         if (sesdirs.size() > 0) {
             foreach (QString sesdir, sesdirs) {
@@ -148,14 +148,14 @@ bool bids::LoadRootFiles(QStringList rootfiles, squirrel *sqrl) {
         */
 
         if (filename == "dataset_description.json") {
-            QString desc = CleanJSON(ReadTextFileToString(f));
+            QString desc = utils::CleanJSON(utils::ReadTextFileToString(f));
             sqrl->description = desc;
         }
         else if ((filename == "README") || (filename == "README.md")) {
-            sqrl->readme = ReadTextFileToString(f);
+            sqrl->readme = utils::ReadTextFileToString(f);
         }
         else if (filename == "CHANGES") {
-            sqrl->changes = ReadTextFileToString(f);
+            sqrl->changes = utils::ReadTextFileToString(f);
         }
         else if (filename.startsWith("task-")) {
             /* this goes into the squirrel experiments object */
@@ -229,13 +229,13 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
              * ses-01 value
              * ses-02 value
              */
-            QString filestr = ReadTextFileToString(f);
+            QString filestr = utils::ReadTextFileToString(f);
 
-            indexedHash tsv;
+            utils::indexedHash tsv;
             QStringList cols;
             QString m;
 
-            if (ParseTSV(filestr, tsv, cols, m)) {
+            if (utils::ParseTSV(filestr, tsv, cols, m)) {
                 //sqrl->Log(QString("Successfuly read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
                 for (int i=0; i<tsv.size(); i++) {
                     QString sesid = tsv[i]["session_id"];
@@ -278,12 +278,12 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
     QHash<QString, QString> params;
 
     /* get list of all dirs in this sesdir */
-    QStringList sesdirs = FindAllDirs(sesdir, "*", false);
+    QStringList sesdirs = utils::FindAllDirs(sesdir, "*", false);
     sqrl->Log(QString("Found [%1] directories in [%2/*]").arg(sesdirs.size()).arg(sesdir), __FUNCTION__, true);
     if (sesdirs.size() > 0) {
         foreach (QString dir, sesdirs) {
             QString datadir = QString("%1/%2").arg(sesdir).arg(dir);
-            QStringList files = FindAllFiles(datadir, "*", false);
+            QStringList files = utils::FindAllFiles(datadir, "*", false);
             sqrl->Log(QString("Found [%1] files in '%2'").arg(files.size()).arg(datadir), __FUNCTION__, true);
 
             /* now do something with the files, depending on what they are */
@@ -766,13 +766,13 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
 
     sqrl->Log(QString("Reading participants file [%1]").arg(f), __FUNCTION__);
 
-    QString file = ReadTextFileToString(f);
+    QString file = utils::ReadTextFileToString(f);
 
-    indexedHash tsv;
+    utils::indexedHash tsv;
     QStringList cols;
     QString m;
 
-    if (ParseTSV(file, tsv, cols, m)) {
+    if (utils::ParseTSV(file, tsv, cols, m)) {
         //sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
         for (int i=0; i<tsv.size(); i++) {
             QString id = tsv[i]["participant_id"];
@@ -841,7 +841,7 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
     filename.replace(".tsv", "");
     filename.replace("_events", "");
     filename.replace("_bold", "");
-    QString str = ReadTextFileToString(f);
+    QString str = utils::ReadTextFileToString(f);
     QJsonDocument d = QJsonDocument::fromJson(str.toUtf8());
     QJsonObject root = d.object();
 

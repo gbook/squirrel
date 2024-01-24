@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel experiment.h
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public:
     qint64 numFiles;            /*!< number of experiment files (required) */
     qint64 size;                /*!< total size in bytes of the experiment files (required) */
     QString virtualPath;        /*!< path to the experiment files, relative to the package root (required) */
-    qint64 packageRowID;        /*!< database row ID of the parent package */
+    //qint64 packageRowID;        /*!< database row ID of the parent package */
     QStringList stagedFiles;    /*!< staged file list - list of files in their own original paths which will be copied in before the package is zipped up */
 
 private:

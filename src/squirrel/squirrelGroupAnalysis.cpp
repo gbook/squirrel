@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel squirrelGroupAnalysis.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -55,13 +55,13 @@ QJsonObject squirrelGroupAnalysis::ToJSON() {
  */
 void squirrelGroupAnalysis::PrintGroupAnalysis() {
 
-    Print("\t----- GROUPANALYSIS ------");
-    Print(QString("\tGroupAnalysisName: %1").arg(groupAnalysisName));
-    Print(QString("\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("\tDescription: %1").arg(description));
-    Print(QString("\tNotes: %1").arg(notes));
-    Print(QString("\tNumfiles: %1").arg(numfiles));
-    Print(QString("\tSize: %1").arg(size));
-    Print(QString("\tVirtualPath: %1").arg(virtualPath));
+    utils::Print("\t----- GROUPANALYSIS ------");
+    utils::Print(QString("\tGroupAnalysisName: %1").arg(groupAnalysisName));
+    utils::Print(QString("\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print(QString("\tDescription: %1").arg(description));
+    utils::Print(QString("\tNotes: %1").arg(notes));
+    utils::Print(QString("\tNumfiles: %1").arg(numfiles));
+    utils::Print(QString("\tSize: %1").arg(size));
+    utils::Print(QString("\tVirtualPath: %1").arg(virtualPath));
 
 }

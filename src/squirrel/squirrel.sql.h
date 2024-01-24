@@ -35,13 +35,17 @@ QString tableStagedFiles = QString("CREATE TABLE StagedFiles"
     "StagedFileRowID INTEGER PRIMARY KEY,"
     "ObjectType TEXT,"
     "ObjectRowID INTEGER,"
-    "StagedPath TEXT)");
+    "FileSize INTEGER,"
+    "StagedPath TEXT,"
+    "UNIQUE(ObjectRowID, ObjectType, StagedPath) )");
 
 QString tableAnalysis = QString("CREATE TABLE Analysis ("
     "AnalysisRowID INTEGER PRIMARY KEY,"
     "StudyRowID INTEGER,"
     "PipelineRowID INTEGER,"
     "PipelineVersion INTEGER,"
+    "ClusterStartDate TEXT,"
+    "ClusterEndDate TEXT,"
     "StartDate TEXT,"
     "EndDate TEXT,"
     "SetupTime INTEGER,"

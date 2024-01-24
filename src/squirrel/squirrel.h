@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel squirrel.h
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ public:
 
     bool addSubject(squirrelSubject subj);
     bool addPipeline(squirrelPipeline pipe);
-    bool addExperiment(squirrelExperiment exp);
+    //bool addExperiment(squirrelExperiment exp);
     bool removeSubject(QString ID);
 
     /* JSON elements */

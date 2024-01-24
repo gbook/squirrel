@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel experiment.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ bool squirrelExperiment::Get() {
     }
     q.prepare("select * from Experiment where ExperimentRowID = :id");
     q.bindValue(":id", objectID);
-    SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.size() > 0) {
         q.first();
 
@@ -55,16 +55,15 @@ bool squirrelExperiment::Get() {
         objectID = q.value("ExperimentRowID").toLongLong();
         experimentName = q.value("ExperimentName").toString();
         numFiles = q.value("NumFiles").toLongLong();
-        size = q.value("NumFiles").toLongLong();
+        size = q.value("Size").toLongLong();
         virtualPath = q.value("VirtualPath").toString();
-        packageRowID = q.value("PackageRowID").toLongLong();
 
         /* get any staged files */
         stagedFiles.clear();
         q.prepare("select * from StagedFiles where ObjectRowID = :id and ObjectType = :type");
         q.bindValue(":id", objectID);
         q.bindValue(":type", "experiment");
-        SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         if (q.size() > 0) {
             while (q.next()) {
                 stagedFiles.append(q.value("StagedPath").toString());
@@ -98,25 +97,23 @@ bool squirrelExperiment::Store() {
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Experiment (PackageRowID, ExperimentName, Size, NumFiles, VirtualPath) values (:packageid, :name, :size, :numfiles, :virtualpath)");
-        q.bindValue(":packageid", packageRowID);
+        q.prepare("insert into Experiment (ExperimentName, Size, NumFiles, VirtualPath) values (:packageid, :name, :size, :numfiles, :virtualpath)");
         q.bindValue(":name", experimentName);
         q.bindValue(":size", size);
         q.bindValue(":numfiles", numFiles);
         q.bindValue(":virtualPath", virtualPath);
-        SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
     /* ... otherwise update */
     else {
         q.prepare("update Experiment set ");
         q.bindValue(":id", objectID);
-        q.bindValue(":packageid", packageRowID);
         q.bindValue(":name", experimentName);
         q.bindValue(":size", size);
         q.bindValue(":numfiles", numFiles);
         q.bindValue(":virtualPath", virtualPath);
-        SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }
 
     /* store any staged files */
@@ -125,15 +122,14 @@ bool squirrelExperiment::Store() {
         q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
         q.bindValue(":id", objectID);
         q.bindValue(":type", "experiment");
-        SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
         QString path;
         foreach (path, stagedFiles) {
-            q.prepare("insert into StagedFiles (PackageRowID, ObjectRowID, ObjectType) values (:packageid, :id, :type)");
-            q.bindValue(":packageid", packageRowID);
+            q.prepare("insert into StagedFiles (ObjectRowID, ObjectType) values (:packageid, :id, :type)");
             q.bindValue(":id", objectID);
             q.bindValue(":type", "experiment");
-            SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         }
     }
     return true;
@@ -163,9 +159,9 @@ QJsonObject squirrelExperiment::ToJSON() {
  */
 void squirrelExperiment::PrintExperiment() {
 
-    Print("\t----- EXPERIMENT -----");
-    Print(QString("\tExperimentName: %1").arg(experimentName));
-    Print(QString("\tNumfiles: %1").arg(numFiles));
-    Print(QString("\tSize: %1").arg(size));
-    Print(QString("\tVirtualPath: %1").arg(virtualPath));
+    utils::Print("\t----- EXPERIMENT -----");
+    utils::Print(QString("\tExperimentName: %1").arg(experimentName));
+    utils::Print(QString("\tNumfiles: %1").arg(numFiles));
+    utils::Print(QString("\tSize: %1").arg(size));
+    utils::Print(QString("\tVirtualPath: %1").arg(virtualPath));
 }

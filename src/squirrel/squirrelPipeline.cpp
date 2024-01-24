@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel pipeline.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
     /* write all pipeline info to path */
     QString m;
     QString pipelinepath = QString("%1/pipelines/%2").arg(path).arg(pipelineName);
-    if (MakePath(pipelinepath, m)) {
+    if (utils::MakePath(pipelinepath, m)) {
         //QByteArray j = QJsonDocument(json).toJson();
         //QFile fout(QString(pipelinepath + "/pipeline.json"));
         //if (fout.open(QIODevice::WriteOnly))
@@ -125,15 +125,15 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
         //    Print("Error writing file [" + pipelinepath + "/pipeline.json]");
 
         /* write the scripts */
-        if (!WriteTextFile(QString(pipelinepath + "/primaryScript.sh"), primaryScript))
-            Print("Error writing primary script [" + pipelinepath + "/primaryScript.sh]");
+        if (!utils::WriteTextFile(QString(pipelinepath + "/primaryScript.sh"), primaryScript))
+            utils::Print("Error writing primary script [" + pipelinepath + "/primaryScript.sh]");
 
-        if (!WriteTextFile(QString(pipelinepath + "/secondaryScript.sh"), secondaryScript))
-            Print("Error writing secondary script [" + pipelinepath + "/secondaryScript.sh]");
+        if (!utils::WriteTextFile(QString(pipelinepath + "/secondaryScript.sh"), secondaryScript))
+            utils::Print("Error writing secondary script [" + pipelinepath + "/secondaryScript.sh]");
 
     }
     else {
-        Print("Error creating path [" + pipelinepath + "] because of [" + m + "]");
+        utils::Print("Error creating path [" + pipelinepath + "] because of [" + m + "]");
     }
 
     /* return JSON object */
@@ -149,37 +149,37 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
  */
 void squirrelPipeline::PrintPipeline() {
 
-    Print("\t----- PIPELINE -----");
+    utils::Print("\t----- PIPELINE -----");
 
-    Print(QString("\tPipelineName: %1").arg(pipelineName));
-    Print(QString("\tPipelineName: %1").arg(description));
-    Print(QString("\tPipelineName: %1").arg(createDate.toString()));
-    Print(QString("\tPipelineName: %1").arg(version));
-    Print(QString("\tPipelineName: %1").arg(level));
+    utils::Print(QString("\tPipelineName: %1").arg(pipelineName));
+    utils::Print(QString("\tPipelineName: %1").arg(description));
+    utils::Print(QString("\tPipelineName: %1").arg(createDate.toString()));
+    utils::Print(QString("\tPipelineName: %1").arg(version));
+    utils::Print(QString("\tPipelineName: %1").arg(level));
 
-    Print(QString("\tPipelineName: %1").arg(parentPipelines.join(",")));
-    Print(QString("\tPipelineName: %1").arg(completeFiles.join(",")));
+    utils::Print(QString("\tPipelineName: %1").arg(parentPipelines.join(",")));
+    utils::Print(QString("\tPipelineName: %1").arg(completeFiles.join(",")));
 
-    Print(QString("\tPipelineName: %1").arg(dataCopyMethod));
-    Print(QString("\tPipelineName: %1").arg(directory));
-    Print(QString("\tPipelineName: %1").arg(dirStructure));
-    Print(QString("\tPipelineName: %1").arg(depLevel));
-    Print(QString("\tPipelineName: %1").arg(depDir));
-    Print(QString("\tPipelineName: %1").arg(depLinkType));
-    Print(QString("\tPipelineName: %1").arg(group));
-    Print(QString("\tPipelineName: %1").arg(groupType));
-    Print(QString("\tPipelineName: %1").arg(notes));
-    Print(QString("\tPipelineName: %1").arg(resultScript));
-    Print(QString("\tPipelineName: %1").arg(tmpDir));
-    Print(QString("\tPipelineName: %1").arg(flags.useTmpDir));
-    Print(QString("\tPipelineName: %1").arg(flags.useProfile));
+    utils::Print(QString("\tPipelineName: %1").arg(dataCopyMethod));
+    utils::Print(QString("\tPipelineName: %1").arg(directory));
+    utils::Print(QString("\tPipelineName: %1").arg(dirStructure));
+    utils::Print(QString("\tPipelineName: %1").arg(depLevel));
+    utils::Print(QString("\tPipelineName: %1").arg(depDir));
+    utils::Print(QString("\tPipelineName: %1").arg(depLinkType));
+    utils::Print(QString("\tPipelineName: %1").arg(group));
+    utils::Print(QString("\tPipelineName: %1").arg(groupType));
+    utils::Print(QString("\tPipelineName: %1").arg(notes));
+    utils::Print(QString("\tPipelineName: %1").arg(resultScript));
+    utils::Print(QString("\tPipelineName: %1").arg(tmpDir));
+    utils::Print(QString("\tPipelineName: %1").arg(flags.useTmpDir));
+    utils::Print(QString("\tPipelineName: %1").arg(flags.useProfile));
 
-    Print(QString("\tPipelineName: %1").arg(clusterType));
-    Print(QString("\tPipelineName: %1").arg(clusterUser));
-    Print(QString("\tPipelineName: %1").arg(clusterQueue));
-    Print(QString("\tPipelineName: %1").arg(clusterSubmitHost));
-    Print(QString("\tPipelineName: %1").arg(maxWallTime));
-    Print(QString("\tPipelineName: %1").arg(submitDelay));
-    Print(QString("\tPipelineName: %1").arg(numConcurrentAnalyses));
+    utils::Print(QString("\tPipelineName: %1").arg(clusterType));
+    utils::Print(QString("\tPipelineName: %1").arg(clusterUser));
+    utils::Print(QString("\tPipelineName: %1").arg(clusterQueue));
+    utils::Print(QString("\tPipelineName: %1").arg(clusterSubmitHost));
+    utils::Print(QString("\tPipelineName: %1").arg(maxWallTime));
+    utils::Print(QString("\tPipelineName: %1").arg(submitDelay));
+    utils::Print(QString("\tPipelineName: %1").arg(numConcurrentAnalyses));
 
 }

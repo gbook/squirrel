@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel main.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -121,19 +121,19 @@ int main(int argc, char *argv[])
     QString bindir = QDir::currentPath();
 
     if (!quiet) {
-        Print("+----------------------------------------------------+");
-        Print(QString("|  Squirrel utils version %1.%2\n|\n|  Build date [%3 %4]\n|  C++ [%5]\n|  Qt compiled [%6]\n|  Qt runtime [%7]\n|  Build system [%8]" ).arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN).arg(__DATE__).arg(__TIME__).arg(__cplusplus).arg(QT_VERSION_STR).arg(qVersion()).arg(QSysInfo::buildAbi()));
-        Print(QString("|\n|  Current working directory is %1").arg(bindir));
-        Print("+----------------------------------------------------+\n");
+        utils::Print("+----------------------------------------------------+");
+        utils::Print(QString("|  Squirrel utils version %1.%2\n|\n|  Build date [%3 %4]\n|  C++ [%5]\n|  Qt compiled [%6]\n|  Qt runtime [%7]\n|  Build system [%8]" ).arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN).arg(__DATE__).arg(__TIME__).arg(__cplusplus).arg(QT_VERSION_STR).arg(qVersion()).arg(QSysInfo::buildAbi()));
+        utils::Print(QString("|\n|  Current working directory is %1").arg(bindir));
+        utils::Print("+----------------------------------------------------+\n");
     }
 
     /* ---------- Run the validate tool ---------- */
     if (tool == "validate") {
         if (paramInput.trimmed() == "") {
-            Print("*** Input file blank ***");
+            utils::Print("*** Input file blank ***");
         }
         else if (!QFile::exists(paramInput)) {
-            Print(QString("*** Input file [%1] does not exist ***").arg(paramInput));
+            utils::Print(QString("*** Input file [%1] does not exist ***").arg(paramInput));
         }
         else {
             /* create squirrel object and validate */
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
         QFileInfo outinfo(paramOutputFile);
         QDir outdir = outinfo.absolutePath();
         if (!outdir.exists()) {
-            Print(QString("Output directory [%1] does not exist").arg(outdir.absolutePath()));
+            utils::Print(QString("Output directory [%1] does not exist").arg(outdir.absolutePath()));
         }
         else {
             dicom *dcm = new dicom();
@@ -179,23 +179,23 @@ int main(int argc, char *argv[])
     /* ---------- Run the bids2squirrel tool ---------- */
     else if (tool == "bids2squirrel") {
 
-        Print(QString("Running bids2squirrel on input directory [%1]").arg(paramInput));
-        Print(QString("Output file [%1]").arg(paramOutputFile));
+        utils::Print(QString("Running bids2squirrel on input directory [%1]").arg(paramInput));
+        utils::Print(QString("Output file [%1]").arg(paramOutputFile));
 
         /* check if the infile directory exists */
         QDir indir(paramInput);
         if (!indir.exists()) {
-            Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
+            utils::Print(QString("Input directory [%1] does not exist").arg(indir.absolutePath()));
         }
         else if (paramInput == "") {
-            Print("Input directory not specified. Use the -i <indir> option to specify the input directory");
+            utils::Print("Input directory not specified. Use the -i <indir> option to specify the input directory");
         }
         else {
             QString outputfile = paramOutputFile;
 
             if (paramOutputFile == "") {
                 outputfile = QString(paramInput + "/squirrel.zip");
-                Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
+                utils::Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
             }
 
             /* create a squirrel object */
@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
         /* check if the infile exists */
         QFile infile(paramInput);
         if (!infile.exists()) {
-            Print(QString("Input file [%1] does not exist").arg(paramInput));
+            utils::Print(QString("Input file [%1] does not exist").arg(paramInput));
         }
         else {
             squirrel *sqrl = new squirrel(debug, quiet);
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
     }
 
     if (!quiet)
-        Print("\nExiting squirrel utils");
+        utils::Print("\nExiting squirrel utils");
 
     a.exit();
     return 0;

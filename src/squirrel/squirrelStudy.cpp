@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel study.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -110,20 +110,20 @@ qint64 squirrelStudy::GetNextSeriesNumber() {
  */
 void squirrelStudy::PrintStudy() {
 
-    Print("\t\t\t----- STUDY -----");
-    Print(QString("\t\t\tNumber: %1").arg(number));
-    Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("\t\t\tAgeAtStudy: %1").arg(ageAtStudy));
-    Print(QString("\t\t\tHeight: %1 m").arg(height));
-    Print(QString("\t\t\tWeight: %1 kg").arg(weight));
-    Print(QString("\t\t\tModality: %1").arg(modality));
-    Print(QString("\t\t\tDescription: %1").arg(description));
-    Print(QString("\t\t\tstudy-uid: %1").arg(studyUID));
-    Print(QString("\t\t\tVisitType: %1").arg(visitType));
-    Print(QString("\t\t\tDayNumber: %1").arg(dayNumber));
-    Print(QString("\t\t\tTimePoint: %1").arg(timePoint));
-    Print(QString("\t\t\tEquipment: %1").arg(equipment));
-    Print(QString("\t\t\tVirtualPath: %1").arg(virtualPath));
+    utils::Print("\t\t\t----- STUDY -----");
+    utils::Print(QString("\t\t\tNumber: %1").arg(number));
+    utils::Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print(QString("\t\t\tAgeAtStudy: %1").arg(ageAtStudy));
+    utils::Print(QString("\t\t\tHeight: %1 m").arg(height));
+    utils::Print(QString("\t\t\tWeight: %1 kg").arg(weight));
+    utils::Print(QString("\t\t\tModality: %1").arg(modality));
+    utils::Print(QString("\t\t\tDescription: %1").arg(description));
+    utils::Print(QString("\t\t\tstudy-uid: %1").arg(studyUID));
+    utils::Print(QString("\t\t\tVisitType: %1").arg(visitType));
+    utils::Print(QString("\t\t\tDayNumber: %1").arg(dayNumber));
+    utils::Print(QString("\t\t\tTimePoint: %1").arg(timePoint));
+    utils::Print(QString("\t\t\tEquipment: %1").arg(equipment));
+    utils::Print(QString("\t\t\tVirtualPath: %1").arg(virtualPath));
 }
 
 

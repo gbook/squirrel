@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel drug.cpp
-  Copyright (C) 2004 - 2023
+  Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -64,22 +64,22 @@ QJsonObject squirrelDrug::ToJSON() {
  */
 void squirrelDrug::PrintDrug() {
 
-    Print("\t\t\t----- DRUG -----");
-    Print(QString("\t\t\tDrugName: %1").arg(drugName));
-    Print(QString("\t\t\tDateStart: %1").arg(dateStart.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("\t\t\tDateEnd: %1").arg(dateEnd.toString("yyyy-MM-dd HH:mm:ss")));
-    Print(QString("\t\t\tDoseAmount: %1").arg(doseAmount));
-    Print(QString("\t\t\tDoseFrequency: %1").arg(doseFrequency));
-    Print(QString("\t\t\tRoute: %1").arg(route));
-    Print(QString("\t\t\tDrugClass: %1").arg(drugClass));
-    Print(QString("\t\t\tDoseKey: %1").arg(doseKey));
-    Print(QString("\t\t\tDoseUnit: %1").arg(doseUnit));
-    Print(QString("\t\t\tFrequencyModifier: %1").arg(frequencyModifier));
-    Print(QString("\t\t\tFrequencyValue: %1").arg(frequencyValue));
-    Print(QString("\t\t\tFrequencyUnit: %1").arg(frequencyUnit));
-    Print(QString("\t\t\tDescription: %1").arg(description));
-    Print(QString("\t\t\tRater: %1").arg(rater));
-    Print(QString("\t\t\tNotes: %1").arg(notes));
-    Print(QString("\t\t\tDateRecordEntry: %1").arg(dateRecordEntry.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print("\t\t\t----- DRUG -----");
+    utils::Print(QString("\t\t\tDrugName: %1").arg(drugName));
+    utils::Print(QString("\t\t\tDateStart: %1").arg(dateStart.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print(QString("\t\t\tDateEnd: %1").arg(dateEnd.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print(QString("\t\t\tDoseAmount: %1").arg(doseAmount));
+    utils::Print(QString("\t\t\tDoseFrequency: %1").arg(doseFrequency));
+    utils::Print(QString("\t\t\tRoute: %1").arg(route));
+    utils::Print(QString("\t\t\tDrugClass: %1").arg(drugClass));
+    utils::Print(QString("\t\t\tDoseKey: %1").arg(doseKey));
+    utils::Print(QString("\t\t\tDoseUnit: %1").arg(doseUnit));
+    utils::Print(QString("\t\t\tFrequencyModifier: %1").arg(frequencyModifier));
+    utils::Print(QString("\t\t\tFrequencyValue: %1").arg(frequencyValue));
+    utils::Print(QString("\t\t\tFrequencyUnit: %1").arg(frequencyUnit));
+    utils::Print(QString("\t\t\tDescription: %1").arg(description));
+    utils::Print(QString("\t\t\tRater: %1").arg(rater));
+    utils::Print(QString("\t\t\tNotes: %1").arg(notes));
+    utils::Print(QString("\t\t\tDateRecordEntry: %1").arg(dateRecordEntry.toString("yyyy-MM-dd HH:mm:ss")));
 
 }
