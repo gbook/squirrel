@@ -61,7 +61,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlQuery q;
 };
 
 #endif // SQUIRRELMEASURE_H

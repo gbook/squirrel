@@ -22,10 +22,10 @@
 
 #ifndef SQUIRRELEXPERIMENT_H
 #define SQUIRRELEXPERIMENT_H
+#include <QtSql>
 #include <QString>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QtSql>
 
 /**
  * @brief The experiment class

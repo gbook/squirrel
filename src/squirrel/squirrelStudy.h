@@ -22,7 +22,7 @@
 
 #ifndef SQUIRRELSTUDY_H
 #define SQUIRRELSTUDY_H
-
+#include <QtSql>
 #include <QString>
 #include <QDateTime>
 #include <QJsonObject>
@@ -45,6 +45,12 @@ public:
     qint64 GetNextSeriesNumber();
     void PrintStudy();
     QJsonObject ToJSON();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
     qint64 number = -1;            /*!< Unique study number. Must be unique within the subject */
@@ -64,6 +70,11 @@ public:
     /* lib variables */
     QList<squirrelSeries> seriesList; /*!< List of series attached to this study */
     QList<squirrelAnalysis> analysisList; /*!< List of analyses attached to this study */
+
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
 
 };
 

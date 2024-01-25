@@ -46,6 +46,7 @@ bool squirrelDrug::Get() {
         err = "objectID is not set";
         return false;
     }
+    QSqlQuery q;
     q.prepare("select * from Drug where DrugRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -97,6 +98,7 @@ bool squirrelDrug::Get() {
  * Otherwise it will return false.
  */
 bool squirrelDrug::Store() {
+    QSqlQuery q;
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {

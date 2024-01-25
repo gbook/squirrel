@@ -49,6 +49,7 @@ public:
     void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
+    qint64 studyRowID;
     qint64 number = -1;             /*!< Series number. must be unique to the study */
     QDateTime dateTime;             /*!< Series datetime */
     QString seriesUID;              /*!< SeriesInstanceUID */
@@ -70,7 +71,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlQuery q;
 };
 
 #endif // SQUIRRELSERIES_H

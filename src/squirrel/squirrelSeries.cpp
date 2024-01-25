@@ -46,6 +46,7 @@ bool squirrelSeries::Get() {
         err = "objectID is not set";
         return false;
     }
+    QSqlQuery q;
     q.prepare("select * from Series where SeriesRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -70,6 +71,7 @@ bool squirrelSeries::Get() {
 
         /* get any staged files */
         stagedFiles = utils::GetStagedFileList(objectID, "series");
+        stagedBehFiles = utils::GetStagedFileList(objectID, "behseries");
 
         valid = true;
         return true;
@@ -96,6 +98,7 @@ bool squirrelSeries::Get() {
  */
 bool squirrelSeries::Store() {
 
+    QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :VirtualPath)");
@@ -135,6 +138,7 @@ bool squirrelSeries::Store() {
 
     /* store any staged filepaths */
     utils::StoreStagedFileList(objectID, "series", stagedFiles);
+    utils::StoreStagedFileList(objectID, "behseries", stagedBehFiles);
 
     return true;
 }

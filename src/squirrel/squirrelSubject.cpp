@@ -131,16 +131,16 @@ bool squirrelSubject::addDrug(squirrelDrug d) {
  * @brief Gets the next study number for this subject
  * @return the next study number
  */
-qint64 squirrelSubject::GetNextStudyNumber() {
+//qint64 squirrelSubject::GetNextStudyNumber() {
 
     /* find the current highest study number */
-    qint64 maxnum = 0;
-    for (int i=0; i<studyList.size(); i++)
-        if (studyList[i].number > maxnum)
-            maxnum = studyList[i].number;
+//    qint64 maxnum = 0;
+//    for (int i=0; i<studyList.size(); i++)
+//        if (studyList[i].number > maxnum)
+//            maxnum = studyList[i].number;
 
-    return maxnum+1;
-}
+//    return maxnum+1;
+//}
 
 
 /* ------------------------------------------------------------ */

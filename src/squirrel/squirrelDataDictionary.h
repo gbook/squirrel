@@ -22,7 +22,7 @@
 
 #ifndef SQUIRRELDATADICTIONARY_H
 #define SQUIRRELDATADICTIONARY_H
-
+#include <QtSql>
 #include <QString>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -51,6 +51,12 @@ public:
 
     QJsonObject ToJSON();
     void PrintDataDictionary();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
     QList<dataDictionaryItem> dictItems; /*!< List of data dictionary items */
@@ -60,6 +66,12 @@ public:
     /* lib variables */
     QString virtualPath = "data-dictionary";    /*!< path within the squirrel package, no leading slash */
     QStringList stagedFiles;                    /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
+
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+
 };
 
 #endif // SQUIRRELDATADICTIONARY_H

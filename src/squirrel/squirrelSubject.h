@@ -22,7 +22,7 @@
 
 #ifndef SQUIRRELSUBJECT_H
 #define SQUIRRELSUBJECT_H
-
+#include <QtSql>
 #include <QString>
 #include <QDate>
 #include <QJsonObject>
@@ -45,9 +45,15 @@ public:
 	bool addStudy(squirrelStudy s);
 	bool addMeasure(squirrelMeasure m);
 	bool addDrug(squirrelDrug d);
-    qint64 GetNextStudyNumber();
+    //qint64 GetNextStudyNumber();
 	void PrintSubject();
 	QJsonObject ToJSON();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
     QString ID;                 /*!< --- Unique identifier --- Must be unique within the squirrel package */
@@ -65,6 +71,11 @@ public:
 	QList<squirrelStudy> studyList; /*!< List of studies attached to this subject */
 	QList<squirrelMeasure> measureList; /*!< List of measures (variables) attached to this subject */
 	QList<squirrelDrug> drugList; /*!< List of drugs attached to this subject */
+
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
 
 };
 

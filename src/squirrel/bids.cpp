@@ -86,7 +86,8 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
                 /* each session will become its own study */
                 QString sespath = QString("%1/%2/%3").arg(dir).arg(subjdir).arg(sesdir);
                 int subjectIndex = sqrl->GetSubjectIndex(subjdir);
-                int studyNum = sqrl->subjectList[subjectIndex].GetNextStudyNumber();
+                int studyNum;
+                //studyNum = sqrl->subjectList[subjectIndex].GetNextStudyNumber();
 
                 sqrl->Log(QString("Loading session path [%1] into study [%2]").arg(sespath).arg(studyNum), __FUNCTION__, true);
 
@@ -208,7 +209,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 
             /* create a session/study and add it to the subject */
             squirrelStudy sqrlStudy;
-            sqrlStudy.number = sqrlSubject.GetNextStudyNumber();
+            //sqrlStudy.number = sqrlSubject.GetNextStudyNumber();
             sqrlSubject.addStudy(sqrlStudy);
 
             /* create an analysis */
