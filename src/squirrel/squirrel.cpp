@@ -427,7 +427,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
         sqrlPipeline.directory = jsonPipeline["Directory"].toString();
         sqrlPipeline.group = jsonPipeline["Group"].toString();
         sqrlPipeline.groupType = jsonPipeline["GroupType"].toString();
-        sqrlPipeline.level = jsonPipeline["Level"].toString();
+        sqrlPipeline.level = jsonPipeline["Level"].toInt();
         sqrlPipeline.maxWallTime = jsonPipeline["MaxWallTime"].toInt();
         sqrlPipeline.pipelineName = jsonPipeline["PipelineName"].toString();
         sqrlPipeline.notes = jsonPipeline["Notes"].toString();

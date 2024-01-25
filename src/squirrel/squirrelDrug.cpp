@@ -28,6 +28,130 @@ squirrelDrug::squirrelDrug()
 
 }
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelDrug::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the drug data from
+ * the database. The drugRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelDrug::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+    q.prepare("select * from Drug where DrugRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("DrugRowID").toLongLong();
+        subjectRowID = q.value("SubjectRowID").toLongLong();
+        drugName = q.value("DrugName").toString();
+        dateStart = q.value("DateStart").toDateTime();
+        dateEnd = q.value("DateEnd").toDateTime();
+        doseString = q.value("DoseString").toString();
+        doseAmount = q.value("DoseAmount").toDouble();
+        doseFrequency = q.value("DoseFrequency").toString();
+        route = q.value("Route").toString();
+        drugClass = q.value("DrugClass").toString();
+        doseKey = q.value("DoseKey").toString();
+        doseUnit = q.value("DoseUnit").toString();
+        frequencyModifier = q.value("FrequencyModifier").toString();
+        frequencyValue = q.value("FrequencyValue").toDouble();
+        frequencyUnit = q.value("FrequencyUnit").toString();
+        description = q.value("Description").toString();
+        rater = q.value("Rater").toString();
+        notes = q.value("Notes").toString();
+        dateRecordEntry = q.value("DateRecordEntry").toDateTime();
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelDrug::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the drug data from
+ * the database. The drugRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelDrug::Store() {
+
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into Drug (SubjectRowID, DrugName, DateStart, DateEnd, DateRecordEntry, DoseString, DoseAmount, DoseFrequency, AdministrationRoute, DrugClass, DoseKey, DoseUnit, FrequencyModifer, FrequencyValue, FrequencyUnit, Description, Rater, Notes) values (:SubjectRowID, :DrugName, :DateStart, :DateEnd, :DateRecordEntry, :DoseString, :DoseAmount, :DoseFrequency, :AdministrationRoute, :DrugClass, :DoseKey, :DoseUnit, :FrequencyModifer, :FrequencyValue, :FrequencyUnit, :Description, :Rater, :Notes)");
+
+        q.bindValue(":SubjectRowID", subjectRowID);
+        q.bindValue(":DrugName", drugName);
+        q.bindValue(":DateStart", dateStart);
+        q.bindValue(":DateEnd", dateEnd);
+        q.bindValue(":DateRecordEntry", dateRecordEntry);
+        q.bindValue(":DoseString", doseString);
+        q.bindValue(":DoseAmount", doseAmount);
+        q.bindValue(":DoseFrequency", doseFrequency);
+        q.bindValue(":AdministrationRoute", route);
+        q.bindValue(":DrugClass", drugClass);
+        q.bindValue(":DoseKey", doseKey);
+        q.bindValue(":DoseUnit", doseUnit);
+        q.bindValue(":FrequencyModifer", frequencyModifier);
+        q.bindValue(":FrequencyValue", frequencyValue);
+        q.bindValue(":FrequencyUnit", frequencyUnit);
+        q.bindValue(":Description", description);
+        q.bindValue(":Rater", rater);
+        q.bindValue(":Notes", notes);
+
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update Drug set SubjectRowID = :SubjectRowID, DrugName = :DrugName, DateStart = :DateStart, DateEnd = :DateEnd, DateRecordEntry = :DateRecordEntry, DoseString = :DoseString, DoseAmount = :DoseAmount, DoseFrequency = :DoseFrequency, AdministrationRoute = :AdministrationRoute, DrugClass = :DrugClass, DoseKey = :DoseKey, DoseUnit = :DoseUnit, FrequencyModifer = :FrequencyModifer, FrequencyValue = :FrequencyValue, FrequencyUnit = :FrequencyUnit, Description = :Description, Rater = :Rater, Notes = :Notes where DrugRowID = :id");
+        q.bindValue(":id", objectID);
+        q.bindValue(":SubjectRowID", subjectRowID);
+        q.bindValue(":DrugName", drugName);
+        q.bindValue(":DateStart", dateStart);
+        q.bindValue(":DateEnd", dateEnd);
+        q.bindValue(":DateRecordEntry", dateRecordEntry);
+        q.bindValue(":DoseString", doseString);
+        q.bindValue(":DoseAmount", doseAmount);
+        q.bindValue(":DoseFrequency", doseFrequency);
+        q.bindValue(":AdministrationRoute", route);
+        q.bindValue(":DrugClass", drugClass);
+        q.bindValue(":DoseKey", doseKey);
+        q.bindValue(":DoseUnit", doseUnit);
+        q.bindValue(":FrequencyModifer", frequencyModifier);
+        q.bindValue(":FrequencyValue", frequencyValue);
+        q.bindValue(":FrequencyUnit", frequencyUnit);
+        q.bindValue(":Description", description);
+        q.bindValue(":Rater", rater);
+        q.bindValue(":Notes", notes);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    return true;
+}
+
 
 /* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
@@ -35,12 +159,12 @@ squirrelDrug::squirrelDrug()
 QJsonObject squirrelDrug::ToJSON() {
     QJsonObject json;
 
-	json["drugName"] = drugName;
-	json["dateStart"] = dateStart.toString("yyyy-MM-dd HH:mm:ss");
-	json["dateEnd"] = dateEnd.toString("yyyy-MM-dd HH:mm:ss");
-	json["doseAmount"] = doseAmount;
-	json["doseFrequency"] = doseFrequency;
-	json["route"] = route;
+    json["DrugName"] = drugName;
+    json["DateStart"] = dateStart.toString("yyyy-MM-dd HH:mm:ss");
+    json["DateEnd"] = dateEnd.toString("yyyy-MM-dd HH:mm:ss");
+    json["DoseAmount"] = doseAmount;
+    json["DoseFrequency"] = doseFrequency;
+    json["Route"] = route;
     json["DrugClass"] = drugClass;
     json["DoseKey"] = doseKey;
     json["DoseUnit"] = doseUnit;

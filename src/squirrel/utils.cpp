@@ -180,77 +180,6 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
-    /* --------- SandboxedSystemCommand ------------------------- */
-    /* ---------------------------------------------------------- */
-    /* this function does not work in Windows                     */
-    /* ---------------------------------------------------------- */
-    bool SandboxedSystemCommand(QString s, QString dir, QString &output, QString timeout, bool detail, bool truncate) {
-
-        double starttime = double(QDateTime::currentMSecsSinceEpoch());
-        bool ret = true;
-        QString outStr;
-        QProcess process;
-        double elapsedtime(0.0);
-
-        /* check if the temp directory exists */
-        QDir d(dir);
-        if (!d.exists()) {
-            output = "Error, sandbox dir [" + dir + "] does not exist";
-            return false;
-        }
-
-        /* change to the home directory, which is where the jailed files will appear after running "firejail --private" */
-        QDir::setCurrent("~");
-        process.setProcessChannelMode(QProcess::MergedChannels);
-        /* start the process */
-        process.start("sh", QStringList() << "-c" << "firejail --timeout=" + timeout + " --quiet --private-cwd --private=" + dir + " ./" + s);
-        QString command = "sh -cl 'firejail --timeout=" + timeout + " --quiet --private-cwd --private=" + dir + " ./" + s + "'";
-
-        /* get the output, and wait for it to finish */
-        if (process.waitForStarted(-1)) {
-            while(process.waitForReadyRead(-1)) {
-                outStr += process.readAll();
-            }
-        }
-        process.waitForFinished();
-
-        /* process should be done by now, check if there was an error */
-        if ((process.errorString().trimmed() != "") && (process.errorString().trimmed() != "Unknown error")) {
-            outStr += QString("Error [%1]. Exit status [%2]").arg(process.errorString()).arg(process.exitStatus());
-            switch (process.error()) {
-                case QProcess::FailedToStart: outStr += "Program failed to start. Executable not found?"; break;
-                case QProcess::Crashed: outStr += "Program crashed"; break;
-                case QProcess::Timedout: outStr += "Program timed out"; break;
-                case QProcess::WriteError: outStr += "Program encountered a write error"; break;
-                case QProcess::ReadError: outStr += "Program encountered a write error"; break;
-                case QProcess::UnknownError: outStr += "Program encountered unknown error"; break;
-            }
-            ret = false;
-        }
-        else {
-            elapsedtime = (double(QDateTime::currentMSecsSinceEpoch()) - starttime + 0.000001)/1000.0; /* add tiny decimal to avoid a divide by zero */
-
-            outStr = outStr.trimmed();
-            outStr.replace("’", "'");
-            outStr.replace("‘", "'");
-
-            /* truncate only if there was no error */
-            if (truncate)
-                if (outStr.size() > 10000)
-                    outStr = outStr.left(5000) + "\n\n     ...\n\n     OUTPUT TRUNCATED. Displaying only first and last 5,000 characters\n\n     ...\n\n" + outStr.right(5000);
-        }
-
-        /* format the final output */
-        if (detail)
-            output = QString("Executed command [%1], Output [%2], elapsed time [%3 sec]").arg(command).arg(outStr).arg(elapsedtime, 0, 'f', 3);
-        else
-            output = outStr;
-
-        return ret;
-    }
-
-
-    /* ---------------------------------------------------------- */
     /* --------- MakePath --------------------------------------- */
     /* ---------------------------------------------------------- */
     bool MakePath(QString p, QString &msg, bool perm777) {
@@ -1112,53 +1041,6 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
-    /* --------- Mean ------------------------------------------- */
-    /* ---------------------------------------------------------- */
-    /**
-     * Calculates the mean value from a list of doubles
-     * @param a array of doubles
-    */
-    double Mean(QList<double> a) {
-        if (a.isEmpty())
-            return 0.0;
-
-        double sum = 0.0;
-        foreach( double n, a )
-            sum += n;
-
-        return sum/double(a.size());
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- Variance --------------------------------------- */
-    /* ---------------------------------------------------------- */
-    double Variance(QList<double> a) {
-        if (a.isEmpty())
-            return 0.0;
-
-        double mean = Mean(a);
-        double temp = 0.0;
-
-        foreach (double d, a)
-            temp += (d-mean)*(d-mean);
-
-        return temp/(double(a.size()-1));
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- StdDev ----------------------------------------- */
-    /* ---------------------------------------------------------- */
-    double StdDev(QList<double> a) {
-        if (a.isEmpty())
-            return 0.0;
-
-        return sqrt(Variance(a));
-    }
-
-
-    /* ---------------------------------------------------------- */
     /* --------- BatchRenameFiles ------------------------------- */
     /* ---------------------------------------------------------- */
     bool BatchRenameFiles(QString dir, QString seriesnum, QString studynum, QString uid, int &numfilesrenamed, QString &msg) {
@@ -1259,16 +1141,6 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
-    /* --------- PrependQStringList ----------------------------- */
-    /* ---------------------------------------------------------- */
-    void PrependQStringList(QStringList &list, QString s) {
-        for (int i=0; i<list.size(); i++) {
-            list[i] = s + list[i];
-        }
-    }
-
-
-    /* ---------------------------------------------------------- */
     /* --------- CopyFile --------------------------------------- */
     /* ---------------------------------------------------------- */
     bool CopyFile(QString f, QString dir) {
@@ -1281,4 +1153,50 @@ namespace utils {
             return false;
         }
     }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- GetStagedFileList ------------------------------ */
+    /* ---------------------------------------------------------- */
+    QStringList GetStagedFileList(qint64 objectID, QString objectType) {
+        QStringList paths;
+
+        QSqlQuery q;
+        q.prepare("select * from StagedFiles where ObjectRowID = :id and ObjectType = :type");
+        q.bindValue(":id", objectID);
+        q.bindValue(":type", objectType);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        if (q.size() > 0) {
+            while (q.next()) {
+                paths.append(q.value("StagedPath").toString());
+            }
+        }
+
+        return paths;
+    }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- StoreStagedFileList ---------------------------- */
+    /* ---------------------------------------------------------- */
+    void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths) {
+
+        QSqlQuery q;
+        if (objectID >= 0) {
+            /* delete previously staged files from the database */
+            q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
+            q.bindValue(":id", objectID);
+            q.bindValue(":type", objectType);
+            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+            foreach (QString path, paths) {
+                q.prepare("insert into StagedFiles (ObjectRowID, ObjectType, StagedPath) values (:id, :type, :path)");
+                q.bindValue(":id", objectID);
+                q.bindValue(":type", objectType);
+                q.bindValue(":path", path);
+                utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+            }
+        }
+    }
+
 }

@@ -22,6 +22,7 @@
 
 #ifndef SQUIRRELDRUG_H
 #define SQUIRRELDRUG_H
+#include <QtSql>
 #include <QDateTime>
 #include <QString>
 #include <QJsonObject>
@@ -38,8 +39,15 @@ public:
 	squirrelDrug();
     QJsonObject ToJSON();
 	void PrintDrug();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
+    qint64 subjectRowID;        /*!< database row ID of the parent object */
     QString drugName;           /*!< drug name (required) */
     QDateTime dateStart;        /*!< drug start date (required) */
     QDateTime dateEnd;          /*!< drug end date */
@@ -58,10 +66,11 @@ public:
     QString notes;              /*!< freeform field for notes */
     QDateTime dateRecordEntry;  /*!< date of the data entry */
 
-    //QDateTime dateRecordEntry;
-    //QDateTime dateRecordCreate;
-    //QDateTime dateRecordModify;
-
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+    QSqlQuery q;
 };
 
 #endif // SQUIRRELDRUG_H

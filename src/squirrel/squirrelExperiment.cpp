@@ -59,16 +59,7 @@ bool squirrelExperiment::Get() {
         virtualPath = q.value("VirtualPath").toString();
 
         /* get any staged files */
-        stagedFiles.clear();
-        q.prepare("select * from StagedFiles where ObjectRowID = :id and ObjectType = :type");
-        q.bindValue(":id", objectID);
-        q.bindValue(":type", "experiment");
-        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        if (q.size() > 0) {
-            while (q.next()) {
-                stagedFiles.append(q.value("StagedPath").toString());
-            }
-        }
+        stagedFiles = utils::GetStagedFileList(objectID, "experiment");
 
         valid = true;
         return true;
@@ -107,7 +98,7 @@ bool squirrelExperiment::Store() {
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Experiment set ");
+        q.prepare("update Experiment set ExperimentName = :name, Size = :size, NumFiles = :numfiles, VirtualPath = :virtualpath where ExperimentRowID = :id");
         q.bindValue(":id", objectID);
         q.bindValue(":name", experimentName);
         q.bindValue(":size", size);
@@ -116,22 +107,9 @@ bool squirrelExperiment::Store() {
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }
 
-    /* store any staged files */
-    if (objectID >= 0) {
-        /* delete previously staged files from the database */
-        q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
-        q.bindValue(":id", objectID);
-        q.bindValue(":type", "experiment");
-        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    /* store any staged filepaths */
+    utils::StoreStagedFileList(objectID, "experiment", stagedFiles);
 
-        QString path;
-        foreach (path, stagedFiles) {
-            q.prepare("insert into StagedFiles (ObjectRowID, ObjectType) values (:packageid, :id, :type)");
-            q.bindValue(":id", objectID);
-            q.bindValue(":type", "experiment");
-            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        }
-    }
     return true;
 }
 

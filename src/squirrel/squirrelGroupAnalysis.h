@@ -23,6 +23,7 @@
 
 #ifndef SQUIRRELGROUPANALYSIS_H
 #define SQUIRRELGROUPANALYSIS_H
+#include <QtSql>
 #include <QString>
 #include <QDateTime>
 #include <QJsonObject>
@@ -36,18 +37,30 @@ public:
     squirrelGroupAnalysis();
     QJsonObject ToJSON();
     void PrintGroupAnalysis();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
     QString groupAnalysisName;  /*!< name of the group analysis */
     QDateTime dateTime;         /*!< datetime of the group analysis */
     QString description;        /*!< description of the group analysis */
     QString notes;              /*!< notes about the group analysis */
-    qint64 numfiles;            /*!< number of files in the analysis */
+    qint64 numFiles;            /*!< number of files in the analysis */
     qint64 size;                /*!< disk size in bytes of the analysis */
     QString virtualPath;        /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */
     QStringList stagedFiles;    /*!< staged file list: list of files in their own original paths which will be copied in before the package is zipped up */
+
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+    QSqlQuery q;
 };
 
 #endif // SQUIRRELGROUPANALYSIS_H

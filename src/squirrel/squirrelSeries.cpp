@@ -25,21 +25,118 @@
 
 squirrelSeries::squirrelSeries()
 {
-	number = 0;
-	dateTime = QDateTime::currentDateTime();
-    seriesUID = "";
-    description = "";
-    protocol = "";
-	numFiles = 0;
-	size = 0;
-	numBehFiles = 0;
-	behSize = 0;
-	//QHash<QString, QString> params; /*!< Hash containing experimental parameters. eg MR params */
-	//QStringList stagedFiles; /*!< staged file list: list of raw files in their own directories before the package is zipped up */
-	//QStringList stagedBehFiles; /*!< staged beh file list: list of raw files in their own directories before the package is zipped up */
-	//QStringList experimentList; /*!< List of experiment names attached to this series */
-	virtualPath = "";
 
+}
+
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelSeries::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the series data from
+ * the database. The seriesRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelSeries::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+    q.prepare("select * from Series where SeriesRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("SeriesRowID").toLongLong();
+        studyRowID = q.value("StudyRowID").toLongLong();
+        number = q.value("SeriesNum").toLongLong();
+        dateTime = q.value("Datetime").toDateTime();
+        seriesUID = q.value("SeriesUID").toString();
+        description = q.value("Description").toString();
+        protocol = q.value("Protocol").toString();
+        //QStringList experimentNames = q.value("SeriesRowID").toString();
+        numFiles = q.value("NumFiles").toLongLong();
+        size = q.value("Size").toLongLong();
+        numBehFiles = q.value("BehNumFiles").toLongLong();
+        behSize = q.value("BehSize").toLongLong();
+        //QHash<QString, QString> params = q.value("SeriesRowID").toLongLong();
+        virtualPath = q.value("VirtualPath").toString();
+
+        /* get any staged files */
+        stagedFiles = utils::GetStagedFileList(objectID, "series");
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelSeries::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the series data from
+ * the database. The seriesRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelSeries::Store() {
+
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :VirtualPath)");
+        q.bindValue(":StudyRowID", objectID);
+        q.bindValue(":SeriesNum", objectID);
+        q.bindValue(":Datetime", objectID);
+        q.bindValue(":SeriesUID", objectID);
+        q.bindValue(":Description", objectID);
+        q.bindValue(":Protocol", objectID);
+        q.bindValue(":ExperimentRowID", objectID);
+        q.bindValue(":Size", objectID);
+        q.bindValue(":NumFiles", objectID);
+        q.bindValue(":BehSize", objectID);
+        q.bindValue(":BehNumFiles", objectID);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNum = :SeriesNum, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, NumFiles = :NumFiles, BehSize = :BehSize, BehNumFiles = :BehNumFiles, VirtualPath = :VirtualPath where SeriesRowID = :id");
+        q.bindValue(":StudyRowID", objectID);
+        q.bindValue(":SeriesNum", objectID);
+        q.bindValue(":Datetime", objectID);
+        q.bindValue(":SeriesUID", objectID);
+        q.bindValue(":Description", objectID);
+        q.bindValue(":Protocol", objectID);
+        q.bindValue(":ExperimentRowID", objectID);
+        q.bindValue(":Size", objectID);
+        q.bindValue(":NumFiles", objectID);
+        q.bindValue(":BehSize", objectID);
+        q.bindValue(":BehNumFiles", objectID);
+        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":id", objectID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    /* store any staged filepaths */
+    utils::StoreStagedFileList(objectID, "series", stagedFiles);
+
+    return true;
 }
 
 
@@ -85,12 +182,13 @@ QJsonObject squirrelSeries::ToJSON() {
     json["BehSize"] = behSize;
     json["VirtualPath"] = virtualPath;
 
-    QJsonArray JSONexperiments;
-    for (int i=0; i<experimentNames.size(); i++) {
-        JSONexperiments.append(experimentNames[i]);
-    }
-	if (JSONexperiments.size() > 0)
-        json["ExperimentNames"] = JSONexperiments;
+    /* experiments */
+    //QJsonArray JSONseriess;
+    //for (int i=0; i<seriesNames.size(); i++) {
+    //    JSONseriess.append(seriesNames[i]);
+    //}
+    //if (JSONseriess.size() > 0)
+    //    json["SeriesNames"] = JSONseriess;
 
     return json;
 }

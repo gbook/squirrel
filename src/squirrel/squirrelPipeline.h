@@ -23,6 +23,7 @@
 
 #ifndef SQUIRRELPIPELINE_H
 #define SQUIRRELPIPELINE_H
+#include <QtSql>
 #include <QString>
 #include <QDateTime>
 #include <QJsonObject>
@@ -77,6 +78,12 @@ public:
     squirrelPipeline();
     QJsonObject ToJSON(QString path);
     void PrintPipeline();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
     /* pipeline information (required fields) */
@@ -84,7 +91,7 @@ public:
     QString description;            /*!< longer description */
     QDateTime createDate;           /*!< date the pipeline was created */
     int version;                    /*!< pipeline version (required) */
-    QString level;                  /*!< 1 (subject), or 2 (group) */
+    int level;                  /*!< 1 (subject), or 2 (group) */
     /* pipeline options */
     QStringList parentPipelines;    /*!< list of pipelines on which this pipeline depends */
     QStringList completeFiles;      /*!< list of files that must exists to indicate the analysis was complete */
@@ -122,6 +129,11 @@ public:
     /* lib variables */
     QStringList stagedFiles; /*!< staged file list: list of files in their own original directories which will be copied in before the package is zipped up */
 
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+    QSqlQuery q;
 };
 
 #endif // SQUIRRELPIPELINE_H

@@ -30,6 +30,108 @@ squirrelMeasure::squirrelMeasure()
 
 
 /* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelMeasure::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the measure data from
+ * the database. The measureRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelMeasure::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+    q.prepare("select * from Measure where MeasureRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("MeasureRowID").toLongLong();
+        subjectRowID = q.value("SubjectRowID").toLongLong();
+        measureName = q.value("MeasureName").toString();
+        dateStart = q.value("DateStart").toDateTime();
+        dateEnd = q.value("DateEnd").toDateTime();
+        instrumentName = q.value("InstrumentName").toString();
+        rater = q.value("Rater").toString();
+        notes = q.value("Notes").toString();
+        value = q.value("Value").toString();
+        description = q.value("Description").toString();
+        duration = q.value("Duration").toLongLong();
+        dateRecordEntry = q.value("DateRecordEntry").toDateTime();
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelMeasure::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the measure data from
+ * the database. The measureRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelMeasure::Store() {
+
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into Measure (SubjectRowID, MeasureName, DateStart, DateEnd, InstrumentName, Rater, Notes, Value, Duration, DateRecordEntry, Description) values (:SubjectRowID, :MeasureName, :DateStart, :DateEnd, :InstrumentName, :Rater, :Notes, :Value, :Duration, :DateRecordEntry, :Description)");
+        q.bindValue(":SubjectRowID", subjectRowID);
+        q.bindValue(":MeasureName", measureName);
+        q.bindValue(":DateStart", dateStart);
+        q.bindValue(":DateEnd", dateEnd);
+        q.bindValue(":InstrumentName", instrumentName);
+        q.bindValue(":Rater", rater);
+        q.bindValue(":Notes", notes);
+        q.bindValue(":Value", value);
+        q.bindValue(":Duration", duration);
+        q.bindValue(":DateRecordEntry", dateRecordEntry);
+        q.bindValue(":Description", description);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update Measure set SubjectRowID = :SubjectRowID, MeasureName = :MeasureName, DateStart = :DateStart, DateEnd = :DateEnd, InstrumentName = :InstrumentName, Rater = :Rater, Notes = :Notes, Value = :Value, Duration = :Duration, DateRecordEntry = :DateRecordEntry, Description = :Description where MeasureRowID = :id");
+        q.bindValue(":id", objectID);
+        q.bindValue(":SubjectRowID", subjectRowID);
+        q.bindValue(":MeasureName", measureName);
+        q.bindValue(":DateStart", dateStart);
+        q.bindValue(":DateEnd", dateEnd);
+        q.bindValue(":InstrumentName", instrumentName);
+        q.bindValue(":Rater", rater);
+        q.bindValue(":Notes", notes);
+        q.bindValue(":Value", value);
+        q.bindValue(":Duration", duration);
+        q.bindValue(":DateRecordEntry", dateRecordEntry);
+        q.bindValue(":Description", description);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 QJsonObject squirrelMeasure::ToJSON() {
@@ -56,16 +158,6 @@ QJsonObject squirrelMeasure::ToJSON() {
  * @brief squirrelMeasure::PrintMeasure
  */
 void squirrelMeasure::PrintMeasure() {
-
-    //Print("-- MEASURE ----------");
-    //Print(QString("\t\t\tName: %1").arg(measureName));
-    //Print(QString("\t\t\tDateStart: %1").arg(dateStart.toString()));
-    //Print(QString("\t\t\tDateEnd: %1").arg(dateEnd.toString()));
-    //Print(QString("\t\t\tInstrumentName: %1").arg(instrumentName));
-    //Print(QString("\t\t\tRater: %1").arg(rater));
-    //Print(QString("\t\t\tNotes: %1").arg(notes));
-    //Print(QString("\t\t\tValue: %1").arg(value));
-    //Print(QString("\t\t\tDescription: %1").arg(description));
 
     utils::Print(QString("\t\t\tMEASURE\tName [%1]\tDateStart [%2]\tDateEnd [%3]\tInstrumentName [%4]\tRater [%5]\tNotes [%6]\tValue [%7]\tDescription [%8]").arg(measureName).arg(dateStart.toString()).arg(dateEnd.toString()).arg(instrumentName).arg(rater).arg(notes).arg(value).arg(description));
 }

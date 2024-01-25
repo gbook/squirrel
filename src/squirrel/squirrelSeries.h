@@ -22,7 +22,7 @@
 
 #ifndef SQUIRRELSERIES_H
 #define SQUIRRELSERIES_H
-
+#include <QtSql>
 #include <QString>
 #include <QHash>
 #include <QList>
@@ -41,6 +41,12 @@ public:
     void PrintSeries();
     QJsonObject ToJSON();
     QJsonObject ParamsToJSON();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
     qint64 number = -1;             /*!< Series number. must be unique to the study */
@@ -60,6 +66,11 @@ public:
     QStringList stagedFiles;        /*!< staged file list: list of raw files in their own directories before the package is zipped up */
     QStringList stagedBehFiles;     /*!< staged beh file list: list of raw files in their own directories before the package is zipped up */
 
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+    QSqlQuery q;
 };
 
 #endif // SQUIRRELSERIES_H

@@ -22,6 +22,7 @@
 
 #ifndef SQUIRRELMEASURE_H
 #define SQUIRRELMEASURE_H
+#include <QtSql>
 #include <QString>
 #include <QDateTime>
 #include <QJsonObject>
@@ -36,8 +37,15 @@ public:
 	squirrelMeasure();
     QJsonObject ToJSON();
 	void PrintMeasure();
+    bool Get();             /* gets the object data from the database */
+    bool Store();           /* saves the object data from this object into the database */
+    bool isValid() { return valid; }
+    QString Error() { return err; }
+    qint64 GetObjectID() { return objectID; }
+    void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
+    qint64 subjectRowID;
     QString measureName;        /*!< measure name (required) */
     QDateTime dateStart;        /*!< start date of the measurement (required) */
     QDateTime dateEnd;          /*!< end date of the measurement */
@@ -49,9 +57,11 @@ public:
     double duration;            /*!< duration of the measure, in seconds */
     QDateTime dateRecordEntry;  /*!< data entry date */
 
-    //QDateTime dateRecordEntry; /*!< date the record was entered (by a user, which may have occurred in a different database) */
-    //QDateTime dateRecordCreate; /*!< date the record was created (in this database) */
-    //QDateTime dateRecordModify; /*!< date the record was modified (in this database) */
+private:
+    bool valid = false;
+    QString err;
+    qint64 objectID = -1;
+    QSqlQuery q;
 };
 
 #endif // SQUIRRELMEASURE_H

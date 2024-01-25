@@ -67,8 +67,8 @@ bool squirrelAnalysis::Get() {
         endDate = q.value("EndDate").toDateTime();
         setupTime = q.value("SetupTime").toLongLong();
         runTime = q.value("RunTime").toLongLong();
-        numSeries = q.value("NumSeries").toLongLong();
-        successful = q.value("Successful").toInt();
+        numSeries = q.value("NumSeries").toInt();
+        successful = q.value("Successful").toBool();
         size = q.value("Size").toLongLong();
         hostname = q.value("Hostname").toString();
         status = q.value("Status").toString();

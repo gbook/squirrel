@@ -35,6 +35,169 @@ squirrelPipeline::squirrelPipeline()
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelPipeline::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the pipeline data from
+ * the database. The pipelineRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelPipeline::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+    q.prepare("select * from Pipeline where PipelineRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("PipelineRowID").toLongLong();
+        pipelineName = q.value("PipelineName").toString();
+        description = q.value("Description").toString();
+        createDate = q.value("Datetime").toDateTime();
+        level = q.value("Level").toInt();
+        primaryScript = q.value("PrimaryScript").toString();
+        secondaryScript = q.value("SecondaryScript").toString();
+        version = q.value("Version").toInt();
+        //parentPipelines = q.value("CompleteFiles").toString();
+        completeFiles = q.value("CompleteFiles").toString().split(",");
+        dataCopyMethod = q.value("DataCopyMethod").toString();
+        depDir = q.value("DependencyDirectory").toString();
+        depLevel = q.value("DependencyLevel").toString();
+        depLinkType = q.value("DependencyLinkType").toString();
+        dirStructure = q.value("DirStructure").toString();
+        directory = q.value("Directory").toString();
+        group = q.value("GroupName").toString();
+        groupType = q.value("GroupType").toString();
+        notes = q.value("Notes").toString();
+        resultScript = q.value("ResultScript").toString();
+        tmpDir = q.value("TempDir").toString();
+        flags.useProfile = q.value("FlagUseProfile").toBool();
+        flags.useTmpDir = q.value("FlagUseTempDir").toBool();
+        clusterType = q.value("ClusterType").toString();
+        clusterUser = q.value("ClusterUser").toString();
+        clusterQueue = q.value("ClusterQueue").toString();
+        clusterSubmitHost = q.value("ClusterSubmitHost").toString();
+        numConcurrentAnalyses = q.value("NumConcurrentAnalysis").toInt();
+        maxWallTime = q.value("MaxWallTime").toInt();
+        submitDelay = q.value("SubmitDelay").toInt();
+        virtualPath = q.value("VirtualPath").toString();
+
+        /* get any staged files */
+        stagedFiles = utils::GetStagedFileList(objectID, "pipeline");
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelPipeline::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the pipeline data from
+ * the database. The pipelineRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelPipeline::Store() {
+
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into Pipeline (PipelineName, Description, Datetime, Level, PrimaryScript, SecondaryScript, Version, CompleteFiles, DataCopyMethod, DependencyDirectory, DependencyLevel, DependencyLinkType, DirStructure, Directory, GroupName, GroupType, Notes, ResultScript, TempDir, FlagUseProfile, FlagUseTempDir, ClusterType, ClusterUser, ClusterQueue, ClusterSubmitHost, NumConcurrentAnalysis, MaxWallTime, SubmitDelay, VirtualPath) values (:PipelineName, :Description, :Datetime, :Level, :PrimaryScript, :SecondaryScript, :Version, :CompleteFiles, :DataCopyMethod, :DependencyDirectory, :DependencyLevel, :DependencyLinkType, :DirStructure, :Directory, :GroupName, :GroupType, :Notes, :ResultScript, :TempDir, :FlagUseProfile, :FlagUseTempDir, :ClusterType, :ClusterUser, :ClusterQueue, :ClusterSubmitHost, :NumConcurrentAnalysis, :MaxWallTime, :SubmitDelay, :VirtualPath)");
+        q.bindValue(":PipelineName", pipelineName);
+        q.bindValue(":Description", description);
+        q.bindValue(":Datetime", createDate);
+        q.bindValue(":Level", level);
+        q.bindValue(":PrimaryScript", primaryScript);
+        q.bindValue(":SecondaryScript", secondaryScript);
+        q.bindValue(":Version", version);
+        q.bindValue(":CompleteFiles", completeFiles.join(","));
+        q.bindValue(":DataCopyMethod", dataCopyMethod);
+        q.bindValue(":DependencyDirectory", depDir);
+        q.bindValue(":DependencyLevel", depLevel);
+        q.bindValue(":DependencyLinkType", depLinkType);
+        q.bindValue(":DirStructure", dirStructure);
+        q.bindValue(":Directory", directory);
+        q.bindValue(":GroupName", group);
+        q.bindValue(":GroupType", groupType);
+        q.bindValue(":Notes", notes);
+        q.bindValue(":ResultScript", resultScript);
+        q.bindValue(":TempDir", tmpDir);
+        q.bindValue(":FlagUseProfile", flags.useProfile);
+        q.bindValue(":FlagUseTempDir", flags.useTmpDir);
+        q.bindValue(":ClusterType", clusterType);
+        q.bindValue(":ClusterUser", clusterUser);
+        q.bindValue(":ClusterQueue", clusterQueue);
+        q.bindValue(":ClusterSubmitHost", clusterSubmitHost);
+        q.bindValue(":NumConcurrentAnalysis", numConcurrentAnalyses);
+        q.bindValue(":MaxWallTime", maxWallTime);
+        q.bindValue(":SubmitDelay", submitDelay);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update Pipeline set PipelineName = :PipelineName, Description = :Description, Datetime = :Datetime, Level = :Level, PrimaryScript = :PrimaryScript, SecondaryScript = :SecondaryScript, Version = :Version, CompleteFiles = :CompleteFiles, DataCopyMethod = :DataCopyMethod, DependencyDirectory = :DependencyDirectory, DependencyLevel = :DependencyLevel, DependencyLinkType = :DependencyLinkType, DirStructure = :DirStructure, Directory = :Directory, GroupName = :GroupName, GroupType = :GroupType, Notes = :Notes, ResultScript = :ResultScript, TempDir = :TempDir, FlagUseProfile = :FlagUseProfile, FlagUseTempDir = :FlagUseTempDir, ClusterType = :ClusterType, ClusterUser = :ClusterUser, ClusterQueue = :ClusterQueue, ClusterSubmitHost = :ClusterSubmitHost, NumConcurrentAnalysis = :NumConcurrentAnalysis, MaxWallTime = :MaxWallTime, SubmitDelay = :SubmitDelay, VirtualPath = :VirtualPath where PipelineRowID = :id");
+        q.bindValue(":id", objectID);
+        q.bindValue(":PipelineName", pipelineName);
+        q.bindValue(":Description", description);
+        q.bindValue(":Datetime", createDate);
+        q.bindValue(":Level", level);
+        q.bindValue(":PrimaryScript", primaryScript);
+        q.bindValue(":SecondaryScript", secondaryScript);
+        q.bindValue(":Version", version);
+        q.bindValue(":CompleteFiles", completeFiles.join(","));
+        q.bindValue(":DataCopyMethod", dataCopyMethod);
+        q.bindValue(":DependencyDirectory", depDir);
+        q.bindValue(":DependencyLevel", depLevel);
+        q.bindValue(":DependencyLinkType", depLinkType);
+        q.bindValue(":DirStructure", dirStructure);
+        q.bindValue(":Directory", directory);
+        q.bindValue(":GroupName", group);
+        q.bindValue(":GroupType", groupType);
+        q.bindValue(":Notes", notes);
+        q.bindValue(":ResultScript", resultScript);
+        q.bindValue(":TempDir", tmpDir);
+        q.bindValue(":FlagUseProfile", flags.useProfile);
+        q.bindValue(":FlagUseTempDir", flags.useTmpDir);
+        q.bindValue(":ClusterType", clusterType);
+        q.bindValue(":ClusterUser", clusterUser);
+        q.bindValue(":ClusterQueue", clusterQueue);
+        q.bindValue(":ClusterSubmitHost", clusterSubmitHost);
+        q.bindValue(":NumConcurrentAnalysis", numConcurrentAnalyses);
+        q.bindValue(":MaxWallTime", maxWallTime);
+        q.bindValue(":SubmitDelay", submitDelay);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    /* store any staged filepaths */
+    utils::StoreStagedFileList(objectID, "pipeline", stagedFiles);
+
+    return true;
+}
+
+
 /* ---------------------------------------------------------- */
 /* --------- ToJSON ----------------------------------------- */
 /* ---------------------------------------------------------- */

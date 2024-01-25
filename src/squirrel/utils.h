@@ -49,30 +49,21 @@ namespace utils {
     QString CreateLogDate();
     void AppendCustomLog(QString f, QString msg);
     QString SystemCommand(QString s, bool detail=true, bool truncate=false, bool bufferOutput=true);
-    bool SandboxedSystemCommand(QString s, QString dir, QString &output, QString timeout="00:05:00", bool detail=true, bool truncate=false);
     QString GenerateRandomString(int n);
     void SortQStringListNaturally(QStringList &s);
-    QString RemoveNonAlphaNumericChars(QString s);
     QString ParseDate(QString s);
     QString ParseTime(QString s);
     QString JoinIntArray(QList<int> a, QString glue);
     QList<int> SplitStringArrayToInt(QStringList a);
     QList<double> SplitStringArrayToDouble(QStringList a);
     QList<int> SplitStringToIntArray(QString a);
-    QStringList ShellWords(QString s);
     bool IsInt(QString s);
     bool IsDouble(QString s);
     bool IsNumber(QString s);
-    QString WrapText(QString s, int col);
     bool ParseCSV(QString csv, indexedHash &table, QStringList &columns, QString &msg);
     bool ParseTSV(QString tsv, indexedHash &table, QStringList &columns, QString &msg);
     QString CleanJSON(QString s);
     double GetPatientAge(QString PatientAgeStr, QString StudyDate, QString PatientBirthDate);
-
-    /* math */
-    double Mean(QList<double> a);
-    double Variance(QList<double> a);
-    double StdDev(QList<double> a);
 
     /* file and directory operations */
     bool CopyFile(QString f, QString dir);
@@ -97,8 +88,9 @@ namespace utils {
     bool FileExists(QString f);
     bool FileDirectoryExists(QString f);
 
-    void PrependQStringList(QStringList &list, QString s);
-
+    /* database functions */
     bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
+    QStringList GetStagedFileList(qint64 objectID, QString objectType);
+    void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths);
 }
 #endif // UTILS_H
