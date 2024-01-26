@@ -30,6 +30,131 @@ squirrelDataDictionary::squirrelDataDictionary()
 
 
 /* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelDataDictionary::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the dataDictionary data from
+ * the database. The dataDictionaryRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelDataDictionary::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+
+    QSqlQuery q;
+    q.prepare("select * from DataDictionary where DataDictionaryRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("DataDictionaryRowID").toLongLong();
+        numfiles = q.value("NumFiles").toLongLong();
+        size = q.value("Size").toLongLong();
+        virtualPath = q.value("VirtualPath").toString();
+
+        /* get the DataDictionaryItems */
+        dictItems.clear();
+        QSqlQuery q;
+        q.prepare("select * from DataDictionaryItems where DataDictionaryRowID = :id");
+        q.bindValue(":id", objectID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        if (q.size() > 0) {
+            while (q.next()) {
+                dataDictionaryItem d;
+                d.type = q.value("VariableType").toString();
+                d.variableName = q.value("VariableName").toString();
+                d.desc = q.value("VariableDescription").toString();
+                d.keyValue = q.value("KeyValue").toString();
+                d.expectedTimepoints = q.value("ExpectedTimepoints").toInt();
+                d.rangeLow = q.value("RangeLow").toDouble();
+                d.rangeHigh = q.value("RangeHigh").toDouble();
+                dictItems.append(d);
+            }
+        }
+
+        /* get any staged files */
+        stagedFiles = utils::GetStagedFileList(objectID, "datadictionary");
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelDataDictionary::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the dataDictionary data from
+ * the database. The dataDictionaryRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelDataDictionary::Store() {
+
+    QSqlQuery q;
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into DataDictionary (NumFiles, Size, VirtualPath) values (:NumFiles, :Size, :VirtualPath)");
+        q.bindValue(":NumFiles", numfiles);
+        q.bindValue(":Size", size);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update DataDictionary set NumFiles = :NumFiles, Size = :Size, VirtualPath = :VirtualPath where DataDictionaryRowID = :id");
+        q.bindValue(":id", objectID);
+        q.bindValue(":NumFiles", numfiles);
+        q.bindValue(":Size", size);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    /* store the DataDictionaryItems */
+    q.prepare("delete from DataDictionaryItems where DataDictionaryRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    foreach (dataDictionaryItem dic, dictItems) {
+        q.prepare("insert into DataDictionaryItems (DataDictionaryRowID, VariableType, VariableName, VariableDescription, KeyValue, ExpectedTimepoints, RangeLow, RangeHigh) values (:DataDictionaryRowID, :VariableType, :VariableName, :VariableDescription, :KeyValue, :ExpectedTimepoints, :RangeLow, :RangeHigh)");
+        q.bindValue(":DataDictionaryRowID", objectID);
+        q.bindValue(":VariableType", dic.type);
+        q.bindValue(":VariableName", dic.variableName);
+        q.bindValue(":VariableDescription", dic.desc);
+        q.bindValue(":KeyValue", dic.keyValue);
+        q.bindValue(":ExpectedTimepoints", dic.expectedTimepoints);
+        q.bindValue(":RangeLow", dic.rangeLow);
+        q.bindValue(":RangeHigh", dic.rangeHigh);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    /* store any staged filepaths */
+    utils::StoreStagedFileList(objectID, "datadictionary", stagedFiles);
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 QJsonObject squirrelDataDictionary::ToJSON() {

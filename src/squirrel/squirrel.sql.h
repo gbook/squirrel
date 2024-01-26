@@ -54,10 +54,28 @@ QString tableAnalysis = QString("CREATE TABLE Analysis ("
     "Status TEXT,"
     "Successful INTEGER,"
     "Size INTEGER,"
+    "NumFiles INTEGER,"
     "Hostname TEXT,"
     "StatusMessage TEXT,"
     "VirtualPath TEXT,"
     "UNIQUE(StudyRowID, PipelineRowID, PipelineVersion))");
+
+QString tableDataDictionary = QString("CREATE TABLE DataDictionary ("
+    "DataDictionaryRowID INTEGER PRIMARY KEY,"
+    "NumFiles INTEGER,"
+    "Size INTEGER,"
+    "VirtualPath TEXT)");
+
+QString tableDataDictionaryItems = QString("CREATE TABLE DataDictionaryItems ("
+    "DataDictionaryItemRowID INTEGER PRIMARY KEY,"
+    "DataDictionaryRowID INTEGER,"
+    "VariableType TEXT,"
+    "VariableName TEXT,"
+    "VariableDescription TEXT,"
+    "KeyValue TEXT,"
+    "ExpectedTimepoints INTEGER,"
+    "RangeLow REAL,"
+    "RangeHigh REAL)");
 
 QString tableDrug = QString("CREATE TABLE Drug ("
     "DrugRowID INTEGER PRIMARY KEY,"

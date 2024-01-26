@@ -59,7 +59,7 @@ public:
     QString ID;                 /*!< --- Unique identifier --- Must be unique within the squirrel package */
     QStringList alternateIDs;   /*!< List of alternate subject IDs */
     QString GUID;               /*!< globally unique identifier, from NIMH's NDA */
-    QDate dateOfBirth;          /*!< Date of birth. Not required, but can be useful to calculate age during studies. Can also contain only year... or contain only year and month */
+    QDate dateOfBirth = QDate(0,0,0);          /*!< Date of birth. Not required, but can be useful to calculate age during studies. Can also contain only year... or contain only year and month */
     QString sex = "U";          /*!< Sex at birth (biological sex) */
     QString gender = "U";       /*!< Gender identity */
     QString ethnicity1;         /*!< Ethnicity: hispanic, non-hispanic */
@@ -67,10 +67,10 @@ public:
     QString virtualPath;        /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */
-    QString dirpath; /*!< Relative path to the subject data */
-	QList<squirrelStudy> studyList; /*!< List of studies attached to this subject */
-	QList<squirrelMeasure> measureList; /*!< List of measures (variables) attached to this subject */
-	QList<squirrelDrug> drugList; /*!< List of drugs attached to this subject */
+    //QString dirpath; /*!< Relative path to the subject data */
+    QList<squirrelStudy> studyList; /*!< List of studies attached to this subject */
+    QList<squirrelMeasure> measureList; /*!< List of measures (variables) attached to this subject */
+    QList<squirrelDrug> drugList; /*!< List of drugs attached to this subject */
 
 private:
     bool valid = false;

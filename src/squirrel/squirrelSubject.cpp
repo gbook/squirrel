@@ -28,9 +28,106 @@
 /* ----- subject ---------------------------------------------- */
 /* ------------------------------------------------------------ */
 squirrelSubject::squirrelSubject() {
-    sex = 'U';
-    gender = 'U';
-	dateOfBirth = QDate::fromString("0000-00-00", "YYYY-MM-dd");
+
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelSubject::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the subject data from
+ * the database. The subjectRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelSubject::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+
+    QSqlQuery q;
+    q.prepare("select * from Subject where SubjectRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("SubjectRowID").toLongLong();
+        ID = q.value("ID").toString();
+        alternateIDs = q.value("AltIDs").toString().split(",");
+        GUID = q.value("GUID").toString();
+        dateOfBirth = q.value("DateOfBirth").toDate();
+        sex = q.value("Sex").toString();
+        gender = q.value("Gender").toString();
+        ethnicity1 = q.value("Ethnicity1").toString();
+        ethnicity2 = q.value("Ethnicity2").toString();
+        virtualPath = q.value("VirtualPath").toString();
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelSubject::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the subject data from
+ * the database. The subjectRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelSubject::Store() {
+
+    QSqlQuery q;
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into Subject (ID, AltIDs, GUID, DateOfBirth, Sex, Gender, Ethnicity1, Ethnicity2, VirtualPath) values (:ID, :AltIDs, :GUID, :DateOfBirth, :Sex, :Gender, :Ethnicity1, :Ethnicity2, :VirtualPath)");
+        q.bindValue(":ID", ID);
+        q.bindValue(":AltIDs", alternateIDs.join(","));
+        q.bindValue(":GUID", GUID);
+        q.bindValue(":DateOfBirth", dateOfBirth);
+        q.bindValue(":Sex", sex);
+        q.bindValue(":Gender", gender);
+        q.bindValue(":Ethnicity1", ethnicity1);
+        q.bindValue(":Ethnicity2", ethnicity2);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update Subject set ID = :ID, AltIDs = :AltIDs, GUID = :GUID, DateOfBirth = :DateOfBirth, Sex = :Sex, Gender = :Gender, Ethnicity1 = :Ethnicity1, Ethnicity2 = :Ethnicity2, VirtualPath = :VirtualPath where SubjectRowID = :id");
+        q.bindValue(":id", objectID);
+        q.bindValue(":ID", ID);
+        q.bindValue(":AltIDs", alternateIDs.join(","));
+        q.bindValue(":GUID", GUID);
+        q.bindValue(":DateOfBirth", dateOfBirth);
+        q.bindValue(":Sex", sex);
+        q.bindValue(":Gender", gender);
+        q.bindValue(":Ethnicity1", ethnicity1);
+        q.bindValue(":Ethnicity2", ethnicity2);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    return true;
 }
 
 

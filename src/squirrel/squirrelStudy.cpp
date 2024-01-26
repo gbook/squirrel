@@ -30,11 +30,121 @@
 /* ------------------------------------------------------------ */
 squirrelStudy::squirrelStudy()
 {
-	number = 1;
-    dateTime = QDateTime::currentDateTime();
-    modality = "UNKNOWN";
-    weight = 0.0;
-    height = 0.0;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelStudy::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the study data from
+ * the database. The studyRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelStudy::Get() {
+    if (objectID < 0) {
+        valid = false;
+        err = "objectID is not set";
+        return false;
+    }
+
+    QSqlQuery q;
+    q.prepare("select * from Study where StudyRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+
+        /* get the data */
+        objectID = q.value("StudyRowID").toLongLong();
+        subjectRowID = q.value("SubjectRowID").toLongLong();
+        number = q.value("StudyNumber").toLongLong();
+        dateTime = q.value("Datetime").toDateTime();
+        ageAtStudy = q.value("Age").toDouble();
+        height = q.value("Height").toDouble();
+        weight = q.value("Weight").toDouble();
+        modality = q.value("Modality").toString();
+        description = q.value("Description").toString();
+        studyUID = q.value("StudyUID").toString();
+        visitType = q.value("VisitType").toString();
+        dayNumber = q.value("DayNumber").toInt();
+        timePoint = q.value("TimePoint").toInt();
+        equipment = q.value("StudyRowID").toString();
+        virtualPath = q.value("VirtualPath").toString();
+
+        valid = true;
+        return true;
+    }
+    else {
+        valid = false;
+        err = "objectID not found in database";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Store ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelStudy::Store
+ * @return true if successful
+ *
+ * This function will attempt to load the study data from
+ * the database. The studyRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
+bool squirrelStudy::Store() {
+
+    QSqlQuery q;
+
+    /* insert if the object doesn't exist ... */
+    if (objectID < 0) {
+        q.prepare("insert into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :VirtualPath)");
+        q.bindValue(":SubjectRowID", subjectRowID);
+        q.bindValue(":StudyNumber", number);
+        q.bindValue(":Datetime", dateTime);
+        q.bindValue(":Age", ageAtStudy);
+        q.bindValue(":Height", height);
+        q.bindValue(":Weight", weight);
+        q.bindValue(":Modality", modality);
+        q.bindValue(":Description", description);
+        q.bindValue(":StudyUID", studyUID);
+        q.bindValue(":VisitType", visitType);
+        q.bindValue(":DayNumber", dayNumber);
+        q.bindValue(":Timepoint", timePoint);
+        q.bindValue(":Equipment", equipment);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        objectID = q.lastInsertId().toInt();
+    }
+    /* ... otherwise update */
+    else {
+        q.prepare("update Study set SubjectRowID = :SubjectRowID, StudyNumber = :StudyNumber, Datetime = :Datetime, Age = :Age, Height = :Height, Weight = :Weight, Modality = :Modality, Description = :Description, StudyUID = :StudyUID, VisitType = :VisitType, DayNumber = :DayNumber, Timepoint = :Timepoint, Equipment = :Equipment, VirtualPath = :VirtualPath where StudyRowID = :id");
+        q.bindValue(":id", objectID);
+        q.bindValue(":SubjectRowID", subjectRowID);
+        q.bindValue(":StudyNumber", number);
+        q.bindValue(":Datetime", dateTime);
+        q.bindValue(":Age", ageAtStudy);
+        q.bindValue(":Height", height);
+        q.bindValue(":Weight", weight);
+        q.bindValue(":Modality", modality);
+        q.bindValue(":Description", description);
+        q.bindValue(":StudyUID", studyUID);
+        q.bindValue(":VisitType", visitType);
+        q.bindValue(":DayNumber", dayNumber);
+        q.bindValue(":Timepoint", timePoint);
+        q.bindValue(":Equipment", equipment);
+        q.bindValue(":VirtualPath", virtualPath);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    return true;
 }
 
 

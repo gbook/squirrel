@@ -58,7 +58,7 @@ public:
     //bool addExperiment(squirrelExperiment exp);
     bool removeSubject(QString ID);
 
-    /* JSON elements */
+    /* package JSON elements */
     QDateTime datetime;         /*!< datetime the package was created */
     QString description;        /*!< detailed description of the package */
     QString name;               /*!< name of the package */
@@ -77,19 +77,34 @@ public:
     /* lib variables */
     QString filePath;           /*!< full path to the zip file */
 
+    /* new, SQLite based functions */
+    QList<squirrelExperiment> GetAllExperiments();
+    QList<squirrelPipeline> GetAllPipelines();
+    QList<squirrelSubject> GetAllSubjects();
+    QList<squirrelGroupAnalysis> GetAllGroupAnalyses();
+    QList<squirrelDataDictionary> GetAllDataDictionaries();
+
+    qint64 GetNumFiles();
+    int GetNumSubjects();
+    int GetNumStudies();
+    int GetNumSeries();
+    int GetNumMeasures();
+    int GetNumDrugs();
+    int GetNumAnalyses();
+    int GetNumExperiments();
+    int GetNumPipelines();
+    int GetNumGroupAnalyses();
+    int GetNumDataDictionaries();
+    int GetNumDataDictionaryItems();
+
+    int FindSubject(QString id);
+    int FindStudy(QString subjectID, int studyNum);
+    int FindSeries(QString subjectID, int studyNum, int seriesNum);
+
+    bool removeSubject(int rowID);
+
     /* package information */
     qint64 GetUnzipSize();
-    qint64 GetNumFiles();
-    qint64 GetNumSubjects();
-    qint64 GetNumStudies();
-    qint64 GetNumSeries();
-    qint64 GetNumMeasures();
-    qint64 GetNumDrugs();
-    qint64 GetNumAnalyses();
-    qint64 GetNumExperiments();
-    qint64 GetNumPipelines();
-    qint64 GetNumGroupAnalyses();
-    qint64 GetNumDataDictionaryItems();
 
     /* subject, pipeline, and experiment data */
     QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
@@ -98,7 +113,7 @@ public:
     QList<squirrelGroupAnalysis> groupAnalysisList; /*!< List of groupAnalyses within this package */
 
     /* data dictionary (just a single object, not array) */
-    squirrelDataDictionary dataDictionary;
+    //squirrelDataDictionary dataDictionary;
 
     /* searching/retrieval, get index */
     int GetSubjectIndex(QString ID);
@@ -119,7 +134,6 @@ public:
     bool GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis);
     bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
     bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
-    QList<int> GetExperimentIDList();
 
     /* validation functions */
     QString GetTempDir();

@@ -45,6 +45,8 @@ bool squirrelExperiment::Get() {
         err = "objectID is not set";
         return false;
     }
+
+    QSqlQuery q;
     q.prepare("select * from Experiment where ExperimentRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -86,6 +88,7 @@ bool squirrelExperiment::Get() {
  */
 bool squirrelExperiment::Store() {
 
+    QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert into Experiment (ExperimentName, Size, NumFiles, VirtualPath) values (:packageid, :name, :size, :numfiles, :virtualpath)");

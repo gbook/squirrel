@@ -53,19 +53,20 @@ public:
     void SetObjectID(int id) { objectID = id; }
 
     /* JSON elements */
-    qint64 number = -1;            /*!< Unique study number. Must be unique within the subject */
-    QDateTime dateTime;         /*!< start datetime of the study */
-    double ageAtStudy = 0.0;    /*!< age in years at the time of the study */
-    double height = 0.0;        /*!< height in meters */
-    double weight = 0.0;        /*!< weight in kg */
-    QString modality;           /*!< study modality */
-    QString description;        /*!< Description of the imaging study */
-    QString studyUID;           /*!< DICOM StudyInstanceUID */
-    QString visitType;          /*!< Description of the visit, eg. pre, post */
-    QString dayNumber;          /*!< Day number for repeated studies or clinical trials. eg. 6 for 'day 6' */
-    QString timePoint;          /*!< Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study */
-    QString equipment;          /*!< Equipment the study was run on */
-    QString virtualPath; /*!< path within the squirrel package, no leading slash */
+    qint64 subjectRowID;
+    qint64 number = -1;             /*!< Unique study number. Must be unique within the subject */
+    QDateTime dateTime = QDateTime::currentDateTime();         /*!< start datetime of the study */
+    double ageAtStudy = 0.0;        /*!< age in years at the time of the study */
+    double height = 0.0;            /*!< height in meters */
+    double weight = 0.0;            /*!< weight in kg */
+    QString modality = "UNKNOWN";   /*!< study modality */
+    QString description;            /*!< Description of the imaging study */
+    QString studyUID;               /*!< DICOM StudyInstanceUID */
+    QString visitType;              /*!< Description of the visit, eg. pre, post */
+    int dayNumber;                  /*!< Day number for repeated studies or clinical trials. eg. 6 for 'day 6' */
+    int timePoint;                  /*!< Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study */
+    QString equipment;              /*!< Equipment the study was run on */
+    QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */
     QList<squirrelSeries> seriesList; /*!< List of series attached to this study */
