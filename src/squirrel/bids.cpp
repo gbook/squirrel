@@ -205,22 +205,31 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 
             /* get the subject */
             squirrelSubject sqrlSubject;
-            sqrl->GetSubject(ID, sqrlSubject);
+            int subjectRowID = sqrl->FindSubject(ID);
+            if (subjectRowID < 0) {
+                sqrlSubject.ID = ID;
+                sqrlSubject.Store();
+                subjectRowID = sqrlSubject.GetObjectID();
+            }
 
             /* create a session/study and add it to the subject */
+            int studyRowID;
             squirrelStudy sqrlStudy;
-            //sqrlStudy.number = sqrlSubject.GetNextStudyNumber();
-            sqrlSubject.addStudy(sqrlStudy);
+            sqrlStudy.subjectRowID = subjectRowID;
+            sqrlStudy.Store();
+            studyRowID = sqrlStudy.GetObjectID();
 
             /* create an analysis */
             squirrelAnalysis sqrlAnalysis;
             sqrlAnalysis.pipelineName = "analysis";
             sqrlAnalysis.lastMessage = "BIDS imported analysis file";
-            sqrlStudy.addAnalysis(sqrlAnalysis);
+            sqrlAnalysis.studyRowID = studyRowID;
+            sqrlAnalysis.Store();
+            int analysisRowID = sqrlAnalysis.GetObjectID();
 
             QStringList files;
             files.append(f);
-            sqrl->AddAnalysisFiles(ID, sqrlStudy.number, "analysis", files);
+            sqrl->AddStagedFiles("analysis", analysisRowID, files);
             sqrl->Log(QString("Added [%1] files to analysis [%2]").arg(files.size()).arg("analysis"), __FUNCTION__);
 
         }

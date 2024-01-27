@@ -916,7 +916,7 @@ qint64 squirrel::GetUnzipSize() {
  * @return total number of files in the package
  */
 qint64 squirrel::GetNumFiles() {
-    qint64 total;
+    qint64 total(0);
 
     QSqlQuery q;
 
@@ -1698,6 +1698,62 @@ bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExp
 
 
 /* ------------------------------------------------------------ */
+/* ----- AddStagedFiles --------------------------------------- */
+/* ------------------------------------------------------------ */
+bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir) {
+
+    if (rowid < 0) return false;
+    if (files.size() <= 0) return false;
+
+    if (objectType == "series") {
+        squirrelSeries s;
+        s.SetObjectID(rowid);
+        if (s.Get()) {
+            foreach (QString f, files)
+                s.stagedFiles.append(f);
+            if (s.Store())
+                return true;
+        }
+    }
+
+    if (objectType == "experiment") {
+        squirrelExperiment e;
+        e.SetObjectID(rowid);
+        if (e.Get()) {
+            foreach (QString f, files)
+                e.stagedFiles.append(f);
+            if (e.Store())
+                return true;
+        }
+    }
+
+    if (objectType == "pipeline") {
+        squirrelPipeline p;
+        p.SetObjectID(rowid);
+        if (p.Get()) {
+            foreach (QString f, files)
+                p.stagedFiles.append(f);
+            if (p.Store())
+                return true;
+        }
+    }
+
+    if (objectType == "analysis") {
+        squirrelAnalysis a;
+        a.SetObjectID(rowid);
+        if (a.Get()) {
+            foreach (QString f, files)
+                a.stagedFiles.append(f);
+            if (a.Store())
+                return true;
+        }
+    }
+
+    return false;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- GetTempDir ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -1730,128 +1786,6 @@ void squirrel::Log(QString s, QString func, bool dbg) {
     }
 }
 
-
-/* ------------------------------------------------------------ */
-/* ----- AddSeriesFiles --------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add files to a series. This function also copies the files to the staging/temp directory
- * @param ID subject ID
- * @param studyNum study number
- * @param seriesNum series number
- * @param files list of files to be added
- * @param destDir sub-directory within the series staging directory
- * @return true if successful, false otherwise
- */
-bool squirrel::AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir) {
-
-    /* make sure the subject info is not blank */
-    if (ID == "") return false;
-    if (studyNum < 1) return false;
-    if (seriesNum < 1) return false;
-
-    /* create the experiment path on disk and set the experiment path in  */
-    QString dir = QString("%1/data/%2/%3/%4").arg(workingDir).arg(ID).arg(studyNum).arg(seriesNum);
-    QString m;
-    utils::MakePath(dir, m);
-    foreach (QString f, files) {
-        /* copy this to the packageRoot/destDir directory */
-        Log(QString("Copying file [%1] to [%2]").arg(f).arg(dir), __FUNCTION__, true);
-        utils::CopyFile(f, dir);
-    }
-
-    return true;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- AddAnalysisFiles ------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add files to an analysis. This function also copies the files to the staging/temp directory
- * @param ID subject ID
- * @param studyNum study number
- * @param pipelineName pipeline name
- * @param files list of files to be added
- * @param destDir sub-directory within the analysis staging directory
- * @return true if successful, false otherwise
- */
-bool squirrel::AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir) {
-
-    /* make sure the subject info is not blank */
-    if (ID == "") return false;
-    if (studyNum < 1) return false;
-    if (pipelineName == "") return false;
-
-    /* create the experiment path on disk and set the experiment path in  */
-    QString dir = QString("%1/data/%2/%3/%4").arg(workingDir).arg(ID).arg(studyNum).arg(pipelineName);
-    QString m;
-    utils::MakePath(dir, m);
-    foreach (QString f, files) {
-        /* copy this to the packageRoot/destDir directory */
-        utils::CopyFile(f, dir);
-    }
-
-    return true;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- AddPipelineFiles ------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add files to a pipeline. This function also copies the files to the staging/temp directory
- * @param pipelineName pipeline name
- * @param files list of files to be added
- * @param destDir sub-directory within the analysis staging directory
- * @return true if successful, false otherwise
- */
-bool squirrel::AddPipelineFiles(QString pipelineName, QStringList files, QString destDir) {
-
-    /* make sure the experiment name is not blank */
-    if (pipelineName == "") {
-        return false;
-    }
-    /* create the experiment path on disk and set the experiment path in  */
-    QString dir = QString("%1/experiments/%2/%3").arg(workingDir).arg(pipelineName).arg(destDir);
-    QString m;
-    utils::MakePath(dir, m);
-    foreach (QString f, files) {
-        /* copy this to the packageRoot/destDir directory */
-        utils::CopyFile(f, dir);
-    }
-
-    return true;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- AddExperimentFiles ----------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add files to an experiment. This function also copies the files to the staging/temp directory
- * @param experimentName experiment name
- * @param files list of files to be added
- * @param destDir sub-directory within the analysis staging directory
- * @return true if successful, false otherwise
- */
-bool squirrel::AddExperimentFiles(QString experimentName, QStringList files, QString destDir) {
-
-    /* make sure the experiment name is not blank */
-    if (experimentName == "") {
-        return false;
-    }
-    /* create the experiment path on disk and set the experiment path in  */
-    QString dir = QString("%1/experiments/%2/%3").arg(workingDir).arg(experimentName).arg(destDir);
-    QString m;
-    utils::MakePath(dir, m);
-    foreach (QString f, files) {
-        /* copy this to the packageRoot/destDir directory */
-        utils::CopyFile(f, dir);
-    }
-
-    return true;
-}
 
 /* ------------------------------------------------------------ */
 /* ----- ReadParamsFile --------------------------------------- */

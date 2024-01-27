@@ -37,6 +37,7 @@ QString tableStagedFiles = QString("CREATE TABLE StagedFiles"
     "ObjectRowID INTEGER,"
     "FileSize INTEGER,"
     "StagedPath TEXT,"
+    "FinalDirectory TEXT,"
     "UNIQUE(ObjectRowID, ObjectType, StagedPath) )");
 
 QString tableAnalysis = QString("CREATE TABLE Analysis ("

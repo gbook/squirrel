@@ -101,6 +101,8 @@ public:
     int FindStudy(QString subjectID, int studyNum);
     int FindSeries(QString subjectID, int studyNum, int seriesNum);
 
+    bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
+
     bool removeSubject(int rowID);
 
     /* package information */
@@ -141,11 +143,11 @@ public:
     bool okToDelete() { return isOkToDelete; }
 
     /* functions to manipulate, add files */
-    bool AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir="");
-    bool AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir="");
-    bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
-    bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
-    bool AddGroupAnalysisFiles(QString experimentName, QStringList files, QString destDir="");
+    //bool AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir="");
+    //bool AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir="");
+    //bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
+    //bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
+    //bool AddGroupAnalysisFiles(QString experimentName, QStringList files, QString destDir="");
 
     /* functions to read special files */
     QHash<QString, QString> ReadParamsFile(QString f);

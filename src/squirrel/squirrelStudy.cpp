@@ -105,6 +105,12 @@ bool squirrelStudy::Store() {
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
+        /* get the next study number */
+        q.prepare("select max(StudyNumber) 'Max' from Study where StudyRowID = :id");
+        q.bindValue(":id", objectID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        number = q.value("Max").toInt() + 1;
+
         q.prepare("insert into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :VirtualPath)");
         q.bindValue(":SubjectRowID", subjectRowID);
         q.bindValue(":StudyNumber", number);
