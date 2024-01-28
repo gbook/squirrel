@@ -74,6 +74,7 @@ bool squirrelStudy::Get() {
         dayNumber = q.value("DayNumber").toInt();
         timePoint = q.value("TimePoint").toInt();
         equipment = q.value("StudyRowID").toString();
+        sequence = q.value("Sequence").toInt();
         virtualPath = q.value("VirtualPath").toString();
 
         valid = true;
@@ -111,7 +112,7 @@ bool squirrelStudy::Store() {
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         number = q.value("Max").toInt() + 1;
 
-        q.prepare("insert into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :VirtualPath)");
+        q.prepare("insert into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, Sequence, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :Sequence, :VirtualPath)");
         q.bindValue(":SubjectRowID", subjectRowID);
         q.bindValue(":StudyNumber", number);
         q.bindValue(":Datetime", dateTime);
@@ -125,13 +126,14 @@ bool squirrelStudy::Store() {
         q.bindValue(":DayNumber", dayNumber);
         q.bindValue(":Timepoint", timePoint);
         q.bindValue(":Equipment", equipment);
+        q.bindValue(":Sequence", sequence);
         q.bindValue(":VirtualPath", virtualPath);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Study set SubjectRowID = :SubjectRowID, StudyNumber = :StudyNumber, Datetime = :Datetime, Age = :Age, Height = :Height, Weight = :Weight, Modality = :Modality, Description = :Description, StudyUID = :StudyUID, VisitType = :VisitType, DayNumber = :DayNumber, Timepoint = :Timepoint, Equipment = :Equipment, VirtualPath = :VirtualPath where StudyRowID = :id");
+        q.prepare("update Study set SubjectRowID = :SubjectRowID, StudyNumber = :StudyNumber, Datetime = :Datetime, Age = :Age, Height = :Height, Weight = :Weight, Modality = :Modality, Description = :Description, StudyUID = :StudyUID, VisitType = :VisitType, DayNumber = :DayNumber, Timepoint = :Timepoint, Equipment = :Equipment, Sequence = :Sequence, VirtualPath = :VirtualPath where StudyRowID = :id");
         q.bindValue(":id", objectID);
         q.bindValue(":SubjectRowID", subjectRowID);
         q.bindValue(":StudyNumber", number);
@@ -146,6 +148,7 @@ bool squirrelStudy::Store() {
         q.bindValue(":DayNumber", dayNumber);
         q.bindValue(":Timepoint", timePoint);
         q.bindValue(":Equipment", equipment);
+        q.bindValue(":Sequence", sequence);
         q.bindValue(":VirtualPath", virtualPath);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }

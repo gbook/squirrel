@@ -27,9 +27,9 @@
 #include <QDate>
 #include <QJsonObject>
 #include <QJsonArray>
-#include "squirrelStudy.h"
-#include "squirrelMeasure.h"
-#include "squirrelDrug.h"
+//#include "squirrelStudy.h"
+//#include "squirrelMeasure.h"
+//#include "squirrelDrug.h"
 
 /**
  * @brief The subject class
@@ -42,9 +42,9 @@ public:
 	squirrelSubject();
 
     /* functions */
-	bool addStudy(squirrelStudy s);
-	bool addMeasure(squirrelMeasure m);
-	bool addDrug(squirrelDrug d);
+    //bool addStudy(squirrelStudy s);
+    //bool addMeasure(squirrelMeasure m);
+    //bool addDrug(squirrelDrug d);
     //qint64 GetNextStudyNumber();
 	void PrintSubject();
 	QJsonObject ToJSON();
@@ -65,12 +65,13 @@ public:
     QString ethnicity1;         /*!< Ethnicity: hispanic, non-hispanic */
     QString ethnicity2;         /*!< Race: americanindian, asian, black, hispanic, islander, white */
     QString virtualPath;        /*!< path within the squirrel package, no leading slash */
+    int sequence;
 
     /* lib variables */
     //QString dirpath; /*!< Relative path to the subject data */
-    QList<squirrelStudy> studyList; /*!< List of studies attached to this subject */
-    QList<squirrelMeasure> measureList; /*!< List of measures (variables) attached to this subject */
-    QList<squirrelDrug> drugList; /*!< List of drugs attached to this subject */
+    //QList<squirrelStudy> studyList; /*!< List of studies attached to this subject */
+    //QList<squirrelMeasure> measureList; /*!< List of measures (variables) attached to this subject */
+    //QList<squirrelDrug> drugList; /*!< List of drugs attached to this subject */
 
 private:
     bool valid = false;

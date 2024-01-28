@@ -61,6 +61,7 @@ public:
     qint64 numBehFiles = 0;         /*!< Number of files associated with the behavioral data */
     qint64 behSize = 0;             /*!< total size in bytes of the beh data */
     QHash<QString, QString> params; /*!< Hash containing experimental parameters. eg MR params */
+    int sequence;
     QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */

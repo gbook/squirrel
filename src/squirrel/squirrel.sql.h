@@ -32,7 +32,7 @@
  */
 
 QString tableStagedFiles = QString("CREATE TABLE StagedFiles"
-    "StagedFileRowID INTEGER PRIMARY KEY,"
+    "StagedFileRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "ObjectType TEXT,"
     "ObjectRowID INTEGER,"
     "FileSize INTEGER,"
@@ -41,7 +41,7 @@ QString tableStagedFiles = QString("CREATE TABLE StagedFiles"
     "UNIQUE(ObjectRowID, ObjectType, StagedPath) )");
 
 QString tableAnalysis = QString("CREATE TABLE Analysis ("
-    "AnalysisRowID INTEGER PRIMARY KEY,"
+    "AnalysisRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "StudyRowID INTEGER,"
     "PipelineRowID INTEGER,"
     "PipelineVersion INTEGER,"
@@ -62,13 +62,13 @@ QString tableAnalysis = QString("CREATE TABLE Analysis ("
     "UNIQUE(StudyRowID, PipelineRowID, PipelineVersion))");
 
 QString tableDataDictionary = QString("CREATE TABLE DataDictionary ("
-    "DataDictionaryRowID INTEGER PRIMARY KEY,"
+    "DataDictionaryRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "NumFiles INTEGER,"
     "Size INTEGER,"
     "VirtualPath TEXT)");
 
 QString tableDataDictionaryItems = QString("CREATE TABLE DataDictionaryItems ("
-    "DataDictionaryItemRowID INTEGER PRIMARY KEY,"
+    "DataDictionaryItemRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "DataDictionaryRowID INTEGER,"
     "VariableType TEXT,"
     "VariableName TEXT,"
@@ -79,7 +79,7 @@ QString tableDataDictionaryItems = QString("CREATE TABLE DataDictionaryItems ("
     "RangeHigh REAL)");
 
 QString tableDrug = QString("CREATE TABLE Drug ("
-    "DrugRowID INTEGER PRIMARY KEY,"
+    "DrugRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "SubjectRowID INTEGER,"
     "DrugName TEXT,"
     "DateStart TEXT,"
@@ -100,14 +100,14 @@ QString tableDrug = QString("CREATE TABLE Drug ("
     "Notes TEXT)");
 
 QString tableExperiment = QString("CREATE TABLE Experiment ("
-    "ExperimentRowID INTEGER PRIMARY KEY,"
+    "ExperimentRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "ExperimentName TEXT UNIQUE,"
     "Size INTEGER DEFAULT 0,"
     "NumFiles INTEGER DEFAULT 0,"
     "VirtualPath TEXT)");
 
 QString tableGroupAnalysis = QString("CREATE TABLE GroupAnalysis ("
-    "GroupAnalysisRowID INTEGER PRIMARY KEY,"
+    "GroupAnalysisRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "GroupAnalysisName TEXT UNIQUE,"
     "Description TEXT,"
     "Datetime TEXT,"
@@ -116,7 +116,7 @@ QString tableGroupAnalysis = QString("CREATE TABLE GroupAnalysis ("
     "VirtualPath TEXT)");
 
 QString tableMeasure = QString("CREATE TABLE Measure ("
-    "MeasureRowID INTEGER PRIMARY KEY,"
+    "MeasureRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "SubjectRowID INTEGER,"
     "MeasureName TEXT,"
     "DateStart TEXT,"
@@ -130,7 +130,7 @@ QString tableMeasure = QString("CREATE TABLE Measure ("
     "Description TEXT)");
 
 QString tablePackage = QString("CREATE TABLE Package ("
-    "PackageRowID INTEGER PRIMARY KEY,"
+    "PackageRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "Name TEXT NOT NULL UNIQUE,"
     "Description TEXT,"
     "Datetime TEXT,"
@@ -144,14 +144,14 @@ QString tablePackage = QString("CREATE TABLE Package ("
     "Notes TEXT)");
 
 QString tableParams = QString("CREATE TABLE Params ("
-    "ParamRowID INTEGER PRIMARY KEY,"
+    "ParamRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "SeriesRowID INTEGER,"
     "ParamKey TEXT,"
     "ParamValue TEXT,"
     "UNIQUE(ParamKey, ParamValue))");
 
 QString tablePipeline = QString("CREATE TABLE Pipeline ("
-    "PipelineRowID INTEGER PRIMARY KEY,"
+    "PipelineRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "PipelineName TEXT,"
     "Description TEXT,"
     "Datetime TEXT,"
@@ -184,7 +184,7 @@ QString tablePipeline = QString("CREATE TABLE Pipeline ("
     "UNIQUE(Name, Version))");
 
 QString tablePipelineDataStep = QString("CREATE TABLE PipeplineDataStep ("
-    "DataStepRowID INTEGER PRIMARY KEY,"
+    "DataStepRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "PipelineRowID INTEGER,"
     "AssociationType TEXT,"
     "BehDir TEXT,"
@@ -208,7 +208,7 @@ QString tablePipelineDataStep = QString("CREATE TABLE PipeplineDataStep ("
     "FlagUseSeries INTEGER)");
 
 QString tableSeries = QString("CREATE TABLE Series ("
-    "SeriesRowID INTEGER PRIMARY KEY,"
+    "SeriesRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "StudyRowID INTEGER,"
     "SeriesNum INTEGER,"
     "Datetime TEXT,"
@@ -221,10 +221,11 @@ QString tableSeries = QString("CREATE TABLE Series ("
     "BehSize INTEGER DEFAULT 0,"
     "BehNumFiles INTEGER DEFAULT 0,"
     "VirtualPath TEXT,"
+    "Sequence INTEGER,"
     "UNIQUE(StudyRowID, SeriesNum))");
 
 QString tableStudy = QString("CREATE TABLE Study ("
-    "StudyRowID INTEGER PRIMARY KEY,"
+    "StudyRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "SubjectRowID INTEGER,"
     "StudyNumber INTEGER ,"
     "Datetime TEXT,"
@@ -238,11 +239,12 @@ QString tableStudy = QString("CREATE TABLE Study ("
     "DayNumber INTEGER DEFAULT 0,"
     "Timepoint INTEGER DEFAULT 0,"
     "Equipment TEXT,"
+    "Sequence INTEGER,"
     "VirtualPath TEXT,"
     "UNIQUE(SubjectRowID, StudyNumber))");
 
 QString tableSubject = QString("CREATE TABLE Subject ("
-    "SubjectRowID INTEGER PRIMARY KEY,"
+    "SubjectRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "ID TEXT NOT NULL UNIQUE,"
     "AltIDs TEXT,"
     "GUID TEXT,"
@@ -251,4 +253,5 @@ QString tableSubject = QString("CREATE TABLE Subject ("
     "Gender TEXT,"
     "Ethnicity1 TEXT,"
     "Ethnicity2 TEXT,"
+    "Sequence INTEGER,"
     "VirtualPath TEXT)");

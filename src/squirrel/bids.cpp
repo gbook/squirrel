@@ -347,7 +347,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "func") {
@@ -411,7 +411,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         tf.replace("bold.nii.gz", "events.tsv");
                         files2.append(tf);
                     }
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "pet") {
@@ -483,7 +483,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         tf.replace("events.json", "events.tsv");
                         files2.append(tf);
                     }
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "micr") {
@@ -553,7 +553,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         tf.replace("events.json", "events.tsv");
                         files2.append(tf);
                     }
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "motion") {
@@ -623,7 +623,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         files2.append(tf);
                     }
                     files2.append(f);
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "eeg") {
@@ -695,7 +695,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         files2.append(tf);
                     }
                     files2.append(f);
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "beh") {
@@ -749,7 +749,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
-                    sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
+                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else {
@@ -861,14 +861,20 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
 
     //double tr = root.value("RepetitionTime").toDouble();
 
+    squirrelExperiment exp;
+    exp.experimentName = experimentName;
+    exp.virtualPath = QString("experiments/%1").arg(experimentName);
+    exp.Store();
+    int expRowID = exp.GetObjectID();
+
     QStringList files;
     files.append(f);
-    squirrelExperiment sqrlExp;
-    sqrlExp.experimentName = experimentName;
-    sqrlExp.virtualPath = QString("%1/experiments/%2").arg(sqrl->GetTempDir()).arg(experimentName);
-    sqrl->experimentList.append(sqrlExp);
-    sqrl->AddExperimentFiles(experimentName, files);
-    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(sqrlExp.virtualPath), __FUNCTION__, true);
+    //squirrelExperiment sqrlExp;
+    //sqrlExp.experimentName = experimentName;
+    //sqrlExp.virtualPath = QString("%1/experiments/%2").arg(sqrl->GetTempDir()).arg(experimentName);
+    //sqrl->experimentList.append(sqrlExp);
+    sqrl->AddStagedFiles("experiment", expRowID, files);
+    sqrl->Log(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(exp.virtualPath), __FUNCTION__, true);
 
     return true;
 }

@@ -68,6 +68,7 @@ bool squirrelSubject::Get() {
         gender = q.value("Gender").toString();
         ethnicity1 = q.value("Ethnicity1").toString();
         ethnicity2 = q.value("Ethnicity2").toString();
+        sequence = q.value("Sequence").toInt();
         virtualPath = q.value("VirtualPath").toString();
 
         valid = true;
@@ -98,7 +99,7 @@ bool squirrelSubject::Store() {
     QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Subject (ID, AltIDs, GUID, DateOfBirth, Sex, Gender, Ethnicity1, Ethnicity2, VirtualPath) values (:ID, :AltIDs, :GUID, :DateOfBirth, :Sex, :Gender, :Ethnicity1, :Ethnicity2, :VirtualPath)");
+        q.prepare("insert into Subject (ID, AltIDs, GUID, DateOfBirth, Sex, Gender, Ethnicity1, Ethnicity2, Sequence, VirtualPath) values (:ID, :AltIDs, :GUID, :DateOfBirth, :Sex, :Gender, :Ethnicity1, :Ethnicity2, :Sequence, :VirtualPath)");
         q.bindValue(":ID", ID);
         q.bindValue(":AltIDs", alternateIDs.join(","));
         q.bindValue(":GUID", GUID);
@@ -107,13 +108,14 @@ bool squirrelSubject::Store() {
         q.bindValue(":Gender", gender);
         q.bindValue(":Ethnicity1", ethnicity1);
         q.bindValue(":Ethnicity2", ethnicity2);
+        q.bindValue(":Sequence", sequence);
         q.bindValue(":VirtualPath", virtualPath);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Subject set ID = :ID, AltIDs = :AltIDs, GUID = :GUID, DateOfBirth = :DateOfBirth, Sex = :Sex, Gender = :Gender, Ethnicity1 = :Ethnicity1, Ethnicity2 = :Ethnicity2, VirtualPath = :VirtualPath where SubjectRowID = :id");
+        q.prepare("update Subject set ID = :ID, AltIDs = :AltIDs, GUID = :GUID, DateOfBirth = :DateOfBirth, Sex = :Sex, Gender = :Gender, Ethnicity1 = :Ethnicity1, Ethnicity2 = :Ethnicity2, Sequence = :Sequence, VirtualPath = :VirtualPath where SubjectRowID = :id");
         q.bindValue(":id", objectID);
         q.bindValue(":ID", ID);
         q.bindValue(":AltIDs", alternateIDs.join(","));
@@ -123,6 +125,7 @@ bool squirrelSubject::Store() {
         q.bindValue(":Gender", gender);
         q.bindValue(":Ethnicity1", ethnicity1);
         q.bindValue(":Ethnicity2", ethnicity2);
+        q.bindValue(":Sequence", sequence);
         q.bindValue(":VirtualPath", virtualPath);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }
@@ -131,94 +134,94 @@ bool squirrelSubject::Store() {
 }
 
 
-/* ------------------------------------------------------------ */
-/* ----- addStudy --------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add a study to this subject
- * @param s squirrelStudy to be added
- * @return true if added, false otherwise
- */
-bool squirrelSubject::addStudy(squirrelStudy s) {
+// /* ------------------------------------------------------------ */
+// /* ----- addStudy --------------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Add a study to this subject
+//  * @param s squirrelStudy to be added
+//  * @return true if added, false otherwise
+//  */
+// bool squirrelSubject::addStudy(squirrelStudy s) {
 
-    /* check size of the study list before and after adding */
-    qint64 size = studyList.size();
+//     /* check size of the study list before and after adding */
+//     qint64 size = studyList.size();
 
-    /* check if this study already exists, by UID */
-    bool exists = false;
-    for (int i=0; i<studyList.size(); i++)
-        if ((studyList[i].studyUID == s.studyUID) && (s.studyUID != ""))
-            exists = true;
+//     /* check if this study already exists, by UID */
+//     bool exists = false;
+//     for (int i=0; i<studyList.size(); i++)
+//         if ((studyList[i].studyUID == s.studyUID) && (s.studyUID != ""))
+//             exists = true;
 
-    /* if it doesn't exist, append it */
-    if (!exists)
-        studyList.append(s);
+//     /* if it doesn't exist, append it */
+//     if (!exists)
+//         studyList.append(s);
 
-    if (studyList.size() > size)
-        return true;
-    else
-        return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- addMeasure ------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add a measure to this subject
- * @param m squirrelMeasure to be added
- * @return true if added, false otherwise
- */
-bool squirrelSubject::addMeasure(squirrelMeasure m) {
-
-	/* check size of the measure list before and after adding */
-	qint64 size = measureList.size();
-
-	/* check if this measure already exists, by UID */
-	bool exists = false;
-	//for (int i=0; i<studyList.size(); i++)
-	//	if (studyList.at(i).studyUID == s.studyUID)
-	//        exists = true;
-
-	/* if it doesn't exist, append it */
-	if (!exists)
-		measureList.append(m);
-
-	if (measureList.size() > size)
-		return true;
-	else
-		return false;
-}
+//     if (studyList.size() > size)
+//         return true;
+//     else
+//         return false;
+// }
 
 
-/* ------------------------------------------------------------ */
-/* ----- addDrug ---------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add a drug to this subject
- * @param d squirrelDrug to be added
- * @return true if added, false otherwise
- */
-bool squirrelSubject::addDrug(squirrelDrug d) {
+// /* ------------------------------------------------------------ */
+// /* ----- addMeasure ------------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Add a measure to this subject
+//  * @param m squirrelMeasure to be added
+//  * @return true if added, false otherwise
+//  */
+// bool squirrelSubject::addMeasure(squirrelMeasure m) {
 
-	/* check size of the drug list before and after adding */
-	qint64 size = drugList.size();
+// 	/* check size of the measure list before and after adding */
+// 	qint64 size = measureList.size();
 
-	/* check if this drug already exists, by UID */
-	bool exists = false;
-	//for (int i=0; i<studyList.size(); i++)
-	//	if (studyList.at(i).studyUID == s.studyUID)
-	//        exists = true;
+// 	/* check if this measure already exists, by UID */
+// 	bool exists = false;
+// 	//for (int i=0; i<studyList.size(); i++)
+// 	//	if (studyList.at(i).studyUID == s.studyUID)
+// 	//        exists = true;
 
-	/* if it doesn't exist, append it */
-	if (!exists)
-        drugList.append(d);
+// 	/* if it doesn't exist, append it */
+// 	if (!exists)
+// 		measureList.append(m);
 
-	if (drugList.size() > size)
-		return true;
-	else
-		return false;
-}
+// 	if (measureList.size() > size)
+// 		return true;
+// 	else
+// 		return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- addDrug ---------------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Add a drug to this subject
+//  * @param d squirrelDrug to be added
+//  * @return true if added, false otherwise
+//  */
+// bool squirrelSubject::addDrug(squirrelDrug d) {
+
+// 	/* check size of the drug list before and after adding */
+// 	qint64 size = drugList.size();
+
+// 	/* check if this drug already exists, by UID */
+// 	bool exists = false;
+// 	//for (int i=0; i<studyList.size(); i++)
+// 	//	if (studyList.at(i).studyUID == s.studyUID)
+// 	//        exists = true;
+
+// 	/* if it doesn't exist, append it */
+// 	if (!exists)
+//         drugList.append(d);
+
+// 	if (drugList.size() > size)
+// 		return true;
+// 	else
+// 		return false;
+// }
 
 
 /* ------------------------------------------------------------ */
@@ -281,32 +284,32 @@ QJsonObject squirrelSubject::ToJSON() {
     json["Ethnicity2"] = ethnicity2;
     json["VirtualPath"] = virtualPath;
 
-    QJsonArray JSONstudies;
-    for (int i=0; i<studyList.size(); i++) {
-        JSONstudies.append(studyList[i].ToJSON());
-    }
-    json["NumStudies"] = JSONstudies.size();
-    json["studies"] = JSONstudies;
+  //   QJsonArray JSONstudies;
+  //   for (int i=0; i<studyList.size(); i++) {
+  //       JSONstudies.append(studyList[i].ToJSON());
+  //   }
+  //   json["NumStudies"] = JSONstudies.size();
+  //   json["studies"] = JSONstudies;
 
-    /* add measures */
-    if (measureList.size() > 0) {
-        QJsonArray JSONmeasures;
-        for (int i=0; i < measureList.size(); i++) {
-            JSONmeasures.append(measureList[i].ToJSON());
-        }
-        json["NumMeasures"] = JSONmeasures.size();
-		json["measures"] = JSONmeasures;
-    }
+  //   /* add measures */
+  //   if (measureList.size() > 0) {
+  //       QJsonArray JSONmeasures;
+  //       for (int i=0; i < measureList.size(); i++) {
+  //           JSONmeasures.append(measureList[i].ToJSON());
+  //       }
+  //       json["NumMeasures"] = JSONmeasures.size();
+        // json["measures"] = JSONmeasures;
+  //   }
 
-    /* add drugs */
-    if (drugList.size() > 0) {
-        QJsonArray JSONdrugs;
-        for (int i=0; i < drugList.size(); i++) {
-            JSONdrugs.append(drugList[i].ToJSON());
-        }
-        json["NumDrugs"] = JSONdrugs.size();
-		json["drugs"] = JSONdrugs;
-    }
+  //   /* add drugs */
+  //   if (drugList.size() > 0) {
+  //       QJsonArray JSONdrugs;
+  //       for (int i=0; i < drugList.size(); i++) {
+  //           JSONdrugs.append(drugList[i].ToJSON());
+  //       }
+  //       json["NumDrugs"] = JSONdrugs.size();
+        // json["drugs"] = JSONdrugs;
+  //   }
 
     return json;
 }

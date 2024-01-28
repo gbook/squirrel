@@ -66,6 +66,7 @@ public:
     int dayNumber;                  /*!< Day number for repeated studies or clinical trials. eg. 6 for 'day 6' */
     int timePoint;                  /*!< Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study */
     QString equipment;              /*!< Equipment the study was run on */
+    int sequence;
     QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */

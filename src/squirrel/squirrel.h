@@ -29,6 +29,8 @@
 #include <QDebug>
 #include <QtSql>
 #include "squirrelSubject.h"
+#include "squirrelStudy.h"
+#include "squirrelSeries.h"
 #include "squirrelExperiment.h"
 #include "squirrelPipeline.h"
 #include "squirrelMeasure.h"
@@ -81,6 +83,8 @@ public:
     QList<squirrelExperiment> GetAllExperiments();
     QList<squirrelPipeline> GetAllPipelines();
     QList<squirrelSubject> GetAllSubjects();
+    QList<squirrelStudy> GetStudies(int subjectRowID);
+    QList<squirrelSeries> GetSeries(int studyRowID);
     QList<squirrelGroupAnalysis> GetAllGroupAnalyses();
     QList<squirrelDataDictionary> GetAllDataDictionaries();
 
@@ -104,6 +108,14 @@ public:
     bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
 
     bool removeSubject(int rowID);
+
+    void ResqeuenceSubjects();
+    void ResequenceStudies(int subjectRowID);
+    void ResequenceSeries(int studyRowID);
+
+
+
+
 
     /* package information */
     qint64 GetUnzipSize();

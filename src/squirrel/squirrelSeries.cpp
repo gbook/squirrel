@@ -67,6 +67,7 @@ bool squirrelSeries::Get() {
         numBehFiles = q.value("BehNumFiles").toLongLong();
         behSize = q.value("BehSize").toLongLong();
         //QHash<QString, QString> params = q.value("SeriesRowID").toLongLong();
+        sequence = q.value("Sequence").toInt();
         virtualPath = q.value("VirtualPath").toString();
 
         /* get any staged files */
@@ -101,7 +102,7 @@ bool squirrelSeries::Store() {
     QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :VirtualPath)");
+        q.prepare("insert into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, Sequence, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :Sequence, :VirtualPath)");
         q.bindValue(":StudyRowID", objectID);
         q.bindValue(":SeriesNum", objectID);
         q.bindValue(":Datetime", objectID);
@@ -113,13 +114,14 @@ bool squirrelSeries::Store() {
         q.bindValue(":NumFiles", objectID);
         q.bindValue(":BehSize", objectID);
         q.bindValue(":BehNumFiles", objectID);
+        q.bindValue(":Sequence", sequence);
         q.bindValue(":VirtualPath", virtualPath);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNum = :SeriesNum, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, NumFiles = :NumFiles, BehSize = :BehSize, BehNumFiles = :BehNumFiles, VirtualPath = :VirtualPath where SeriesRowID = :id");
+        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNum = :SeriesNum, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, NumFiles = :NumFiles, BehSize = :BehSize, BehNumFiles = :BehNumFiles, Sequence = :Sequence, VirtualPath = :VirtualPath where SeriesRowID = :id");
         q.bindValue(":StudyRowID", objectID);
         q.bindValue(":SeriesNum", objectID);
         q.bindValue(":Datetime", objectID);
@@ -131,6 +133,7 @@ bool squirrelSeries::Store() {
         q.bindValue(":NumFiles", objectID);
         q.bindValue(":BehSize", objectID);
         q.bindValue(":BehNumFiles", objectID);
+        q.bindValue(":Sequence", sequence);
         q.bindValue(":VirtualPath", virtualPath);
         q.bindValue(":id", objectID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
