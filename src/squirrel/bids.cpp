@@ -308,45 +308,75 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     QString ID = filename.section("_", 0,0);
                     QString protocol = filename.section("_", -1);
                     QString visit = filename.section("_", 1,1);
-                    int subjectIndex = sqrl->GetSubjectIndex(ID);
+                    //int subjectIndex = sqrl->GetSubjectIndex(ID);
                     if (studyNum < 0)
                         studyNum = 1;
                     qint64 seriesNum = 1;
 
-                    /* check if this study exists */
-                    int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
-
-                    if (studyIndex > -1) {
-                        /* study exists, so let's add a series to it */
-                        seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
-                        sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
-                        squirrelSeries series;
-                        series.number = seriesNum;
-                        series.protocol = protocol;
-                        if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
-                            sqrl->Log(QString("Error. Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    /* create a subjectRowID if it doesn't exist */
+                    int subjectRowID = sqrl->FindSubject(ID);
+                    if (subjectRowID < 0) {
+                        squirrelSubject subject;
+                        subject.ID = ID;
+                        subject.Store();
+                        subjectRowID = subject.GetObjectID();
                     }
-                    else {
-                        /* study doesn't exist, so create it */
-                        squirrelStudy study2;
-                        study2.number = studyNum;
-                        study2.modality = "MR";
-                        study2.visitType = visit;
 
-                        /* create the series and add it to the study */
-                        squirrelSeries series;
-                        series.number = seriesNum;
-                        series.protocol = protocol;
-                        study2.addSeries(series);
-
-                        /* add the study to the subject */
-                        if (!sqrl->subjectList[subjectIndex].addStudy(study2))
-                            sqrl->Log("Error. Unable to add study!", __FUNCTION__);
+                    /* create a subjectRowID if it doesn't exist */
+                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    if (studyRowID < 0) {
+                        squirrelStudy study;
+                        study.number = studyNum;
+                        study.subjectRowID = subjectRowID;
+                        study.modality = "MR";
+                        study.visitType = visit;
+                        study.Store();
+                        studyRowID = study.GetObjectID();
                     }
+
+                    /* create a subjectRowID if it doesn't exist */
+                    squirrelSeries series;
+                    series.number = seriesNum;
+                    series.studyRowID = studyRowID;
+                    series.protocol = protocol;
+                    series.Store();
+                    int seriesRowID = series.GetObjectID();
+
+                    // /* check if this study exists */
+                    // int studyIndex = sqrl->GetStudyIndex(ID, studyNum);
+
+                    // if (studyIndex > -1) {
+                    //     /* study exists, so let's add a series to it */
+                    //     seriesNum = sqrl->subjectList[subjectIndex].studyList[studyIndex].GetNextSeriesNumber();
+                    //     sqrl->Log(QString("Next series number [%1]").arg(seriesNum), __FUNCTION__, true);
+                    //     squirrelSeries series;
+                    //     series.number = seriesNum;
+                    //     series.protocol = protocol;
+                    //     if (!sqrl->subjectList[subjectIndex].studyList[studyIndex].addSeries(series))
+                    //         sqrl->Log(QString("Error. Unable to add seriesNum [%1] protocol [%2]").arg(seriesNum).arg(protocol), __FUNCTION__);
+                    // }
+                    // else {
+                    //     /* study doesn't exist, so create it */
+                    //     squirrelStudy study2;
+                    //     study2.number = studyNum;
+                    //     study2.modality = "MR";
+                    //     study2.visitType = visit;
+
+                    //     /* create the series and add it to the study */
+                    //     squirrelSeries series;
+                    //     series.number = seriesNum;
+                    //     series.protocol = protocol;
+                    //     study2.addSeries(series);
+
+                    //     /* add the study to the subject */
+                    //     if (!sqrl->subjectList[subjectIndex].addStudy(study2))
+                    //         sqrl->Log("Error. Unable to add study!", __FUNCTION__);
+                    // }
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
+                    sqrl->AddStagedFiles("series", seriesRowID, files2);
                     //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }

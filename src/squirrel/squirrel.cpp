@@ -558,40 +558,41 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudies(subjectRowID);
-        foreach (squirrelStudy stud, studies) {
+        foreach (squirrelStudy study, studies) {
 
-            int studyRowID = stud.GetObjectID();
+            int studyRowID = study.GetObjectID();
 
             QString studyDir;
             if (studyDirFormat == "orig")
-                studyDir = QString("%1").arg(stud.number);
+                studyDir = QString("%1").arg(study.number);
             else
-                studyDir = QString("%1").arg(stud.sequence); /* start the numbering at 1 instead of 0 */
+                studyDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
 
             studyDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
             QString vPath = QString("data/%1/%2").arg(subjDir).arg(studyDir);
-            stud.virtualPath = vPath;
-            stud.Store();
+            study.virtualPath = vPath;
+            study.Store();
 
             Log(QString("Writing study [%1]").arg(studyDir), __FUNCTION__);
 
             /* iterate through series */
-            for (int k=0; k < stud.seriesList.size(); k++) {
+            QList<squirrelSeries> serieses = GetSeries(studyRowID);
+            foreach (squirrelSeries series, serieses) {
 
-                squirrelSeries ser = stud.seriesList[k];
+                int seriesRowID = series.GetObjectID();
 
                 QString seriesDir;
                 if (seriesDirFormat == "orig")
-                    seriesDir = QString("%1").arg(ser.number);
+                    seriesDir = QString("%1").arg(series.number);
                 else
-                    seriesDir = QString("%1").arg(k+1); /* start the numbering at 1 instead of 0 */
+                    seriesDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
 
                 seriesDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
                 QString vPath = QString("data/%1/%2/%3").arg(subjDir).arg(studyDir).arg(seriesDir);
-                subjectList[i].studyList[j].seriesList[k].virtualPath = vPath;
+                series.virtualPath = vPath;
 
                 QString m;
-                QString seriesPath = QString("%1/%2").arg(workingDir).arg(subjectList[i].studyList[j].seriesList[k].virtualPath);
+                QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.virtualPath);
                 utils::MakePath(seriesPath,m);
 
                 Log(QString("Writing series [%1]. Data format [%2]").arg(seriesDir).arg(dataFormat), __FUNCTION__);
@@ -599,7 +600,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                 /* orig vs other formats */
                 if (dataFormat == "orig") {
                     /* copy all of the series files to the temp directory */
-                    foreach (QString f, ser.stagedFiles) {
+                    foreach (QString f, series.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
                         utils::SystemCommand(systemstring);
                     }
@@ -611,7 +612,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
                     /* copy all files to temp directory */
                     QString systemstring;
-                    foreach (QString f, ser.stagedFiles) {
+                    foreach (QString f, series.stagedFiles) {
                         systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
                         utils::SystemCommand(systemstring);
                     }
@@ -641,10 +642,10 @@ bool squirrel::write(QString outpath, QString &filepath) {
                         gzip = false;
 
                     /* get path of first file to be converted */
-                    if (ser.stagedFiles.size() > 0) {
+                    if (series.stagedFiles.size() > 0) {
                         Log(QString("Converting [%1] files to nifti").arg(ser.stagedFiles.size()), __FUNCTION__, true);
 
-                        QFileInfo f(ser.stagedFiles[0]);
+                        QFileInfo f(series.stagedFiles[0]);
                         QString origSeriesPath = f.absoluteDir().absolutePath();
                         squirrelImageIO io;
                         QString m3;
@@ -663,12 +664,12 @@ bool squirrel::write(QString outpath, QString &filepath) {
                 //Log(QString("Running GetDirSizeAndFileCount() on [%1]").arg(seriesPath), __FUNCTION__);
                 utils::GetDirSizeAndFileCount(seriesPath, c, b, false);
                 //Log(QString("GetDirSizeAndFileCount() found  [%1] files   [%2] bytes").arg(c).arg(b), __FUNCTION__);
-                subjectList[i].studyList[j].seriesList[k].numFiles = c;
-                subjectList[i].studyList[j].seriesList[k].size = b;
+                series.numFiles = c;
+                series.size = b;
 
                 /* write the series .json file, containing the dicom header params */
                 QJsonObject params;
-                params = ser.ParamsToJSON();
+                params = series.ParamsToJSON();
                 QByteArray j = QJsonDocument(params).toJson();
                 QFile fout(QString("%1/params.json").arg(seriesPath));
                 if (fout.open(QIODevice::WriteOnly)) {
