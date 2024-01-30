@@ -106,7 +106,9 @@ public:
 
     int FindSubject(QString id);
     int FindStudy(QString subjectID, int studyNum);
+    int FindStudyByUID(QString studyUID);
     int FindSeries(QString subjectID, int studyNum, int seriesNum);
+    int FindSeriesByUID(QString seriesUID);
 
     bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
 

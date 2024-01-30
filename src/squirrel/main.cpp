@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
 
     QCommandLineOption optListObject(QStringList() << "list", "List an object [package  subjects  studies  series  experiments  pipelines  groupanalyses  datadictionary].", "object");
     QCommandLineOption optSubjectID(QStringList() << "subject-id", "Subject ID.", "subjectid");
-    QCommandLineOption optStudyNum(QStringList() << "study-num", "Study ID.", "studynum");
+    QCommandLineOption optStudyNum(QStringList() << "study-num", "Study Number.", "studynum");
+    QCommandLineOption optSeriesNum(QStringList() << "series-num", "Series Number.", "seriesnum");
 
     QCommandLineOption optListDetails(QStringList() << "list-details", "Include details when printing lists.");
     p.addOption(optOutputFile);
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
     p.addOption(optListObject);
     p.addOption(optSubjectID);
     p.addOption(optStudyNum);
+    p.addOption(optSeriesNum);
     p.addOption(optListDetails);
 
     /* Process the actual command line arguments given by the user */
@@ -101,6 +103,7 @@ int main(int argc, char *argv[])
     QString paramListObject = p.value(optListObject);
     QString paramSubjectID = p.value(optSubjectID).trimmed();
     int paramStudyNum = p.value(optStudyNum).trimmed().toInt();
+    int paramSeriesNum = p.value(optSeriesNum).trimmed().toInt();
     renumberIDs = p.isSet(optRenumberIDs);
     listDetails = p.isSet(optListDetails);
 
@@ -248,10 +251,12 @@ int main(int argc, char *argv[])
                 sqrl->PrintSubjects(listDetails);
             }
             else if (paramListObject == "studies") {
-                sqrl->PrintStudies(paramSubjectID, listDetails);
+                int studyRowID = sqrl->FindStudy(paramSubjectID, paramStudyNum);
+                sqrl->PrintStudies(studyRowID, listDetails);
             }
             else if (paramListObject == "series") {
-                sqrl->PrintSeries(paramSubjectID, paramStudyNum, listDetails);
+                int seriesRowID = sqrl->FindSeries(paramSubjectID, paramStudyNum, paramSeriesNum);
+                sqrl->PrintSeries(seriesRowID, listDetails);
             }
             else if (paramListObject == "experiments") {
                 sqrl->PrintExperiments(listDetails);

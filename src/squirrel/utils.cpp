@@ -1187,14 +1187,14 @@ namespace utils {
             q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
             q.bindValue(":id", objectID);
             q.bindValue(":type", objectType);
-            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
 
             foreach (QString path, paths) {
                 q.prepare("insert into StagedFiles (ObjectRowID, ObjectType, StagedPath) values (:id, :type, :path)");
                 q.bindValue(":id", objectID);
                 q.bindValue(":type", objectType);
                 q.bindValue(":path", path);
-                utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+                utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
             }
         }
     }

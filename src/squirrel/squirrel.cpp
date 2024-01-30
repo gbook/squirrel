@@ -1737,7 +1737,7 @@ bool squirrel::MakeTempDir(QString &dir) {
 /* ------------------------------------------------------------ */
 /* ----- AddStagedFiles --------------------------------------- */
 /* ------------------------------------------------------------ */
-bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir) {
+bool squirrel::AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir) {
 
     if (rowid < 0) return false;
     if (files.size() <= 0) return false;
@@ -2215,6 +2215,23 @@ int squirrel::FindStudy(QString subjectID, int studyNum) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- FindStudyByUID --------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::FindStudyByUID(QString studyUID) {
+    int rowid(-1);
+    QSqlQuery q;
+    q.prepare("select * from Study where StudyUID = :studyuid");
+    q.bindValue(":studyid", studyUID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+        rowid = q.value("StudyRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- FindSeries ------------------------------------------- */
 /* ------------------------------------------------------------ */
 int squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
@@ -2228,6 +2245,23 @@ int squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
     if (q.size() > 0) {
         q.first();
         rowid = q.value("SubjectRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindSeriesByUID -------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::FindSeriesByUID(QString seriesUID) {
+    int rowid(-1);
+    QSqlQuery q;
+    q.prepare("select * from Series where SeriesUID = :seriesuid");
+    q.bindValue(":seriesuid", seriesUID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        q.first();
+        rowid = q.value("SeriesRowID").toInt();
     }
     return rowid;
 }

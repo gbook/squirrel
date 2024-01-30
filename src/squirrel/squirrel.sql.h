@@ -181,7 +181,7 @@ QString tablePipeline = QString("CREATE TABLE Pipeline ("
     "MaxWallTime INTEGER,"
     "SubmitDelay INTEGER,"
     "VirtualPath TEXT,"
-    "UNIQUE(Name, Version))");
+    "UNIQUE(PipelineName, Version))");
 
 QString tablePipelineDataStep = QString("CREATE TABLE PipeplineDataStep ("
     "DataStepRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
