@@ -292,7 +292,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
                     sqrlSeries.params = ReadParamsFile(QString("%1/data/%2/%3/%4/params.json").arg(workingDir).arg(sqrlSubject.ID).arg(sqrlStudy.number).arg(sqrlSeries.number));
 
                 sqrlSeries.Store();
-                int seriesRowID = sqrlSeries.GetObjectID();
+                //int seriesRowID = sqrlSeries.GetObjectID();
 
                 /* add this series to the study */
                 //if (sqrlStudy.addSeries(sqrlSeries)) {
@@ -579,7 +579,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
             QList<squirrelSeries> serieses = GetSeries(studyRowID);
             foreach (squirrelSeries series, serieses) {
 
-                int seriesRowID = series.GetObjectID();
+                //int seriesRowID = series.GetObjectID();
 
                 QString seriesDir;
                 if (seriesDirFormat == "orig")
@@ -1309,429 +1309,429 @@ bool squirrel::MakeTempDir(QString &dir) {
 }
 
 
-/* ------------------------------------------------------------ */
-/* ----- GetSubjectIndex -------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for index of a subject
- * @param ID subject ID
- * @return index of the subject, if found. -1 if not found
- */
-int squirrel::GetSubjectIndex(QString ID) {
-
-    /* find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetStudyIndex ---------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for index of a study
- * @param ID subject ID
- * @param studyNum study number
- * @return index of the study if found, -1 otherwise
- */
-int squirrel::GetStudyIndex(QString ID, int studyNum) {
-
-    /* first, find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            /* next, find study by number */
-            for (int j=0; j < subjectList[i].studyList.size(); j++) {
-                if (subjectList[i].studyList[j].number == studyNum) {
-                    return j;
-                }
-            }
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetSeriesIndex --------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for index of a series
- * @param ID subject ID
- * @param studyNum study number
- * @param seriesNum series number
- * @return index of the series if found, -1 otherwise
- */
-int squirrel::GetSeriesIndex(QString ID, int studyNum, int seriesNum) {
-    squirrelSubject sqrlSubject;
-    squirrelStudy sqrlStudy;
-    bool subjectFound = false;
-    bool studyFound = false;
-
-    /* first, find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            sqrlSubject = subjectList[i];
-            subjectFound = true;
-            break;
-        }
-    }
-
-    /* next, find study by number */
-    if (subjectFound) {
-        for (int j=0; j < sqrlSubject.studyList.size(); j++) {
-            if (sqrlSubject.studyList[j].number == studyNum) {
-                sqrlStudy = sqrlSubject.studyList[j];
-                studyFound = true;
-                break;
-            }
-        }
-    }
-
-    /* then, find series by number */
-    if (studyFound) {
-        for (int k=0; k < sqrlStudy.seriesList.size(); k++) {
-            if (sqrlStudy.seriesList[k].number == seriesNum) {
-                return k;
-            }
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetPipelineIndex ------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for index of a pipeline
- * @param pipelineName pipeline name
- * @return index of pipeline if found, -1 otherwise
- */
-int squirrel::GetPipelineIndex(QString pipelineName) {
-
-    /* find pipeline by name */
-    for (int i=0; i < pipelineList.size(); i++) {
-        if (pipelineList[i].pipelineName == pipelineName) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetExperimentIndex ----------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for index of an experiment
- * @param experimentName experiment name
- * @return index of experiment if found, -1 otherwise
- */
-int squirrel::GetExperimentIndex(QString experimentName) {
-
-    /* find experiment by name */
-    for (int i=0; i < experimentList.size(); i++) {
-        if (experimentList[i].experimentName == experimentName) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetSubject ------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of a subject
- * @param ID subject ID
- * @param sqrlSubject copy of squirrelSubject object
- * @return true if found, false otherwise
- */
-bool squirrel::GetSubject(QString ID, squirrelSubject &sqrlSubject) {
-
-    /* find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            sqrlSubject = subjectList[i];
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetStudy --------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of a study
- * @param ID subjectID
- * @param studyNum studyNumber
- * @param sqrlStudy copy of squirrelStudy object
- * @return true if found, false otherwise
- */
-bool squirrel::GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy) {
-
-    squirrelSubject sqrlSubject;
-    bool subjectFound = false;
-
-    /* first, find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            sqrlSubject = subjectList[i];
-            subjectFound = true;
-            break;
-        }
-    }
-
-    /* next, find study by number */
-    if (subjectFound) {
-        for (int i=0; i < sqrlSubject.studyList.size(); i++) {
-            if (sqrlSubject.studyList[i].number == studyNum) {
-                sqrlStudy = sqrlSubject.studyList[i];
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetSeries -------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of a series
- * @param ID subject ID
- * @param studyNum study number
- * @param seriesNum series number
- * @param sqrlSeries copy of squirrelSeries object
- * @return true if found, false otherwise
- */
-bool squirrel::GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries) {
-    squirrelSubject sqrlSubject;
-    squirrelStudy sqrlStudy;
-    bool subjectFound = false;
-    bool studyFound = false;
-
-    /* first, find subject by ID */
-    for (int i=0; i < subjectList.size(); i++) {
-        if (subjectList[i].ID == ID) {
-            sqrlSubject = subjectList[i];
-            subjectFound = true;
-            break;
-        }
-    }
-
-    /* next, find study by number */
-    if (subjectFound) {
-        for (int i=0; i < sqrlSubject.studyList.size(); i++) {
-            if (sqrlSubject.studyList[i].number == studyNum) {
-                sqrlStudy = sqrlSubject.studyList[i];
-                studyFound = true;
-                break;
-            }
-        }
-    }
-
-    /* then, find series by number */
-    if (studyFound) {
-        for (int i=0; i < sqrlStudy.seriesList.size(); i++) {
-            if (sqrlStudy.seriesList[i].number == seriesNum) {
-                sqrlSeries = sqrlStudy.seriesList[i];
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetSubjectList --------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Get a copy of the list of subjects
- * @param subjects QList of squirrelSubject objects
- * @return always true, even if empty
- */
-bool squirrel::GetSubjectList(QList<squirrelSubject> &subjects) {
-
-    subjects = subjectList;
-
-    return true;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetStudyList ----------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of a list of studies
- * @param ID subject ID
- * @param studies QList of squirrelStudy objects
- * @return true if found, false otherwise
- */
-bool squirrel::GetStudyList(QString ID, QList<squirrelStudy> &studies) {
-    squirrelSubject sqrlSubj;
-
-    if (GetSubject(ID, sqrlSubj)) {
-        studies = sqrlSubj.studyList;
-        return true;
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetSeriesList ---------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for a get a copy of a list of series
- * @param ID subject ID
- * @param studyNum study number
- * @param series QList of squirrelSeries objects
- * @return true if found, false otherwise
- */
-bool squirrel::GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series) {
-    squirrelStudy sqrlStudy;
-    if (GetStudy(ID, studyNum, sqrlStudy)) {
-        series = sqrlStudy.seriesList;
-        return true;
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetDrugList ------------------------------------------ */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for an get a copy of a list of drugs
- * @param ID subject ID
- * @param drugs QList of squirrelDrug objects
- * @return true if found, false otherwise
- */
-bool squirrel::GetDrugList(QString ID, QList<squirrelDrug> &drugs) {
-    squirrelSubject sqrlSubj;
-
-    if (GetSubject(ID, sqrlSubj)) {
-        drugs = sqrlSubj.drugList;
-        return true;
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetMeasureList --------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of a list of measure objects
- * @param ID subject ID
- * @param measures QList of squirrelMeasure objects
- * @return true if found, false otherwise
- */
-bool squirrel::GetMeasureList(QString ID, QList<squirrelMeasure> &measures) {
-    squirrelSubject sqrlSubj;
-
-    if (GetSubject(ID, sqrlSubj)) {
-        measures = sqrlSubj.measureList;
-        return true;
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetAnalysis ------------------------------------------ */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of an analysis
- * @param ID subject ID
- * @param studyNum study number
- * @param pipelineName pipeline name
- * @param sqrlAnalysis copy of a squirrelAnalysis object
- * @return true if found, false otherwise
- */
-bool squirrel::GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis) {
-    squirrelStudy sqrlStudy;
-    if (GetStudy(ID, studyNum, sqrlStudy)) {
-
-        /* find analysis by pipelineName */
-        for (int i=0; i < sqrlStudy.analysisList.size(); i++) {
-            if (sqrlStudy.analysisList[i].pipelineName == pipelineName) {
-                sqrlAnalysis = sqrlStudy.analysisList[i];
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetPipeline ------------------------------------------ */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for and get a copy of a pipeline
- * @param pipelineName pipeline name
- * @param sqrlPipeline copy of a squirrelPipeline object
- * @return true if found, false otherwise
- */
-bool squirrel::GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline) {
-
-    /* find pipeline by name */
-    for (int i=0; i < pipelineList.size(); i++) {
-        if (pipelineList[i].pipelineName == pipelineName) {
-            sqrlPipeline = pipelineList[i];
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetExperiment ---------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Search for a get a copy of an experiment
- * @param experimentName experiment name
- * @param sqrlExperiment copy of a squirrelExperiment object
- * @return true if found, false otherwise
- */
-bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment) {
-
-    /* find experiment by name */
-    for (int i=0; i < experimentList.size(); i++) {
-        if (experimentList[i].experimentName == experimentName) {
-            sqrlExperiment = experimentList[i];
-            return true;
-        }
-    }
-
-    return false;
-}
+// /* ------------------------------------------------------------ */
+// /* ----- GetSubjectIndex -------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for index of a subject
+//  * @param ID subject ID
+//  * @return index of the subject, if found. -1 if not found
+//  */
+// int squirrel::GetSubjectIndex(QString ID) {
+
+//     /* find subject by ID */
+//     for (int i=0; i < subjectList.size(); i++) {
+//         if (subjectList[i].ID == ID) {
+//             return i;
+//         }
+//     }
+
+//     return -1;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetStudyIndex ---------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for index of a study
+//  * @param ID subject ID
+//  * @param studyNum study number
+//  * @return index of the study if found, -1 otherwise
+//  */
+// int squirrel::GetStudyIndex(QString ID, int studyNum) {
+
+//     /* first, find subject by ID */
+//     for (int i=0; i < subjectList.size(); i++) {
+//         if (subjectList[i].ID == ID) {
+//             /* next, find study by number */
+//             for (int j=0; j < subjectList[i].studyList.size(); j++) {
+//                 if (subjectList[i].studyList[j].number == studyNum) {
+//                     return j;
+//                 }
+//             }
+//         }
+//     }
+
+//     return -1;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetSeriesIndex --------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for index of a series
+//  * @param ID subject ID
+//  * @param studyNum study number
+//  * @param seriesNum series number
+//  * @return index of the series if found, -1 otherwise
+//  */
+// int squirrel::GetSeriesIndex(QString ID, int studyNum, int seriesNum) {
+//     squirrelSubject sqrlSubject;
+//     squirrelStudy sqrlStudy;
+//     bool subjectFound = false;
+//     bool studyFound = false;
+
+//     /* first, find subject by ID */
+//     for (int i=0; i < subjectList.size(); i++) {
+//         if (subjectList[i].ID == ID) {
+//             sqrlSubject = subjectList[i];
+//             subjectFound = true;
+//             break;
+//         }
+//     }
+
+//     /* next, find study by number */
+//     if (subjectFound) {
+//         for (int j=0; j < sqrlSubject.studyList.size(); j++) {
+//             if (sqrlSubject.studyList[j].number == studyNum) {
+//                 sqrlStudy = sqrlSubject.studyList[j];
+//                 studyFound = true;
+//                 break;
+//             }
+//         }
+//     }
+
+//     /* then, find series by number */
+//     if (studyFound) {
+//         for (int k=0; k < sqrlStudy.seriesList.size(); k++) {
+//             if (sqrlStudy.seriesList[k].number == seriesNum) {
+//                 return k;
+//             }
+//         }
+//     }
+
+//     return -1;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetPipelineIndex ------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for index of a pipeline
+//  * @param pipelineName pipeline name
+//  * @return index of pipeline if found, -1 otherwise
+//  */
+// int squirrel::GetPipelineIndex(QString pipelineName) {
+
+//     /* find pipeline by name */
+//     for (int i=0; i < pipelineList.size(); i++) {
+//         if (pipelineList[i].pipelineName == pipelineName) {
+//             return i;
+//         }
+//     }
+
+//     return -1;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetExperimentIndex ----------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for index of an experiment
+//  * @param experimentName experiment name
+//  * @return index of experiment if found, -1 otherwise
+//  */
+// int squirrel::GetExperimentIndex(QString experimentName) {
+
+//     /* find experiment by name */
+//     for (int i=0; i < experimentList.size(); i++) {
+//         if (experimentList[i].experimentName == experimentName) {
+//             return i;
+//         }
+//     }
+
+//     return -1;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetSubject ------------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of a subject
+//  * @param ID subject ID
+//  * @param sqrlSubject copy of squirrelSubject object
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetSubject(QString ID, squirrelSubject &sqrlSubject) {
+
+//     /* find subject by ID */
+//     for (int i=0; i < subjectList.size(); i++) {
+//         if (subjectList[i].ID == ID) {
+//             sqrlSubject = subjectList[i];
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetStudy --------------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of a study
+//  * @param ID subjectID
+//  * @param studyNum studyNumber
+//  * @param sqrlStudy copy of squirrelStudy object
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy) {
+
+//     squirrelSubject sqrlSubject;
+//     bool subjectFound = false;
+
+//     /* first, find subject by ID */
+//     for (int i=0; i < subjectList.size(); i++) {
+//         if (subjectList[i].ID == ID) {
+//             sqrlSubject = subjectList[i];
+//             subjectFound = true;
+//             break;
+//         }
+//     }
+
+//     /* next, find study by number */
+//     if (subjectFound) {
+//         for (int i=0; i < sqrlSubject.studyList.size(); i++) {
+//             if (sqrlSubject.studyList[i].number == studyNum) {
+//                 sqrlStudy = sqrlSubject.studyList[i];
+//                 return true;
+//             }
+//         }
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetSeries -------------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of a series
+//  * @param ID subject ID
+//  * @param studyNum study number
+//  * @param seriesNum series number
+//  * @param sqrlSeries copy of squirrelSeries object
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries) {
+//     squirrelSubject sqrlSubject;
+//     squirrelStudy sqrlStudy;
+//     bool subjectFound = false;
+//     bool studyFound = false;
+
+//     /* first, find subject by ID */
+//     for (int i=0; i < subjectList.size(); i++) {
+//         if (subjectList[i].ID == ID) {
+//             sqrlSubject = subjectList[i];
+//             subjectFound = true;
+//             break;
+//         }
+//     }
+
+//     /* next, find study by number */
+//     if (subjectFound) {
+//         for (int i=0; i < sqrlSubject.studyList.size(); i++) {
+//             if (sqrlSubject.studyList[i].number == studyNum) {
+//                 sqrlStudy = sqrlSubject.studyList[i];
+//                 studyFound = true;
+//                 break;
+//             }
+//         }
+//     }
+
+//     /* then, find series by number */
+//     if (studyFound) {
+//         for (int i=0; i < sqrlStudy.seriesList.size(); i++) {
+//             if (sqrlStudy.seriesList[i].number == seriesNum) {
+//                 sqrlSeries = sqrlStudy.seriesList[i];
+//                 return true;
+//             }
+//         }
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetSubjectList --------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Get a copy of the list of subjects
+//  * @param subjects QList of squirrelSubject objects
+//  * @return always true, even if empty
+//  */
+// bool squirrel::GetSubjectList(QList<squirrelSubject> &subjects) {
+
+//     subjects = subjectList;
+
+//     return true;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetStudyList ----------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of a list of studies
+//  * @param ID subject ID
+//  * @param studies QList of squirrelStudy objects
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetStudyList(QString ID, QList<squirrelStudy> &studies) {
+//     squirrelSubject sqrlSubj;
+
+//     if (GetSubject(ID, sqrlSubj)) {
+//         studies = sqrlSubj.studyList;
+//         return true;
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetSeriesList ---------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for a get a copy of a list of series
+//  * @param ID subject ID
+//  * @param studyNum study number
+//  * @param series QList of squirrelSeries objects
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series) {
+//     squirrelStudy sqrlStudy;
+//     if (GetStudy(ID, studyNum, sqrlStudy)) {
+//         series = sqrlStudy.seriesList;
+//         return true;
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetDrugList ------------------------------------------ */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for an get a copy of a list of drugs
+//  * @param ID subject ID
+//  * @param drugs QList of squirrelDrug objects
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetDrugList(QString ID, QList<squirrelDrug> &drugs) {
+//     squirrelSubject sqrlSubj;
+
+//     if (GetSubject(ID, sqrlSubj)) {
+//         drugs = sqrlSubj.drugList;
+//         return true;
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetMeasureList --------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of a list of measure objects
+//  * @param ID subject ID
+//  * @param measures QList of squirrelMeasure objects
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetMeasureList(QString ID, QList<squirrelMeasure> &measures) {
+//     squirrelSubject sqrlSubj;
+
+//     if (GetSubject(ID, sqrlSubj)) {
+//         measures = sqrlSubj.measureList;
+//         return true;
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetAnalysis ------------------------------------------ */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of an analysis
+//  * @param ID subject ID
+//  * @param studyNum study number
+//  * @param pipelineName pipeline name
+//  * @param sqrlAnalysis copy of a squirrelAnalysis object
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis) {
+//     squirrelStudy sqrlStudy;
+//     if (GetStudy(ID, studyNum, sqrlStudy)) {
+
+//         /* find analysis by pipelineName */
+//         for (int i=0; i < sqrlStudy.analysisList.size(); i++) {
+//             if (sqrlStudy.analysisList[i].pipelineName == pipelineName) {
+//                 sqrlAnalysis = sqrlStudy.analysisList[i];
+//                 return true;
+//             }
+//         }
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetPipeline ------------------------------------------ */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for and get a copy of a pipeline
+//  * @param pipelineName pipeline name
+//  * @param sqrlPipeline copy of a squirrelPipeline object
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline) {
+
+//     /* find pipeline by name */
+//     for (int i=0; i < pipelineList.size(); i++) {
+//         if (pipelineList[i].pipelineName == pipelineName) {
+//             sqrlPipeline = pipelineList[i];
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
+
+
+// /* ------------------------------------------------------------ */
+// /* ----- GetExperiment ---------------------------------------- */
+// /* ------------------------------------------------------------ */
+// /**
+//  * @brief Search for a get a copy of an experiment
+//  * @param experimentName experiment name
+//  * @param sqrlExperiment copy of a squirrelExperiment object
+//  * @return true if found, false otherwise
+//  */
+// bool squirrel::GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment) {
+
+//     /* find experiment by name */
+//     for (int i=0; i < experimentList.size(); i++) {
+//         if (experimentList[i].experimentName == experimentName) {
+//             sqrlExperiment = experimentList[i];
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
 
 
 /* ------------------------------------------------------------ */
@@ -1864,18 +1864,18 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
  */
 void squirrel::PrintSubjects(bool details) {
 
-    if (details) {
-        foreach (squirrelSubject s, subjectList) {
-            s.PrintSubject();
+    QList <squirrelSubject> subjects = GetAllSubjects();
+    QStringList subjectIDs;
+    foreach (squirrelSubject s, subjects) {
+        if (s.Get()) {
+            if (details)
+                s.PrintSubject();
+            else
+                subjectIDs.append(s.ID);
         }
     }
-    else {
-        QStringList ids;
-        foreach (squirrelSubject s, subjectList) {
-            ids.append(s.ID);
-        }
-        utils::Print(ids.join(" "));
-    }
+    if (details)
+        utils::Print(subjectIDs.join(" "));
 }
 
 
@@ -1887,25 +1887,19 @@ void squirrel::PrintSubjects(bool details) {
  * @param subjectID the subject ID to print studies for
  * @param details true to print details, false to print list of study numbers
  */
-void squirrel::PrintStudies(QString subjectID, bool details) {
-    if (details) {
-        squirrelSubject sqrlSubject;
-        if (GetSubject(subjectID, sqrlSubject)) {
-            foreach (squirrelStudy s, sqrlSubject.studyList) {
+void squirrel::PrintStudies(int subjectRowID, bool details) {
+    QList <squirrelStudy> studies = GetStudies(subjectRowID);
+    QStringList studyNumbers;
+    foreach (squirrelStudy s, studies) {
+        if (s.Get()) {
+            if (details)
                 s.PrintStudy();
-            }
+            else
+                studyNumbers.append(QString("%1").arg(s.number));
         }
     }
-    else {
-        QStringList studynums;
-        squirrelSubject sqrlSubject;
-        if (GetSubject(subjectID, sqrlSubject)) {
-            foreach (squirrelStudy s, sqrlSubject.studyList) {
-                studynums.append(QString("%1").arg(s.number));
-            }
-        }
-        utils::Print(studynums.join(" "));
-    }
+    if (details)
+        utils::Print(studyNumbers.join(" "));
 }
 
 
@@ -1918,25 +1912,19 @@ void squirrel::PrintStudies(QString subjectID, bool details) {
  * @param studyNum the study number
  * @param details true to print details, false to print list of series numbers
  */
-void squirrel::PrintSeries(QString subjectID, int studyNum, bool details) {
-    if (details) {
-        squirrelStudy sqrlStudy;
-        if (GetStudy(subjectID, studyNum, sqrlStudy)) {
-            foreach (squirrelSeries s, sqrlStudy.seriesList) {
+void squirrel::PrintSeries(int studyRowID, bool details) {
+    QList <squirrelSeries> series = GetSeries(studyRowID);
+    QStringList seriesNumbers;
+    foreach (squirrelSeries s, series) {
+        if (s.Get()) {
+            if (details)
                 s.PrintSeries();
-            }
+            else
+                seriesNumbers.append(QString("%1").arg(s.number));
         }
     }
-    else {
-        QStringList seriesnums;
-        squirrelStudy sqrlStudy;
-        if (GetStudy(subjectID, studyNum, sqrlStudy)) {
-            foreach (squirrelSeries s, sqrlStudy.seriesList) {
-                seriesnums.append(QString("%1").arg(s.number));
-            }
-        }
-        utils::Print(seriesnums.join(" "));
-    }
+    if (details)
+        utils::Print(seriesNumbers.join(" "));
 }
 
 
@@ -1968,18 +1956,18 @@ void squirrel::PrintExperiments(bool details) {
  * @param details true to print details, false to print list of pipeline names
  */
 void squirrel::PrintPipelines(bool details) {
-    if (details) {
-        foreach (squirrelPipeline p, pipelineList) {
-            p.PrintPipeline();
+    QList <squirrelPipeline> pipelines = GetAllPipelines();
+    QStringList pipelineNames;
+    foreach (squirrelPipeline p, pipelines) {
+        if (p.Get()) {
+            if (details)
+                p.PrintPipeline();
+            else
+                pipelineNames.append(p.pipelineName);
         }
     }
-    else {
-        QStringList pipes;
-        foreach (squirrelPipeline p, pipelineList) {
-            pipes.append(p.pipelineName);
-        }
-        utils::Print(pipes.join(" "));
-    }
+    if (details)
+        utils::Print(pipelineNames.join(" "));
 }
 
 
