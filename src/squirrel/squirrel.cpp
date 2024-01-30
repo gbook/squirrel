@@ -643,7 +643,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
                     /* get path of first file to be converted */
                     if (series.stagedFiles.size() > 0) {
-                        Log(QString("Converting [%1] files to nifti").arg(ser.stagedFiles.size()), __FUNCTION__, true);
+                        Log(QString("Converting [%1] files to nifti").arg(series.stagedFiles.size()), __FUNCTION__, true);
 
                         QFileInfo f(series.stagedFiles[0]);
                         QString origSeriesPath = f.absoluteDir().absolutePath();
@@ -721,17 +721,32 @@ bool squirrel::write(QString outpath, QString &filepath) {
     data["subjects"] = JSONsubjects;
     root["data"] = data;
 
-    /* add pipelines */
-    if (pipelineList.size() > 0) {
-        Log(QString("Adding [%1] pipelines...").arg(pipelineList.size()), __FUNCTION__);
+    /* add pipelines -- Get pipeline list from SQLite database */
+    QList <squirrelPipeline> pipelines = GetAllPipelines();
+    if (pipelines.size() > 0) {
+        Log(QString("Adding [%1] pipelines...").arg(pipelines.size()), __FUNCTION__);
         QJsonArray JSONpipelines;
-        for (int i=0; i < pipelineList.size(); i++) {
-            JSONpipelines.append(pipelineList[i].ToJSON(workingDir));
-            Log(QString("Added pipeline [%1]").arg(pipelineList[i].pipelineName), __FUNCTION__, true);
+        foreach (squirrelPipeline p, pipelines) {
+            if (p.Get()) {
+                JSONpipelines.append(p.ToJSON(workingDir));
+                Log(QString("Added pipeline [%1]").arg(p.pipelineName), __FUNCTION__, true);
+            }
         }
         root["NumPipelines"] = JSONpipelines.size();
         root["pipelines"] = JSONpipelines;
     }
+
+    /* add pipelines */
+    //if (pipelineList.size() > 0) {
+    //    Log(QString("Adding [%1] pipelines...").arg(pipelineList.size()), __FUNCTION__);
+    //    QJsonArray JSONpipelines;
+    //    for (int i=0; i < pipelineList.size(); i++) {
+    //        JSONpipelines.append(pipelineList[i].ToJSON(workingDir));
+    //        Log(QString("Added pipeline [%1]").arg(pipelineList[i].pipelineName), __FUNCTION__, true);
+    //    }
+    //    root["NumPipelines"] = JSONpipelines.size();
+    //    root["pipelines"] = JSONpipelines;
+    //}
 
     /* add experiments -- Get experiment list from SQLite database */
     QList <squirrelExperiment> exps = GetAllExperiments();
@@ -845,37 +860,40 @@ void squirrel::print() {
     PrintPackage();
 
     /* iterate through subjects */
-    for (int i=0; i < subjectList.size(); i++) {
-        squirrelSubject sub = subjectList[i];
+    QList<squirrelSubject> subjects = GetAllSubjects();
+    foreach (squirrelSubject sub, subjects) {
+        int subjectRowID = sub.GetObjectID();
         sub.PrintSubject();
 
         /* iterate through studies */
-        for (int j=0; j < sub.studyList.size(); j++) {
-            squirrelStudy stud = sub.studyList[j];
-            stud.PrintStudy();
+        QList<squirrelStudy> studies = GetStudies(subjectRowID);
+        foreach (squirrelStudy study, studies) {
+            int studyRowID = study.GetObjectID();
+            study.PrintStudy();
 
             /* iterate through series */
-            for (int k=0; k < stud.seriesList.size(); k++) {
-                squirrelSeries ser = stud.seriesList[k];
-                ser.PrintSeries();
+            QList<squirrelSeries> series = GetSeries(studyRowID);
+            foreach (squirrelSeries series, series) {
+                //int seriesRowID = series.GetObjectID();
+                series.PrintSeries();
             }
 
             /* iterate through analyses */
-            for (int k=0; k < stud.analysisList.size(); k++) {
-                squirrelAnalysis an = stud.analysisList[k];
-                an.PrintAnalysis();
+            QList<squirrelAnalysis> analyses = GetAnalyses(studyRowID);
+            foreach (squirrelAnalysis analysis, analyses) {
+                analysis.PrintAnalysis();
             }
         }
 
         /* iterate through measures */
-        for (int j=0; j < sub.measureList.size(); j++) {
-            squirrelMeasure meas = sub.measureList[j];
-            meas.PrintMeasure();
+        QList<squirrelMeasure> measures = GetMeasures(subjectRowID);
+        foreach (squirrelMeasure measure, measures) {
+            measure.PrintMeasure();
         }
 
         /* iterate through drugs */
-        for (int j=0; j < sub.drugList.size(); j++) {
-            squirrelDrug drug = sub.drugList[j];
+        QList<squirrelDrug> drugs = GetDrugs(subjectRowID);
+        foreach (squirrelDrug drug, drugs) {
             drug.PrintDrug();
         }
     }
@@ -906,23 +924,23 @@ qint64 squirrel::GetUnzipSize() {
     qint64 unzipSize(0);
 
     /* iterate through subjects */
-    for (int i=0; i < subjectList.size(); i++) {
-        squirrelSubject sub = subjectList[i];
-        /* iterate through studies */
-        for (int j=0; j < sub.studyList.size(); j++) {
-            squirrelStudy stud = sub.studyList[j];
-            /* iterate through series */
-            for (int k=0; k < stud.seriesList.size(); k++) {
-                squirrelSeries ser = stud.seriesList[k];
-                unzipSize += ser.size;
-            }
-            /* iterate through analyses */
-            for (int k=0; k < stud.analysisList.size(); k++) {
-                squirrelAnalysis an = stud.analysisList[k];
-                unzipSize += an.size;
-            }
-        }
-    }
+    // for (int i=0; i < subjectList.size(); i++) {
+    //     squirrelSubject sub = subjectList[i];
+    //     /* iterate through studies */
+    //     for (int j=0; j < sub.studyList.size(); j++) {
+    //         squirrelStudy stud = sub.studyList[j];
+    //         /* iterate through series */
+    //         for (int k=0; k < stud.seriesList.size(); k++) {
+    //             squirrelSeries ser = stud.seriesList[k];
+    //             unzipSize += ser.size;
+    //         }
+    //         /* iterate through analyses */
+    //         for (int k=0; k < stud.analysisList.size(); k++) {
+    //             squirrelAnalysis an = stud.analysisList[k];
+    //             unzipSize += an.size;
+    //         }
+    //     }
+    // }
     return unzipSize;
 }
 
@@ -2079,6 +2097,72 @@ QList<squirrelSeries> squirrel::GetSeries(int studyRowID) {
             s.SetObjectID(q.value("SeriesRowID").toInt());
             if (s.Get()) {
                 list.append(s);
+            }
+        }
+    }
+    return list;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetAnalyses ------------------------------------------ */
+/* ------------------------------------------------------------ */
+QList<squirrelAnalysis> squirrel::GetAnalyses(int studyRowID) {
+    QSqlQuery q;
+    QList<squirrelAnalysis> list;
+    q.prepare("select AnalysisRowID from Analysis where StudyRowID = :id");
+    q.bindValue(":id", studyRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        while (q.next()) {
+            squirrelAnalysis a;
+            a.SetObjectID(q.value("AnalysisRowID").toInt());
+            if (a.Get()) {
+                list.append(a);
+            }
+        }
+    }
+    return list;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetMeasures ------------------------------------------ */
+/* ------------------------------------------------------------ */
+QList<squirrelMeasure> squirrel::GetMeasures(int subjectRowID) {
+    QSqlQuery q;
+    QList<squirrelMeasure> list;
+    q.prepare("select MeasureRowID from Measures where SubjectRowID = :id");
+    q.bindValue(":id", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        while (q.next()) {
+            squirrelMeasure m;
+            m.SetObjectID(q.value("MeasureRowID").toInt());
+            if (m.Get()) {
+                list.append(m);
+            }
+        }
+    }
+    return list;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetDrugs --------------------------------------------- */
+/* ------------------------------------------------------------ */
+QList<squirrelDrug> squirrel::GetDrugs(int subjectRowID) {
+    QSqlQuery q;
+    QList<squirrelDrug> list;
+    q.prepare("select DrugRowID from Drugs where SubjectRowID = :id");
+    q.bindValue(":id", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        while (q.next()) {
+            squirrelDrug d;
+            d.SetObjectID(q.value("DrugRowID").toInt());
+            if (d.Get()) {
+                list.append(d);
             }
         }
     }

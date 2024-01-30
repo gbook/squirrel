@@ -85,6 +85,9 @@ public:
     QList<squirrelSubject> GetAllSubjects();
     QList<squirrelStudy> GetStudies(int subjectRowID);
     QList<squirrelSeries> GetSeries(int studyRowID);
+    QList<squirrelAnalysis> GetAnalyses(int studyRowID);
+    QList<squirrelMeasure> GetMeasures(int subjectRowID);
+    QList<squirrelDrug> GetDrugs(int subjectRowID);
     QList<squirrelGroupAnalysis> GetAllGroupAnalyses();
     QList<squirrelDataDictionary> GetAllDataDictionaries();
 
