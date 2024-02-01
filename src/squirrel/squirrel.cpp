@@ -79,7 +79,8 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(":memory:");
+    //db.setDatabaseName(":memory:");
+    db.setDatabaseName("C:/Temp/sqlite.db");
 
     if (db.open()) {
         utils::Print("Successfuly opened SQLite memory database");
@@ -700,18 +701,65 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
     QJsonObject data;
     QJsonArray JSONsubjects;
+
     /* add subjects */
-    for (int i=0; i < subjectList.size(); i++) {
-        JSONsubjects.append(subjectList[i].ToJSON());
+
+    /* iterate through subjects */
+    QList<squirrelSubject> subjects = GetAllSubjects();
+    foreach (squirrelSubject subject, subjects) {
+        int subjectRowID = subject.GetObjectID();
+        subject.ToJSON();
+
+        /* iterate through studies */
+        QList<squirrelStudy> studies = GetStudies(subjectRowID);
+        foreach (squirrelStudy study, studies) {
+            int studyRowID = study.GetObjectID();
+            study.PrintStudy();
+
+            /* iterate through series */
+            QList<squirrelSeries> serieses = GetSeries(studyRowID);
+            foreach (squirrelSeries series, serieses) {
+                series.PrintSeries();
+            }
+
+            /* iterate through analyses */
+            QList<squirrelAnalysis> analyses = GetAnalyses(studyRowID);
+            foreach (squirrelAnalysis analysis, analyses) {
+                analysis.PrintAnalysis();
+            }
+        }
+
+        /* iterate through measures */
+        QList<squirrelMeasure> measures = GetMeasures(subjectRowID);
+        foreach (squirrelMeasure measure, measures) {
+            measure.PrintMeasure();
+        }
+
+        /* iterate through drugs */
+        QList<squirrelDrug> drugs = GetDrugs(subjectRowID);
+        foreach (squirrelDrug drug, drugs) {
+            drug.PrintDrug();
+        }
+        JSONsubjects.append(subject.ToJSON());
     }
 
+    //QList <squirrelSubject> subjects = GetAllSubjects();
+    //foreach (squirrelSubject s, subjects) {
+    //    if (s.Get()) {
+    //        JSONsubjects.append(subjectList[i].ToJSON());
+    //    }
+    //}
+
     /* add group-analyses */
-    if (groupAnalysisList.size() > 0) {
-        Log(QString("Adding [%1] group-analyses...").arg(groupAnalysisList.size()), __FUNCTION__);
+    QList <squirrelGroupAnalysis> groupAnalyses = GetAllGroupAnalyses();
+    if (groupAnalyses.size() > 0) {
+        Log(QString("Adding [%1] group-analyses...").arg(groupAnalyses.size()), __FUNCTION__);
         QJsonArray JSONgroupanalyses;
-        for (int i=0; i < groupAnalysisList.size(); i++) {
-            JSONgroupanalyses.append(groupAnalysisList[i].ToJSON());
-            Log(QString("Added group-analysis [%1]").arg(groupAnalysisList[i].groupAnalysisName), __FUNCTION__, true);
+        foreach (squirrelGroupAnalysis g, groupAnalyses) {
+            if (g.Get()) {
+                JSONgroupanalyses.append(g.ToJSON());
+                Log(QString("Added group-analysis [%1]").arg(g.groupAnalysisName), __FUNCTION__, true);
+            }
         }
         data["NumGroupAnalyses"] = JSONgroupanalyses.size();
         data["group-analysis"] = JSONgroupanalyses;
@@ -736,18 +784,6 @@ bool squirrel::write(QString outpath, QString &filepath) {
         root["pipelines"] = JSONpipelines;
     }
 
-    /* add pipelines */
-    //if (pipelineList.size() > 0) {
-    //    Log(QString("Adding [%1] pipelines...").arg(pipelineList.size()), __FUNCTION__);
-    //    QJsonArray JSONpipelines;
-    //    for (int i=0; i < pipelineList.size(); i++) {
-    //        JSONpipelines.append(pipelineList[i].ToJSON(workingDir));
-    //        Log(QString("Added pipeline [%1]").arg(pipelineList[i].pipelineName), __FUNCTION__, true);
-    //    }
-    //    root["NumPipelines"] = JSONpipelines.size();
-    //    root["pipelines"] = JSONpipelines;
-    //}
-
     /* add experiments -- Get experiment list from SQLite database */
     QList <squirrelExperiment> exps = GetAllExperiments();
     if (exps.size() > 0) {
@@ -762,17 +798,6 @@ bool squirrel::write(QString outpath, QString &filepath) {
         root["NumExperiments"] = JSONexperiments.size();
         root["experiments"] = JSONexperiments;
     }
-
-    //if (experimentList.size() > 0) {
-    //    Log(QString("Adding [%1] experiments...").arg(experimentList.size()), __FUNCTION__);
-    //    QJsonArray JSONexperiments;
-    //    for (int i=0; i < experimentList.size(); i++) {
-    //        JSONexperiments.append(experimentList[i].ToJSON());
-    //        Log(QString("Added experiment [%1]").arg(experimentList[i].experimentName), __FUNCTION__, true);
-    //    }
-    //    root["NumExperiments"] = JSONexperiments.size();
-    //    root["experiments"] = JSONexperiments;
-    //}
 
     /* add data-dictionary */
     QList <squirrelDataDictionary> dicts = GetAllDataDictionaries();
@@ -872,9 +897,8 @@ void squirrel::print() {
             study.PrintStudy();
 
             /* iterate through series */
-            QList<squirrelSeries> series = GetSeries(studyRowID);
-            foreach (squirrelSeries series, series) {
-                //int seriesRowID = series.GetObjectID();
+            QList<squirrelSeries> serieses = GetSeries(studyRowID);
+            foreach (squirrelSeries series, serieses) {
                 series.PrintSeries();
             }
 
@@ -899,16 +923,10 @@ void squirrel::print() {
     }
 
     /* iterate through pipelines */
-    for (int i=0; i < pipelineList.size(); i++) {
-        squirrelPipeline pipe = pipelineList[i];
-        pipe.PrintPipeline();
-    }
+    PrintPipelines();
 
     /* iterate through experiments */
-    for (int i=0; i < experimentList.size(); i++) {
-        squirrelExperiment exp = experimentList[i];
-        exp.PrintExperiment();
-    }
+    PrintExperiments();
 }
 
 
@@ -1165,18 +1183,18 @@ int squirrel::GetNumDataDictionaryItems() {
  * @param subj squirrelSubject to be added
  * @return true if added, false otherwise
  */
-bool squirrel::addSubject(squirrelSubject subj) {
+// bool squirrel::addSubject(squirrelSubject subj) {
 
-    /* check size of the subject list before and after adding */
-    qint64 size = subjectList.size();
+//     /* check size of the subject list before and after adding */
+//     qint64 size = subjectList.size();
 
-    subjectList.append(subj);
+//     subjectList.append(subj);
 
-    if (subjectList.size() > size)
-        return true;
-    else
-        return false;
-}
+//     if (subjectList.size() > size)
+//         return true;
+//     else
+//         return false;
+// }
 
 
 /* ------------------------------------------------------------ */
@@ -1187,18 +1205,18 @@ bool squirrel::addSubject(squirrelSubject subj) {
  * @param pipe squirrelPipeline to be added
  * @return true if added, false otherwise
  */
-bool squirrel::addPipeline(squirrelPipeline pipe) {
+// bool squirrel::addPipeline(squirrelPipeline pipe) {
 
-    /* check size of the pipeline list before and after adding */
-    qint64 size = pipelineList.size();
+//     /* check size of the pipeline list before and after adding */
+//     qint64 size = pipelineList.size();
 
-    pipelineList.append(pipe);
+//     pipelineList.append(pipe);
 
-    if (pipelineList.size() > size)
-        return true;
-    else
-        return false;
-}
+//     if (pipelineList.size() > size)
+//         return true;
+//     else
+//         return false;
+// }
 
 
 /* ------------------------------------------------------------ */
@@ -2151,6 +2169,27 @@ QList<squirrelDrug> squirrel::GetDrugs(int subjectRowID) {
             d.SetObjectID(q.value("DrugRowID").toInt());
             if (d.Get()) {
                 list.append(d);
+            }
+        }
+    }
+    return list;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetAllGroupAnalyses ---------------------------------- */
+/* ------------------------------------------------------------ */
+QList<squirrelGroupAnalysis> squirrel::GetAllGroupAnalyses() {
+    QSqlQuery q;
+    QList<squirrelGroupAnalysis> list;
+    q.prepare("select GroupAnalysisRowID from GroupAnalysis");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.size() > 0) {
+        while (q.next()) {
+            squirrelGroupAnalysis g;
+            g.SetObjectID(q.value("GroupAnalysisRowID").toInt());
+            if (g.Get()) {
+                list.append(g);
             }
         }
     }

@@ -220,8 +220,8 @@ QString tableSeries = QString("CREATE TABLE Series ("
     "NumFiles INTEGER DEFAULT 0,"
     "BehSize INTEGER DEFAULT 0,"
     "BehNumFiles INTEGER DEFAULT 0,"
-    "VirtualPath TEXT,"
     "Sequence INTEGER,"
+    "VirtualPath TEXT,"
     "UNIQUE(StudyRowID, SeriesNum))");
 
 QString tableStudy = QString("CREATE TABLE Study ("
