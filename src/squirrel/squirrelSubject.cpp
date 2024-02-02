@@ -48,6 +48,7 @@ bool squirrelSubject::Get() {
     if (objectID < 0) {
         valid = false;
         err = "objectID is not set";
+        qDebug() << "ObjectID is not set";
         return false;
     }
 
@@ -55,8 +56,7 @@ bool squirrelSubject::Get() {
     q.prepare("select * from Subject where SubjectRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
-        q.first();
+    if (q.next()) {
 
         /* get the data */
         objectID = q.value("SubjectRowID").toLongLong();
@@ -96,10 +96,11 @@ bool squirrelSubject::Get() {
  */
 bool squirrelSubject::Store() {
 
+    qDebug() << "Inside the Store() function";
     QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Subject (ID, AltIDs, GUID, DateOfBirth, Sex, Gender, Ethnicity1, Ethnicity2, Sequence, VirtualPath) values (:ID, :AltIDs, :GUID, :DateOfBirth, :Sex, :Gender, :Ethnicity1, :Ethnicity2, :Sequence, :VirtualPath)");
+        q.prepare("insert or ignore into Subject (ID, AltIDs, GUID, DateOfBirth, Sex, Gender, Ethnicity1, Ethnicity2, Sequence, VirtualPath) values (:ID, :AltIDs, :GUID, :DateOfBirth, :Sex, :Gender, :Ethnicity1, :Ethnicity2, :Sequence, :VirtualPath)");
         q.bindValue(":ID", ID);
         q.bindValue(":AltIDs", alternateIDs.join(","));
         q.bindValue(":GUID", GUID);
@@ -284,32 +285,57 @@ QJsonObject squirrelSubject::ToJSON() {
     json["Ethnicity2"] = ethnicity2;
     json["VirtualPath"] = virtualPath;
 
-  //   QJsonArray JSONstudies;
-  //   for (int i=0; i<studyList.size(); i++) {
-  //       JSONstudies.append(studyList[i].ToJSON());
-  //   }
-  //   json["NumStudies"] = JSONstudies.size();
-  //   json["studies"] = JSONstudies;
+    /* add studies */
+    QSqlQuery q;
+    q.prepare("select StudyRowID from Study where SubjectRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    QJsonArray JSONstudies;
+    while (q.next()) {
+        squirrelStudy s;
+        s.SetObjectID(q.value("StudyRowID").toInt());
+        if (s.Get()) {
+            JSONstudies.append(s.ToJSON());
+        }
+    }
+    if (JSONstudies.size() > 0) {
+        json["NumStudies"] = JSONstudies.size();
+        json["studies"] = JSONstudies;
+    }
 
-  //   /* add measures */
-  //   if (measureList.size() > 0) {
-  //       QJsonArray JSONmeasures;
-  //       for (int i=0; i < measureList.size(); i++) {
-  //           JSONmeasures.append(measureList[i].ToJSON());
-  //       }
-  //       json["NumMeasures"] = JSONmeasures.size();
-        // json["measures"] = JSONmeasures;
-  //   }
+    /* add measures */
+    q.prepare("select MeasureRowID from Measure where SubjectRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    QJsonArray JSONmeasures;
+    while (q.next()) {
+        squirrelMeasure m;
+        m.SetObjectID(q.value("MeasureRowID").toInt());
+        if (m.Get()) {
+            JSONmeasures.append(m.ToJSON());
+        }
+    }
+    if (JSONmeasures.size() > 0) {
+        json["NumMeasures"] = JSONmeasures.size();
+        json["measures"] = JSONmeasures;
+    }
 
-  //   /* add drugs */
-  //   if (drugList.size() > 0) {
-  //       QJsonArray JSONdrugs;
-  //       for (int i=0; i < drugList.size(); i++) {
-  //           JSONdrugs.append(drugList[i].ToJSON());
-  //       }
-  //       json["NumDrugs"] = JSONdrugs.size();
-        // json["drugs"] = JSONdrugs;
-  //   }
+    /* add drugs */
+    q.prepare("select DrugRowID from Drug where SubjectRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    QJsonArray JSONdrugs;
+    while (q.next()) {
+        squirrelDrug d;
+        d.SetObjectID(q.value("DrugRowID").toInt());
+        if (d.Get()) {
+            JSONdrugs.append(d.ToJSON());
+        }
+    }
+    if (JSONdrugs.size() > 0) {
+        json["NumDrugs"] = JSONdrugs.size();
+        json["drugs"] = JSONdrugs;
+    }
 
     return json;
 }

@@ -56,8 +56,8 @@ bool squirrelStudy::Get() {
     q.prepare("select * from Study where StudyRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
-        q.first();
+    if (q.next()) {
+        //q.first();
 
         /* get the data */
         objectID = q.value("StudyRowID").toLongLong();
@@ -112,7 +112,7 @@ bool squirrelStudy::Store() {
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         number = q.value("Max").toInt() + 1;
 
-        q.prepare("insert into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, Sequence, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :Sequence, :VirtualPath)");
+        q.prepare("insert or ignore into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, Sequence, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :Sequence, :VirtualPath)");
         q.bindValue(":SubjectRowID", subjectRowID);
         q.bindValue(":StudyNumber", number);
         q.bindValue(":Datetime", dateTime);
@@ -271,20 +271,54 @@ QJsonObject squirrelStudy::ToJSON() {
     json["VirtualPath"] = virtualPath;
 
     /* add all the series */
-	QJsonArray JSONseries;
-	for (int i=0; i<seriesList.size(); i++) {
-		JSONseries.append(seriesList[i].ToJSON());
-	}
-    json["NumSeries"] = JSONseries.size();
-	json["series"] = JSONseries;
+    QSqlQuery q;
+    q.prepare("select SeriesRowID from Series where StudyRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    QJsonArray JSONseries;
+    while (q.next()) {
+        squirrelSeries s;
+        s.SetObjectID(q.value("SeriesRowID").toInt());
+        if (s.Get()) {
+            JSONseries.append(s.ToJSON());
+        }
+    }
+    if (JSONseries.size() > 0) {
+        json["NumSeries"] = JSONseries.size();
+        json["series"] = JSONseries;
+    }
+
+    // QJsonArray JSONseries;
+    // for (int i=0; i<seriesList.size(); i++) {
+    // 	JSONseries.append(seriesList[i].ToJSON());
+    // }
+ //    json["NumSeries"] = JSONseries.size();
+    // json["series"] = JSONseries;
 
     /* add all the analyses */
-    QJsonArray JSONanalyses;
-    for (int i=0; i<analysisList.size(); i++) {
-        JSONanalyses.append(analysisList[i].ToJSON());
+    q.prepare("select AnalysisRowID from Analysis where StudyRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    QJsonArray JSONanalysis;
+    while (q.next()) {
+        squirrelSeries s;
+        s.SetObjectID(q.value("SeriesRowID").toInt());
+        if (s.Get()) {
+            JSONanalysis.append(s.ToJSON());
+        }
     }
-    json["NumAnalyses"] = JSONanalyses.size();
-    json["analyses"] = JSONanalyses;
+    if (JSONanalysis.size() > 0) {
+        json["NumAnalyses"] = JSONanalysis.size();
+        json["analyses"] = JSONanalysis;
+    }
+
+
+    // QJsonArray JSONanalyses;
+    // for (int i=0; i<analysisList.size(); i++) {
+    //     JSONanalyses.append(analysisList[i].ToJSON());
+    // }
+    // json["NumAnalyses"] = JSONanalyses.size();
+    // json["analyses"] = JSONanalyses;
 
 	return json;
 }

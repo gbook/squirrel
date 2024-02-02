@@ -50,8 +50,8 @@ bool squirrelSeries::Get() {
     q.prepare("select * from Series where SeriesRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
-        q.first();
+    if (q.next()) {
+        //q.first();
 
         /* get the data */
         objectID = q.value("SeriesRowID").toLongLong();
@@ -102,7 +102,7 @@ bool squirrelSeries::Store() {
     QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, Sequence, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :Sequence, :VirtualPath)");
+        q.prepare("insert or ignore into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, Sequence, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :Sequence, :VirtualPath)");
         q.bindValue(":StudyRowID", objectID);
         q.bindValue(":SeriesNum", objectID);
         q.bindValue(":Datetime", objectID);

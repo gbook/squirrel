@@ -50,8 +50,7 @@ bool squirrelDrug::Get() {
     q.prepare("select * from Drug where DrugRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
-        q.first();
+    if (q.next()) {
 
         /* get the data */
         objectID = q.value("DrugRowID").toLongLong();

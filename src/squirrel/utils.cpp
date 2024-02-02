@@ -243,58 +243,6 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
-    /* --------- MoveFile --------------------------------------- */
-    /* ---------------------------------------------------------- */
-    bool MoveFile(QString f, QString dir, QString &m) {
-
-        QDir d;
-        if (d.exists(dir)) {
-            QString systemstring;
-            systemstring = QString("mv %1 %2/").arg(f).arg(dir);
-
-            QString output = SystemCommand(systemstring, false).trimmed();
-            if (output != "") {
-                m = output;
-                return false;
-            }
-        }
-        else {
-            m = QString("Directory [%1] does not exist").arg(dir);
-            return false;
-        }
-
-        return true;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- RenameFile ------------------------------------- */
-    /* ---------------------------------------------------------- */
-    bool RenameFile(QString filepathorig, QString filepathnew, bool force) {
-
-        if (filepathorig == filepathnew) {
-            //WriteLog("RenameFile - old and new filename are the same");
-            return true;
-        }
-
-        QString systemstring;
-        if (force)
-            systemstring = QString("mv -f %1 %2").arg(filepathorig).arg(filepathnew);
-        else
-            systemstring = QString("mv %1 %2").arg(filepathorig).arg(filepathnew);
-
-        QString output = SystemCommand(systemstring, false).trimmed();
-        /* check if there's an error message from mv */
-        if (output == "")
-            return true;
-        else {
-            //WriteLog("RenameFile() error. Running [" + systemstring + "] produced output [" + output + "]");
-            return false;
-        }
-    }
-
-
-    /* ---------------------------------------------------------- */
     /* --------- FindAllFiles ----------------------------------- */
     /* ---------------------------------------------------------- */
     QStringList FindAllFiles(QString dir, QString pattern, bool recursive) {
@@ -315,57 +263,6 @@ namespace utils {
         return files;
     }
 
-
-    /* ---------------------------------------------------------- */
-    /* --------- FindFirstFile ---------------------------------- */
-    /* ---------------------------------------------------------- */
-    bool FindFirstFile(QString dir, QString pattern, QString &f, QString &msg, bool recursive) {
-
-        QDir d = QDir(dir);
-        if (!d.exists()) {
-            msg = "Directory [" + dir + "] does not exist";
-            return false;
-        }
-
-        f = "";
-
-        if (recursive) {
-            QDirIterator it(dir, QStringList() << pattern, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks, QDirIterator::Subdirectories);
-            if (it.hasNext())
-                f = it.next();
-        }
-        else {
-            QDirIterator it(dir, QStringList() << pattern, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-            if (it.hasNext())
-                f = it.next();
-        }
-
-        if (f.size() == 0)
-            return false;
-        else
-            return true;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- MoveAllFiles ----------------------------------- */
-    /* ---------------------------------------------------------- */
-    bool MoveAllFiles(QString indir, QString pattern, QString outdir, QString &msg) {
-        QStringList msgs;
-        bool ret = true;
-        QDirIterator it(indir, QStringList() << pattern, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks, QDirIterator::Subdirectories);
-        while (it.hasNext()) {
-            QFile f(it.next());
-            QString newfile = QString("%1/%2.dcm").arg(outdir).arg(GenerateRandomString(20));
-            if (!f.rename(newfile)) {
-                msgs << QString("Error moving [%1] to [%2]").arg(QFileInfo(f).filePath()).arg(newfile);
-                ret = false;
-            }
-        }
-
-        msg = msgs.join(" | ");
-        return ret;
-    }
 
     /* ---------------------------------------------------------- */
     /* --------- FindAllDirs ------------------------------------ */
@@ -429,88 +326,6 @@ namespace utils {
                 b += finfo.size();
             }
         }
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- UnzipDirectory --------------------------------- */
-    /* ---------------------------------------------------------- */
-    /* perform one pass through a directory and attempt to unzip
-     * any zipped files in it */
-    QString UnzipDirectory(QString dir, bool recurse) {
-
-        QStringList msgs;
-
-        if (dir.trimmed() == "") {
-            msgs << "Empty directory specified. Not attempting to unzip";
-        }
-        else {
-            //msgs << "Directory before unzipping [" + dir + "] contains " + SystemCommand("ls " + dir, false);
-            for (int i=0; i<3; i++) {
-                QString prefix = QString("Unzipping pass [%1]: ").arg(i);
-                QString maxdepth;
-                if (recurse)
-                    maxdepth = "";
-                else
-                    maxdepth = "-maxdepth 0";
-
-                QStringList cmds;
-                cmds << QString("cd %1; find . %2 -name '*.tar.gz' -exec tar -zxf {} \\;").arg(dir).arg(maxdepth);
-                cmds << QString("cd %1; find . %2 -name '*.gz' -exec gunzip {} \\;").arg(dir).arg(maxdepth);
-                cmds << QString("cd %1; find . %2 -name '*.z' -exec gunzip {} \\;").arg(dir).arg(maxdepth);
-                cmds << QString("cd %1; find . %2 -iname '*.zip' -exec sh -c 'unzip -o -q -d \"${0%.*}\" \"$0\" && rm -v {}' '{}' ';'").arg(dir).arg(maxdepth);
-                cmds << QString("cd %1; find . %2 -name '*.tar.bz2' -exec tar -xjf {} \\;").arg(dir).arg(maxdepth);
-                cmds << QString("cd %1; find . %2 -name '*.bz2' -exec bunzip {} \\;").arg(dir).arg(maxdepth);
-                cmds << QString("cd %1; find . %2 -name '*.tar' -exec tar -xf {} \\;").arg(dir).arg(maxdepth);
-
-                foreach (QString cmd, cmds) {
-                    QString output;
-                    output = SystemCommand(cmd,false);
-                    if (output != "")
-                        msgs << prefix + output;
-                }
-            }
-            //msgs << "Directory after unzipping [" + dir + "] contains " + SystemCommand("ls " + dir, false);
-        }
-
-        return msgs.join('\n');
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- GetFileChecksum -------------------------------- */
-    /* ---------------------------------------------------------- */
-    QByteArray GetFileChecksum(const QString &fileName, QCryptographicHash::Algorithm hashAlgorithm) {
-        QFile f(fileName);
-        if (f.open(QFile::ReadOnly)) {
-            QCryptographicHash hash(hashAlgorithm);
-            if (hash.addData(&f)) {
-                return hash.result();
-            }
-        }
-        return QByteArray();
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- RemoveNonAlphaNumericChars --------------------- */
-    /* ---------------------------------------------------------- */
-    QString RemoveNonAlphaNumericChars(QString s) {
-        return s.remove(QRegularExpression("[^a-zA-Z0-9_-]"));
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- SortQStringListNaturally ----------------------- */
-    /* ---------------------------------------------------------- */
-    void SortQStringListNaturally(QStringList &s) {
-
-        if (s.size() < 2)
-            return;
-
-        QCollator coll;
-        coll.setNumericMode(true);
-        std::sort(s.begin(), s.end(), [&](const QString& s1, const QString& s2){ return coll.compare(s1, s2) < 0; });
     }
 
 
@@ -591,206 +406,6 @@ namespace utils {
         if (time.isValid()) return time.toString("hh:mm:ss");
 
         return t;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- chmod ------------------------------------------ */
-    /* ---------------------------------------------------------- */
-    bool chmod(QString f, QString perm) {
-        if (perm.size() != 3)
-            return false;
-
-        int owner = QString(perm[0]).toInt();
-        int group = QString(perm[1]).toInt();
-        int everyone = QString(perm[2]).toInt();
-
-        switch (owner) {
-            case 1: if (!QFile::setPermissions(f, QFileDevice::ExeOwner)) return false; break;
-            case 2: if (!QFile::setPermissions(f, QFileDevice::WriteOwner)) return false; break;
-            case 3: if (!QFile::setPermissions(f, QFileDevice::ExeOwner | QFileDevice::WriteOwner)) return false; break;
-            case 4: if (!QFile::setPermissions(f, QFileDevice::ReadOwner)) return false; break;
-            case 5: if (!QFile::setPermissions(f, QFileDevice::ExeOwner | QFileDevice::ReadOwner)) return false; break;
-            case 6: if (!QFile::setPermissions(f, QFileDevice::ReadOwner | QFileDevice::WriteOwner)) return false; break;
-            case 7: if (!QFile::setPermissions(f, QFileDevice::ExeOwner | QFileDevice::WriteOwner | QFileDevice::ReadOwner)) return false; break;
-        }
-
-        switch (group) {
-            case 1: if (!QFile::setPermissions(f, QFileDevice::ExeGroup)) return false; break;
-            case 2: if (!QFile::setPermissions(f, QFileDevice::WriteGroup)) return false; break;
-            case 3: if (!QFile::setPermissions(f, QFileDevice::ExeGroup | QFileDevice::WriteGroup)) return false; break;
-            case 4: if (!QFile::setPermissions(f, QFileDevice::ReadGroup)) return false; break;
-            case 5: if (!QFile::setPermissions(f, QFileDevice::ExeGroup | QFileDevice::ReadGroup)) return false; break;
-            case 6: if (!QFile::setPermissions(f, QFileDevice::ReadGroup | QFileDevice::WriteGroup)) return false; break;
-            case 7: if (!QFile::setPermissions(f, QFileDevice::ExeGroup | QFileDevice::WriteGroup | QFileDevice::ReadGroup)) return false; break;
-        }
-
-        switch (everyone) {
-            case 1: if (!QFile::setPermissions(f, QFileDevice::ExeOther)) return false; break;
-            case 2: if (!QFile::setPermissions(f, QFileDevice::WriteOther)) return false; break;
-            case 3: if (!QFile::setPermissions(f, QFileDevice::ExeOther | QFileDevice::WriteOther)) return false; break;
-            case 4: if (!QFile::setPermissions(f, QFileDevice::ReadOther)) return false; break;
-            case 5: if (!QFile::setPermissions(f, QFileDevice::ExeOther | QFileDevice::ReadOther)) return false; break;
-            case 6: if (!QFile::setPermissions(f, QFileDevice::ReadOther | QFileDevice::WriteOther)) return false; break;
-            case 7: if (!QFile::setPermissions(f, QFileDevice::ExeOther | QFileDevice::WriteOther | QFileDevice::ReadOther)) return false; break;
-        }
-        return true;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- JoinIntArray ----------------------------------- */
-    /* ---------------------------------------------------------- */
-    QString JoinIntArray(QList<int> a, QString glue) {
-        if (a.size() == 0)
-            return "";
-        else if (a.size() == 1)
-            return QString("%1").arg(a[0]);
-        else {
-            QStringList sa;
-            for (int i=0; i<a.size();i++)
-                sa << QString("%1").arg(a[i]);
-            return sa.join(glue);
-        }
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- SplitStringArrayToInt -------------------------- */
-    /* ---------------------------------------------------------- */
-    QList<int> SplitStringArrayToInt(QStringList a) {
-        QList<int> i;
-
-        if (a.size() > 0) {
-            foreach (QString v, a) {
-                i.append(v.trimmed().toInt());
-            }
-        }
-
-        return i;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- SplitStringArrayToDouble ----------------------- */
-    /* ---------------------------------------------------------- */
-    QList<double> SplitStringArrayToDouble(QStringList a) {
-        QList<double> i;
-
-        if (a.size() > 0) {
-            foreach (QString v, a) {
-                i.append(v.trimmed().toDouble());
-            }
-        }
-
-        return i;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- SplitStringToIntArray -------------------------- */
-    /* ---------------------------------------------------------- */
-    QList<int> SplitStringToIntArray(QString a) {
-        QList<int> i;
-
-        if (a.size() > 0) {
-            QStringList sl = a.split(',');
-            i = SplitStringArrayToInt(sl);
-        }
-
-        return i;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- AppendCustomLog -------------------------------- */
-    /* ---------------------------------------------------------- */
-    void AppendCustomLog(QString file, QString msg) {
-        int pid = QCoreApplication::applicationPid();
-
-        QFile f(file);
-        if (f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
-            QTextStream fs(&f);
-            fs << QString("[%1][%2] %3\n").arg(CreateCurrentDateTime()).arg(pid).arg(msg);
-            f.close();
-        }
-        else {
-            //WriteLog("Error writing to file ["+file+"]");
-        }
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- ShellWords ------------------------------------- */
-    /* ---------------------------------------------------------- */
-    QStringList ShellWords(QString s) {
-
-        QStringList words;
-        QRegularExpression regex("\".*?\"", QRegularExpression::CaseInsensitiveOption);
-        if (s.contains(regex)) {
-            QRegularExpressionMatchIterator iterator = regex.globalMatch(s);
-            while (iterator.hasNext()) {
-                QRegularExpressionMatch match = iterator.next();
-                QString matched = match.captured(0);
-                matched.remove("\"");
-
-                if (matched.length() > 0)
-                    words << matched;
-            }
-        }
-        return words;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- IsInt ------------------------------------------ */
-    /* ---------------------------------------------------------- */
-    bool IsInt(QString s) {
-        bool is = false;
-
-        s.toInt(&is);
-
-        if (is)
-            return true;
-        else
-            return false;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- IsDouble --------------------------------------- */
-    /* ---------------------------------------------------------- */
-    bool IsDouble(QString s) {
-        bool is = false;
-
-        s.toDouble(&is);
-
-        if (is)
-            return true;
-        else
-            return false;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- IsNumber --------------------------------------- */
-    /* ---------------------------------------------------------- */
-    bool IsNumber(QString s) {
-        if (IsInt(s) || IsDouble(s))
-            return true;
-        else
-            return false;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- WrapText --------------------------------------- */
-    /* ---------------------------------------------------------- */
-    QString WrapText(QString s, int col) {
-        for (int i = col; i <= s.size(); i+=col+1)
-            s.insert(i, "\n");
-
-        return s;
     }
 
 
@@ -996,31 +611,7 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
-    /* --------- ReadTextFileIntoArray -------------------------- */
-    /* ---------------------------------------------------------- */
-    QStringList ReadTextFileIntoArray(QString filepath, bool ignoreEmptyLines) {
-        QStringList a;
-
-        QFile inputFile(filepath);
-        inputFile.open(QIODevice::ReadOnly);
-        if (inputFile.isOpen()) {
-            QTextStream in(&inputFile);
-
-            QString line;
-            while (in.readLineInto(&line)) {
-                line = line.trimmed();
-                if (ignoreEmptyLines && (line.size() == 0)) {}
-                else
-                    a.append(line);
-            }
-        }
-
-        return a;
-    }
-
-
-    /* ---------------------------------------------------------- */
-    /* --------- ReadTextFileToString -------------------------- */
+    /* --------- ReadTextFileToString --------------------------- */
     /* ---------------------------------------------------------- */
     QString ReadTextFileToString(QString filepath) {
         QString a;
@@ -1128,19 +719,6 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
-    /* --------- FileDirectoryExists ---------------------------- */
-    /* ---------------------------------------------------------- */
-    bool FileDirectoryExists(QString f) {
-        QFileInfo info(f);
-        QDir d(info.absoluteDir());
-        if (d.exists())
-            return true;
-        else
-            return false;
-    }
-
-
-    /* ---------------------------------------------------------- */
     /* --------- CopyFile --------------------------------------- */
     /* ---------------------------------------------------------- */
     bool CopyFile(QString f, QString dir) {
@@ -1166,10 +744,8 @@ namespace utils {
         q.bindValue(":id", objectID);
         q.bindValue(":type", objectType);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        if (q.size() > 0) {
-            while (q.next()) {
-                paths.append(q.value("StagedPath").toString());
-            }
+        while (q.next()) {
+            paths.append(q.value("StagedPath").toString());
         }
 
         return paths;
@@ -1187,14 +763,14 @@ namespace utils {
             q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
             q.bindValue(":id", objectID);
             q.bindValue(":type", objectType);
-            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
+            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
             foreach (QString path, paths) {
                 q.prepare("insert into StagedFiles (ObjectRowID, ObjectType, StagedPath) values (:id, :type, :path)");
                 q.bindValue(":id", objectID);
                 q.bindValue(":type", objectType);
                 q.bindValue(":path", path);
-                utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
+                utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
             }
         }
     }

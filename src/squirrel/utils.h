@@ -40,26 +40,15 @@
 
 namespace utils {
     typedef QHash <int, QHash<QString, QString>> indexedHash;
-    static const QRegularExpression REwhiteSpace("\\s*");
-    static const QRegularExpression REnonAlphaNum("[^a-zA-Z0-9_-]");
 
     /* generic functions */
     void Print(QString s, bool n=true, bool pad=false);
     QString CreateCurrentDateTime(int format=1);
     QString CreateLogDate();
-    void AppendCustomLog(QString f, QString msg);
     QString SystemCommand(QString s, bool detail=true, bool truncate=false, bool bufferOutput=true);
     QString GenerateRandomString(int n);
-    void SortQStringListNaturally(QStringList &s);
     QString ParseDate(QString s);
     QString ParseTime(QString s);
-    QString JoinIntArray(QList<int> a, QString glue);
-    QList<int> SplitStringArrayToInt(QStringList a);
-    QList<double> SplitStringArrayToDouble(QStringList a);
-    QList<int> SplitStringToIntArray(QString a);
-    bool IsInt(QString s);
-    bool IsDouble(QString s);
-    bool IsNumber(QString s);
     bool ParseCSV(QString csv, indexedHash &table, QStringList &columns, QString &msg);
     bool ParseTSV(QString tsv, indexedHash &table, QStringList &columns, QString &msg);
     QString CleanJSON(QString s);
@@ -71,22 +60,14 @@ namespace utils {
     bool RemoveDir(QString p, QString &msg);
     QStringList FindAllFiles(QString dir, QString pattern, bool recursive=false);
     QStringList FindAllDirs(QString dir, QString pattern, bool recursive=false, bool includepath=false);
-    bool FindFirstFile(QString dir, QString pattern, QString &f, QString &msg, bool recursive=false);
-    bool MoveAllFiles(QString indir, QString pattern, QString outdir, QString &msg);
     bool RenameFile(QString filepathorig, QString filepathnew, bool force=true);
     bool MoveFile(QString f, QString dir, QString &m);
     void GetDirSizeAndFileCount(QString dir, qint64 &c, qint64 &b, bool recurse=false);
-    //void GetDirectoryListing(QString dir, QStringList &files, QList<int> &sizes, bool recurse=false);
-    QByteArray GetFileChecksum(const QString &fileName, QCryptographicHash::Algorithm hashAlgorithm);
-    bool chmod(QString f, QString perm);
-    QString UnzipDirectory(QString dir, bool recurse=false);
     bool WriteTextFile(QString filepath, QString str, bool append=true);
-    QStringList ReadTextFileIntoArray(QString filepath, bool ignoreEmptyLines=true);
     QString ReadTextFileToString(QString filepath);
     bool BatchRenameFiles(QString dir, QString seriesnum, QString studynum, QString uid, int &numfilesrenamed, QString &msg);
     bool DirectoryExists(QString dir);
     bool FileExists(QString f);
-    bool FileDirectoryExists(QString f);
 
     /* database functions */
     bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);

@@ -52,7 +52,7 @@ bool squirrelAnalysis::Get() {
     q.prepare("select * from Analysis a left join Pipeline b on a.PipelineRowID = b.PipelineRowID where a.AnalysisRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
+    if (q.next()) {
         q.first();
 
         /* get the data */
@@ -82,10 +82,8 @@ bool squirrelAnalysis::Get() {
         q.bindValue(":id", objectID);
         q.bindValue(":type", "analysis");
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        if (q.size() > 0) {
-            while (q.next()) {
-                stagedFiles.append(q.value("StagedPath").toString());
-            }
+        while (q.next()) {
+            stagedFiles.append(q.value("StagedPath").toString());
         }
 
         valid = true;

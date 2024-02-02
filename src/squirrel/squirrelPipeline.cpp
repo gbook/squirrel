@@ -56,8 +56,7 @@ bool squirrelPipeline::Get() {
     q.prepare("select * from Pipeline where PipelineRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
-        q.first();
+    if (q.next()) {
 
         /* get the data */
         objectID = q.value("PipelineRowID").toLongLong();

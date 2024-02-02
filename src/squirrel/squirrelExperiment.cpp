@@ -50,8 +50,7 @@ bool squirrelExperiment::Get() {
     q.prepare("select * from Experiment where ExperimentRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
-        q.first();
+    if (q.next()) {
 
         /* get the data */
         objectID = q.value("ExperimentRowID").toLongLong();

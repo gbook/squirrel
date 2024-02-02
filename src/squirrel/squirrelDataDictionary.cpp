@@ -52,7 +52,7 @@ bool squirrelDataDictionary::Get() {
     q.prepare("select * from DataDictionary where DataDictionaryRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.size() > 0) {
+    if (q.next()) {
         q.first();
 
         /* get the data */
@@ -67,18 +67,16 @@ bool squirrelDataDictionary::Get() {
         q.prepare("select * from DataDictionaryItems where DataDictionaryRowID = :id");
         q.bindValue(":id", objectID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        if (q.size() > 0) {
-            while (q.next()) {
-                dataDictionaryItem d;
-                d.type = q.value("VariableType").toString();
-                d.variableName = q.value("VariableName").toString();
-                d.desc = q.value("VariableDescription").toString();
-                d.keyValue = q.value("KeyValue").toString();
-                d.expectedTimepoints = q.value("ExpectedTimepoints").toInt();
-                d.rangeLow = q.value("RangeLow").toDouble();
-                d.rangeHigh = q.value("RangeHigh").toDouble();
-                dictItems.append(d);
-            }
+        while (q.next()) {
+            dataDictionaryItem d;
+            d.type = q.value("VariableType").toString();
+            d.variableName = q.value("VariableName").toString();
+            d.desc = q.value("VariableDescription").toString();
+            d.keyValue = q.value("KeyValue").toString();
+            d.expectedTimepoints = q.value("ExpectedTimepoints").toInt();
+            d.rangeLow = q.value("RangeLow").toDouble();
+            d.rangeHigh = q.value("RangeHigh").toDouble();
+            dictItems.append(d);
         }
 
         /* get any staged files */

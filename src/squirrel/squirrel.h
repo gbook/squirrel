@@ -125,46 +125,10 @@ public:
     /* package information */
     qint64 GetUnzipSize();
 
-    /* subject, pipeline, and experiment data */
-    //QList<squirrelSubject> subjectList; /*!< List of subjects within this package */
-    //QList<squirrelPipeline> pipelineList; /*!< List of pipelines within this package */
-    //QList<squirrelExperiment> experimentList; /*!< List of experiments within this package */
-    //QList<squirrelGroupAnalysis> groupAnalysisList; /*!< List of groupAnalyses within this package */
-
-    /* data dictionary (just a single object, not array) */
-    //squirrelDataDictionary dataDictionary;
-
-    /* searching/retrieval, get index */
-    //int GetSubjectIndex(QString ID);
-    //int GetStudyIndex(QString ID, int studyNum);
-    //int GetSeriesIndex(QString ID, int studyNum, int seriesNum);
-    //int GetExperimentIndex(QString experimentName);
-    //int GetPipelineIndex(QString pipelineName);
-
-    /* searching/retrieval functions - get copies */
-    //bool GetSubject(QString ID, squirrelSubject &sqrlSubject);
-    //bool GetStudy(QString ID, int studyNum, squirrelStudy &sqrlStudy);
-    //bool GetSeries(QString ID, int studyNum, int seriesNum, squirrelSeries &sqrlSeries);
-    //bool GetSubjectList(QList<squirrelSubject> &subjects);
-    //bool GetStudyList(QString ID, QList<squirrelStudy> &studies);
-    //bool GetSeriesList(QString ID, int studyNum, QList<squirrelSeries> &series);
-    //bool GetDrugList(QString ID, QList<squirrelDrug> &drugs);
-    //bool GetMeasureList(QString ID, QList<squirrelMeasure> &measures);
-    //bool GetAnalysis(QString ID, int studyNum, QString pipelineName, squirrelAnalysis &sqrlAnalysis);
-    //bool GetPipeline(QString pipelineName, squirrelPipeline &sqrlPipeline);
-    //bool GetExperiment(QString experimentName, squirrelExperiment &sqrlExperiment);
-
     /* validation functions */
     QString GetTempDir();
     bool valid() { return isValid; }
     bool okToDelete() { return isOkToDelete; }
-
-    /* functions to manipulate, add files */
-    //bool AddSeriesFiles(QString ID, int studyNum, int seriesNum, QStringList files, QString destDir="");
-    //bool AddAnalysisFiles(QString ID, int studyNum, QString pipelineName, QStringList files, QString destDir="");
-    //bool AddPipelineFiles(QString pipelineName, QStringList files, QString destDir="");
-    //bool AddExperimentFiles(QString experimentName, QStringList files, QString destDir="");
-    //bool AddGroupAnalysisFiles(QString experimentName, QStringList files, QString destDir="");
 
     /* functions to read special files */
     QHash<QString, QString> ReadParamsFile(QString f);
