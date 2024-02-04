@@ -111,7 +111,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
     /* check for a 'stimuli' directory, which are experiments */
 
-    /* check for a 'phenotype' directory, which are ... subject demographics? */
+    /* check for a 'phenotype' directory, which are ... subject demographics, or measures? */
 
     return true;
 }
