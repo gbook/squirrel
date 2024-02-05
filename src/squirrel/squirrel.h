@@ -114,7 +114,7 @@ public:
 
     bool removeSubject(int rowID);
 
-    void ResqeuenceSubjects();
+    void ResequenceSubjects();
     void ResequenceStudies(int subjectRowID);
     void ResequenceSeries(int studyRowID);
 
@@ -160,7 +160,6 @@ private:
     QString log;
 
     QSqlDatabase db;
-    //QString schema;
 
     bool debug;
     bool isValid;

@@ -1494,7 +1494,7 @@ QList<squirrelPipeline> squirrel::GetAllPipelines() {
 QList<squirrelSubject> squirrel::GetAllSubjects() {
     QSqlQuery q;
     QList<squirrelSubject> list;
-    q.prepare("select SubjectRowID from Subject");
+    q.prepare("select SubjectRowID from Subject order by Sequence, ID");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
         squirrelSubject s;
@@ -1514,7 +1514,7 @@ QList<squirrelSubject> squirrel::GetAllSubjects() {
 QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
     QSqlQuery q;
     QList<squirrelStudy> list;
-    q.prepare("select StudyRowID from Study where SubjectRowID = :id");
+    q.prepare("select StudyRowID from Study where SubjectRowID = :id order by Sequence, StudyNum");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
@@ -1534,7 +1534,7 @@ QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
 QList<squirrelSeries> squirrel::GetSeries(int studyRowID) {
     QSqlQuery q;
     QList<squirrelSeries> list;
-    q.prepare("select SeriesRowID from Series where StudyRowID = :id");
+    q.prepare("select SeriesRowID from Series where StudyRowID = :id order by Sequence, SeriesNum");
     q.bindValue(":id", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
@@ -1687,8 +1687,8 @@ int squirrel::FindStudyByUID(QString studyUID) {
     int rowid(-1);
     QSqlQuery q;
     q.prepare("select * from Study where StudyUID = :studyuid");
-    q.bindValue(":studyid", studyUID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.bindValue(":studyuid", studyUID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
     if (q.next()) {
         q.first();
         rowid = q.value("StudyRowID").toInt();
@@ -1729,4 +1729,46 @@ int squirrel::FindSeriesByUID(QString seriesUID) {
         rowid = q.value("SeriesRowID").toInt();
     }
     return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ResequenceSubjects ----------------------------------- */
+/* ------------------------------------------------------------ */
+void squirrel::ResequenceSubjects() {
+
+    QList<squirrelSubject> subjects = GetAllSubjects();
+    int i =1;
+    foreach (squirrelSubject subject, subjects) {
+        subject.sequence = i;
+        subject.Store();
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ResequenceStudies ------------------------------------ */
+/* ------------------------------------------------------------ */
+void squirrel::ResequenceStudies(int subjectRowID) {
+
+    QList<squirrelStudy> studies = GetStudies(subjectRowID);
+    int i =1;
+    foreach (squirrelStudy study, studies) {
+        study.sequence = i;
+        study.Store();
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ResequenceSeries ------------------------------------- */
+/* ------------------------------------------------------------ */
+void squirrel::ResequenceSeries(int studyRowID) {
+
+    QList<squirrelSeries> serieses = GetSeries(studyRowID);
+    int i =1;
+    foreach (squirrelSeries series, serieses) {
+        series.sequence = i;
+        series.Store();
+    }
 }

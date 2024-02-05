@@ -106,6 +106,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     /* create/update the subject */
                     int subjectRowID;
                     subjectRowID = sqrl->FindSubject(tags["PatientID"]);
+                    utils::Print(QString("Searched for subject [%1] and found subjectRowID [%2]").arg(tags["PatientID"]).arg(subjectRowID));
                     if (subjectRowID < 0) {
                         currSubject.dateOfBirth = QDate::fromString(tags["PatientBirthDate"], "yyyy-MM-dd");
                         currSubject.gender = tags["PatientSex"][0];
@@ -118,6 +119,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     /* create/update the study */
                     int studyRowID;
                     studyRowID = sqrl->FindStudyByUID(tags["StudyInstanceUID"]);
+                    utils::Print(QString("Searched for study [%1] and found studyRowID [%2]").arg(tags["StudyInstanceUID"]).arg(studyRowID));
                     if (studyRowID < 0) {
                         currStudy.dateTime = QDateTime::fromString(tags["StudyDateTime"], "yyyy-MM-dd HH:mm:ss");
                         currStudy.description = tags["StudyDescription"];
@@ -150,7 +152,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     currSeries.studyRowID = studyRowID;
                     currSeries.Store();
 
-                    sqrl->Log(QString("Added [%1-%2-%3]").arg(currSubject.ID).arg(currStudy.dateTime.toString()).arg(currSeries.number), __FUNCTION__);
+                    sqrl->Log(QString("Added subject [%1-%2-%3]").arg(currSubject.ID).arg(currStudy.dateTime.toString()).arg(currSeries.number), __FUNCTION__);
                 }
             }
         }
