@@ -69,7 +69,7 @@ bool squirrelSubject::Get() {
         ethnicity1 = q.value("Ethnicity1").toString();
         ethnicity2 = q.value("Ethnicity2").toString();
         sequence = q.value("Sequence").toInt();
-        virtualPath = q.value("VirtualPath").toString();
+        //virtualPath = q.value("VirtualPath").toString();
 
         valid = true;
         return true;
@@ -110,7 +110,7 @@ bool squirrelSubject::Store() {
         q.bindValue(":Ethnicity1", ethnicity1);
         q.bindValue(":Ethnicity2", ethnicity2);
         q.bindValue(":Sequence", sequence);
-        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
@@ -127,7 +127,7 @@ bool squirrelSubject::Store() {
         q.bindValue(":Ethnicity1", ethnicity1);
         q.bindValue(":Ethnicity2", ethnicity2);
         q.bindValue(":Sequence", sequence);
-        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }
 
@@ -226,25 +226,6 @@ bool squirrelSubject::Store() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetNextStudyNumber ----------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Gets the next study number for this subject
- * @return the next study number
- */
-//qint64 squirrelSubject::GetNextStudyNumber() {
-
-    /* find the current highest study number */
-//    qint64 maxnum = 0;
-//    for (int i=0; i<studyList.size(); i++)
-//        if (studyList[i].number > maxnum)
-//            maxnum = studyList[i].number;
-
-//    return maxnum+1;
-//}
-
-
-/* ------------------------------------------------------------ */
 /* ----- PrintSubject ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -253,14 +234,14 @@ bool squirrelSubject::Store() {
 void squirrelSubject::PrintSubject() {
 
     utils::Print("\t\t----- SUBJECT -----");
-    utils::Print(QString("\t\tSubjectID: %1").arg(ID));
     utils::Print(QString("\t\tAlternateIDs: %1").arg(alternateIDs.join(",")));
-    utils::Print(QString("\t\tGUID: %1").arg(GUID));
-    utils::Print(QString("\t\tSex: %1").arg(sex));
-    utils::Print(QString("\t\tGender: %1").arg(gender));
     utils::Print(QString("\t\tDateOfBirth: %1").arg(dateOfBirth.toString()));
     utils::Print(QString("\t\tEthnicity1: %1").arg(ethnicity1));
     utils::Print(QString("\t\tEthnicity2: %1").arg(ethnicity2));
+    utils::Print(QString("\t\tGUID: %1").arg(GUID));
+    utils::Print(QString("\t\tGender: %1").arg(gender));
+    utils::Print(QString("\t\tSex: %1").arg(sex));
+    utils::Print(QString("\t\tSubjectID: %1").arg(ID));
     utils::Print(QString("\t\tVirtualPath: %1").arg(ethnicity2));
 }
 
@@ -283,7 +264,7 @@ QJsonObject squirrelSubject::ToJSON() {
     json["Gender"] = gender;
     json["Ethnicity1"] = ethnicity1;
     json["Ethnicity2"] = ethnicity2;
-    json["VirtualPath"] = virtualPath;
+    json["VirtualPath"] = VirtualPath();
 
     /* add studies */
     QSqlQuery q;
@@ -338,4 +319,24 @@ QJsonObject squirrelSubject::ToJSON() {
     }
 
     return json;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- VirtualPath ------------------------------------------ */
+/* ------------------------------------------------------------ */
+QString squirrelSubject::VirtualPath() {
+
+    QString vPath;
+    QString subjectDir;
+
+    /* get subject directory */
+    if (subjectDirFormat == "orig")
+        subjectDir = utils::CleanString(ID);
+    else
+        subjectDir = QString("%1").arg(sequence);
+
+    vPath = QString("data/%1").arg(subjectDir);
+
+    return vPath;
 }

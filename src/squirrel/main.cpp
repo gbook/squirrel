@@ -161,11 +161,18 @@ int main(int argc, char *argv[])
         else {
             dicom *dcm = new dicom();
             squirrel *sqrl = new squirrel(debug, quiet);
-            sqrl->dataFormat = paramOutputDataFormat;
-            sqrl->subjectDirFormat = paramOutputDirFormat;
-            sqrl->studyDirFormat = paramOutputDirFormat;
-            sqrl->seriesDirFormat = paramOutputDirFormat;
-            sqrl->format = paramOutputPackageFormat;
+
+            if (paramOutputDataFormat != "")
+                sqrl->dataFormat = paramOutputDataFormat;
+
+            if (paramOutputDirFormat != "") {
+                sqrl->subjectDirFormat = paramOutputDirFormat;
+                sqrl->studyDirFormat = paramOutputDirFormat;
+                sqrl->seriesDirFormat = paramOutputDirFormat;
+            }
+
+            if (paramOutputPackageFormat != "")
+                sqrl->format = paramOutputPackageFormat;
 
             /* 1) load the DICOM data to a squirrel object */
             dcm->LoadToSquirrel(paramInput, bindir, sqrl);

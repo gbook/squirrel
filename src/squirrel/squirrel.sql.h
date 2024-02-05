@@ -148,7 +148,7 @@ QString tableParams = QString("CREATE TABLE IF NOT EXISTS Params ("
     "SeriesRowID INTEGER,"
     "ParamKey TEXT,"
     "ParamValue TEXT,"
-    "UNIQUE(ParamKey, ParamValue))");
+    "UNIQUE(SeriesRowID, ParamKey))");
 
 QString tablePipeline = QString("CREATE TABLE IF NOT EXISTS Pipeline ("
     "PipelineRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -210,7 +210,7 @@ QString tablePipelineDataStep = QString("CREATE TABLE IF NOT EXISTS PipeplineDat
 QString tableSeries = QString("CREATE TABLE IF NOT EXISTS Series ("
     "SeriesRowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "StudyRowID INTEGER,"
-    "SeriesNum INTEGER,"
+    "SeriesNumber INTEGER,"
     "Datetime TEXT,"
     "SeriesUID TEXT,"
     "Description TEXT,"
@@ -222,7 +222,7 @@ QString tableSeries = QString("CREATE TABLE IF NOT EXISTS Series ("
     "BehNumFiles INTEGER DEFAULT 0,"
     "Sequence INTEGER,"
     "VirtualPath TEXT,"
-    "UNIQUE(StudyRowID, SeriesNum))");
+    "UNIQUE(StudyRowID, SeriesNumber))");
 
 QString tableStudy = QString("CREATE TABLE IF NOT EXISTS Study ("
     "StudyRowID INTEGER PRIMARY KEY AUTOINCREMENT,"

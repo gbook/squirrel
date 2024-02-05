@@ -51,6 +51,8 @@ public:
     QString Error() { return err; }
     qint64 GetObjectID() { return objectID; }
     void SetObjectID(int id) { objectID = id; }
+    void SetDirFormat(QString subject_DirFormat, QString study_DirFormat) {subjectDirFormat = subject_DirFormat; studyDirFormat = study_DirFormat; }
+    QString VirtualPath();
 
     /* JSON elements */
     qint64 subjectRowID;
@@ -63,11 +65,11 @@ public:
     QString description;            /*!< Description of the imaging study */
     QString studyUID;               /*!< DICOM StudyInstanceUID */
     QString visitType;              /*!< Description of the visit, eg. pre, post */
-    int dayNumber;                  /*!< Day number for repeated studies or clinical trials. eg. 6 for 'day 6' */
-    int timePoint;                  /*!< Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study */
+    int dayNumber = 0;              /*!< Day number for repeated studies or clinical trials. eg. 6 for 'day 6' */
+    int timePoint = 0;              /*!< Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study */
     QString equipment;              /*!< Equipment the study was run on */
-    int sequence;
-    QString virtualPath;            /*!< path within the squirrel package, no leading slash */
+    int sequence = 0;
+    //QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */
     QList<squirrelSeries> seriesList; /*!< List of series attached to this study */
@@ -77,7 +79,8 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-
+    QString subjectDirFormat = "orig";
+    QString studyDirFormat = "orig";
 };
 
 #endif // SQUIRRELSTUDY_H

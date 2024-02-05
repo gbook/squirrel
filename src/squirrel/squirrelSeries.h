@@ -47,6 +47,8 @@ public:
     QString Error() { return err; }
     qint64 GetObjectID() { return objectID; }
     void SetObjectID(int id) { objectID = id; }
+    void SetDirFormat(QString subject_DirFormat, QString study_DirFormat, QString series_DirFormat) {subjectDirFormat = subject_DirFormat; studyDirFormat = study_DirFormat; seriesDirFormat = series_DirFormat; }
+    QString VirtualPath();
 
     /* JSON elements */
     qint64 studyRowID;
@@ -55,14 +57,14 @@ public:
     QString seriesUID;              /*!< SeriesInstanceUID */
     QString description;            /*!< Description of the series */
     QString protocol;               /*!< Protocol (may differ from description) */
-    QStringList experimentNames;     /*!< List of experiment names attached to this series */
+    qint64 experimentRowID = -1;    /*!< List of experiment names attached to this series */
     qint64 numFiles = 0;            /*!< Number of files associated with the series */
     qint64 size = 0;                /*!< total size in bytes of the series */
     qint64 numBehFiles = 0;         /*!< Number of files associated with the behavioral data */
     qint64 behSize = 0;             /*!< total size in bytes of the beh data */
     QHash<QString, QString> params; /*!< Hash containing experimental parameters. eg MR params */
-    int sequence;
-    QString virtualPath;            /*!< path within the squirrel package, no leading slash */
+    int sequence = 0;
+    //QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */
     QStringList stagedFiles;        /*!< staged file list: list of raw files in their own directories before the package is zipped up */
@@ -72,6 +74,9 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
+    QString subjectDirFormat = "orig";
+    QString studyDirFormat = "orig";
+    QString seriesDirFormat = "orig";
 };
 
 #endif // SQUIRRELSERIES_H

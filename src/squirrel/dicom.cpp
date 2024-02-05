@@ -114,6 +114,8 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                         currSubject.sex = tags["PatientSex"][0];
                         currSubject.Store();
                         subjectRowID = currSubject.GetObjectID();
+                        /* resequence the newly added subject */
+                        sqrl->ResequenceSubjects();
                     }
 
                     /* create/update the study */
@@ -130,6 +132,8 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                         currStudy.subjectRowID = subjectRowID;
                         currStudy.Store();
                         studyRowID = currStudy.GetObjectID();
+                        /* resequence the newly added studies */
+                        sqrl->ResequenceStudies(subjectRowID);
                     }
 
                     /* create the series object */
@@ -151,13 +155,15 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     currSeries.size = totalSize;
                     currSeries.studyRowID = studyRowID;
                     currSeries.Store();
+                    /* resequence the newly added series */
+                    sqrl->ResequenceSeries(studyRowID);
 
                     sqrl->Log(QString("Added subject [%1-%2-%3]").arg(currSubject.ID).arg(currStudy.dateTime.toString()).arg(currSeries.number), __FUNCTION__);
                 }
             }
         }
 
-        //sqrl->print();
+        sqrl->print();
     }
 
     delete img;

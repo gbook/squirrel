@@ -79,8 +79,8 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(":memory:");
-    //db.setDatabaseName("C:/Temp/sqlite.db");
+    //db.setDatabaseName(":memory:");
+    db.setDatabaseName("C:/Temp/sqlite.db");
 
     if (db.open()) {
         utils::Print("Successfuly opened SQLite memory database");
@@ -242,7 +242,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
         sqrlSubject.gender = jsonSubject["Gender"].toString();
         sqrlSubject.ethnicity1 = jsonSubject["Ethnicity1"].toString();
         sqrlSubject.ethnicity2 = jsonSubject["Ethnicity2"].toString();
-        sqrlSubject.virtualPath = jsonSubject["VirtualPath"].toString();
+        //sqrlSubject.virtualPath = jsonSubject["VirtualPath"].toString();
         sqrlSubject.Store();
         int subjectRowID = sqrlSubject.GetObjectID();
 
@@ -266,7 +266,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
             sqrlStudy.dayNumber = jsonStudy["DayNumber"].toInt();
             sqrlStudy.timePoint = jsonStudy["TimePoint"].toInt();
             sqrlStudy.equipment = jsonStudy["Equipment"].toString();
-            sqrlStudy.virtualPath = jsonStudy["VirtualPath"].toString();
+            //sqrlStudy.virtualPath = jsonStudy["VirtualPath"].toString();
             sqrlStudy.subjectRowID = subjectRowID;
             sqrlStudy.Store();
             int studyRowID = sqrlStudy.GetObjectID();
@@ -282,12 +282,12 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
                 sqrlSeries.seriesUID = jsonSeries["SeriesUID"].toString();
                 sqrlSeries.description = jsonSeries["Description"].toString();
                 sqrlSeries.protocol = jsonSeries["Protocol"].toString();
-                sqrlSeries.experimentNames = jsonSeries["ExperimentNames"].toString().split(",");
+                //sqrlSeries.experimentNames = jsonSeries["ExperimentNames"].toString().split(",");
                 sqrlSeries.size = jsonSeries["Size"].toInteger();
                 sqrlSeries.numFiles = jsonSeries["NumFiles"].toInteger();
                 sqrlSeries.behSize = jsonSeries["BehSize"].toInteger();
                 sqrlSeries.numBehFiles = jsonSeries["BehNumFiles"].toInteger();
-                sqrlSeries.virtualPath = jsonSeries["VirtualPath"].toString();
+                //sqrlSeries.virtualPath = jsonSeries["VirtualPath"].toString();
                 sqrlSeries.studyRowID = studyRowID;
 
                 /* read any params from the data/Subject/Study/Series/params.json file */
@@ -519,22 +519,22 @@ bool squirrel::write(QString outpath, QString &filepath) {
     /* ----- 1) write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
     QList<squirrelSubject> subjects = GetAllSubjects();
-    foreach (squirrelSubject sub, subjects) {
+    foreach (squirrelSubject subject, subjects) {
 
-        int subjectRowID = sub.GetObjectID();
-        QString subjDir;
-        if (subjectDirFormat == "orig") {
-            subjDir = sub.ID;
-        }
-        else {
-            subjDir = QString("%1").arg(sub.sequence); /* start the numbering at 1 instead of 0 */
-        }
-        Log(QString("Writing subject [%1]").arg(subjDir), __FUNCTION__, true);
+        int subjectRowID = subject.GetObjectID();
+        // QString subjDir;
+        // if (subjectDirFormat == "orig") {
+        //     subjDir = subject.ID;
+        // }
+        // else {
+        //     subjDir = QString("%1").arg(subject.sequence); /* start the numbering at 1 instead of 0 */
+        // }
+        // Log(QString("Writing subject [%1] to [%2]").arg(subject.ID).arg(subjDir), __FUNCTION__, true);
 
-        subjDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-        QString vPath = QString("data/%1").arg(subjDir);
-        sub.virtualPath = vPath;
-        sub.Store();
+        // subjDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+        // QString vPath = QString("data/%1").arg(subjDir);
+        // subject.virtualPath = vPath;
+        // subject.Store();
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudies(subjectRowID);
@@ -542,38 +542,39 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
             int studyRowID = study.GetObjectID();
 
-            QString studyDir;
-            if (studyDirFormat == "orig")
-                studyDir = QString("%1").arg(study.number);
-            else
-                studyDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
+            // QString studyDir;
+            // if (studyDirFormat == "orig")
+            //     studyDir = QString("%1").arg(study.number);
+            // else
+            //     studyDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
 
-            studyDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-            QString vPath = QString("data/%1/%2").arg(subjDir).arg(studyDir);
-            study.virtualPath = vPath;
-            study.Store();
+            // studyDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+            // QString vPath = QString("data/%1/%2").arg(subjDir).arg(studyDir);
+            // study.virtualPath = vPath;
+            // study.Store();
 
-            Log(QString("Writing study [%1]").arg(studyDir), __FUNCTION__);
+            Log(QString("Writing study [%1]").arg(study.VirtualPath()), __FUNCTION__);
 
             /* iterate through series */
             QList<squirrelSeries> serieses = GetSeries(studyRowID);
             foreach (squirrelSeries series, serieses) {
 
-                QString seriesDir;
-                if (seriesDirFormat == "orig")
-                    seriesDir = QString("%1").arg(series.number);
-                else
-                    seriesDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
+                //QString seriesDir;
+                //if (seriesDirFormat == "orig")
+                //    seriesDir = QString("%1").arg(series.number);
+                //else
+                //    seriesDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
 
-                seriesDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-                QString vPath = QString("data/%1/%2/%3").arg(subjDir).arg(studyDir).arg(seriesDir);
-                series.virtualPath = vPath;
+                //seriesDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+                //QString vPath = QString("data/%1/%2/%3").arg(subjDir).arg(studyDir).arg(seriesDir);
+                //series.virtualPath = vPath;
+                //series.Store();
 
                 QString m;
-                QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.virtualPath);
+                QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
                 utils::MakePath(seriesPath,m);
 
-                Log(QString("Writing series [%1]. Data format [%2]").arg(seriesDir).arg(dataFormat), __FUNCTION__);
+                Log(QString("Writing series to [%1]. Data format [%2]").arg(seriesPath).arg(dataFormat), __FUNCTION__);
 
                 /* orig vs other formats */
                 if (dataFormat == "orig") {
@@ -627,7 +628,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                         QString origSeriesPath = f.absoluteDir().absolutePath();
                         squirrelImageIO io;
                         QString m3;
-                        io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, subjDir, studyDir, seriesDir, "dicom", numConv, numRename, m3);
+                        io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.number), QString("%1").arg(series.number), "dicom", numConv, numRename, m3);
                         Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__, true);
                     }
                     else {
@@ -644,6 +645,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                 //Log(QString("GetDirSizeAndFileCount() found  [%1] files   [%2] bytes").arg(c).arg(b), __FUNCTION__);
                 series.numFiles = c;
                 series.size = b;
+                series.Store();
 
                 /* write the series .json file, containing the dicom header params */
                 QJsonObject params;
@@ -955,10 +957,15 @@ qint64 squirrel::GetNumFiles() {
  * @return the number of subjects
  */
 int squirrel::GetNumSubjects() {
+    int count(0);
+
     QSqlQuery q;
-    q.prepare("select * from Subject");
+    q.prepare("select count(*) 'count' from Subject");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -970,10 +977,14 @@ int squirrel::GetNumSubjects() {
  * @return the total number of studies in the package
  */
 int squirrel::GetNumStudies() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from Study");
+    q.prepare("select count(*) 'count' from Study");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -985,10 +996,14 @@ int squirrel::GetNumStudies() {
  * @return the total number of series in the package
  */
 int squirrel::GetNumSeries() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from Series");
+    q.prepare("select count(*) 'count' from Series");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1000,10 +1015,15 @@ int squirrel::GetNumSeries() {
  * @return the total number of measure objects in the package
  */
 int squirrel::GetNumMeasures() {
+    int count(0);
+
     QSqlQuery q;
-    q.prepare("select * from Measure");
+    q.prepare("select count(*) 'count' from Measure");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1015,10 +1035,14 @@ int squirrel::GetNumMeasures() {
  * @return the totel number of drug objects in the package
  */
 int squirrel::GetNumDrugs() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from Drug");
+    q.prepare("select count(*) 'count' from Drug");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1030,10 +1054,14 @@ int squirrel::GetNumDrugs() {
  * @return the total number of analysis objects in the package
  */
 int squirrel::GetNumAnalyses() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from Analysis");
+    q.prepare("select count(*) 'count' from Analysis");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1045,10 +1073,14 @@ int squirrel::GetNumAnalyses() {
  * @return the number of experiments
  */
 int squirrel::GetNumExperiments() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from Experiment");
+    q.prepare("select count(*) 'count' from Experiment");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1060,10 +1092,14 @@ int squirrel::GetNumExperiments() {
  * @return the number of pipelines
  */
 int squirrel::GetNumPipelines() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from Pipeline");
+    q.prepare("select count(*) from Pipeline");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1075,10 +1111,14 @@ int squirrel::GetNumPipelines() {
  * @return the number of group analyses
  */
 int squirrel::GetNumGroupAnalyses() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from GroupAnalysis");
+    q.prepare("select count(*) 'count' from GroupAnalysis");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1090,10 +1130,14 @@ int squirrel::GetNumGroupAnalyses() {
  * @return the number of data dictionaries
  */
 int squirrel::GetNumDataDictionaries() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from DataDictionary");
+    q.prepare("select count(*) 'count' from DataDictionary");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1105,10 +1149,14 @@ int squirrel::GetNumDataDictionaries() {
  * @return the number of data dictionary items
  */
 int squirrel::GetNumDataDictionaryItems() {
+    int count(0);
     QSqlQuery q;
-    q.prepare("select * from DataDictionaryItems");
+    q.prepare("select count(*) 'count' from DataDictionaryItems");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    return q.size();
+    if (q.first())
+        count = q.value("count").toInt();
+
+    return count;
 }
 
 
@@ -1128,9 +1176,9 @@ bool squirrel::removeSubject(int rowID) {
     s.Get();
 
     /* remove all files */
-    if (s.isValid() && s.virtualPath != "") {
+    if (s.isValid() && s.VirtualPath() != "") {
         QString m;
-        utils::RemoveDir(s.virtualPath, m);
+        utils::RemoveDir(s.VirtualPath(), m);
     }
 
     /* TODO: remove recursively from database */
@@ -1514,7 +1562,7 @@ QList<squirrelSubject> squirrel::GetAllSubjects() {
 QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
     QSqlQuery q;
     QList<squirrelStudy> list;
-    q.prepare("select StudyRowID from Study where SubjectRowID = :id order by Sequence, StudyNum");
+    q.prepare("select StudyRowID from Study where SubjectRowID = :id order by Sequence, StudyNumber");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
@@ -1534,7 +1582,7 @@ QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
 QList<squirrelSeries> squirrel::GetSeries(int studyRowID) {
     QSqlQuery q;
     QList<squirrelSeries> list;
-    q.prepare("select SeriesRowID from Series where StudyRowID = :id order by Sequence, SeriesNum");
+    q.prepare("select SeriesRowID from Series where StudyRowID = :id order by Sequence, SeriesNumber");
     q.bindValue(":id", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {

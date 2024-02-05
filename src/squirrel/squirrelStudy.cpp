@@ -75,7 +75,7 @@ bool squirrelStudy::Get() {
         timePoint = q.value("TimePoint").toInt();
         equipment = q.value("StudyRowID").toString();
         sequence = q.value("Sequence").toInt();
-        virtualPath = q.value("VirtualPath").toString();
+        //virtualPath = q.value("VirtualPath").toString();
 
         valid = true;
         return true;
@@ -127,7 +127,7 @@ bool squirrelStudy::Store() {
         q.bindValue(":Timepoint", timePoint);
         q.bindValue(":Equipment", equipment);
         q.bindValue(":Sequence", sequence);
-        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
@@ -149,7 +149,7 @@ bool squirrelStudy::Store() {
         q.bindValue(":Timepoint", timePoint);
         q.bindValue(":Equipment", equipment);
         q.bindValue(":Sequence", sequence);
-        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }
 
@@ -230,19 +230,19 @@ qint64 squirrelStudy::GetNextSeriesNumber() {
 void squirrelStudy::PrintStudy() {
 
     utils::Print("\t\t\t----- STUDY -----");
-    utils::Print(QString("\t\t\tNumber: %1").arg(number));
-    utils::Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
     utils::Print(QString("\t\t\tAgeAtStudy: %1").arg(ageAtStudy));
-    utils::Print(QString("\t\t\tHeight: %1 m").arg(height));
-    utils::Print(QString("\t\t\tWeight: %1 kg").arg(weight));
-    utils::Print(QString("\t\t\tModality: %1").arg(modality));
-    utils::Print(QString("\t\t\tDescription: %1").arg(description));
-    utils::Print(QString("\t\t\tstudy-uid: %1").arg(studyUID));
-    utils::Print(QString("\t\t\tVisitType: %1").arg(visitType));
+    utils::Print(QString("\t\t\tDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
     utils::Print(QString("\t\t\tDayNumber: %1").arg(dayNumber));
-    utils::Print(QString("\t\t\tTimePoint: %1").arg(timePoint));
+    utils::Print(QString("\t\t\tDescription: %1").arg(description));
     utils::Print(QString("\t\t\tEquipment: %1").arg(equipment));
-    utils::Print(QString("\t\t\tVirtualPath: %1").arg(virtualPath));
+    utils::Print(QString("\t\t\tHeight: %1 m").arg(height));
+    utils::Print(QString("\t\t\tModality: %1").arg(modality));
+    utils::Print(QString("\t\t\tStudyNumber: %1").arg(number));
+    utils::Print(QString("\t\t\tTimePoint: %1").arg(timePoint));
+    utils::Print(QString("\t\t\tVirtualPath: %1").arg(VirtualPath()));
+    utils::Print(QString("\t\t\tVisitType: %1").arg(visitType));
+    utils::Print(QString("\t\t\tWeight: %1 kg").arg(weight));
+    utils::Print(QString("\t\t\tstudy-uid: %1").arg(studyUID));
 }
 
 
@@ -256,19 +256,19 @@ void squirrelStudy::PrintStudy() {
 QJsonObject squirrelStudy::ToJSON() {
 	QJsonObject json;
 
-    json["Number"] = number;
-    json["Datetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
     json["AgeAtStudy"] = ageAtStudy;
-    json["Height"] = height;
-    json["Weight"] = weight;
-    json["Modality"] = modality;
-    json["Description"] = description;
-    json["StudyUID"] = studyUID;
-    json["VisitType"] = visitType;
+    json["Datetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
     json["DayNumber"] = dayNumber;
-    json["TimePoint"] = timePoint;
+    json["Description"] = description;
     json["Equipment"] = equipment;
-    json["VirtualPath"] = virtualPath;
+    json["Height"] = height;
+    json["Modality"] = modality;
+    json["StudyNumber"] = number;
+    json["StudyUID"] = studyUID;
+    json["TimePoint"] = timePoint;
+    json["VirtualPath"] = VirtualPath();
+    json["VisitType"] = visitType;
+    json["Weight"] = weight;
 
     /* add all the series */
     QSqlQuery q;
@@ -321,4 +321,35 @@ QJsonObject squirrelStudy::ToJSON() {
     // json["analyses"] = JSONanalyses;
 
 	return json;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- VirtualPath ------------------------------------------ */
+/* ------------------------------------------------------------ */
+QString squirrelStudy::VirtualPath() {
+
+    QString vPath;
+    QString subjectDir;
+    QString studyDir;
+
+    /* get parent subject directory */
+    QSqlQuery q;
+    q.prepare("select ID, Sequence from Subject where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (subjectDirFormat == "orig")
+        subjectDir = QString("%1").arg(q.value("ID").toInt());
+    else
+        subjectDir = QString("%1").arg(q.value("Sequence").toInt());
+
+    /* get study directory */
+    if (studyDirFormat == "orig")
+        studyDir = QString("%1").arg(number);
+    else
+        studyDir = QString("%1").arg(sequence);
+
+    vPath = QString("data/%1/%2").arg(subjectDir).arg(studyDir);
+
+    return vPath;
 }

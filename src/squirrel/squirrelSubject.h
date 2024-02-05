@@ -50,6 +50,8 @@ public:
     QString Error() { return err; }
     qint64 GetObjectID() { return objectID; }
     void SetObjectID(int id) { objectID = id; }
+    void SetDirFormat(QString subject_DirFormat) {subjectDirFormat = subject_DirFormat; }
+    QString VirtualPath();
 
     /* JSON elements */
     QString ID;                 /*!< --- Unique identifier --- Must be unique within the squirrel package */
@@ -60,14 +62,14 @@ public:
     QString gender = "U";       /*!< Gender identity */
     QString ethnicity1;         /*!< Ethnicity: hispanic, non-hispanic */
     QString ethnicity2;         /*!< Race: americanindian, asian, black, hispanic, islander, white */
-    QString virtualPath;        /*!< path within the squirrel package, no leading slash */
+    //QString virtualPath;        /*!< path within the squirrel package, no leading slash */
     int sequence;
 
 private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-
+    QString subjectDirFormat = "orig";
 };
 
 #endif // SQUIRRELSUBJECT_H

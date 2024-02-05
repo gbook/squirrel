@@ -51,24 +51,25 @@ bool squirrelSeries::Get() {
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
-        //q.first();
 
         /* get the data */
         objectID = q.value("SeriesRowID").toLongLong();
         studyRowID = q.value("StudyRowID").toLongLong();
-        number = q.value("SeriesNum").toLongLong();
+        number = q.value("SeriesNumber").toLongLong();
         dateTime = q.value("Datetime").toDateTime();
         seriesUID = q.value("SeriesUID").toString();
         description = q.value("Description").toString();
         protocol = q.value("Protocol").toString();
-        //QStringList experimentNames = q.value("SeriesRowID").toString();
+        experimentRowID = q.value("ExperimentRowID").toInt();
         numFiles = q.value("NumFiles").toLongLong();
         size = q.value("Size").toLongLong();
         numBehFiles = q.value("BehNumFiles").toLongLong();
         behSize = q.value("BehSize").toLongLong();
-        //QHash<QString, QString> params = q.value("SeriesRowID").toLongLong();
         sequence = q.value("Sequence").toInt();
-        virtualPath = q.value("VirtualPath").toString();
+        //virtualPath = q.value("VirtualPath").toString();
+
+        /* get any params */
+        params = utils::GetParams(objectID);
 
         /* get any staged files */
         stagedFiles = utils::GetStagedFileList(objectID, "series");
@@ -102,42 +103,45 @@ bool squirrelSeries::Store() {
     QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert or ignore into Series (StudyRowID, SeriesNum, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, Sequence, VirtualPath) values (:StudyRowID, :SeriesNum, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :Sequence, :VirtualPath)");
-        q.bindValue(":StudyRowID", objectID);
-        q.bindValue(":SeriesNum", objectID);
-        q.bindValue(":Datetime", objectID);
-        q.bindValue(":SeriesUID", objectID);
-        q.bindValue(":Description", objectID);
-        q.bindValue(":Protocol", objectID);
-        q.bindValue(":ExperimentRowID", objectID);
-        q.bindValue(":Size", objectID);
-        q.bindValue(":NumFiles", objectID);
-        q.bindValue(":BehSize", objectID);
-        q.bindValue(":BehNumFiles", objectID);
+        q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, Sequence, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :Sequence, :VirtualPath)");
+        q.bindValue(":StudyRowID", studyRowID);
+        q.bindValue(":SeriesNumber", number);
+        q.bindValue(":Datetime", dateTime);
+        q.bindValue(":SeriesUID", seriesUID);
+        q.bindValue(":Description", description);
+        q.bindValue(":Protocol", protocol);
+        q.bindValue(":ExperimentRowID", experimentRowID);
+        q.bindValue(":Size", size);
+        q.bindValue(":NumFiles", numFiles);
+        q.bindValue(":BehSize", behSize);
+        q.bindValue(":BehNumFiles", numBehFiles);
         q.bindValue(":Sequence", sequence);
-        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         objectID = q.lastInsertId().toInt();
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNum = :SeriesNum, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, NumFiles = :NumFiles, BehSize = :BehSize, BehNumFiles = :BehNumFiles, Sequence = :Sequence, VirtualPath = :VirtualPath where SeriesRowID = :id");
-        q.bindValue(":StudyRowID", objectID);
-        q.bindValue(":SeriesNum", objectID);
-        q.bindValue(":Datetime", objectID);
-        q.bindValue(":SeriesUID", objectID);
-        q.bindValue(":Description", objectID);
-        q.bindValue(":Protocol", objectID);
-        q.bindValue(":ExperimentRowID", objectID);
-        q.bindValue(":Size", objectID);
-        q.bindValue(":NumFiles", objectID);
-        q.bindValue(":BehSize", objectID);
-        q.bindValue(":BehNumFiles", objectID);
+        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNumber = :SeriesNumber, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, NumFiles = :NumFiles, BehSize = :BehSize, BehNumFiles = :BehNumFiles, Sequence = :Sequence, VirtualPath = :VirtualPath where SeriesRowID = :id");
+        q.bindValue(":StudyRowID", studyRowID);
+        q.bindValue(":SeriesNumber", number);
+        q.bindValue(":Datetime", dateTime);
+        q.bindValue(":SeriesUID", seriesUID);
+        q.bindValue(":Description", description);
+        q.bindValue(":Protocol", protocol);
+        q.bindValue(":ExperimentRowID", experimentRowID);
+        q.bindValue(":Size", size);
+        q.bindValue(":NumFiles", numFiles);
+        q.bindValue(":BehSize", behSize);
+        q.bindValue(":BehNumFiles", numBehFiles);
         q.bindValue(":Sequence", sequence);
-        q.bindValue(":VirtualPath", virtualPath);
+        q.bindValue(":VirtualPath", VirtualPath());
         q.bindValue(":id", objectID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     }
+
+    /* store any params */
+    utils::StoreParams(objectID, params);
 
     /* store any staged filepaths */
     utils::StoreStagedFileList(objectID, "series", stagedFiles);
@@ -155,16 +159,25 @@ bool squirrelSeries::Store() {
  */
 void squirrelSeries::PrintSeries() {
     utils::Print("\t\t\t\t----- SERIES -----");
-    utils::Print(QString("\t\t\t\tSeriesNumber: %1").arg(number));
-    utils::Print(QString("\t\t\t\tSeriesDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
-    utils::Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
-    utils::Print(QString("\t\t\t\tDescription: %1").arg(description));
-    utils::Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
-    utils::Print(QString("\t\t\t\tExperimentNames: %1").arg(experimentNames.join(",")));
-    utils::Print(QString("\t\t\t\tSize: %1").arg(size));
-    utils::Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
-    utils::Print(QString("\t\t\t\tNumBehFiles: %1").arg(numBehFiles));
     utils::Print(QString("\t\t\t\tBehSize: %1").arg(behSize));
+    utils::Print(QString("\t\t\t\tDescription: %1").arg(description));
+    utils::Print(QString("\t\t\t\tExperimentName: %1").arg(experimentRowID));
+    utils::Print(QString("\t\t\t\tNumBehFiles: %1").arg(numBehFiles));
+    utils::Print(QString("\t\t\t\tNumFiles: %1").arg(numFiles));
+    utils::Print(QString("\t\t\t\tProtocol: %1").arg(protocol));
+    utils::Print(QString("\t\t\t\tSequence: %1").arg(sequence));
+    utils::Print(QString("\t\t\t\tSeriesDatetime: %1").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss")));
+    utils::Print(QString("\t\t\t\tSeriesNumber: %1").arg(number));
+    utils::Print(QString("\t\t\t\tSeriesUID: %1").arg(seriesUID));
+    utils::Print(QString("\t\t\t\tSize: %1").arg(size));
+    utils::Print(QString("\t\t\t\tVirtualPath: %1").arg(VirtualPath()));
+
+    foreach (QString f, stagedFiles) {
+        utils::Print(QString("\t\t\t\t\tFile: %1").arg(f));
+    }
+    foreach (QString f, stagedBehFiles) {
+        utils::Print(QString("\t\t\t\t\tBehFile: %1").arg(f));
+    }
 }
 
 
@@ -187,7 +200,8 @@ QJsonObject squirrelSeries::ToJSON() {
     json["Size"] = size;
     json["NumBehFiles"] = numBehFiles;
     json["BehSize"] = behSize;
-    json["VirtualPath"] = virtualPath;
+    json["Sequence"] = sequence;
+    json["VirtualPath"] = VirtualPath();
 
     /* experiments */
     //QJsonArray JSONseriess;
@@ -216,4 +230,46 @@ QJsonObject squirrelSeries::ParamsToJSON() {
 	}
 
 	return json;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- VirtualPath ------------------------------------------ */
+/* ------------------------------------------------------------ */
+QString squirrelSeries::VirtualPath() {
+
+    QString vPath;
+    QString subjectDir;
+    QString studyDir;
+    QString seriesDir;
+
+    /* get the parent study directory */
+    QSqlQuery q;
+    q.prepare("select SubjectRowID, StudyNumber, Sequence from Study where StudyRowID = :studyid");
+    q.bindValue(":studyid", studyRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    int subjectRowID = q.value("SubjectRowID").toInt();
+    if (studyDirFormat == "orig")
+        studyDir = QString("%1").arg(q.value("StudyNumber").toInt());
+    else
+        studyDir = QString("%1").arg(q.value("Sequence").toInt());
+
+    /* get parent subject directory */
+    q.prepare("select ID, Sequence from Subject where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (subjectDirFormat == "orig")
+        subjectDir = QString("%1").arg(q.value("ID").toInt());
+    else
+        subjectDir = QString("%1").arg(q.value("Sequence").toInt());
+
+    /* get series directory */
+    if (seriesDirFormat == "orig")
+        seriesDir = QString("%1").arg(number);
+    else
+        seriesDir = QString("%1").arg(sequence);
+
+    vPath = QString("data/%1/%2/%3").arg(subjectDir).arg(studyDir).arg(seriesDir);
+
+    return vPath;
 }

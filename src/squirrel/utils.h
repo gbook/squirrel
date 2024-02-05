@@ -53,6 +53,7 @@ namespace utils {
     bool ParseTSV(QString tsv, indexedHash &table, QStringList &columns, QString &msg);
     QString CleanJSON(QString s);
     double GetPatientAge(QString PatientAgeStr, QString StudyDate, QString PatientBirthDate);
+    QString CleanString(QString s);
 
     /* file and directory operations */
     bool CopyFile(QString f, QString dir);
@@ -73,5 +74,8 @@ namespace utils {
     bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
     QStringList GetStagedFileList(qint64 objectID, QString objectType);
     void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths);
+    QHash<QString, QString> GetParams(qint64 seriesRowID);
+    void StoreParams(qint64 seriesRowID, QHash<QString, QString> params);
+
 }
 #endif // UTILS_H

@@ -775,4 +775,59 @@ namespace utils {
         }
     }
 
+
+    /* ---------------------------------------------------------- */
+    /* --------- GetParams -------------------------------------- */
+    /* ---------------------------------------------------------- */
+    QHash<QString, QString> GetParams(qint64 seriesRowID) {
+        QHash<QString, QString> params;
+
+        QSqlQuery q;
+        q.prepare("select * from Params where SeriesRowID = :id");
+        q.bindValue(":id", seriesRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        while (q.next()) {
+            QString key = q.value("ParamKey").toString();
+            QString value = q.value("ParamValue").toString();
+            params[key] = value;
+        }
+
+        return params;
+    }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- StoreParams ------------------------------------ */
+    /* ---------------------------------------------------------- */
+    void StoreParams(qint64 seriesRowID, QHash<QString, QString> params) {
+
+        QSqlQuery q;
+        if (seriesRowID >= 0) {
+            /* delete previously staged files from the database */
+            q.prepare("delete from Params where SeriesRowID = :id");
+            q.bindValue(":id", seriesRowID);
+            utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+            for(QHash<QString, QString>::iterator a = params.begin(); a != params.end(); ++a) {
+                QString key = a.key().trimmed();
+                QString value = a.value().trimmed();
+
+                if (key != "") {
+                    q.prepare("insert into Params (SeriesRowID, ParamKey, ParamValue) values (:id, :key, :value)");
+                    q.bindValue(":id", seriesRowID);
+                    q.bindValue(":key", key);
+                    q.bindValue(":value", value);
+                    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+                }
+            }
+        }
+    }
+
+    /* ---------------------------------------------------------- */
+    /* --------- CleanString ------------------------------------ */
+    /* ---------------------------------------------------------- */
+    QString CleanString(QString s) {
+        s.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
+        return s;
+    }
 }
