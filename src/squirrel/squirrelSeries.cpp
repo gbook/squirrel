@@ -242,26 +242,31 @@ QString squirrelSeries::VirtualPath() {
     QString subjectDir;
     QString studyDir;
     QString seriesDir;
+    int subjectRowID = -1;
 
     /* get the parent study directory */
     QSqlQuery q;
     q.prepare("select SubjectRowID, StudyNumber, Sequence from Study where StudyRowID = :studyid");
     q.bindValue(":studyid", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    int subjectRowID = q.value("SubjectRowID").toInt();
-    if (studyDirFormat == "orig")
-        studyDir = QString("%1").arg(q.value("StudyNumber").toInt());
-    else
-        studyDir = QString("%1").arg(q.value("Sequence").toInt());
+    if (q.next()) {
+        subjectRowID = q.value("SubjectRowID").toInt();
+        if (studyDirFormat == "orig")
+            studyDir = QString("%1").arg(q.value("StudyNumber").toInt());
+        else
+            studyDir = QString("%1").arg(q.value("Sequence").toInt());
+    }
 
     /* get parent subject directory */
     q.prepare("select ID, Sequence from Subject where SubjectRowID = :subjectid");
     q.bindValue(":subjectid", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (subjectDirFormat == "orig")
-        subjectDir = QString("%1").arg(q.value("ID").toInt());
-    else
-        subjectDir = QString("%1").arg(q.value("Sequence").toInt());
+    if (q.next()) {
+        if (subjectDirFormat == "orig")
+            subjectDir = utils::CleanString(q.value("ID").toString());
+        else
+            subjectDir = QString("%1").arg(q.value("Sequence").toInt());
+    }
 
     /* get series directory */
     if (seriesDirFormat == "orig")

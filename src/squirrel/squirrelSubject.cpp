@@ -242,7 +242,7 @@ void squirrelSubject::PrintSubject() {
     utils::Print(QString("\t\tGender: %1").arg(gender));
     utils::Print(QString("\t\tSex: %1").arg(sex));
     utils::Print(QString("\t\tSubjectID: %1").arg(ID));
-    utils::Print(QString("\t\tVirtualPath: %1").arg(ethnicity2));
+    utils::Print(QString("\t\tVirtualPath: %1").arg(VirtualPath()));
 }
 
 
@@ -337,6 +337,7 @@ QString squirrelSubject::VirtualPath() {
         subjectDir = QString("%1").arg(sequence);
 
     vPath = QString("data/%1").arg(subjectDir);
+    qDebug() << "Subject virtualPath() [" << vPath << "]";
 
     return vPath;
 }

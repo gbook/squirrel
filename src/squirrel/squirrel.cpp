@@ -36,7 +36,7 @@
 squirrel::squirrel(bool dbg, bool q)
 {
     datetime = QDateTime::currentDateTime();
-    description = "Uninitialized squirrel package";
+    description = "Squirrel package";
     name = "Squirrel package";
     version = QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN);
     format = "squirrel";
@@ -79,8 +79,8 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE");
-    //db.setDatabaseName(":memory:");
-    db.setDatabaseName("C:/Temp/sqlite.db");
+    db.setDatabaseName(":memory:");
+    //db.setDatabaseName("C:/Temp/sqlite.db");
 
     if (db.open()) {
         utils::Print("Successfuly opened SQLite memory database");
@@ -489,23 +489,6 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
 /**
  * @brief squirrel::write Writes a squirrel package using stored information
  * @param outpath full path to the output squirrel .zip file
- * @param dataFormat if converting from DICOM, write the data in the specified format
- *                   - 'orig' - Perform no conversion of DICOM images (not recommended as it retains PHI)
- *                   - 'anon' - Anonymize DICOM files (light anonymization: remove PHI, but not ID or dates)
- *                   - 'anonfull' - Anonymize DICOM files (full anonymization)
- *                   - 'nifti4d' - Attempt to convert any convertable images to Nifti 4D
- *                   - 'nifti4dgz' - Attempt to convert any convertable images to Nifti 4D gzip [DEFAULT]
- *                   - 'nidti3d' - Attempt to convert any convertable images to Nifti 3D
- *                   - 'nifti3dgz' - Attempt to convert any convertable images to Nifti 3D gzip
- * @param subjectDirFormat directory structure of the subject data
- *                  - 'orig' - Use the subjectID for subject directories [DEFAULT]
- *                  - 'seq' - Use sequentially generated numbers for subject directories
- * @param studyDirFormat directory structure of the subject data
- *                  - 'orig' - Use the studyNum for study directories [DEFAULT]
- *                  - 'seq' - Use sequentially generated numbers for study directories
- * @param seriesDirFormat directory structure of the subject data
- *                  - 'orig' - Use the seriesNum for series directories [DEFAULT]
- *                  - 'seq' - Use sequentially generated numbers for series directories
  * @return true if package was successfully written, false otherwise
  */
 bool squirrel::write(QString outpath, QString &filepath) {
@@ -514,7 +497,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
     QFileInfo finfo(outpath);
     logfile = QString(finfo.absolutePath() + "/squirrel-" + utils::CreateLogDate() + ".log");
 
-    Log(QString("Writing squirrel package. Working dir [%1]. Outpath [%2]. logfile [%3]").arg(workingDir).arg(outpath).arg(logfile), __FUNCTION__);
+    Log(QString("Writing squirrel package: workingdir [%1]  outpath [%2]  logfile [%3]").arg(workingDir).arg(outpath).arg(logfile), __FUNCTION__);
 
     /* ----- 1) write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
@@ -529,7 +512,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
         // else {
         //     subjDir = QString("%1").arg(subject.sequence); /* start the numbering at 1 instead of 0 */
         // }
-        // Log(QString("Writing subject [%1] to [%2]").arg(subject.ID).arg(subjDir), __FUNCTION__, true);
+        Log(QString("Writing subject [%1] to virtualPath [%2]").arg(subject.ID).arg(subject.VirtualPath()), __FUNCTION__);
 
         // subjDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
         // QString vPath = QString("data/%1").arg(subjDir);
@@ -553,12 +536,11 @@ bool squirrel::write(QString outpath, QString &filepath) {
             // study.virtualPath = vPath;
             // study.Store();
 
-            Log(QString("Writing study [%1]").arg(study.VirtualPath()), __FUNCTION__);
+            Log(QString("Writing study [%1] to virtualPath [%2]").arg(study.number).arg(study.VirtualPath()), __FUNCTION__);
 
             /* iterate through series */
             QList<squirrelSeries> serieses = GetSeries(studyRowID);
             foreach (squirrelSeries series, serieses) {
-
                 //QString seriesDir;
                 //if (seriesDirFormat == "orig")
                 //    seriesDir = QString("%1").arg(series.number);
@@ -574,7 +556,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                 QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
                 utils::MakePath(seriesPath,m);
 
-                Log(QString("Writing series to [%1]. Data format [%2]").arg(seriesPath).arg(dataFormat), __FUNCTION__);
+                Log(QString("Writing series [%1] to [%2]. Data format [%3]").arg(series.number).arg(seriesPath).arg(dataFormat), __FUNCTION__);
 
                 /* orig vs other formats */
                 if (dataFormat == "orig") {
@@ -629,7 +611,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
                         squirrelImageIO io;
                         QString m3;
                         io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.number), QString("%1").arg(series.number), "dicom", numConv, numRename, m3);
-                        Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__, true);
+                        Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
                     }
                     else {
                         Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__, true);
@@ -1231,7 +1213,7 @@ bool squirrel::MakeTempDir(QString &dir) {
     #ifdef Q_OS_WINDOWS
         d = QString("C:/tmp/%1").arg(utils::GenerateRandomString(20));
     #else
-        d = QString("/tmp/%1").arg(GenerateRandomString(20));
+    d = QString("/tmp/%1").arg(utils::GenerateRandomString(20));
     #endif
 
     QString m;
@@ -1548,6 +1530,7 @@ QList<squirrelSubject> squirrel::GetAllSubjects() {
         squirrelSubject s;
         s.SetObjectID(q.value("SubjectRowID").toInt());
         if (s.Get()) {
+            s.SetDirFormat(subjectDirFormat);
             list.append(s);
         }
     }
@@ -1569,6 +1552,7 @@ QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
         squirrelStudy s;
         s.SetObjectID(q.value("StudyRowID").toInt());
         if (s.Get()) {
+            s.SetDirFormat(subjectDirFormat, studyDirFormat);
             list.append(s);
         }
     }
@@ -1589,6 +1573,7 @@ QList<squirrelSeries> squirrel::GetSeries(int studyRowID) {
         squirrelSeries s;
         s.SetObjectID(q.value("SeriesRowID").toInt());
         if (s.Get()) {
+            s.SetDirFormat(subjectDirFormat, studyDirFormat, seriesDirFormat);
             list.append(s);
         }
     }
@@ -1786,10 +1771,11 @@ int squirrel::FindSeriesByUID(QString seriesUID) {
 void squirrel::ResequenceSubjects() {
 
     QList<squirrelSubject> subjects = GetAllSubjects();
-    int i =1;
+    int i = 1;
     foreach (squirrelSubject subject, subjects) {
         subject.sequence = i;
         subject.Store();
+        i++;
     }
 }
 
@@ -1800,10 +1786,11 @@ void squirrel::ResequenceSubjects() {
 void squirrel::ResequenceStudies(int subjectRowID) {
 
     QList<squirrelStudy> studies = GetStudies(subjectRowID);
-    int i =1;
+    int i = 1;
     foreach (squirrelStudy study, studies) {
         study.sequence = i;
         study.Store();
+        i++;
     }
 }
 
@@ -1814,9 +1801,10 @@ void squirrel::ResequenceStudies(int subjectRowID) {
 void squirrel::ResequenceSeries(int studyRowID) {
 
     QList<squirrelSeries> serieses = GetSeries(studyRowID);
-    int i =1;
+    int i = 1;
     foreach (squirrelSeries series, serieses) {
         series.sequence = i;
         series.Store();
+        i++;
     }
 }

@@ -242,7 +242,9 @@ void squirrelStudy::PrintStudy() {
     utils::Print(QString("\t\t\tVirtualPath: %1").arg(VirtualPath()));
     utils::Print(QString("\t\t\tVisitType: %1").arg(visitType));
     utils::Print(QString("\t\t\tWeight: %1 kg").arg(weight));
-    utils::Print(QString("\t\t\tstudy-uid: %1").arg(studyUID));
+    utils::Print(QString("\t\t\tStudyUID: %1").arg(studyUID));
+    utils::Print(QString("\t\t\tSubjectRowID: %1").arg(subjectRowID));
+    utils::Print(QString("\t\t\tObjectRowID: %1").arg(objectID));
 }
 
 
@@ -338,10 +340,12 @@ QString squirrelStudy::VirtualPath() {
     q.prepare("select ID, Sequence from Subject where SubjectRowID = :subjectid");
     q.bindValue(":subjectid", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (subjectDirFormat == "orig")
-        subjectDir = QString("%1").arg(q.value("ID").toInt());
-    else
-        subjectDir = QString("%1").arg(q.value("Sequence").toInt());
+    if (q.next()) {
+        if (subjectDirFormat == "orig")
+            subjectDir = utils::CleanString(q.value("ID").toString());
+        else
+            subjectDir = QString("%1").arg(q.value("Sequence").toInt());
+    }
 
     /* get study directory */
     if (studyDirFormat == "orig")
