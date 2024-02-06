@@ -51,7 +51,7 @@ public:
     ~squirrel();
 
     bool read(QString filename, bool headerOnly, bool validateOnly=false);
-    bool write(QString outpath, QString &filepath);
+    bool write(QString outpath, QString &zipFilePath);
     bool validate();
     void print();
 
@@ -91,19 +91,11 @@ public:
     QList<squirrelGroupAnalysis> GetAllGroupAnalyses();
     QList<squirrelDataDictionary> GetAllDataDictionaries();
 
+    /* get numbers of objects */
     qint64 GetNumFiles();
-    int GetNumSubjects();
-    int GetNumStudies();
-    int GetNumSeries();
-    int GetNumMeasures();
-    int GetNumDrugs();
-    int GetNumAnalyses();
-    int GetNumExperiments();
-    int GetNumPipelines();
-    int GetNumGroupAnalyses();
-    int GetNumDataDictionaries();
-    int GetNumDataDictionaryItems();
+    int GetObjectCount(QString object);
 
+    /* find objects */
     int FindSubject(QString id);
     int FindStudy(QString subjectID, int studyNum);
     int FindStudyByUID(QString studyUID);
@@ -114,13 +106,10 @@ public:
 
     bool removeSubject(int rowID);
 
+    /* requence the subject data */
     void ResequenceSubjects();
     void ResequenceStudies(int subjectRowID);
     void ResequenceSeries(int studyRowID);
-
-
-
-
 
     /* package information */
     qint64 GetUnzipSize();

@@ -823,6 +823,7 @@ namespace utils {
         }
     }
 
+
     /* ---------------------------------------------------------- */
     /* --------- CleanString ------------------------------------ */
     /* ---------------------------------------------------------- */
@@ -830,4 +831,39 @@ namespace utils {
         s.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
         return s;
     }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- AnonymizeParams -------------------------------- */
+    /* ---------------------------------------------------------- */
+    QHash<QString, QString> AnonymizeParams(QHash<QString, QString> params) {
+        QHash<QString, QString> p;
+        QStringList anonFields;
+        anonFields << "ReferringPhysiciansName";
+        anonFields << "PerformingPhysiciansName";
+        anonFields << "OperatorsName";
+        anonFields << "PatientName";
+        anonFields << "PatientBirthDate";
+        anonFields << "InstitutionName";
+        anonFields << "InstitutionAddress";
+        anonFields << "StationName";
+        anonFields << "StudyDescription";
+        anonFields << "StudyDate";
+        anonFields << "SeriesDate";
+        anonFields << "AcquisitionDate";
+        anonFields << "ContentDate";
+        anonFields << "StudyTime";
+        anonFields << "SeriesTime";
+        anonFields << "AcquisitionTime";
+        anonFields << "ContentTime";
+        anonFields << "PatientID";
+
+        for(QHash<QString, QString>::iterator a = params.begin(); a != params.end(); ++a) {
+            if (!anonFields.contains(a.key()))
+                p[a.key()] = a.value();
+        }
+
+        return p;
+    }
+
 }

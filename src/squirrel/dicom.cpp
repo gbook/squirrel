@@ -143,7 +143,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     currSeries.number = tags["SeriesNumber"].toLongLong();
                     currSeries.dateTime = QDateTime::fromString(tags["SeriesDateTime"], "yyyy-MM-dd HH:mm:ss");
                     currSeries.numFiles = numfiles;
-                    currSeries.params = tags;
+                    currSeries.params = utils::AnonymizeParams(tags);
                     currSeries.seriesUID = tags["SeriesInstanceUID"];
                     currSeries.stagedFiles = files;
 

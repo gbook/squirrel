@@ -487,11 +487,12 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
 /* ----- write ------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::write Writes a squirrel package using stored information
- * @param outpath full path to the output squirrel .zip file
- * @return true if package was successfully written, false otherwise
+ * @brief squirrel::write
+ * @param outpath
+ * @param zipFilePath -
+ * @return true if successfuly written, false otherwise
  */
-bool squirrel::write(QString outpath, QString &filepath) {
+bool squirrel::write(QString outpath, QString &zipFilePath) {
 
     /* create the log file */
     QFileInfo finfo(outpath);
@@ -503,55 +504,18 @@ bool squirrel::write(QString outpath, QString &filepath) {
     /* iterate through subjects */
     QList<squirrelSubject> subjects = GetAllSubjects();
     foreach (squirrelSubject subject, subjects) {
-
         int subjectRowID = subject.GetObjectID();
-        // QString subjDir;
-        // if (subjectDirFormat == "orig") {
-        //     subjDir = subject.ID;
-        // }
-        // else {
-        //     subjDir = QString("%1").arg(subject.sequence); /* start the numbering at 1 instead of 0 */
-        // }
         Log(QString("Writing subject [%1] to virtualPath [%2]").arg(subject.ID).arg(subject.VirtualPath()), __FUNCTION__);
-
-        // subjDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-        // QString vPath = QString("data/%1").arg(subjDir);
-        // subject.virtualPath = vPath;
-        // subject.Store();
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudies(subjectRowID);
         foreach (squirrelStudy study, studies) {
-
             int studyRowID = study.GetObjectID();
-
-            // QString studyDir;
-            // if (studyDirFormat == "orig")
-            //     studyDir = QString("%1").arg(study.number);
-            // else
-            //     studyDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
-
-            // studyDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-            // QString vPath = QString("data/%1/%2").arg(subjDir).arg(studyDir);
-            // study.virtualPath = vPath;
-            // study.Store();
-
             Log(QString("Writing study [%1] to virtualPath [%2]").arg(study.number).arg(study.VirtualPath()), __FUNCTION__);
 
             /* iterate through series */
             QList<squirrelSeries> serieses = GetSeries(studyRowID);
             foreach (squirrelSeries series, serieses) {
-                //QString seriesDir;
-                //if (seriesDirFormat == "orig")
-                //    seriesDir = QString("%1").arg(series.number);
-                //else
-                //    seriesDir = QString("%1").arg(study.sequence); /* start the numbering at 1 instead of 0 */
-
-                //seriesDir.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-                //QString vPath = QString("data/%1/%2/%3").arg(subjDir).arg(studyDir).arg(seriesDir);
-                //series.virtualPath = vPath;
-                //series.Store();
-
                 QString m;
                 QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
                 utils::MakePath(seriesPath,m);
@@ -664,8 +628,6 @@ bool squirrel::write(QString outpath, QString &filepath) {
     QJsonArray JSONsubjects;
 
     /* add subjects */
-
-    /* iterate through subjects */
     QList<squirrelSubject> subjectses = GetAllSubjects();
     foreach (squirrelSubject subject, subjectses) {
         JSONsubjects.append(subject.ToJSON());
@@ -753,7 +715,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
     #ifdef Q_OS_WINDOWS
         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipfile + "\" \"" + workingDir + "/*\"");
     #else
-        systemstring = "zip -1rv " + zipfile + ".";
+        systemstring = "cd " + workingDir + "; zip -1rv " + zipfile + " .";
     #endif
 
     Log("Beginning zipping package...", __FUNCTION__);
@@ -762,7 +724,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
 
     if (utils::FileExists(zipfile)) {
         Log("Created .zip file [" + zipfile + "]", __FUNCTION__);
-        filepath = zipfile;
+        zipFilePath = zipfile;
 
         /* delete the tmp dir, if it exists */
         if (utils::DirectoryExists(workingDir)) {
@@ -932,208 +894,26 @@ qint64 squirrel::GetNumFiles() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetNumSubjects --------------------------------------- */
+/* ----- GetObjectCount --------------------------------------- */
 /* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumSubjects
- * @return the number of subjects
- */
-int squirrel::GetNumSubjects() {
+int squirrel::GetObjectCount(QString object) {
     int count(0);
+    QString table;
 
     QSqlQuery q;
-    q.prepare("select count(*) 'count' from Subject");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
+    if (object == "subject") table = "Subject";
+    else if (object == "study") table = "Study";
+    else if (object == "series") table = "Series";
+    else if (object == "analysis") table = "Analysis";
+    else if (object == "datadictionary") table = "DataDictionary";
+    else if (object == "datadictionaryitem") table = "DataDictionaryItems";
+    else if (object == "drug") table = "Drug";
+    else if (object == "measure") table = "Measure";
+    else if (object == "pipeline") table = "Pipeline";
+    else if (object == "groupanalysis") table = "GroupAnalysis";
+    else if (object == "experiment") table = "Experiment";
 
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumStudies ---------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumStudies
- * @return the total number of studies in the package
- */
-int squirrel::GetNumStudies() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from Study");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumSeries ----------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumSeries
- * @return the total number of series in the package
- */
-int squirrel::GetNumSeries() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from Series");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumMeasures --------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumMeasures
- * @return the total number of measure objects in the package
- */
-int squirrel::GetNumMeasures() {
-    int count(0);
-
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from Measure");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumDrugs ------------------------------------------ */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumDrugs
- * @return the totel number of drug objects in the package
- */
-int squirrel::GetNumDrugs() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from Drug");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumAnalyses --------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumAnalyses
- * @return the total number of analysis objects in the package
- */
-int squirrel::GetNumAnalyses() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from Analysis");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumExperiments ------------------------------------ */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumExperiments
- * @return the number of experiments
- */
-int squirrel::GetNumExperiments() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from Experiment");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumPipelines -------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumPipelines
- * @return the number of pipelines
- */
-int squirrel::GetNumPipelines() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) from Pipeline");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumGroupAnalyses ---------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumGroupAnalyses
- * @return the number of group analyses
- */
-int squirrel::GetNumGroupAnalyses() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from GroupAnalysis");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumDataDictionaries ------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumDataDictionaries
- * @return the number of data dictionaries
- */
-int squirrel::GetNumDataDictionaries() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from DataDictionary");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    if (q.first())
-        count = q.value("count").toInt();
-
-    return count;
-}
-
-
-/* ------------------------------------------------------------ */
-/* ----- GetNumDataDictionaryItems ---------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrel::GetNumDataDictionaryItems
- * @return the number of data dictionary items
- */
-int squirrel::GetNumDataDictionaryItems() {
-    int count(0);
-    QSqlQuery q;
-    q.prepare("select count(*) 'count' from DataDictionaryItems");
+    q.prepare("select count(*) 'count' from " + table);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.first())
         count = q.value("count").toInt();
@@ -1177,16 +957,17 @@ bool squirrel::removeSubject(int rowID) {
  */
 void squirrel::PrintPackage() {
 
-    qint64 numSubjects = GetNumSubjects();
-    qint64 numStudies = GetNumStudies();
-    qint64 numSeries = GetNumSeries();
-    qint64 numMeasures(0);
-    qint64 numDrugs(0);
-    qint64 numAnalyses(0);
-    qint64 numExperiments(0);
-    qint64 numPipelines(0);
-    qint64 numGroupAnalyses(0);
-    qint64 numDataDictionaries = GetNumDataDictionaryItems();
+    qint64 numSubjects = GetObjectCount("subject");
+    qint64 numStudies = GetObjectCount("study");
+    qint64 numSeries = GetObjectCount("series");
+    qint64 numMeasures = GetObjectCount("measure");
+    qint64 numDrugs = GetObjectCount("drug");
+    qint64 numAnalyses = GetObjectCount("analysis");
+    qint64 numExperiments = GetObjectCount("experiment");
+    qint64 numPipelines = GetObjectCount("pipeline");
+    qint64 numGroupAnalyses = GetObjectCount("groupananalysis");
+    qint64 numDataDictionaries = GetObjectCount("datadictionary");
+    qint64 numDataDictionaryItems = GetObjectCount("datadictionaryitem");
 
     utils::Print("Squirrel Package: " + filePath);
     utils::Print(QString("  Date: %1").arg(datetime.toString()));

@@ -76,6 +76,7 @@ namespace utils {
     void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths);
     QHash<QString, QString> GetParams(qint64 seriesRowID);
     void StoreParams(qint64 seriesRowID, QHash<QString, QString> params);
+    QHash<QString, QString> AnonymizeParams(QHash<QString, QString> params);
 
 }
 #endif // UTILS_H

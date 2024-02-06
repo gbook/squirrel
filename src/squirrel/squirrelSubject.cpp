@@ -337,7 +337,6 @@ QString squirrelSubject::VirtualPath() {
         subjectDir = QString("%1").arg(sequence);
 
     vPath = QString("data/%1").arg(subjectDir);
-    qDebug() << "Subject virtualPath() [" << vPath << "]";
 
     return vPath;
 }
