@@ -215,36 +215,33 @@ bool squirrelPipeline::Store() {
 QJsonObject squirrelPipeline::ToJSON(QString path) {
     QJsonObject json;
 
-    json["PipelineName"] = pipelineName;
-    json["Description"] = description;
-    json["CreateDate"] = createDate.toString();
-    json["PipelineVersion"] = version;
-    json["Level"] = level;
-
-    json["ParentPipelines"] = parentPipelines.join(",");
-    json["CompleteFiles"] = QJsonArray::fromStringList(completeFiles);
-
-    json["DataCopyMethod"] = dataCopyMethod;
-    json["Directory"] = directory;
-    json["DirStructure"] = dirStructure;
-    json["DepLevel"] = depLevel;
-    json["DepDir"] = depDir;
-    json["DepLinkType"] = depLinkType;
-    json["Group"] = group;
-    json["GroupType"] = groupType;
-    json["Notes"] = notes;
-    json["ResultScript"] = resultScript;
-    json["TempDir"] = tmpDir;
-    json["UseTempDir"] = flags.useTmpDir;
-    json["UseProfile"] = flags.useProfile;
-
-    json["ClusterType"] = clusterType;
-    json["ClusterUser"] = clusterUser;
     json["ClusterQueue"] = clusterQueue;
     json["ClusterSubmitHost"] = clusterSubmitHost;
+    json["ClusterType"] = clusterType;
+    json["ClusterUser"] = clusterUser;
+    json["CompleteFiles"] = QJsonArray::fromStringList(completeFiles);
+    json["CreateDate"] = createDate.toString();
+    json["DataCopyMethod"] = dataCopyMethod;
+    json["DepDir"] = depDir;
+    json["DepLevel"] = depLevel;
+    json["DepLinkType"] = depLinkType;
+    json["Description"] = description;
+    json["DirStructure"] = dirStructure;
+    json["Directory"] = directory;
+    json["Group"] = group;
+    json["GroupType"] = groupType;
+    json["Level"] = level;
     json["MaxWallTime"] = maxWallTime;
-    json["SubmitDelay"] = submitDelay;
+    json["Notes"] = notes;
     json["NumConcurrentAnalyses"] = numConcurrentAnalyses;
+    json["ParentPipelines"] = parentPipelines.join(",");
+    json["PipelineName"] = pipelineName;
+    json["PipelineVersion"] = version;
+    json["ResultScript"] = resultScript;
+    json["SubmitDelay"] = submitDelay;
+    json["TempDir"] = tmpDir;
+    json["UseProfile"] = flags.useProfile;
+    json["UseTempDir"] = flags.useTmpDir;
     json["VirtualPath"] = virtualPath;
 
     /* add the dataSteps */
@@ -255,20 +252,20 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
         dataStep["BehDir"] = dataSteps[i].behDir;
         dataStep["BehFormat"] = dataSteps[i].behFormat;
         dataStep["DataFormat"] = dataSteps[i].dataFormat;
-        dataStep["ImageType"] = dataSteps[i].imageType;
         dataStep["DataLevel"] = dataSteps[i].datalevel;
+        dataStep["Enabled"] = dataSteps[i].flags.enabled;
+        dataStep["Gzip"] = dataSteps[i].flags.gzip;
+        dataStep["ImageType"] = dataSteps[i].imageType;
         dataStep["Location"] = dataSteps[i].location;
         dataStep["Modality"] = dataSteps[i].modality;
         dataStep["NumBOLDreps"] = dataSteps[i].numBOLDreps;
         dataStep["NumImagesCriteria"] = dataSteps[i].numImagesCriteria;
-        dataStep["Order"] = dataSteps[i].order;
-        dataStep["Protocol"] = dataSteps[i].protocol;
-        dataStep["SeriesCriteria"] = dataSteps[i].seriesCriteria;
-        dataStep["Enabled"] = dataSteps[i].flags.enabled;
         dataStep["Optional"] = dataSteps[i].flags.optional;
-        dataStep["Gzip"] = dataSteps[i].flags.gzip;
+        dataStep["Order"] = dataSteps[i].order;
         dataStep["PreserveSeries"] = dataSteps[i].flags.preserveSeries;
         dataStep["PrimaryProtocol"] = dataSteps[i].flags.primaryProtocol;
+        dataStep["Protocol"] = dataSteps[i].protocol;
+        dataStep["SeriesCriteria"] = dataSteps[i].seriesCriteria;
         dataStep["UsePhaseDir"] = dataSteps[i].flags.usePhaseDir;
         dataStep["UseSeries"] = dataSteps[i].flags.useSeries;
 
@@ -315,35 +312,32 @@ void squirrelPipeline::PrintPipeline() {
 
     utils::Print("\t----- PIPELINE -----");
 
+    utils::Print(QString("\tClusterQueue: %1").arg(clusterQueue));
+    utils::Print(QString("\tClusterSubmitHost: %1").arg(clusterSubmitHost));
+    utils::Print(QString("\tClusterType: %1").arg(clusterType));
+    utils::Print(QString("\tClusterUser: %1").arg(clusterUser));
+    utils::Print(QString("\tCompleteFiles: %1").arg(completeFiles.join(",")));
+    utils::Print(QString("\tCreateDate: %1").arg(createDate.toString()));
+    utils::Print(QString("\tDataCopyMethod: %1").arg(dataCopyMethod));
+    utils::Print(QString("\tDepDirectory: %1").arg(depDir));
+    utils::Print(QString("\tDepLevel: %1").arg(depLevel));
+    utils::Print(QString("\tDepLinkType: %1").arg(depLinkType));
+    utils::Print(QString("\tDescription: %1").arg(description));
+    utils::Print(QString("\tDirStructure: %1").arg(dirStructure));
+    utils::Print(QString("\tDirectory: %1").arg(directory));
+    utils::Print(QString("\tGroup: %1").arg(group));
+    utils::Print(QString("\tGroupType: %1").arg(groupType));
+    utils::Print(QString("\tLevel: %1").arg(level));
+    utils::Print(QString("\tMaxWallTime: %1").arg(maxWallTime));
+    utils::Print(QString("\tNotes: %1").arg(notes));
+    utils::Print(QString("\tNumConcurrentAnalyses: %1").arg(numConcurrentAnalyses));
+    utils::Print(QString("\tParentPipelines: %1").arg(parentPipelines.join(",")));
     utils::Print(QString("\tPipelineName: %1").arg(pipelineName));
-    utils::Print(QString("\tPipelineName: %1").arg(description));
-    utils::Print(QString("\tPipelineName: %1").arg(createDate.toString()));
-    utils::Print(QString("\tPipelineName: %1").arg(version));
-    utils::Print(QString("\tPipelineName: %1").arg(level));
-
-    utils::Print(QString("\tPipelineName: %1").arg(parentPipelines.join(",")));
-    utils::Print(QString("\tPipelineName: %1").arg(completeFiles.join(",")));
-
-    utils::Print(QString("\tPipelineName: %1").arg(dataCopyMethod));
-    utils::Print(QString("\tPipelineName: %1").arg(directory));
-    utils::Print(QString("\tPipelineName: %1").arg(dirStructure));
-    utils::Print(QString("\tPipelineName: %1").arg(depLevel));
-    utils::Print(QString("\tPipelineName: %1").arg(depDir));
-    utils::Print(QString("\tPipelineName: %1").arg(depLinkType));
-    utils::Print(QString("\tPipelineName: %1").arg(group));
-    utils::Print(QString("\tPipelineName: %1").arg(groupType));
-    utils::Print(QString("\tPipelineName: %1").arg(notes));
-    utils::Print(QString("\tPipelineName: %1").arg(resultScript));
-    utils::Print(QString("\tPipelineName: %1").arg(tmpDir));
-    utils::Print(QString("\tPipelineName: %1").arg(flags.useTmpDir));
-    utils::Print(QString("\tPipelineName: %1").arg(flags.useProfile));
-
-    utils::Print(QString("\tPipelineName: %1").arg(clusterType));
-    utils::Print(QString("\tPipelineName: %1").arg(clusterUser));
-    utils::Print(QString("\tPipelineName: %1").arg(clusterQueue));
-    utils::Print(QString("\tPipelineName: %1").arg(clusterSubmitHost));
-    utils::Print(QString("\tPipelineName: %1").arg(maxWallTime));
-    utils::Print(QString("\tPipelineName: %1").arg(submitDelay));
-    utils::Print(QString("\tPipelineName: %1").arg(numConcurrentAnalyses));
+    utils::Print(QString("\tResultScript: %1").arg(resultScript));
+    utils::Print(QString("\tSubmitDelay: %1").arg(submitDelay));
+    utils::Print(QString("\tTempDir: %1").arg(tmpDir));
+    utils::Print(QString("\tUseProfile: %1").arg(flags.useProfile));
+    utils::Print(QString("\tUseTempDir: %1").arg(flags.useTmpDir));
+    utils::Print(QString("\tVersion: %1").arg(version));
 
 }

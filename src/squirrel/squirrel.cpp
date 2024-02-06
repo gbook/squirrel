@@ -757,7 +757,7 @@ bool squirrel::write(QString outpath, QString &filepath) {
     #endif
 
     Log("Beginning zipping package...", __FUNCTION__);
-    utils::SystemCommand(systemstring, false);
+    utils::SystemCommand(systemstring);
     Log("Finished zipping package...", __FUNCTION__);
 
     if (utils::FileExists(zipfile)) {
