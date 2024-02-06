@@ -53,6 +53,7 @@ bool squirrelPipeline::Get() {
         err = "objectID is not set";
         return false;
     }
+    QSqlQuery q;
     q.prepare("select * from Pipeline where PipelineRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -118,6 +119,7 @@ bool squirrelPipeline::Get() {
  * Otherwise it will return false.
  */
 bool squirrelPipeline::Store() {
+    QSqlQuery q;
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {

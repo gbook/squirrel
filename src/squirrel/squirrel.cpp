@@ -187,7 +187,7 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
             //Print(jsonStr);
         #else
             systemstring = QString("unzip -p " + filepath + " squirrel.json");
-        output = uitls::SystemCommand(systemstring, true);
+        output = utils::SystemCommand(systemstring, true);
         #endif
     }
     else {
