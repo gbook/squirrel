@@ -858,6 +858,7 @@ namespace utils {
         anonFields << "PerformedProcedureStepStartTime";
         anonFields << "PerformingPhysicianName";
         anonFields << "ReferringPhysicianName";
+        anonFields << "RequestingPhysician";
         anonFields << "RequestedProcedureDescription";
         anonFields << "SeriesDate";
         anonFields << "SeriesDateTime";

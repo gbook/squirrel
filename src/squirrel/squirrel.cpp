@@ -600,10 +600,7 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
                         QString origSeriesPath = f.absoluteDir().absolutePath();
                         squirrelImageIO io;
                         QString m3;
-                        if (io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.number), QString("%1").arg(series.number), "dicom", numConv, numRename, m3)) {
-                            Log("ConvertDicom() successful", __FUNCTION__);
-                        }
-                        else {
+                        if (!io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.number), QString("%1").arg(series.number), "dicom", numConv, numRename, m3)) {
                             Log(QString("ConvertDicom() failed. Returned [%1]").arg(m3), __FUNCTION__);
                         }
                     }
@@ -634,7 +631,6 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
                 }
                 else {
                     Log(QString("Error writing [%1]").arg(fout.fileName()), __FUNCTION__);
-                    //Log(QString("Error writing %1/params.json").arg(seriesPath), __FUNCTION__);
                 }
             }
         }
@@ -682,7 +678,7 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
     data["subjects"] = JSONsubjects;
     root["data"] = data;
 
-    /* add pipelines -- Get pipeline list from SQLite database */
+    /* add pipelines */
     QList <squirrelPipeline> pipelines = GetAllPipelines();
     if (pipelines.size() > 0) {
         Log(QString("Adding [%1] pipelines...").arg(pipelines.size()), __FUNCTION__);
@@ -697,7 +693,7 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
         root["pipelines"] = JSONpipelines;
     }
 
-    /* add experiments -- Get experiment list from SQLite database */
+    /* add experiments */
     QList <squirrelExperiment> exps = GetAllExperiments();
     if (exps.size() > 0) {
         Log(QString("Adding [%1] experiments...").arg(exps.size()), __FUNCTION__);
@@ -726,6 +722,8 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
         root["NumDataDictionaries"] = JSONdataDictionaries.size();
         root["data-dictionaries"] = JSONdataDictionaries;
     }
+    root["TotalSize"] = GetUnzipSize();
+    root["TotalNumFiles"] = GetNumFiles();
 
     /* write the final .json file */
     QByteArray j = QJsonDocument(root).toJson();
@@ -854,24 +852,39 @@ qint64 squirrel::GetUnzipSize() {
 
     qint64 unzipSize(0);
 
-    /* iterate through subjects */
-    // for (int i=0; i < subjectList.size(); i++) {
-    //     squirrelSubject sub = subjectList[i];
-    //     /* iterate through studies */
-    //     for (int j=0; j < sub.studyList.size(); j++) {
-    //         squirrelStudy stud = sub.studyList[j];
-    //         /* iterate through series */
-    //         for (int k=0; k < stud.seriesList.size(); k++) {
-    //             squirrelSeries ser = stud.seriesList[k];
-    //             unzipSize += ser.size;
-    //         }
-    //         /* iterate through analyses */
-    //         for (int k=0; k < stud.analysisList.size(); k++) {
-    //             squirrelAnalysis an = stud.analysisList[k];
-    //             unzipSize += an.size;
-    //         }
-    //     }
-    // }
+    QSqlQuery q;
+
+    /* Analysis */
+    q.prepare("select sum(Size) 'Size' from Analysis");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.first();
+    unzipSize += q.value("Size").toLongLong();
+
+    /* DataDictionary */
+    q.prepare("select sum(Size) 'Size' from DataDictionary");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.first();
+    unzipSize += q.value("Size").toLongLong();
+
+    /* Experiment */
+    q.prepare("select sum(Size) 'Size' from Experiment");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.first();
+    unzipSize += q.value("Size").toLongLong();
+
+    /* GroupAnalysis */
+    q.prepare("select sum(Size) 'Size' from GroupAnalysis");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.first();
+    unzipSize += q.value("Size").toLongLong();
+
+    /* Series */
+    q.prepare("select sum(Size) 'Size', sum(BehSize) 'BehSize' from Series");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    q.first();
+    unzipSize += q.value("Size").toLongLong();
+    unzipSize += q.value("BehSize").toLongLong();
+
     return unzipSize;
 }
 
