@@ -66,7 +66,6 @@ bool squirrelSeries::Get() {
         numBehFiles = q.value("BehNumFiles").toLongLong();
         behSize = q.value("BehSize").toLongLong();
         sequence = q.value("Sequence").toInt();
-        //virtualPath = q.value("VirtualPath").toString();
 
         /* get any params */
         params = utils::GetParams(objectID);

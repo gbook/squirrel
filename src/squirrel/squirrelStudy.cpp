@@ -57,7 +57,6 @@ bool squirrelStudy::Get() {
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
-        //q.first();
 
         /* get the data */
         objectID = q.value("StudyRowID").toLongLong();
@@ -110,7 +109,8 @@ bool squirrelStudy::Store() {
         q.prepare("select max(StudyNumber) 'Max' from Study where StudyRowID = :id");
         q.bindValue(":id", objectID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        number = q.value("Max").toInt() + 1;
+        if (q.next())
+            number = q.value("Max").toInt() + 1;
 
         q.prepare("insert or ignore into Study (SubjectRowID, StudyNumber, Datetime, Age, Height, Weight, Modality, Description, StudyUID, VisitType, DayNumber, Timepoint, Equipment, Sequence, VirtualPath) values (:SubjectRowID, :StudyNumber, :Datetime, :Age, :Height, :Weight, :Modality, :Description, :StudyUID, :VisitType, :DayNumber, :Timepoint, :Equipment, :Sequence, :VirtualPath)");
         q.bindValue(":SubjectRowID", subjectRowID);

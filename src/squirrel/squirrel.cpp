@@ -76,6 +76,11 @@ squirrel::~squirrel()
 /* ---------------------------------------------------------- */
 /* --------- DatabaseConnect -------------------------------- */
 /* ---------------------------------------------------------- */
+/**
+ * @brief squirrel::DatabaseConnect - connect to SQLite memory
+ * database
+ * @return true if successful, false otherwise
+ */
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -83,11 +88,11 @@ bool squirrel::DatabaseConnect() {
     //db.setDatabaseName("C:/Temp/sqlite.db");
 
     if (db.open()) {
-        utils::Print("Successfuly opened SQLite memory database");
+        Log("Successfuly opened SQLite memory database", __FUNCTION__);
         return true;
     }
     else {
-        utils::Print(QString("Error opening SQLite memory database" + db.lastError().text()));
+        Log(QString("Error opening SQLite memory database" + db.lastError().text()), __FUNCTION__);
         return false;
     }
 }
@@ -96,40 +101,61 @@ bool squirrel::DatabaseConnect() {
 /* ---------------------------------------------------------- */
 /* --------- InitializeDatabase ----------------------------- */
 /* ---------------------------------------------------------- */
+/**
+ * @brief squirrel::InitializeDatabase - Create SQLite tables
+ * @return true if successul, false otherwise
+ */
 bool squirrel::InitializeDatabase() {
 
+    /* NOTE - SQLite does not support multiple statements, so each table needs to be created individualy */
     QSqlQuery q;
-    q.prepare(tableAnalysis);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Analysis]"); } else { utils::Print("Error creating table [Analysis]"); return false; }
-    q.prepare(tableDrug);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Drug]"); } else { utils::Print("Error creating table [Drug]"); return false; }
-    q.prepare(tableDataDictionary);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [DataDictionary]"); } else { utils::Print("Error creating table [DataDictionary]"); return false; }
-    q.prepare(tableDataDictionaryItems);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [DataDictionaryItems]"); } else { utils::Print("Error creating table [DataDictionaryItems]"); return false; }
-    q.prepare(tableExperiment);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Experiment]"); } else { utils::Print("Error creating table [Experiment]"); return false; }
-    q.prepare(tableGroupAnalysis);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [GroupAnalysis]"); } else { utils::Print("Error creating table [GroupAnalysis]"); return false; }
-    q.prepare(tableMeasure);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Measure]"); } else { utils::Print("Error creating table [Measure]"); return false; }
-    q.prepare(tablePackage);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Package]"); } else { utils::Print("Error creating table [Package]"); return false; }
-    q.prepare(tableParams);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Params]"); } else { utils::Print("Error creating table [Params]"); return false; }
-    q.prepare(tablePipeline);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Pipeline]"); } else { utils::Print("Error creating table [Pipeline]"); return false; }
-    q.prepare(tablePipelineDataStep);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [PipelineDataStep]"); } else { utils::Print("Error creating table [PipelineDataStep]"); return false; }
-    q.prepare(tableSeries);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Series]"); } else { utils::Print("Error creating table [Series]"); return false; }
-    q.prepare(tableStudy);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Study]"); } else { utils::Print("Error creating table [Study]"); return false; }
-    q.prepare(tableSubject);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [Subject]"); } else { utils::Print("Error creating table [Subject]"); return false; }
-    q.prepare(tableStagedFiles);
-    if (utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { utils::Print("Created table [StagedFiles]"); } else { utils::Print("Error creating table [StagedFiles]"); return false; }
 
+    q.prepare(tableAnalysis);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Analysis]", __FUNCTION__); return false; }
+
+    q.prepare(tableDrug);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Drug]", __FUNCTION__); return false; }
+
+    q.prepare(tableDataDictionary);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionary]", __FUNCTION__); return false; }
+
+    q.prepare(tableDataDictionaryItems);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionaryItems]", __FUNCTION__); return false; }
+
+    q.prepare(tableExperiment);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Experiment]", __FUNCTION__); return false; }
+
+    q.prepare(tableGroupAnalysis);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [GroupAnalysis]", __FUNCTION__); return false; }
+
+    q.prepare(tableMeasure);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Measure]", __FUNCTION__); return false; }
+
+    q.prepare(tablePackage);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Package]", __FUNCTION__); return false; }
+
+    q.prepare(tableParams);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Params]", __FUNCTION__); return false; }
+
+    q.prepare(tablePipeline);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Pipeline]", __FUNCTION__); return false; }
+
+    q.prepare(tablePipelineDataStep);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [PipelineDataStep]", __FUNCTION__); return false; }
+
+    q.prepare(tableSeries);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Series]", __FUNCTION__); return false; }
+
+    q.prepare(tableStudy);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Study]", __FUNCTION__); return false; }
+
+    q.prepare(tableSubject);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Subject]", __FUNCTION__); return false; }
+
+    q.prepare(tableStagedFiles);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [StagedFiles]", __FUNCTION__); return false; }
+
+    Log("Successfully initialized database", __FUNCTION__);
     return true;
 }
 
@@ -498,7 +524,7 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
     QFileInfo finfo(outpath);
     logfile = QString(finfo.absolutePath() + "/squirrel-" + utils::CreateLogDate() + ".log");
 
-    Log(QString("Writing squirrel package: workingdir [%1]  outpath [%2]  logfile [%3]").arg(workingDir).arg(outpath).arg(logfile), __FUNCTION__);
+    Log(QString("Beginning writing squirrel package: workingdir [%1]  outpath [%2]").arg(workingDir).arg(outpath), __FUNCTION__);
 
     /* ----- 1) write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
@@ -574,8 +600,12 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
                         QString origSeriesPath = f.absoluteDir().absolutePath();
                         squirrelImageIO io;
                         QString m3;
-                        io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.number), QString("%1").arg(series.number), "dicom", numConv, numRename, m3);
-                        Log(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
+                        if (io.ConvertDicom(dataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.number), QString("%1").arg(series.number), "dicom", numConv, numRename, m3)) {
+                            Log("ConvertDicom() successful", __FUNCTION__);
+                        }
+                        else {
+                            Log(QString("ConvertDicom() failed. Returned [%1]").arg(m3), __FUNCTION__);
+                        }
                     }
                     else {
                         Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__, true);
@@ -604,7 +634,7 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
                 }
                 else {
                     Log(QString("Error writing [%1]").arg(fout.fileName()), __FUNCTION__);
-                    Log(QString("Error writing %1/params.json").arg(seriesPath), __FUNCTION__);
+                    //Log(QString("Error writing %1/params.json").arg(seriesPath), __FUNCTION__);
                 }
             }
         }
@@ -912,6 +942,7 @@ int squirrel::GetObjectCount(QString object) {
     else if (object == "pipeline") table = "Pipeline";
     else if (object == "groupanalysis") table = "GroupAnalysis";
     else if (object == "experiment") table = "Experiment";
+    else { return -1; }
 
     q.prepare("select count(*) 'count' from " + table);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -965,7 +996,7 @@ void squirrel::PrintPackage() {
     qint64 numAnalyses = GetObjectCount("analysis");
     qint64 numExperiments = GetObjectCount("experiment");
     qint64 numPipelines = GetObjectCount("pipeline");
-    qint64 numGroupAnalyses = GetObjectCount("groupananalysis");
+    qint64 numGroupAnalyses = GetObjectCount("groupanalysis");
     qint64 numDataDictionaries = GetObjectCount("datadictionary");
     qint64 numDataDictionaryItems = GetObjectCount("datadictionaryitem");
 
@@ -977,7 +1008,7 @@ void squirrel::PrintPackage() {
     utils::Print(QString("  Directory Format (subject, study, series): %1, %2, %3").arg(subjectDirFormat).arg(studyDirFormat).arg(seriesDirFormat));
     utils::Print(QString("  Data Format: %1").arg(dataFormat));
     utils::Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetNumFiles()).arg(GetUnzipSize()));
-    utils::Print(QString("  Objects:\n    %1 subjects\n    %2 studies\n    %3 series\n    %4 measures\n    %5 drugs\n    %6 analyses\n    %7 experiments\n    %8 pipelines\n    %9 group analyses\n    %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+    utils::Print(QString("  Object count:\n    %1 subjects\n    %2 studies\n    %3 series\n    %4 measures\n    %5 drugs\n    %6 analyses\n    %7 experiments\n    %8 pipelines\n    %9 group analyses\n    %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
 }
 
 
@@ -1012,6 +1043,15 @@ bool squirrel::MakeTempDir(QString &dir) {
 /* ------------------------------------------------------------ */
 /* ----- AddStagedFiles --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::AddStagedFiles - add staged files to the database.
+ * These are files which will not be copied until the package is written
+ * @param objectType one of the object types
+ * @param rowid the database row ID of the object
+ * @param files the list of files to be staged
+ * @param destDir subdirectory in the package the files should be staged
+ * @return
+ */
 bool squirrel::AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir) {
 
     if (rowid < 0) return false;
@@ -1305,7 +1345,7 @@ QList<squirrelPipeline> squirrel::GetAllPipelines() {
 QList<squirrelSubject> squirrel::GetAllSubjects() {
     QSqlQuery q;
     QList<squirrelSubject> list;
-    q.prepare("select SubjectRowID from Subject order by Sequence, ID");
+    q.prepare("select SubjectRowID from Subject order by ID asc, Sequence");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
         squirrelSubject s;
@@ -1326,7 +1366,7 @@ QList<squirrelSubject> squirrel::GetAllSubjects() {
 QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
     QSqlQuery q;
     QList<squirrelStudy> list;
-    q.prepare("select StudyRowID from Study where SubjectRowID = :id order by Sequence, StudyNumber");
+    q.prepare("select StudyRowID from Study where SubjectRowID = :id order by StudyNumber asc, Sequence");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
@@ -1347,7 +1387,7 @@ QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
 QList<squirrelSeries> squirrel::GetSeries(int studyRowID) {
     QSqlQuery q;
     QList<squirrelSeries> list;
-    q.prepare("select SeriesRowID from Series where StudyRowID = :id order by Sequence, SeriesNumber");
+    q.prepare("select SeriesRowID from Series where StudyRowID = :id order by SeriesNumber asc, Sequence");
     q.bindValue(":id", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
@@ -1426,6 +1466,10 @@ QList<squirrelDrug> squirrel::GetDrugs(int subjectRowID) {
 /* ------------------------------------------------------------ */
 /* ----- GetAllGroupAnalyses ---------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetAllGroupAnalyses
+ * @return list of all groupAnalysis objects
+ */
 QList<squirrelGroupAnalysis> squirrel::GetAllGroupAnalyses() {
     QSqlQuery q;
     QList<squirrelGroupAnalysis> list;
@@ -1445,6 +1489,10 @@ QList<squirrelGroupAnalysis> squirrel::GetAllGroupAnalyses() {
 /* ------------------------------------------------------------ */
 /* ----- GetAllDataDictionaries ------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetAllDataDictionaries
+ * @return list of all dataDictionary objects
+ */
 QList<squirrelDataDictionary> squirrel::GetAllDataDictionaries() {
     QSqlQuery q;
     QList<squirrelDataDictionary> list;
@@ -1464,6 +1512,11 @@ QList<squirrelDataDictionary> squirrel::GetAllDataDictionaries() {
 /* ------------------------------------------------------------ */
 /* ----- FindSubject ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::FindSubject
+ * @param id the PatientID field
+ * @return the database rowID of the subject if found, -1 otherwise
+ */
 int squirrel::FindSubject(QString id) {
     int rowid(-1);
     QSqlQuery q;
@@ -1502,7 +1555,7 @@ int squirrel::FindStudyByUID(QString studyUID) {
     QSqlQuery q;
     q.prepare("select * from Study where StudyUID = :studyuid");
     q.bindValue(":studyuid", studyUID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         q.first();
         rowid = q.value("StudyRowID").toInt();

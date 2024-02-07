@@ -48,7 +48,6 @@ bool squirrelSubject::Get() {
     if (objectID < 0) {
         valid = false;
         err = "objectID is not set";
-        qDebug() << "ObjectID is not set";
         return false;
     }
 
@@ -69,7 +68,6 @@ bool squirrelSubject::Get() {
         ethnicity1 = q.value("Ethnicity1").toString();
         ethnicity2 = q.value("Ethnicity2").toString();
         sequence = q.value("Sequence").toInt();
-        //virtualPath = q.value("VirtualPath").toString();
 
         valid = true;
         return true;
@@ -96,7 +94,6 @@ bool squirrelSubject::Get() {
  */
 bool squirrelSubject::Store() {
 
-    qDebug() << "Inside the Store() function";
     QSqlQuery q;
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
@@ -133,96 +130,6 @@ bool squirrelSubject::Store() {
 
     return true;
 }
-
-
-// /* ------------------------------------------------------------ */
-// /* ----- addStudy --------------------------------------------- */
-// /* ------------------------------------------------------------ */
-// /**
-//  * @brief Add a study to this subject
-//  * @param s squirrelStudy to be added
-//  * @return true if added, false otherwise
-//  */
-// bool squirrelSubject::addStudy(squirrelStudy s) {
-
-//     /* check size of the study list before and after adding */
-//     qint64 size = studyList.size();
-
-//     /* check if this study already exists, by UID */
-//     bool exists = false;
-//     for (int i=0; i<studyList.size(); i++)
-//         if ((studyList[i].studyUID == s.studyUID) && (s.studyUID != ""))
-//             exists = true;
-
-//     /* if it doesn't exist, append it */
-//     if (!exists)
-//         studyList.append(s);
-
-//     if (studyList.size() > size)
-//         return true;
-//     else
-//         return false;
-// }
-
-
-// /* ------------------------------------------------------------ */
-// /* ----- addMeasure ------------------------------------------- */
-// /* ------------------------------------------------------------ */
-// /**
-//  * @brief Add a measure to this subject
-//  * @param m squirrelMeasure to be added
-//  * @return true if added, false otherwise
-//  */
-// bool squirrelSubject::addMeasure(squirrelMeasure m) {
-
-// 	/* check size of the measure list before and after adding */
-// 	qint64 size = measureList.size();
-
-// 	/* check if this measure already exists, by UID */
-// 	bool exists = false;
-// 	//for (int i=0; i<studyList.size(); i++)
-// 	//	if (studyList.at(i).studyUID == s.studyUID)
-// 	//        exists = true;
-
-// 	/* if it doesn't exist, append it */
-// 	if (!exists)
-// 		measureList.append(m);
-
-// 	if (measureList.size() > size)
-// 		return true;
-// 	else
-// 		return false;
-// }
-
-
-// /* ------------------------------------------------------------ */
-// /* ----- addDrug ---------------------------------------------- */
-// /* ------------------------------------------------------------ */
-// /**
-//  * @brief Add a drug to this subject
-//  * @param d squirrelDrug to be added
-//  * @return true if added, false otherwise
-//  */
-// bool squirrelSubject::addDrug(squirrelDrug d) {
-
-// 	/* check size of the drug list before and after adding */
-// 	qint64 size = drugList.size();
-
-// 	/* check if this drug already exists, by UID */
-// 	bool exists = false;
-// 	//for (int i=0; i<studyList.size(); i++)
-// 	//	if (studyList.at(i).studyUID == s.studyUID)
-// 	//        exists = true;
-
-// 	/* if it doesn't exist, append it */
-// 	if (!exists)
-//         drugList.append(d);
-
-// 	if (drugList.size() > size)
-// 		return true;
-// 	else
-// 		return false;
-// }
 
 
 /* ------------------------------------------------------------ */

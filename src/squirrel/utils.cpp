@@ -839,24 +839,35 @@ namespace utils {
     QHash<QString, QString> AnonymizeParams(QHash<QString, QString> params) {
         QHash<QString, QString> p;
         QStringList anonFields;
-        anonFields << "ReferringPhysiciansName";
-        anonFields << "PerformingPhysiciansName";
-        anonFields << "OperatorsName";
-        anonFields << "PatientName";
-        anonFields << "PatientBirthDate";
-        anonFields << "InstitutionName";
-        anonFields << "InstitutionAddress";
-        anonFields << "StationName";
-        anonFields << "StudyDescription";
-        anonFields << "StudyDate";
-        anonFields << "SeriesDate";
         anonFields << "AcquisitionDate";
-        anonFields << "ContentDate";
-        anonFields << "StudyTime";
-        anonFields << "SeriesTime";
         anonFields << "AcquisitionTime";
+        anonFields << "ContentDate";
         anonFields << "ContentTime";
+        anonFields << "Filename";
+        anonFields << "InstanceCreationDate";
+        anonFields << "InstanceCreationTime";
+        anonFields << "InstitutionAddress";
+        anonFields << "InstitutionName";
+        anonFields << "OperatorsName";
+        anonFields << "PatientBirthDate";
         anonFields << "PatientID";
+        anonFields << "PatientName";
+        anonFields << "PerformedProcedureStepDescription";
+        anonFields << "PerformedProcedureStepID";
+        anonFields << "PerformedProcedureStepStartDate";
+        anonFields << "PerformedProcedureStepStartTime";
+        anonFields << "PerformingPhysicianName";
+        anonFields << "ReferringPhysicianName";
+        anonFields << "RequestedProcedureDescription";
+        anonFields << "SeriesDate";
+        anonFields << "SeriesDateTime";
+        anonFields << "SeriesTime";
+        anonFields << "StationName";
+        anonFields << "StudyDate";
+        anonFields << "StudyDateTime";
+        anonFields << "StudyDescription";
+        anonFields << "StudyTime";
+        anonFields << "UniqueSeriesString";
 
         for(QHash<QString, QString>::iterator a = params.begin(); a != params.end(); ++a) {
             if (!anonFields.contains(a.key()))
