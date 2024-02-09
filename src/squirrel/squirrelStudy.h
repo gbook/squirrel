@@ -40,13 +40,14 @@ class squirrelStudy
 public:
     squirrelStudy();
 
-    bool addSeries(squirrelSeries s);
-    bool addAnalysis(squirrelAnalysis a);
-    qint64 GetNextSeriesNumber();
+    //bool addSeries(squirrelSeries s);
+    //bool addAnalysis(squirrelAnalysis a);
+    //qint64 GetNextSeriesNumber();
     void PrintStudy();
     QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */
+    bool Remove();
     bool isValid() { return valid; }
     QString Error() { return err; }
     qint64 GetObjectID() { return objectID; }

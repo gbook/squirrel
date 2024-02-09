@@ -967,33 +967,6 @@ int squirrel::GetObjectCount(QString object) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- removeSubject ---------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Removed a subject, by ID, from the package
- * @param ID subject ID to be removed
- * @return true if subject found and removed, false otherwise
- */
-bool squirrel::removeSubject(int rowID) {
-
-    /* get details, and virtual path */
-    squirrelSubject s;
-    s.SetObjectID(rowID);
-    s.Get();
-
-    /* remove all files */
-    if (s.isValid() && s.VirtualPath() != "") {
-        QString m;
-        utils::RemoveDir(s.VirtualPath(), m);
-    }
-
-    /* TODO: remove recursively from database */
-
-    return false;
-}
-
-
-/* ------------------------------------------------------------ */
 /* ----- PrintPackage ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**

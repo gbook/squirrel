@@ -777,6 +777,18 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
+    /* --------- RemoveStagedFileList --------------------------- */
+    /* ---------------------------------------------------------- */
+    void RemoveStagedFileList(qint64 objectID, QString objectType) {
+        QSqlQuery q;
+        q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
+        q.bindValue(":id", objectID);
+        q.bindValue(":type", objectType);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+
+    /* ---------------------------------------------------------- */
     /* --------- GetParams -------------------------------------- */
     /* ---------------------------------------------------------- */
     QHash<QString, QString> GetParams(qint64 seriesRowID) {

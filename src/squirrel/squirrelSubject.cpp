@@ -154,6 +154,60 @@ void squirrelSubject::PrintSubject() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- Remove ----------------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelSubject::Remove() {
+
+    /* find all studies associated with this subject ... */
+    QSqlQuery q;
+    q.prepare("select StudyRowID from Study where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        int studyRowID = q.value("StudyRowID").toInt();
+
+        /* ... delete any staged Study files */
+        utils::RemoveStagedFileList(studyRowID, "study");
+
+        /* ... delete all staged Series files */
+        QSqlQuery q2;
+        q2.prepare("select SeriesRowID from Series where StudyRowID = :studyid");
+        q2.bindValue(":studyid", studyRowID);
+        utils::SQLQuery(q2, __FUNCTION__, __FILE__, __LINE__);
+        while (q2.next()) {
+            int seriesRowID = q2.value("SeriesRowID").toInt();
+
+            /* ... delete any staged Series files */
+            utils::RemoveStagedFileList(seriesRowID, "series");
+        }
+
+        /* ... delete all series for those studies */
+        q2.prepare("delete from Series where StudyRowID = :studyid");
+        q2.bindValue(":studyid", studyRowID);
+        utils::SQLQuery(q2, __FUNCTION__, __FILE__, __LINE__);
+    }
+
+    /* delete the studies */
+    q.prepare("delete from Study where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* delete the subject and any staged files */
+    q.prepare("delete from Subject where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    utils::RemoveStagedFileList(objectID, "subject");
+
+    /* in case anyone tries to use this object again */
+    objectID = -1;
+    valid = false;
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**

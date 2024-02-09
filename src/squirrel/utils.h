@@ -74,6 +74,7 @@ namespace utils {
     bool SQLQuery(QSqlQuery &q, QString function, QString file, int line, bool d=false);
     QStringList GetStagedFileList(qint64 objectID, QString objectType);
     void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths);
+    void RemoveStagedFileList(qint64 objectID, QString objectType);
     QHash<QString, QString> GetParams(qint64 seriesRowID);
     void StoreParams(qint64 seriesRowID, QHash<QString, QString> params);
     QHash<QString, QString> AnonymizeParams(QHash<QString, QString> params);

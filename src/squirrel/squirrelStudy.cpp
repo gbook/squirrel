@@ -158,66 +158,41 @@ bool squirrelStudy::Store() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- addSeries -------------------------------------------- */
+/* ----- Remove ----------------------------------------------- */
 /* ------------------------------------------------------------ */
-/**
- * @brief Add series to this study
- * @param s squirrelSeries to be added
- * @return true if series was added, false otherwise
- */
-bool squirrelStudy::addSeries(squirrelSeries s) {
-	/* check size of the series list before and after adding */
-	qint64 size(0);
-	size = seriesList.size();
-
-	/* create a copy of the object before appending */
-    seriesList.append(s);
-
-    if (seriesList.size() > size)
-        return true;
-    else
-        return false;
-}
+bool squirrelStudy::Remove() {
 
 
-/* ------------------------------------------------------------ */
-/* ----- addAnalysis ------------------------------------------ */
-/* ------------------------------------------------------------ */
-/**
- * @brief Add an analysis to this study
- * @param a squirrelAnalysis to be added
- * @return true if analysis was added, false otherwise
- */
-bool squirrelStudy::addAnalysis(squirrelAnalysis a) {
+    /* ... delete any staged Study files */
+    utils::RemoveStagedFileList(objectID, "study");
 
-	/* check size of the series list before and after adding */
-	qint64 size = analysisList.size();
+    /* ... delete all staged Series files */
+    QSqlQuery q;
+    q.prepare("select SeriesRowID from Series where StudyRowID = :studyid");
+    q.bindValue(":studyid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        /* ... delete any staged Series files */
+        utils::RemoveStagedFileList(q.value("SeriesRowID").toInt(), "series");
+    }
 
-	analysisList.append(a);
+    /* ... delete all series for those studies */
+    q.prepare("delete from Series where StudyRowID = :studyid");
+    q.bindValue(":studyid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-	if (analysisList.size() > size)
-		return true;
-	else
-		return false;
-}
+    /* delete the study */
+    q.prepare("delete from Study where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
+    utils::RemoveStagedFileList(objectID, "subject");
 
-/* ------------------------------------------------------------ */
-/* ----- GetNextSeriesNumber ---------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief Get the next series number for this study
- * @return the next series number
- */
-qint64 squirrelStudy::GetNextSeriesNumber() {
+    /* in case anyone tries to use this object again */
+    objectID = -1;
+    valid = false;
 
-    /* find the current highest series number */
-    qint64 maxnum = 0;
-    for (int i=0; i<seriesList.size(); i++)
-        if (seriesList[i].number > maxnum)
-            maxnum = seriesList[i].number;
-
-    return maxnum+1;
+    return true;
 }
 
 

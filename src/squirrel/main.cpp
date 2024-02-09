@@ -58,9 +58,10 @@ int main(int argc, char *argv[])
     QCommandLineOption optOutputDataFormat(QStringList() << "output-data-format", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "dataformat");
     QCommandLineOption optOutputDirFormat(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "dirformat");
     QCommandLineOption optOutputPackageFormat(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "packageformat");
-    QCommandLineOption optRenumberIDs(QStringList() << "renumber-ids", "Renumber IDs in zero-padded format #####. Existing IDs are moved to subject alt-IDs field");
-    QCommandLineOption optDicomDir(QStringList() << "add-dicom-dir", "Modify an existing squirrel package by adding in this DICOM directory. IDs will be automatically renumbered.", "dicomdir");
-
+    //QCommandLineOption optRenumberIDs(QStringList() << "renumber-ids", "Renumber IDs in zero-padded format #####. Existing IDs are moved to subject alt-IDs field");
+    //QCommandLineOption optDicomDir(QStringList() << "add-dicom-dir", "Modify an existing squirrel package by adding in this DICOM directory. IDs will be automatically renumbered.", "dicomdir");
+    QCommandLineOption optAddObject(QStringList() << "add", "Add an object [dicomdir  subject  study  series  experiment  analysis  pipeline].", "object");
+    QCommandLineOption optRemoveObject(QStringList() << "remove", "Remove an object [subject  study  series  experiment  analysis  pipeline].", "object");
     QCommandLineOption optListObject(QStringList() << "list", "List an object [package  subjects  studies  series  experiments  pipelines  groupanalyses  datadictionary].", "object");
     QCommandLineOption optSubjectID(QStringList() << "subject-id", "Subject ID.", "subjectid");
     QCommandLineOption optStudyNum(QStringList() << "study-num", "Study Number.", "studynum");
@@ -72,9 +73,10 @@ int main(int argc, char *argv[])
     p.addOption(optOutputDataFormat);
     p.addOption(optOutputDirFormat);
     p.addOption(optOutputPackageFormat);
-    p.addOption(optRenumberIDs);
-    p.addOption(optDicomDir);
-
+    //p.addOption(optRenumberIDs);
+    //p.addOption(optDicomDir);
+    p.addOption(optAddObject);
+    p.addOption(optRemoveObject);
     p.addOption(optListObject);
     p.addOption(optSubjectID);
     p.addOption(optStudyNum);
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
 
     QString tool;
     bool debug, quiet;
-    bool renumberIDs;
+    //bool renumberIDs;
     bool listDetails;
 
     const QStringList args = p.positionalArguments();
@@ -104,7 +106,7 @@ int main(int argc, char *argv[])
     QString paramSubjectID = p.value(optSubjectID).trimmed();
     int paramStudyNum = p.value(optStudyNum).trimmed().toInt();
     int paramSeriesNum = p.value(optSeriesNum).trimmed().toInt();
-    renumberIDs = p.isSet(optRenumberIDs);
+    //renumberIDs = p.isSet(optRenumberIDs);
     listDetails = p.isSet(optListDetails);
 
     if (quiet)

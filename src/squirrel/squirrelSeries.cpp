@@ -151,6 +151,29 @@ bool squirrelSeries::Store() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- Remove ----------------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelSeries::Remove() {
+
+    QSqlQuery q;
+
+    /* ... delete any staged Study files */
+    utils::RemoveStagedFileList(objectID, "series");
+
+    /* delete the series */
+    q.prepare("delete from Series where SeriesRowID = :seriesid");
+    q.bindValue(":seriesid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* in case anyone tries to use this object again */
+    objectID = -1;
+    valid = false;
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintSeries ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
@@ -190,16 +213,16 @@ void squirrelSeries::PrintSeries() {
 QJsonObject squirrelSeries::ToJSON() {
     QJsonObject json;
 
-    json["SeriesNumber"] = number;
-    json["SeriesDatetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-    json["SeriesUID"] = seriesUID;
-    json["Description"] = description;
-    json["Protocol"] = protocol;
-    json["NumFiles"] = numFiles;
-    json["Size"] = size;
-    json["NumBehFiles"] = numBehFiles;
     json["BehSize"] = behSize;
+    json["Description"] = description;
+    json["NumBehFiles"] = numBehFiles;
+    json["NumFiles"] = numFiles;
+    json["Protocol"] = protocol;
     json["Sequence"] = sequence;
+    json["SeriesDatetime"] = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    json["SeriesNumber"] = number;
+    json["SeriesUID"] = seriesUID;
+    json["Size"] = size;
     json["VirtualPath"] = VirtualPath();
 
     /* experiments */

@@ -104,7 +104,9 @@ public:
 
     bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
 
-    bool removeSubject(int rowID);
+    //bool RemoveSubject(int subjectRowID);
+    //bool RemoveStudy(int studyRowID);
+    //bool RemoveSeries(int studyRowID);
 
     /* requence the subject data */
     void ResequenceSubjects();

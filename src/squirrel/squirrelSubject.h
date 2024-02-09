@@ -46,6 +46,7 @@ public:
 	QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */
+    bool Remove();          /* remove the subject (and all child studies and series) from the database */
     bool isValid() { return valid; }
     QString Error() { return err; }
     qint64 GetObjectID() { return objectID; }
