@@ -23,9 +23,9 @@
 #include "squirrelGroupAnalysis.h"
 #include "utils.h"
 
-squirrelGroupAnalysis::squirrelGroupAnalysis(QSqlDatabase &d)
+squirrelGroupAnalysis::squirrelGroupAnalysis()
 {
-    db = d;
+
 }
 
 
@@ -47,7 +47,7 @@ bool squirrelGroupAnalysis::Get() {
         err = "objectID is not set";
         return false;
     }
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select * from GroupAnalysis where GroupAnalysisRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -64,7 +64,7 @@ bool squirrelGroupAnalysis::Get() {
         virtualPath = q.value("VirtualPath").toString();
 
         /* get any staged files */
-        stagedFiles = utils::GetStagedFileList(objectID, "groupanalysis", db);
+        stagedFiles = utils::GetStagedFileList(objectID, "groupanalysis");
 
         valid = true;
         return true;
@@ -91,7 +91,7 @@ bool squirrelGroupAnalysis::Get() {
  */
 bool squirrelGroupAnalysis::Store() {
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
@@ -119,7 +119,7 @@ bool squirrelGroupAnalysis::Store() {
     }
 
     /* store any staged filepaths */
-    utils::StoreStagedFileList(objectID, "groupanalysis", stagedFiles, db);
+    utils::StoreStagedFileList(objectID, "groupanalysis", stagedFiles);
 
     return true;
 }

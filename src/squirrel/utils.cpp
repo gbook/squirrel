@@ -736,10 +736,10 @@ namespace utils {
     /* ---------------------------------------------------------- */
     /* --------- GetStagedFileList ------------------------------ */
     /* ---------------------------------------------------------- */
-    QStringList GetStagedFileList(qint64 objectID, QString objectType, QSqlDatabase &db) {
+    QStringList GetStagedFileList(qint64 objectID, QString objectType) {
         QStringList paths;
 
-        QSqlQuery q(db);
+        QSqlQuery q(QSqlDatabase::database("squirrel"));
         q.prepare("select * from StagedFiles where ObjectRowID = :id and ObjectType = :type");
         q.bindValue(":id", objectID);
         q.bindValue(":type", objectType);
@@ -755,9 +755,9 @@ namespace utils {
     /* ---------------------------------------------------------- */
     /* --------- StoreStagedFileList ---------------------------- */
     /* ---------------------------------------------------------- */
-    void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths, QSqlDatabase &db) {
+    void StoreStagedFileList(qint64 objectID, QString objectType, QStringList paths) {
 
-        QSqlQuery q(db);
+        QSqlQuery q(QSqlDatabase::database("squirrel"));
         if (objectID >= 0) {
             /* delete previously staged files from the database */
             q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
@@ -779,8 +779,8 @@ namespace utils {
     /* ---------------------------------------------------------- */
     /* --------- RemoveStagedFileList --------------------------- */
     /* ---------------------------------------------------------- */
-    void RemoveStagedFileList(qint64 objectID, QString objectType, QSqlDatabase &db) {
-        QSqlQuery q(db);
+    void RemoveStagedFileList(qint64 objectID, QString objectType) {
+        QSqlQuery q(QSqlDatabase::database("squirrel"));
         q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
         q.bindValue(":id", objectID);
         q.bindValue(":type", objectType);
@@ -791,10 +791,10 @@ namespace utils {
     /* ---------------------------------------------------------- */
     /* --------- GetParams -------------------------------------- */
     /* ---------------------------------------------------------- */
-    QHash<QString, QString> GetParams(qint64 seriesRowID, QSqlDatabase &db) {
+    QHash<QString, QString> GetParams(qint64 seriesRowID) {
         QHash<QString, QString> params;
 
-        QSqlQuery q(db);
+        QSqlQuery q(QSqlDatabase::database("squirrel"));
         q.prepare("select * from Params where SeriesRowID = :id");
         q.bindValue(":id", seriesRowID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -811,9 +811,9 @@ namespace utils {
     /* ---------------------------------------------------------- */
     /* --------- StoreParams ------------------------------------ */
     /* ---------------------------------------------------------- */
-    void StoreParams(qint64 seriesRowID, QHash<QString, QString> params, QSqlDatabase &db) {
+    void StoreParams(qint64 seriesRowID, QHash<QString, QString> params) {
 
-        QSqlQuery q(db);
+        QSqlQuery q(QSqlDatabase::database("squirrel"));
         if (seriesRowID >= 0) {
             /* delete previously staged files from the database */
             q.prepare("delete from Params where SeriesRowID = :id");

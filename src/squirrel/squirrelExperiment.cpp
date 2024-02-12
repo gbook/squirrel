@@ -23,9 +23,9 @@
 #include "squirrelExperiment.h"
 #include "utils.h"
 
-squirrelExperiment::squirrelExperiment(QSqlDatabase &d)
+squirrelExperiment::squirrelExperiment()
 {
-    db = d;
+
 }
 
 /* ------------------------------------------------------------ */
@@ -47,7 +47,7 @@ bool squirrelExperiment::Get() {
         return false;
     }
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select * from Experiment where ExperimentRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -61,7 +61,7 @@ bool squirrelExperiment::Get() {
         virtualPath = q.value("VirtualPath").toString();
 
         /* get any staged files */
-        stagedFiles = utils::GetStagedFileList(objectID, "experiment", db);
+        stagedFiles = utils::GetStagedFileList(objectID, "experiment");
 
         valid = true;
         return true;
@@ -88,7 +88,7 @@ bool squirrelExperiment::Get() {
  */
 bool squirrelExperiment::Store() {
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert into Experiment (ExperimentName, Size, NumFiles, VirtualPath) values (:packageid, :name, :size, :numfiles, :virtualpath)");
@@ -111,7 +111,7 @@ bool squirrelExperiment::Store() {
     }
 
     /* store any staged filepaths */
-    utils::StoreStagedFileList(objectID, "experiment", stagedFiles, db);
+    utils::StoreStagedFileList(objectID, "experiment", stagedFiles);
 
     return true;
 }

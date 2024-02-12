@@ -205,7 +205,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
         if (filename.endsWith("_scans.tsv")) {
 
             /* get the subject */
-            squirrelSubject sqrlSubject(sqrl->db);
+            squirrelSubject sqrlSubject;
             int subjectRowID = sqrl->FindSubject(ID);
             if (subjectRowID < 0) {
                 sqrlSubject.ID = ID;
@@ -215,13 +215,13 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 
             /* create a session/study and add it to the subject */
             int studyRowID;
-            squirrelStudy sqrlStudy(sqrl->db);
+            squirrelStudy sqrlStudy;
             sqrlStudy.subjectRowID = subjectRowID;
             sqrlStudy.Store();
             studyRowID = sqrlStudy.GetObjectID();
 
             /* create an analysis */
-            squirrelAnalysis sqrlAnalysis(sqrl->db);
+            squirrelAnalysis sqrlAnalysis;
             sqrlAnalysis.pipelineName = "analysis";
             sqrlAnalysis.lastMessage = "BIDS imported analysis file";
             sqrlAnalysis.studyRowID = studyRowID;
@@ -317,7 +317,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -326,7 +326,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "MR";
@@ -336,7 +336,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -406,7 +406,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -415,7 +415,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "MR";
@@ -425,7 +425,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -500,7 +500,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -509,7 +509,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "PET";
@@ -519,7 +519,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -599,7 +599,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -608,7 +608,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a studyRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "MR";
@@ -618,7 +618,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a seriesRowID */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -700,7 +700,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -709,7 +709,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "MOTION";
@@ -719,7 +719,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -799,7 +799,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -808,7 +808,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "EEG";
@@ -818,7 +818,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -892,7 +892,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
-                        squirrelSubject subject(sqrl->db);
+                        squirrelSubject subject;
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
@@ -901,7 +901,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
-                        squirrelStudy study(sqrl->db);
+                        squirrelStudy study;
                         study.number = studyNum;
                         study.subjectRowID = subjectRowID;
                         study.modality = "TASK";
@@ -911,7 +911,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series(sqrl->db);
+                    squirrelSeries series;
                     series.number = seriesNum;
                     series.studyRowID = studyRowID;
                     series.protocol = protocol;
@@ -998,7 +998,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
             QString strain = tsv[i]["strain"];
 
             /* add a subject */
-            squirrelSubject sqrlSubj(sqrl->db);
+            squirrelSubject sqrlSubj;
             sqrlSubj.ID = id;
             sqrlSubj.sex = sex;
             sqrlSubj.gender = sex;
@@ -1006,28 +1006,28 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
             int subjectRowID = sqrlSubj.GetObjectID();
 
             /* add handedness as a measure */
-            squirrelMeasure sqrlMeas(sqrl->db);
+            squirrelMeasure sqrlMeas;
             sqrlMeas.description = "Handedness";
             sqrlMeas.measureName = "Handedness";
             sqrlMeas.value = hand;
             sqrlMeas.subjectRowID = subjectRowID;
             sqrlMeas.Store();
 
-            squirrelMeasure sqrlMeas2(sqrl->db);
+            squirrelMeasure sqrlMeas2;
             sqrlMeas2.description = "Species";
             sqrlMeas2.measureName = "Species";
             sqrlMeas2.value = species;
             sqrlMeas2.subjectRowID = subjectRowID;
             sqrlMeas2.Store();
 
-            squirrelMeasure sqrlMeas3(sqrl->db);
+            squirrelMeasure sqrlMeas3;
             sqrlMeas3.description = "Strain";
             sqrlMeas3.measureName = "Strain";
             sqrlMeas3.value = strain;
             sqrlMeas3.subjectRowID = subjectRowID;
             sqrlMeas3.Store();
 
-            squirrelMeasure sqrlMeas4(sqrl->db);
+            squirrelMeasure sqrlMeas4;
             sqrlMeas4.description = "age";
             sqrlMeas4.measureName = "age";
             sqrlMeas4.value = age;
@@ -1075,7 +1075,7 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
 
     //double tr = root.value("RepetitionTime").toDouble();
 
-    squirrelExperiment exp(sqrl->db);
+    squirrelExperiment exp;
     exp.experimentName = experimentName;
     exp.virtualPath = QString("experiments/%1").arg(experimentName);
     exp.Store();

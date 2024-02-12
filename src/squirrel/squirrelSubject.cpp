@@ -27,9 +27,9 @@
 /* ------------------------------------------------------------ */
 /* ----- subject ---------------------------------------------- */
 /* ------------------------------------------------------------ */
-squirrelSubject::squirrelSubject(QSqlDatabase &d)
+squirrelSubject::squirrelSubject()
 {
-    db = d;
+
 }
 
 
@@ -52,7 +52,7 @@ bool squirrelSubject::Get() {
         return false;
     }
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select * from Subject where SubjectRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -95,7 +95,7 @@ bool squirrelSubject::Get() {
  */
 bool squirrelSubject::Store() {
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert or ignore into Subject (ID, AltIDs, GUID, DateOfBirth, Sex, Gender, Ethnicity1, Ethnicity2, Sequence, VirtualPath) values (:ID, :AltIDs, :GUID, :DateOfBirth, :Sex, :Gender, :Ethnicity1, :Ethnicity2, :Sequence, :VirtualPath)");
@@ -160,7 +160,7 @@ void squirrelSubject::PrintSubject() {
 bool squirrelSubject::Remove() {
 
     /* find all studies associated with this subject ... */
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select StudyRowID from Study where SubjectRowID = :subjectid");
     q.bindValue(":subjectid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -168,10 +168,10 @@ bool squirrelSubject::Remove() {
         int studyRowID = q.value("StudyRowID").toInt();
 
         /* ... delete any staged Study files */
-        utils::RemoveStagedFileList(studyRowID, "study", db);
+        utils::RemoveStagedFileList(studyRowID, "study");
 
         /* ... delete all staged Series files */
-        QSqlQuery q2(db);
+        QSqlQuery q2(QSqlDatabase::database("squirrel"));
         q2.prepare("select SeriesRowID from Series where StudyRowID = :studyid");
         q2.bindValue(":studyid", studyRowID);
         utils::SQLQuery(q2, __FUNCTION__, __FILE__, __LINE__);
@@ -179,7 +179,7 @@ bool squirrelSubject::Remove() {
             int seriesRowID = q2.value("SeriesRowID").toInt();
 
             /* ... delete any staged Series files */
-            utils::RemoveStagedFileList(seriesRowID, "series", db);
+            utils::RemoveStagedFileList(seriesRowID, "series");
         }
 
         /* ... delete all series for those studies */
@@ -198,7 +198,7 @@ bool squirrelSubject::Remove() {
     q.bindValue(":subjectid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    utils::RemoveStagedFileList(objectID, "subject", db);
+    utils::RemoveStagedFileList(objectID, "subject");
 
     /* in case anyone tries to use this object again */
     objectID = -1;
@@ -229,13 +229,13 @@ QJsonObject squirrelSubject::ToJSON() {
     json["VirtualPath"] = VirtualPath();
 
     /* add studies */
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select StudyRowID from Study where SubjectRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     QJsonArray JSONstudies;
     while (q.next()) {
-        squirrelStudy s(db);
+        squirrelStudy s;
         s.SetObjectID(q.value("StudyRowID").toInt());
         if (s.Get()) {
             JSONstudies.append(s.ToJSON());
@@ -252,7 +252,7 @@ QJsonObject squirrelSubject::ToJSON() {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     QJsonArray JSONmeasures;
     while (q.next()) {
-        squirrelMeasure m(db);
+        squirrelMeasure m;
         m.SetObjectID(q.value("MeasureRowID").toInt());
         if (m.Get()) {
             JSONmeasures.append(m.ToJSON());
@@ -269,7 +269,7 @@ QJsonObject squirrelSubject::ToJSON() {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     QJsonArray JSONdrugs;
     while (q.next()) {
-        squirrelDrug d(db);
+        squirrelDrug d;
         d.SetObjectID(q.value("DrugRowID").toInt());
         if (d.Get()) {
             JSONdrugs.append(d.ToJSON());

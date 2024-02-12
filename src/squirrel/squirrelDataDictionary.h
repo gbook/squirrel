@@ -47,7 +47,7 @@ struct dataDictionaryItem {
 class squirrelDataDictionary
 {
 public:
-    squirrelDataDictionary(QSqlDatabase &d);
+    squirrelDataDictionary();
 
     QJsonObject ToJSON();
     void PrintDataDictionary();
@@ -71,8 +71,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlDatabase db;
-
 };
 
 #endif // SQUIRRELDATADICTIONARY_H

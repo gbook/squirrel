@@ -38,7 +38,7 @@
 class squirrelStudy
 {
 public:
-    squirrelStudy(QSqlDatabase &d);
+    squirrelStudy();
     void PrintStudy();
     QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */
@@ -77,7 +77,6 @@ private:
     qint64 objectID = -1;
     QString subjectDirFormat = "orig";
     QString studyDirFormat = "orig";
-    QSqlDatabase db;
 };
 
 #endif // SQUIRRELSTUDY_H

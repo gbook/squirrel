@@ -23,9 +23,9 @@
 #include "squirrelDataDictionary.h"
 #include "utils.h"
 
-squirrelDataDictionary::squirrelDataDictionary(QSqlDatabase &d)
+squirrelDataDictionary::squirrelDataDictionary()
 {
-    db = d;
+
 }
 
 
@@ -48,7 +48,7 @@ bool squirrelDataDictionary::Get() {
         return false;
     }
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select * from DataDictionary where DataDictionaryRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -63,7 +63,7 @@ bool squirrelDataDictionary::Get() {
 
         /* get the DataDictionaryItems */
         dictItems.clear();
-        QSqlQuery q(db);
+        QSqlQuery q(QSqlDatabase::database("squirrel"));
         q.prepare("select * from DataDictionaryItems where DataDictionaryRowID = :id");
         q.bindValue(":id", objectID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -80,7 +80,7 @@ bool squirrelDataDictionary::Get() {
         }
 
         /* get any staged files */
-        stagedFiles = utils::GetStagedFileList(objectID, "datadictionary", db);
+        stagedFiles = utils::GetStagedFileList(objectID, "datadictionary");
 
         valid = true;
         return true;
@@ -107,7 +107,7 @@ bool squirrelDataDictionary::Get() {
  */
 bool squirrelDataDictionary::Store() {
 
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert into DataDictionary (NumFiles, Size, VirtualPath) values (:NumFiles, :Size, :VirtualPath)");
@@ -146,7 +146,7 @@ bool squirrelDataDictionary::Store() {
     }
 
     /* store any staged filepaths */
-    utils::StoreStagedFileList(objectID, "datadictionary", stagedFiles, db);
+    utils::StoreStagedFileList(objectID, "datadictionary", stagedFiles);
 
     return true;
 }

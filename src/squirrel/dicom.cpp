@@ -85,13 +85,13 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
             QString subjectID = a.key();
 
             /* create a subject */
-            squirrelSubject currSubject(sqrl->db);
+            squirrelSubject currSubject;
             /* ---------- iterate through the studies ---------- */
             for(QMap<QString, QMap<QString, QStringList> >::iterator b = dcms[subjectID].begin(); b != dcms[subjectID].end(); ++b) {
                 QString studyID = b.key();
 
                 /* create a study */
-                squirrelStudy currStudy(sqrl->db);
+                squirrelStudy currStudy;
                 /* ---------- iterate through the series ---------- */
                 for(QMap<QString, QStringList>::iterator c = dcms[subjectID][studyID].begin(); c != dcms[subjectID][studyID].end(); ++c) {
                     QString seriesID = c.key();
@@ -137,7 +137,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     }
 
                     /* create the series object */
-                    squirrelSeries currSeries(sqrl->db);
+                    squirrelSeries currSeries;
                     currSeries.description = tags["SeriesDescription"];
                     currSeries.protocol = tags["Protocol"];
                     currSeries.number = tags["SeriesNumber"].toLongLong();

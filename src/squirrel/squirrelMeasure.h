@@ -34,7 +34,7 @@
 class squirrelMeasure
 {
 public:
-    squirrelMeasure(QSqlDatabase &d);
+    squirrelMeasure();
     QJsonObject ToJSON();
 	void PrintMeasure();
     bool Get();             /* gets the object data from the database */
@@ -61,7 +61,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlDatabase db;
 };
 
 #endif // SQUIRRELMEASURE_H

@@ -36,7 +36,7 @@
 class squirrelDrug
 {
 public:
-    squirrelDrug(QSqlDatabase &d);
+    squirrelDrug();
     QJsonObject ToJSON();
 	void PrintDrug();
     bool Get();             /* gets the object data from the database */
@@ -70,7 +70,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlDatabase db;
 };
 
 #endif // SQUIRRELDRUG_H

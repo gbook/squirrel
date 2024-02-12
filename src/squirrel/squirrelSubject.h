@@ -39,7 +39,7 @@
 class squirrelSubject
 {
 public:
-    squirrelSubject(QSqlDatabase &d);
+    squirrelSubject();
 
     /* functions */
 	void PrintSubject();
@@ -71,7 +71,6 @@ private:
     QString err;
     qint64 objectID = -1;
     QString subjectDirFormat = "orig";
-    QSqlDatabase db;
 };
 
 #endif // SQUIRRELSUBJECT_H

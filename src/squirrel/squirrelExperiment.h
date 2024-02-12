@@ -33,7 +33,7 @@
 class squirrelExperiment
 {
 public:
-    squirrelExperiment(QSqlDatabase &d);
+    squirrelExperiment();
     QJsonObject ToJSON();   /* returns a JSON object */
     void PrintExperiment(); /* prints the object */
     bool Get();             /* gets the object data from the database */
@@ -54,7 +54,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlDatabase db;
 };
 
 #endif // SQUIRRELEXPERIMENT_H

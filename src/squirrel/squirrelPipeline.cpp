@@ -29,9 +29,9 @@
 /* ---------------------------------------------------------- */
 /* --------- pipeline --------------------------------------- */
 /* ---------------------------------------------------------- */
-squirrelPipeline::squirrelPipeline(QSqlDatabase &d)
+squirrelPipeline::squirrelPipeline()
 {
-    db = d;
+
 }
 
 
@@ -53,7 +53,7 @@ bool squirrelPipeline::Get() {
         err = "objectID is not set";
         return false;
     }
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
     q.prepare("select * from Pipeline where PipelineRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -93,7 +93,7 @@ bool squirrelPipeline::Get() {
         virtualPath = q.value("VirtualPath").toString();
 
         /* get any staged files */
-        stagedFiles = utils::GetStagedFileList(objectID, "pipeline", db);
+        stagedFiles = utils::GetStagedFileList(objectID, "pipeline");
 
         valid = true;
         return true;
@@ -119,7 +119,7 @@ bool squirrelPipeline::Get() {
  * Otherwise it will return false.
  */
 bool squirrelPipeline::Store() {
-    QSqlQuery q(db);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
@@ -193,7 +193,7 @@ bool squirrelPipeline::Store() {
     }
 
     /* store any staged filepaths */
-    utils::StoreStagedFileList(objectID, "pipeline", stagedFiles, db);
+    utils::StoreStagedFileList(objectID, "pipeline", stagedFiles);
 
     return true;
 }

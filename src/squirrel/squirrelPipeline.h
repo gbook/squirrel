@@ -75,7 +75,7 @@ struct dataStep {
 class squirrelPipeline
 {
 public:
-    squirrelPipeline(QSqlDatabase &d);
+    squirrelPipeline();
     QJsonObject ToJSON(QString path);
     void PrintPipeline();
     bool Get();             /* gets the object data from the database */
@@ -133,7 +133,6 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-    QSqlDatabase db;
 };
 
 #endif // SQUIRRELPIPELINE_H
