@@ -37,7 +37,7 @@
 class squirrelSeries
 {
 public:
-    squirrelSeries();
+    squirrelSeries(QSqlDatabase &d);
     void PrintSeries();
     QJsonObject ToJSON();
     QJsonObject ParamsToJSON();
@@ -78,6 +78,7 @@ private:
     QString subjectDirFormat = "orig";
     QString studyDirFormat = "orig";
     QString seriesDirFormat = "orig";
+    QSqlDatabase db;
 };
 
 #endif // SQUIRRELSERIES_H

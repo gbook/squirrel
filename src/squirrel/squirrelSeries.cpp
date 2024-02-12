@@ -23,9 +23,9 @@
 #include "squirrelSeries.h"
 #include "utils.h"
 
-squirrelSeries::squirrelSeries()
+squirrelSeries::squirrelSeries(QSqlDatabase &d)
 {
-
+    db = d;
 }
 
 /* ------------------------------------------------------------ */
@@ -46,7 +46,7 @@ bool squirrelSeries::Get() {
         err = "objectID is not set";
         return false;
     }
-    QSqlQuery q;
+    QSqlQuery q(db);
     q.prepare("select * from Series where SeriesRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -68,11 +68,11 @@ bool squirrelSeries::Get() {
         sequence = q.value("Sequence").toInt();
 
         /* get any params */
-        params = utils::GetParams(objectID);
+        params = utils::GetParams(objectID, db);
 
         /* get any staged files */
-        stagedFiles = utils::GetStagedFileList(objectID, "series");
-        stagedBehFiles = utils::GetStagedFileList(objectID, "behseries");
+        stagedFiles = utils::GetStagedFileList(objectID, "series", db);
+        stagedBehFiles = utils::GetStagedFileList(objectID, "behseries", db);
 
         valid = true;
         return true;
@@ -99,7 +99,7 @@ bool squirrelSeries::Get() {
  */
 bool squirrelSeries::Store() {
 
-    QSqlQuery q;
+    QSqlQuery q(db);
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, NumFiles, BehSize, BehNumFiles, Sequence, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :NumFiles, :BehSize, :BehNumFiles, :Sequence, :VirtualPath)");
@@ -140,11 +140,11 @@ bool squirrelSeries::Store() {
     }
 
     /* store any params */
-    utils::StoreParams(objectID, params);
+    utils::StoreParams(objectID, params, db);
 
     /* store any staged filepaths */
-    utils::StoreStagedFileList(objectID, "series", stagedFiles);
-    utils::StoreStagedFileList(objectID, "behseries", stagedBehFiles);
+    utils::StoreStagedFileList(objectID, "series", stagedFiles, db);
+    utils::StoreStagedFileList(objectID, "behseries", stagedBehFiles, db);
 
     return true;
 }
@@ -155,10 +155,10 @@ bool squirrelSeries::Store() {
 /* ------------------------------------------------------------ */
 bool squirrelSeries::Remove() {
 
-    QSqlQuery q;
+    QSqlQuery q(db);
 
     /* ... delete any staged Study files */
-    utils::RemoveStagedFileList(objectID, "series");
+    utils::RemoveStagedFileList(objectID, "series", db);
 
     /* delete the series */
     q.prepare("delete from Series where SeriesRowID = :seriesid");
@@ -267,7 +267,7 @@ QString squirrelSeries::VirtualPath() {
     int subjectRowID = -1;
 
     /* get the parent study directory */
-    QSqlQuery q;
+    QSqlQuery q(db);
     q.prepare("select SubjectRowID, StudyNumber, Sequence from Study where StudyRowID = :studyid");
     q.bindValue(":studyid", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);

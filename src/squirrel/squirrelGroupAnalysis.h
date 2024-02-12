@@ -34,7 +34,7 @@
 class squirrelGroupAnalysis
 {
 public:
-    squirrelGroupAnalysis();
+    squirrelGroupAnalysis(QSqlDatabase &d);
     QJsonObject ToJSON();
     void PrintGroupAnalysis();
     bool Get();             /* gets the object data from the database */
@@ -60,6 +60,7 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
+    QSqlDatabase db;
 };
 
 #endif // SQUIRRELGROUPANALYSIS_H

@@ -38,11 +38,7 @@
 class squirrelStudy
 {
 public:
-    squirrelStudy();
-
-    //bool addSeries(squirrelSeries s);
-    //bool addAnalysis(squirrelAnalysis a);
-    //qint64 GetNextSeriesNumber();
+    squirrelStudy(QSqlDatabase &d);
     void PrintStudy();
     QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */
@@ -70,7 +66,6 @@ public:
     int timePoint = 0;              /*!< Ordinal time point for repeated studies. eg. 3 for the 3rd consecutive imaging study */
     QString equipment;              /*!< Equipment the study was run on */
     int sequence = 0;
-    //QString virtualPath;            /*!< path within the squirrel package, no leading slash */
 
     /* lib variables */
     QList<squirrelSeries> seriesList; /*!< List of series attached to this study */
@@ -82,6 +77,7 @@ private:
     qint64 objectID = -1;
     QString subjectDirFormat = "orig";
     QString studyDirFormat = "orig";
+    QSqlDatabase db;
 };
 
 #endif // SQUIRRELSTUDY_H

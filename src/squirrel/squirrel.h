@@ -55,11 +55,6 @@ public:
     bool validate();
     void print();
 
-    bool addSubject(squirrelSubject subj);
-    bool addPipeline(squirrelPipeline pipe);
-    //bool addExperiment(squirrelExperiment exp);
-    bool removeSubject(QString ID);
-
     /* package JSON elements */
     QDateTime datetime;         /*!< datetime the package was created */
     QString description;        /*!< detailed description of the package */
@@ -104,10 +99,6 @@ public:
 
     bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
 
-    //bool RemoveSubject(int subjectRowID);
-    //bool RemoveStudy(int studyRowID);
-    //bool RemoveSeries(int studyRowID);
-
     /* requence the subject data */
     void ResequenceSubjects();
     void ResequenceStudies(int subjectRowID);
@@ -140,6 +131,8 @@ public:
     void PrintGroupAnalyses(bool details=false);
     void PrintDataDictionary(bool details=false);
 
+    QSqlDatabase db;
+
 private:
     bool MakeTempDir(QString &dir);
     bool DatabaseConnect();
@@ -149,8 +142,6 @@ private:
     QString logfile;
     QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */
     QString log;
-
-    QSqlDatabase db;
 
     bool debug;
     bool isValid;

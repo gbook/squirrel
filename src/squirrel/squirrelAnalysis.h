@@ -34,7 +34,7 @@
 class squirrelAnalysis
 {
 public:
-    squirrelAnalysis();
+    squirrelAnalysis(QSqlDatabase &d);
     QJsonObject ToJSON();
     void PrintAnalysis();
     bool Get();             /* gets the object data from the database */
@@ -70,7 +70,7 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
-
+    QSqlDatabase db;
 };
 
 #endif // SQUIRRELANALYSIS_H
