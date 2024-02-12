@@ -50,10 +50,11 @@ public:
     squirrel(bool dbg=false, bool q=false);
     ~squirrel();
 
-    bool read(QString filename, bool headerOnly, bool validateOnly=false);
-    bool write(QString outpath, QString &zipFilePath);
-    bool validate();
-    void print();
+    bool Read(QString filename, bool headerOnly, bool validateOnly=false);
+    bool Write(bool writeLog);
+    bool Validate();
+    void Print();
+    void SetFilename(QString p) { zipPath = p; }
 
     /* package JSON elements */
     QDateTime datetime;         /*!< datetime the package was created */
@@ -109,8 +110,8 @@ public:
 
     /* validation functions */
     QString GetTempDir();
-    bool valid() { return isValid; }
-    bool okToDelete() { return isOkToDelete; }
+    bool IsValid() { return isValid; }
+    bool OkToDelete() { return isOkToDelete; }
 
     /* functions to read special files */
     QHash<QString, QString> ReadParamsFile(QString f);
@@ -140,8 +141,9 @@ private:
 
     QString workingDir;
     QString logfile;
-    QStringList msgs; /* squirrel messages, to be passed back upon writing (or reading) through the squirrel library */
+    QStringList msgs; /* squirrel messages to be passed back through the squirrel library */
     QString log;
+    QString zipPath;
 
     bool debug;
     bool isValid;

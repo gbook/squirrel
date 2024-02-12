@@ -160,7 +160,7 @@ bool squirrel::InitializeDatabase() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- read ------------------------------------------------- */
+/* ----- Read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
  * @brief Reads a squirrel package from disk
@@ -169,7 +169,7 @@ bool squirrel::InitializeDatabase() {
  * @param validateOnly true if validating the package
  * @return
  */
-bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
+bool squirrel::Read(QString filepath, bool headerOnly, bool validateOnly) {
 
     /* set the package path */
     filePath = filepath;
@@ -509,23 +509,21 @@ bool squirrel::read(QString filepath, bool headerOnly, bool validateOnly) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- write ------------------------------------------------ */
+/* ----- Write ------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::write
- * @param outpath
- * @param zipFilePath -
+ * @brief squirrel::Write
  * @return true if successfuly written, false otherwise
  */
-bool squirrel::write(QString outpath, QString &zipFilePath) {
+bool squirrel::Write(bool writeLog) {
 
     /* create the log file */
-    QFileInfo finfo(outpath);
+    QFileInfo finfo(zipPath);
     logfile = QString(finfo.absolutePath() + "/squirrel-" + utils::CreateLogDate() + ".log");
 
-    Log(QString("Beginning writing squirrel package: workingdir [%1]  outpath [%2]").arg(workingDir).arg(outpath), __FUNCTION__);
+    Log(QString("Writing squirrel package: workingdir [%1]  zippath [%2]").arg(workingDir).arg(zipPath), __FUNCTION__);
 
-    /* ----- 1) write data. And set the relative paths in the objects ----- */
+    /* ----- 1) Write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
     QList<squirrelSubject> subjects = GetAllSubjects();
     foreach (squirrelSubject subject, subjects) {
@@ -556,7 +554,7 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
                     }
                 }
                 else if ((dataFormat == "anon") || (dataFormat == "anonfull")) {
-                    /* create temp directory */
+                    /* create temp directory for the anonymization */
                     QString td;
                     MakeTempDir(td);
 
@@ -620,17 +618,10 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
                 series.Store();
 
                 /* write the series .json file, containing the dicom header params */
-                QJsonObject params;
-                params = series.ParamsToJSON();
-                QByteArray j = QJsonDocument(params).toJson();
-                QFile fout(QString("%1/params.json").arg(seriesPath));
-                if (fout.open(QIODevice::WriteOnly)) {
-                    fout.write(j);
-                    Log(QString("Wrote %1/params.json").arg(seriesPath), __FUNCTION__, true);
-                }
-                else {
-                    Log(QString("Error writing [%1]").arg(fout.fileName()), __FUNCTION__);
-                }
+                QString paramFilePath = QString("%1/params.json").arg(seriesPath);
+                QByteArray j = QJsonDocument(series.ParamsToJSON()).toJson();
+                if (!utils::WriteTextFile(paramFilePath, j))
+                    Log("Error writing [" + paramFilePath + "]", __FUNCTION__, true);
             }
         }
     }
@@ -725,33 +716,25 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
     root["TotalNumFiles"] = GetNumFiles();
 
     /* write the final .json file */
+    QString jsonFilePath = workingDir + "/squirrel.json";
     QByteArray j = QJsonDocument(root).toJson();
-    QFile fout(QString("%1/squirrel.json").arg(workingDir));
-    fout.open(QIODevice::WriteOnly);
-    fout.write(j);
-    fout.close();
-
-    Log(QString("Wrote main JSON file [%1/squirrel.json]").arg(workingDir), __FUNCTION__);
-
-    /* zip the temp directory into the output file */
-    QString zipfile = outpath;
-    if (!zipfile.endsWith(".zip"))
-        zipfile += ".zip";
+    if (!utils::WriteTextFile(jsonFilePath, j))
+        Log("Error writing [" + jsonFilePath + "]", __FUNCTION__, true);
 
     QString systemstring;
     #ifdef Q_OS_WINDOWS
-        systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipfile + "\" \"" + workingDir + "/*\"");
+        systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipPath + "\" \"" + workingDir + "/*\"");
     #else
-        systemstring = "cd " + workingDir + "; zip -1rv " + zipfile + " .";
+        systemstring = "cd " + workingDir + "; zip -1rv " + zipPath + " .";
     #endif
 
-    Log("Beginning zipping package...", __FUNCTION__);
+    Log("Beginning zipping package", __FUNCTION__);
     utils::SystemCommand(systemstring);
-    Log("Finished zipping package...", __FUNCTION__);
 
-    if (utils::FileExists(zipfile)) {
-        Log("Created .zip file [" + zipfile + "]", __FUNCTION__);
-        zipFilePath = zipfile;
+    if (utils::FileExists(zipPath)) {
+        QFileInfo fi(zipPath);
+        qint64 zipSize = fi.size();
+        Log(QString("Finished zipping package [%1]. Size is [%2] bytes").arg(zipPath).arg(zipSize), __FUNCTION__);
 
         /* delete the tmp dir, if it exists */
         if (utils::DirectoryExists(workingDir)) {
@@ -762,34 +745,38 @@ bool squirrel::write(QString outpath, QString &zipFilePath) {
         }
     }
     else {
-        Log("Error creating zip file [" + zipfile + "]", __FUNCTION__);
+        Log("Error creating zip file [" + zipPath + "]", __FUNCTION__);
         return false;
     }
+
+    /* write the log file */
+    if (writeLog)
+        utils::WriteTextFile(logfile, log);
 
     return true;
 }
 
 
 /* ------------------------------------------------------------ */
-/* ----- validate --------------------------------------------- */
+/* ----- Validate --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
  * @brief Validate if a squirrel package is readable
  * @return true if valid squirrel file, false otherwise
  */
-bool squirrel::validate() {
+bool squirrel::Validate() {
 
     return true;
 }
 
 
 /* ------------------------------------------------------------ */
-/* ----- print ------------------------------------------------ */
+/* ----- Print ------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
  * @brief Print the details of a package, including all objects
  */
-void squirrel::print() {
+void squirrel::Print() {
 
     /* print package info */
     PrintPackage();
