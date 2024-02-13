@@ -1,7 +1,23 @@
 var searchData=
 [
-  ['usephasedir_378',['usePhaseDir',['../structdata_step_1_1flag.html#a3e00d416f995f9139168f0584e009f92',1,'dataStep::flag']]],
-  ['useprofile_379',['useProfile',['../structsquirrel_pipeline_1_1flag.html#a0027e8cd0e31a4cdaaeec7b025dcf1da',1,'squirrelPipeline::flag']]],
-  ['useseries_380',['useSeries',['../structdata_step_1_1flag.html#ab5f48c2302b6c1177c4530aef0337eaa',1,'dataStep::flag']]],
-  ['usetmpdir_381',['useTmpDir',['../structsquirrel_pipeline_1_1flag.html#ae79bb48f72e637459abab3a5611c0b14',1,'squirrelPipeline::flag']]]
+  ['secondaryscript_0',['secondaryScript',['../classsquirrel_pipeline.html#a6e203c3a454cc8a1aa586a95a74f67d7',1,'squirrelPipeline']]],
+  ['sequence_1',['sequence',['../classsquirrel_series.html#a62a50f4895e0b09a45cbc7bc249b0573',1,'squirrelSeries::sequence()'],['../classsquirrel_study.html#a9a6f4b853036509ab1fe2dfcf7852721',1,'squirrelStudy::sequence()'],['../classsquirrel_subject.html#a2befca334c51ea82fd455b6420c3860b',1,'squirrelSubject::sequence()']]],
+  ['seriescriteria_2',['seriesCriteria',['../structdata_step.html#ae882ecffb3844d134114e00fad5ab261',1,'dataStep']]],
+  ['seriesdirformat_3',['seriesDirFormat',['../classsquirrel.html#a2d13c7157ed754865d49e90456ad0b3b',1,'squirrel']]],
+  ['serieslist_4',['seriesList',['../classsquirrel_study.html#ad3eb52823cd9d8441a0f8f04b21b3efe',1,'squirrelStudy']]],
+  ['seriesuid_5',['seriesUID',['../classsquirrel_series.html#ac1cb9c6d5afa054fc9ec1c8b5e0272e0',1,'squirrelSeries']]],
+  ['setuptime_6',['setupTime',['../classsquirrel_analysis.html#a30eaa50e509b1623a0fdc234d069d5bc',1,'squirrelAnalysis']]],
+  ['sex_7',['sex',['../classsquirrel_subject.html#a5041b44033d67dace72c4218d8e72122',1,'squirrelSubject']]],
+  ['size_8',['size',['../classsquirrel_analysis.html#acfe2efc37624f70a4d5239dc31affd3e',1,'squirrelAnalysis::size()'],['../classsquirrel_data_dictionary.html#a14cda891ec0e0500a62d32c42ad65f0a',1,'squirrelDataDictionary::size()'],['../classsquirrel_experiment.html#a7f13539d7f4b5568b1493a106cadcfa0',1,'squirrelExperiment::size()'],['../classsquirrel_group_analysis.html#a36f4a10d11a159386c92cafdf6e5b847',1,'squirrelGroupAnalysis::size()'],['../classsquirrel_series.html#a9e906319ff0dcbfb7b864f749b23ba60',1,'squirrelSeries::size()']]],
+  ['stagedbehfiles_9',['stagedBehFiles',['../classsquirrel_series.html#a73768263e2ca3bcc5d7787f8f1b44062',1,'squirrelSeries']]],
+  ['stagedfiles_10',['stagedFiles',['../classsquirrel_analysis.html#a10fe86257f84c774dbaad4164e999c4c',1,'squirrelAnalysis::stagedFiles()'],['../classsquirrel_data_dictionary.html#ad345b510d771ccaf384103136a7fa065',1,'squirrelDataDictionary::stagedFiles()'],['../classsquirrel_experiment.html#afde3993d2f04839357568806e5abbfa3',1,'squirrelExperiment::stagedFiles()'],['../classsquirrel_group_analysis.html#ac4aff1154f204ce6c0a810de61573d09',1,'squirrelGroupAnalysis::stagedFiles()'],['../classsquirrel_pipeline.html#ad88e0c39190844984eaa8669062f972e',1,'squirrelPipeline::stagedFiles()'],['../classsquirrel_series.html#a442ad2f1e9631ac17d4ba6ddcdb0809c',1,'squirrelSeries::stagedFiles()']]],
+  ['startdate_11',['startDate',['../classsquirrel_analysis.html#a11d791d8edb4bbf2bba69c3d9bc27087',1,'squirrelAnalysis']]],
+  ['status_12',['status',['../classsquirrel_analysis.html#a9a0fc1bf588215f802fdb99d510b5629',1,'squirrelAnalysis']]],
+  ['studydirformat_13',['studyDirFormat',['../classsquirrel.html#a5b5e85e44946d23085576a88929d7da1',1,'squirrel']]],
+  ['studyrowid_14',['studyRowID',['../classsquirrel_analysis.html#a41373d9e6756db5688da10a00c7d1ff8',1,'squirrelAnalysis::studyRowID()'],['../classsquirrel_series.html#a3544362f121b68946192e80086839159',1,'squirrelSeries::studyRowID()']]],
+  ['studyuid_15',['studyUID',['../classsquirrel_study.html#a354e790979a6e860ec4dc06eab94fae8',1,'squirrelStudy']]],
+  ['subjectdirformat_16',['subjectDirFormat',['../classsquirrel.html#a18267ab510b042423b4579c2e9b8a715',1,'squirrel']]],
+  ['subjectrowid_17',['subjectRowID',['../classsquirrel_drug.html#aa46c3763cf2930f505fbdf56fc8cd597',1,'squirrelDrug::subjectRowID()'],['../classsquirrel_measure.html#a02922c142a637a691190a200b86e9072',1,'squirrelMeasure::subjectRowID()'],['../classsquirrel_study.html#a524841e8c6c83a324f7e152e62f3e72b',1,'squirrelStudy::subjectRowID()']]],
+  ['submitdelay_18',['submitDelay',['../classsquirrel_pipeline.html#af1c2aeec47f47ce1ec1c4c959cdb076c',1,'squirrelPipeline']]],
+  ['successful_19',['successful',['../classsquirrel_analysis.html#a5a827295e0fb4104263872c9673e611b',1,'squirrelAnalysis']]]
 ];

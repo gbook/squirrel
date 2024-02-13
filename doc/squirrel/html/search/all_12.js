@@ -1,8 +1,22 @@
 var searchData=
 [
-  ['validate_183',['validate',['../classvalidate.html',1,'validate'],['../classsquirrel.html#aa7266f3125db5891b8bd89d3b013b2cf',1,'squirrel::validate()']]],
-  ['value_184',['value',['../classsquirrel_measure.html#ada0440761192a8306a0d885e27860943',1,'squirrelMeasure']]],
-  ['version_185',['version',['../classsquirrel.html#a9665f1474b79bf96e2bd73ffb7363204',1,'squirrel::version()'],['../classsquirrel_pipeline.html#a134b13834aeca0de6401d4b499946ba0',1,'squirrelPipeline::version()']]],
-  ['virtualpath_186',['virtualPath',['../classsquirrel_series.html#a2b2c63c16f5529fa256a1ef8d145ec69',1,'squirrelSeries::virtualPath()'],['../classsquirrel_study.html#a0442629bf4c6586cb34260c54b9d8c2e',1,'squirrelStudy::virtualPath()'],['../classsquirrel_subject.html#a1b131de659a84f830b78e85b3be61935',1,'squirrelSubject::virtualPath()']]],
-  ['visittype_187',['visitType',['../classsquirrel_study.html#aa8db05232e1ce6addd5e185edf03cf7d',1,'squirrelStudy']]]
+  ['tableanalysis_0',['tableAnalysis',['../squirrel_8sql_8h.html#aee5c65c294a53e3a620f3ecb47ca4c26',1,'squirrel.sql.h']]],
+  ['tabledatadictionary_1',['tableDataDictionary',['../squirrel_8sql_8h.html#adb4c579fbfbe1d17d287962d0a12407f',1,'squirrel.sql.h']]],
+  ['tabledatadictionaryitems_2',['tableDataDictionaryItems',['../squirrel_8sql_8h.html#a912eab483ad28479d5cfd8eabb4c3c34',1,'squirrel.sql.h']]],
+  ['tabledrug_3',['tableDrug',['../squirrel_8sql_8h.html#a674778f41ef3a326361c53904b43c06e',1,'squirrel.sql.h']]],
+  ['tableexperiment_4',['tableExperiment',['../squirrel_8sql_8h.html#a15a4203d6ea6daa0c51b70f2335a9381',1,'squirrel.sql.h']]],
+  ['tablegroupanalysis_5',['tableGroupAnalysis',['../squirrel_8sql_8h.html#a6265847044b7160da1eafca3e32fa11f',1,'squirrel.sql.h']]],
+  ['tablemeasure_6',['tableMeasure',['../squirrel_8sql_8h.html#a4773e488c33f954d1c1a1ee09d2149af',1,'squirrel.sql.h']]],
+  ['tablepackage_7',['tablePackage',['../squirrel_8sql_8h.html#afccafc2136436c0bd4bf68b6f654e464',1,'squirrel.sql.h']]],
+  ['tableparams_8',['tableParams',['../squirrel_8sql_8h.html#a528c56834313522b706d082ebea8110d',1,'squirrel.sql.h']]],
+  ['tablepipeline_9',['tablePipeline',['../squirrel_8sql_8h.html#a82d5c69e908ba894cf3052bc30a2bdc3',1,'squirrel.sql.h']]],
+  ['tablepipelinedatastep_10',['tablePipelineDataStep',['../squirrel_8sql_8h.html#aa9ed1306fc3288b0f9ddbafea7e6485f',1,'squirrel.sql.h']]],
+  ['tableseries_11',['tableSeries',['../squirrel_8sql_8h.html#a48ed38f7ac0c717eb3fdc758a40c82ab',1,'squirrel.sql.h']]],
+  ['tablestagedfiles_12',['tableStagedFiles',['../squirrel_8sql_8h.html#a28d7c2cf492646e17f7115df7f972fe7',1,'squirrel.sql.h']]],
+  ['tablestudy_13',['tableStudy',['../squirrel_8sql_8h.html#afb7f1b4291120a315d432e67ffec8696',1,'squirrel.sql.h']]],
+  ['tablesubject_14',['tableSubject',['../squirrel_8sql_8h.html#aad4c00a2108f75bf31859d0a502b2266',1,'squirrel.sql.h']]],
+  ['timepoint_15',['timePoint',['../classsquirrel_study.html#a5526b1bdde45575f09df5f858e5774c2',1,'squirrelStudy']]],
+  ['tmpdir_16',['tmpDir',['../classsquirrel_pipeline.html#a710d438a4d81414ab6dce49ae3bea7ec',1,'squirrelPipeline']]],
+  ['tojson_17',['ToJSON',['../classsquirrel_analysis.html#a86f7167c4646234a2f0ceff5098ea701',1,'squirrelAnalysis::ToJSON()'],['../classsquirrel_data_dictionary.html#a4f254f7c5a8d6866a50c79e479dd0d60',1,'squirrelDataDictionary::ToJSON()'],['../classsquirrel_drug.html#aa48c9aa30dbacfa75f638cb5ca19c392',1,'squirrelDrug::ToJSON()'],['../classsquirrel_experiment.html#ac5c6b2b05c1cf0364e7c7b8f2c114991',1,'squirrelExperiment::ToJSON()'],['../classsquirrel_group_analysis.html#afaaee391f780e3d39ca84174b0e4a60b',1,'squirrelGroupAnalysis::ToJSON()'],['../classsquirrel_measure.html#a51d7ffdf10334ea6e9433abc129b5daf',1,'squirrelMeasure::ToJSON()'],['../classsquirrel_pipeline.html#ab78101ff2328514265dd584db5cf5beb',1,'squirrelPipeline::ToJSON()'],['../classsquirrel_series.html#a2edaad24c5c20e66ef96b48e86515a69',1,'squirrelSeries::ToJSON()'],['../classsquirrel_study.html#aa6630468472212319a9fefdab8a2f38a',1,'squirrelStudy::ToJSON()'],['../classsquirrel_subject.html#ae73cfdc5fb4ef1feb676640bd991468c',1,'squirrelSubject::ToJSON()']]],
+  ['type_18',['type',['../structdata_dictionary_item.html#a1c89e767f641eaa9b65c14f2a604de06',1,'dataDictionaryItem']]]
 ];

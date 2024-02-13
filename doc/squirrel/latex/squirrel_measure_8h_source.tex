@@ -1,0 +1,68 @@
+\hypertarget{squirrel_measure_8h_source}{}\doxysection{squirrel\+Measure.\+h}
+\label{squirrel_measure_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelMeasure.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelMeasure.h}}
+\mbox{\hyperlink{squirrel_measure_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{  Squirrel measure.h}}
+\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
+\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
+\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
+\DoxyCodeLine{8 \textcolor{comment}{}}
+\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
+\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
+\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
+\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
+\DoxyCodeLine{13 \textcolor{comment}{}}
+\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
+\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
+\DoxyCodeLine{18 \textcolor{comment}{}}
+\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
+\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#ifndef SQUIRRELMEASURE\_H}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define SQUIRRELMEASURE\_H}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#include <QtSql>}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QString>}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QDateTime>}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QJsonObject>}}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#include <QJsonArray>}}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{34 \textcolor{keyword}{class }\mbox{\hyperlink{classsquirrel_measure}{squirrelMeasure}}}
+\DoxyCodeLine{35 \{}
+\DoxyCodeLine{36 \textcolor{keyword}{public}:}
+\DoxyCodeLine{37     \mbox{\hyperlink{classsquirrel_measure_a4ad096b946ea3edc4200c403285483b7}{squirrelMeasure}}();}
+\DoxyCodeLine{38     QJsonObject \mbox{\hyperlink{classsquirrel_measure_a51d7ffdf10334ea6e9433abc129b5daf}{ToJSON}}();}
+\DoxyCodeLine{39     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}{PrintMeasure}}();}
+\DoxyCodeLine{40     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_measure_a47b6f75efffb2f45835bb419b10ae857}{Get}}();             \textcolor{comment}{/* gets the object data from the database */}}
+\DoxyCodeLine{41     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_measure_a41ade07df29b39b71b32f37a7f05ef57}{Store}}();           \textcolor{comment}{/* saves the object data from this object into the database */}}
+\DoxyCodeLine{42     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_measure_a464a0936541f1c2f577c4659e560f38e}{isValid}}() \{ \textcolor{keywordflow}{return} valid; \}}
+\DoxyCodeLine{43     QString \mbox{\hyperlink{classsquirrel_measure_a2e2386f3bf9424b1726e0cfa572127a9}{Error}}() \{ \textcolor{keywordflow}{return} err; \}}
+\DoxyCodeLine{44     qint64 \mbox{\hyperlink{classsquirrel_measure_a1f1fda1c7f87b8392d13fe3eecf2c6e6}{GetObjectID}}() \{ \textcolor{keywordflow}{return} objectID; \}}
+\DoxyCodeLine{45     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_measure_a5879c22ae1ed73d8fb204a0669adad60}{SetObjectID}}(\textcolor{keywordtype}{int} \textcolor{keywordtype}{id}) \{ objectID = id; \}}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47     \textcolor{comment}{/* JSON elements */}}
+\DoxyCodeLine{48     qint64 \mbox{\hyperlink{classsquirrel_measure_a02922c142a637a691190a200b86e9072}{subjectRowID}};}
+\DoxyCodeLine{49     QString \mbox{\hyperlink{classsquirrel_measure_acd6807fb6d1c0887efe2ce60b4bee87f}{measureName}};        }
+\DoxyCodeLine{50     QDateTime \mbox{\hyperlink{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}{dateStart}};        }
+\DoxyCodeLine{51     QDateTime \mbox{\hyperlink{classsquirrel_measure_a1ab49285666faac66eb62a8605c8fd8d}{dateEnd}};          }
+\DoxyCodeLine{52     QString \mbox{\hyperlink{classsquirrel_measure_aab9f6317bb50812e155456544704ecd2}{instrumentName}};     }
+\DoxyCodeLine{53     QString \mbox{\hyperlink{classsquirrel_measure_a13f1282967336134a53883a432449ce0}{rater}};              }
+\DoxyCodeLine{54     QString \mbox{\hyperlink{classsquirrel_measure_a284082810caf54d74cfd330a7e148672}{notes}};              }
+\DoxyCodeLine{55     QString \mbox{\hyperlink{classsquirrel_measure_ada0440761192a8306a0d885e27860943}{value}};              }
+\DoxyCodeLine{56     QString \mbox{\hyperlink{classsquirrel_measure_a563214ed8d2dd2df3afb1713a1f26cb2}{description}};        }
+\DoxyCodeLine{57     \textcolor{keywordtype}{double} \mbox{\hyperlink{classsquirrel_measure_aa23aa27b99bc671e9e03c5c8a6e096d1}{duration}};            }
+\DoxyCodeLine{58     QDateTime \mbox{\hyperlink{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}{dateRecordEntry}};  }
+\DoxyCodeLine{60 \textcolor{keyword}{private}:}
+\DoxyCodeLine{61     \textcolor{keywordtype}{bool} valid = \textcolor{keyword}{false};}
+\DoxyCodeLine{62     QString err;}
+\DoxyCodeLine{63     qint64 objectID = -\/1;}
+\DoxyCodeLine{64 \};}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// SQUIRRELMEASURE\_H}}
+
+\end{DoxyCode}

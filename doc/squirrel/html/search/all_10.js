@@ -1,7 +1,20 @@
 var searchData=
 [
-  ['timepoint_175',['timePoint',['../classsquirrel_study.html#ad5916b41e5fb01374ca5a603d305f8a0',1,'squirrelStudy']]],
-  ['tmpdir_176',['tmpDir',['../classsquirrel_pipeline.html#a710d438a4d81414ab6dce49ae3bea7ec',1,'squirrelPipeline']]],
-  ['tojson_177',['ToJSON',['../classsquirrel_pipeline.html#ab78101ff2328514265dd584db5cf5beb',1,'squirrelPipeline::ToJSON()'],['../classsquirrel_series.html#a2edaad24c5c20e66ef96b48e86515a69',1,'squirrelSeries::ToJSON()'],['../classsquirrel_study.html#aa6630468472212319a9fefdab8a2f38a',1,'squirrelStudy::ToJSON()'],['../classsquirrel_subject.html#ae73cfdc5fb4ef1feb676640bd991468c',1,'squirrelSubject::ToJSON()']]],
-  ['type_178',['type',['../classsquirrel_drug.html#a35a383a34045a9688a7ca3a62b35970e',1,'squirrelDrug']]]
+  ['rangehigh_0',['rangeHigh',['../structdata_dictionary_item.html#ac5ea75910dd50781c24eef20d4ac8339',1,'dataDictionaryItem']]],
+  ['rangelow_1',['rangeLow',['../structdata_dictionary_item.html#aaaf8e793400ec32e96a014ca849d0dc6',1,'dataDictionaryItem']]],
+  ['rater_2',['rater',['../classsquirrel_drug.html#a9941412993576376dc129d233fa636b2',1,'squirrelDrug::rater()'],['../classsquirrel_measure.html#a13f1282967336134a53883a432449ce0',1,'squirrelMeasure::rater()']]],
+  ['read_3',['Read',['../classsquirrel.html#ad96d7cd1440f209a5ad4cc76a8df4e19',1,'squirrel']]],
+  ['readme_4',['readme',['../classsquirrel.html#a8a47e33a20b372c3c0041dea2f8fe9fa',1,'squirrel']]],
+  ['readparamsfile_5',['ReadParamsFile',['../classsquirrel.html#a3328b9565a04ef3bad3a026561317760',1,'squirrel']]],
+  ['readtextfiletostring_6',['ReadTextFileToString',['../namespaceutils.html#ad433122c664f2e5849b6668da507256e',1,'utils']]],
+  ['remove_7',['Remove',['../classsquirrel_series.html#a9c9e83d3b33bec7ef0de23d7f64435df',1,'squirrelSeries::Remove()'],['../classsquirrel_study.html#a84e1eaa19d2cc59eac05c3aae26ec883',1,'squirrelStudy::Remove()'],['../classsquirrel_subject.html#a75746a2918fd967093a2366a17d48a48',1,'squirrelSubject::Remove()']]],
+  ['removedir_8',['RemoveDir',['../namespaceutils.html#a2ca9c2a798bcb7a607120cef4ff3a316',1,'utils']]],
+  ['removestagedfilelist_9',['RemoveStagedFileList',['../namespaceutils.html#a0da88ac6b11389d8033e436a5f019bf0',1,'utils']]],
+  ['renamefile_10',['RenameFile',['../namespaceutils.html#a3b3419cf8be729230f2321d4fc28bf53',1,'utils']]],
+  ['resequenceseries_11',['ResequenceSeries',['../classsquirrel.html#ac5cf0c433088c193c8619b9d8cbc39b8',1,'squirrel']]],
+  ['resequencestudies_12',['ResequenceStudies',['../classsquirrel.html#a540873f04b5b52898921870a330955f1',1,'squirrel']]],
+  ['resequencesubjects_13',['ResequenceSubjects',['../classsquirrel.html#a6ca4e54c2b6993fb5d825646cbe79670',1,'squirrel']]],
+  ['resultscript_14',['resultScript',['../classsquirrel_pipeline.html#a0b7486e93b7475032a489c0629245323',1,'squirrelPipeline']]],
+  ['route_15',['route',['../classsquirrel_drug.html#ac8d471ac923d7bcce700abba8d9f0f36',1,'squirrelDrug']]],
+  ['runtime_16',['runTime',['../classsquirrel_analysis.html#abe4787ee09c29292bc98eb429c815e10',1,'squirrelAnalysis']]]
 ];

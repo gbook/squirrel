@@ -1,66 +1,189 @@
 \hypertarget{classsquirrel_group_analysis}{}\doxysection{squirrel\+Group\+Analysis Class Reference}
 \label{classsquirrel_group_analysis}\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+
+
+The \mbox{\hyperlink{classsquirrel_group_analysis}{squirrel\+Group\+Analysis}} class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Group\+Analysis.\+h$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classsquirrel_group_analysis_afaaee391f780e3d39ca84174b0e4a60b}\label{classsquirrel_group_analysis_afaaee391f780e3d39ca84174b0e4a60b}} 
-Q\+Json\+Object {\bfseries To\+J\+S\+ON} ()
+\mbox{\hyperlink{classsquirrel_group_analysis_a32d83a208a677a4c11f828686496435d}{squirrel\+Group\+Analysis}} ()
 \item 
-\mbox{\Hypertarget{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}\label{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}} 
+QJson\+Object \mbox{\hyperlink{classsquirrel_group_analysis_afaaee391f780e3d39ca84174b0e4a60b}{To\+JSON}} ()
+\item 
 void \mbox{\hyperlink{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}{Print\+Group\+Analysis}} ()
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}{squirrel\+Group\+Analysis\+::\+Print\+Group\+Analysis}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}{squirrel\+Group\+Analysis\+::\+Print\+Group\+Analysis}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_group_analysis_a8d98f9ec6ba2d6566f822d058f832888}{Get}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_group_analysis_a8d98f9ec6ba2d6566f822d058f832888}{squirrel\+Group\+Analysis\+::\+Get}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_group_analysis_a767144d8971d7bfa04f60d2d59ec167d}{Store}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_group_analysis_a767144d8971d7bfa04f60d2d59ec167d}{squirrel\+Group\+Analysis\+::\+Store}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_group_analysis_abe6da4010a9af95b262c5849235ab382}{is\+Valid}} ()
+\item 
+QString \mbox{\hyperlink{classsquirrel_group_analysis_a70bb407edcf0117b9de17f6da72efff1}{Error}} ()
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_group_analysis_ad611161df6c6862783043b1f81af2ca1}{Get\+Object\+ID}} ()
+\item 
+void \mbox{\hyperlink{classsquirrel_group_analysis_ac670e7e282fab5c8e4c47796a2a8e9c3}{Set\+Object\+ID}} (int id)
+\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_group_analysis_a63353781a8311a4a708119d656299b55}{pipeline\+Name}}
+QString \mbox{\hyperlink{classsquirrel_group_analysis_a6f0df17020cd751543949c3255066e78}{group\+Analysis\+Name}}
 \item 
-int \mbox{\hyperlink{classsquirrel_group_analysis_a5058d5a61617a9bdf474c3830cdf0970}{pipeline\+Version}}
+QDate\+Time \mbox{\hyperlink{classsquirrel_group_analysis_a49f938cc02e6346e00e6fa1a5d6c2fbc}{date\+Time}}
 \item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_group_analysis_a4fe52bb3f903e50ebeddca54ab48419b}{start\+Date}}
+QString \mbox{\hyperlink{classsquirrel_group_analysis_a19e093e4cd13aa98e3d1b441c555407b}{description}}
 \item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_group_analysis_a938c43fd69a369d201157247f2fa3b02}{end\+Date}}
+QString \mbox{\hyperlink{classsquirrel_group_analysis_a829f290f8fd329d38bca1b1bf11a73ac}{notes}}
 \item 
-\mbox{\Hypertarget{classsquirrel_group_analysis_af207e510ca3648e7a2e100e4fc6c643a}\label{classsquirrel_group_analysis_af207e510ca3648e7a2e100e4fc6c643a}} 
-qint64 {\bfseries numfiles}
+qint64 \mbox{\hyperlink{classsquirrel_group_analysis_adcc0b96035dbc9b5b498606a1eb5f128}{num\+Files}}
 \item 
 qint64 \mbox{\hyperlink{classsquirrel_group_analysis_a36f4a10d11a159386c92cafdf6e5b847}{size}}
+\item 
+QString \mbox{\hyperlink{classsquirrel_group_analysis_a8a41f0d5b6d285dfeedd29807b57af7c}{virtual\+Path}}
+\item 
+QString\+List \mbox{\hyperlink{classsquirrel_group_analysis_ac4aff1154f204ce6c0a810de61573d09}{staged\+Files}}
 \end{DoxyCompactItemize}
 
 
+\doxysubsection{Detailed Description}
+The \mbox{\hyperlink{classsquirrel_group_analysis}{squirrel\+Group\+Analysis}} class. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classsquirrel_group_analysis_a32d83a208a677a4c11f828686496435d}\label{classsquirrel_group_analysis_a32d83a208a677a4c11f828686496435d}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{squirrelGroupAnalysis()}{squirrelGroupAnalysis()}}
+{\footnotesize\ttfamily squirrel\+Group\+Analysis\+::squirrel\+Group\+Analysis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classsquirrel_group_analysis_a70bb407edcf0117b9de17f6da72efff1}\label{classsquirrel_group_analysis_a70bb407edcf0117b9de17f6da72efff1}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!Error@{Error}}
+\index{Error@{Error}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}}
+{\footnotesize\ttfamily QString squirrel\+Group\+Analysis\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_group_analysis_a8d98f9ec6ba2d6566f822d058f832888}\label{classsquirrel_group_analysis_a8d98f9ec6ba2d6566f822d058f832888}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!Get@{Get}}
+\index{Get@{Get}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+{\footnotesize\ttfamily bool squirrel\+Group\+Analysis\+::\+Get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_group_analysis_a8d98f9ec6ba2d6566f822d058f832888}{squirrel\+Group\+Analysis\+::\+Get}} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the groupanalysis data from the database. The groupanalysis\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_group_analysis_ad611161df6c6862783043b1f81af2ca1}\label{classsquirrel_group_analysis_ad611161df6c6862783043b1f81af2ca1}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!GetObjectID@{GetObjectID}}
+\index{GetObjectID@{GetObjectID}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{GetObjectID()}{GetObjectID()}}
+{\footnotesize\ttfamily qint64 squirrel\+Group\+Analysis\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_group_analysis_abe6da4010a9af95b262c5849235ab382}\label{classsquirrel_group_analysis_abe6da4010a9af95b262c5849235ab382}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!isValid@{isValid}}
+\index{isValid@{isValid}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{isValid()}{isValid()}}
+{\footnotesize\ttfamily bool squirrel\+Group\+Analysis\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}\label{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!PrintGroupAnalysis@{PrintGroupAnalysis}}
+\index{PrintGroupAnalysis@{PrintGroupAnalysis}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{PrintGroupAnalysis()}{PrintGroupAnalysis()}}
+{\footnotesize\ttfamily void squirrel\+Group\+Analysis\+::\+Print\+Group\+Analysis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_group_analysis_ac8b3b58e72f6519d319852f1ca06322d}{squirrel\+Group\+Analysis\+::\+Print\+Group\+Analysis}} 
+
+\mbox{\Hypertarget{classsquirrel_group_analysis_ac670e7e282fab5c8e4c47796a2a8e9c3}\label{classsquirrel_group_analysis_ac670e7e282fab5c8e4c47796a2a8e9c3}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!SetObjectID@{SetObjectID}}
+\index{SetObjectID@{SetObjectID}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{SetObjectID()}{SetObjectID()}}
+{\footnotesize\ttfamily void squirrel\+Group\+Analysis\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{int}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_group_analysis_a767144d8971d7bfa04f60d2d59ec167d}\label{classsquirrel_group_analysis_a767144d8971d7bfa04f60d2d59ec167d}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!Store@{Store}}
+\index{Store@{Store}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{Store()}{Store()}}
+{\footnotesize\ttfamily bool squirrel\+Group\+Analysis\+::\+Store (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_group_analysis_a767144d8971d7bfa04f60d2d59ec167d}{squirrel\+Group\+Analysis\+::\+Store}} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the groupanalysis data from the database. The groupanalysis\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_group_analysis_afaaee391f780e3d39ca84174b0e4a60b}\label{classsquirrel_group_analysis_afaaee391f780e3d39ca84174b0e4a60b}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+{\footnotesize\ttfamily QJson\+Object squirrel\+Group\+Analysis\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
 \doxysubsection{Member Data Documentation}
-\mbox{\Hypertarget{classsquirrel_group_analysis_a938c43fd69a369d201157247f2fa3b02}\label{classsquirrel_group_analysis_a938c43fd69a369d201157247f2fa3b02}} 
-\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!endDate@{endDate}}
-\index{endDate@{endDate}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
-\doxysubsubsection{\texorpdfstring{endDate}{endDate}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Group\+Analysis\+::end\+Date}
+\mbox{\Hypertarget{classsquirrel_group_analysis_a49f938cc02e6346e00e6fa1a5d6c2fbc}\label{classsquirrel_group_analysis_a49f938cc02e6346e00e6fa1a5d6c2fbc}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!dateTime@{dateTime}}
+\index{dateTime@{dateTime}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{dateTime}{dateTime}}
+{\footnotesize\ttfamily QDate\+Time squirrel\+Group\+Analysis\+::date\+Time}
 
-datetime the analysis ended \mbox{\Hypertarget{classsquirrel_group_analysis_a63353781a8311a4a708119d656299b55}\label{classsquirrel_group_analysis_a63353781a8311a4a708119d656299b55}} 
-\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!pipelineName@{pipelineName}}
-\index{pipelineName@{pipelineName}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
-\doxysubsubsection{\texorpdfstring{pipelineName}{pipelineName}}
-{\footnotesize\ttfamily Q\+String squirrel\+Group\+Analysis\+::pipeline\+Name}
+datetime of the group analysis \mbox{\Hypertarget{classsquirrel_group_analysis_a19e093e4cd13aa98e3d1b441c555407b}\label{classsquirrel_group_analysis_a19e093e4cd13aa98e3d1b441c555407b}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!description@{description}}
+\index{description@{description}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{description}{description}}
+{\footnotesize\ttfamily QString squirrel\+Group\+Analysis\+::description}
 
-name of the pipeline \mbox{\Hypertarget{classsquirrel_group_analysis_a5058d5a61617a9bdf474c3830cdf0970}\label{classsquirrel_group_analysis_a5058d5a61617a9bdf474c3830cdf0970}} 
-\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!pipelineVersion@{pipelineVersion}}
-\index{pipelineVersion@{pipelineVersion}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
-\doxysubsubsection{\texorpdfstring{pipelineVersion}{pipelineVersion}}
-{\footnotesize\ttfamily int squirrel\+Group\+Analysis\+::pipeline\+Version}
+description of the group analysis \mbox{\Hypertarget{classsquirrel_group_analysis_a6f0df17020cd751543949c3255066e78}\label{classsquirrel_group_analysis_a6f0df17020cd751543949c3255066e78}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!groupAnalysisName@{groupAnalysisName}}
+\index{groupAnalysisName@{groupAnalysisName}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{groupAnalysisName}{groupAnalysisName}}
+{\footnotesize\ttfamily QString squirrel\+Group\+Analysis\+::group\+Analysis\+Name}
 
-pipeline version \mbox{\Hypertarget{classsquirrel_group_analysis_a36f4a10d11a159386c92cafdf6e5b847}\label{classsquirrel_group_analysis_a36f4a10d11a159386c92cafdf6e5b847}} 
+name of the group analysis \mbox{\Hypertarget{classsquirrel_group_analysis_a829f290f8fd329d38bca1b1bf11a73ac}\label{classsquirrel_group_analysis_a829f290f8fd329d38bca1b1bf11a73ac}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!notes@{notes}}
+\index{notes@{notes}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{notes}{notes}}
+{\footnotesize\ttfamily QString squirrel\+Group\+Analysis\+::notes}
+
+notes about the group analysis \mbox{\Hypertarget{classsquirrel_group_analysis_adcc0b96035dbc9b5b498606a1eb5f128}\label{classsquirrel_group_analysis_adcc0b96035dbc9b5b498606a1eb5f128}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!numFiles@{numFiles}}
+\index{numFiles@{numFiles}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{numFiles}{numFiles}}
+{\footnotesize\ttfamily qint64 squirrel\+Group\+Analysis\+::num\+Files}
+
+number of files in the analysis \mbox{\Hypertarget{classsquirrel_group_analysis_a36f4a10d11a159386c92cafdf6e5b847}\label{classsquirrel_group_analysis_a36f4a10d11a159386c92cafdf6e5b847}} 
 \index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!size@{size}}
 \index{size@{size}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
 \doxysubsubsection{\texorpdfstring{size}{size}}
 {\footnotesize\ttfamily qint64 squirrel\+Group\+Analysis\+::size}
 
-disk size in bytes of the analysis \mbox{\Hypertarget{classsquirrel_group_analysis_a4fe52bb3f903e50ebeddca54ab48419b}\label{classsquirrel_group_analysis_a4fe52bb3f903e50ebeddca54ab48419b}} 
-\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!startDate@{startDate}}
-\index{startDate@{startDate}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
-\doxysubsubsection{\texorpdfstring{startDate}{startDate}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Group\+Analysis\+::start\+Date}
+disk size in bytes of the analysis \mbox{\Hypertarget{classsquirrel_group_analysis_ac4aff1154f204ce6c0a810de61573d09}\label{classsquirrel_group_analysis_ac4aff1154f204ce6c0a810de61573d09}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!stagedFiles@{stagedFiles}}
+\index{stagedFiles@{stagedFiles}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{stagedFiles}{stagedFiles}}
+{\footnotesize\ttfamily QString\+List squirrel\+Group\+Analysis\+::staged\+Files}
 
-datetime the analysis was started, includes the setup time 
+staged file list\+: list of files in their own original paths which will be copied in before the package is zipped up \mbox{\Hypertarget{classsquirrel_group_analysis_a8a41f0d5b6d285dfeedd29807b57af7c}\label{classsquirrel_group_analysis_a8a41f0d5b6d285dfeedd29807b57af7c}} 
+\index{squirrelGroupAnalysis@{squirrelGroupAnalysis}!virtualPath@{virtualPath}}
+\index{virtualPath@{virtualPath}!squirrelGroupAnalysis@{squirrelGroupAnalysis}}
+\doxysubsubsection{\texorpdfstring{virtualPath}{virtualPath}}
+{\footnotesize\ttfamily QString squirrel\+Group\+Analysis\+::virtual\+Path}
+
+path within the squirrel package, no leading slash 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/squirrel/src/squirrel/squirrel\+Group\+Analysis.\+h\item 
-C\+:/squirrel/src/squirrel/squirrel\+Group\+Analysis.\+cpp\end{DoxyCompactItemize}
+C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_group_analysis_8h}{squirrel\+Group\+Analysis.\+h}}\item 
+C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_group_analysis_8cpp}{squirrel\+Group\+Analysis.\+cpp}}\end{DoxyCompactItemize}

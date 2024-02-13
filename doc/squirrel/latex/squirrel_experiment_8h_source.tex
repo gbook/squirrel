@@ -1,0 +1,61 @@
+\hypertarget{squirrel_experiment_8h_source}{}\doxysection{squirrel\+Experiment.\+h}
+\label{squirrel_experiment_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelExperiment.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelExperiment.h}}
+\mbox{\hyperlink{squirrel_experiment_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{  Squirrel experiment.h}}
+\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
+\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
+\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
+\DoxyCodeLine{8 \textcolor{comment}{}}
+\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
+\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
+\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
+\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
+\DoxyCodeLine{13 \textcolor{comment}{}}
+\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
+\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
+\DoxyCodeLine{18 \textcolor{comment}{}}
+\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
+\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#ifndef SQUIRRELEXPERIMENT\_H}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define SQUIRRELEXPERIMENT\_H}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#include <QtSql>}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QString>}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QJsonObject>}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QJsonArray>}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{33 \textcolor{keyword}{class }\mbox{\hyperlink{classsquirrel_experiment}{squirrelExperiment}}}
+\DoxyCodeLine{34 \{}
+\DoxyCodeLine{35 \textcolor{keyword}{public}:}
+\DoxyCodeLine{36     \mbox{\hyperlink{classsquirrel_experiment_ad9488f2b25da74c24f51a321333b2a6f}{squirrelExperiment}}();}
+\DoxyCodeLine{37     QJsonObject \mbox{\hyperlink{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}{ToJSON}}();   \textcolor{comment}{/* returns a JSON object */}}
+\DoxyCodeLine{38     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}{PrintExperiment}}(); \textcolor{comment}{/* prints the object */}}
+\DoxyCodeLine{39     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}{Get}}();             \textcolor{comment}{/* gets the object data from the database */}}
+\DoxyCodeLine{40     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}{Store}}();           \textcolor{comment}{/* saves the object data from this object into the database */}}
+\DoxyCodeLine{41     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_experiment_a1c05f4e0c523d38b1f24b83c9a09a51d}{isValid}}() \{ \textcolor{keywordflow}{return} valid; \}}
+\DoxyCodeLine{42     QString \mbox{\hyperlink{classsquirrel_experiment_a5276e737121a8976866c4a9cbdf23049}{Error}}() \{ \textcolor{keywordflow}{return} err; \}}
+\DoxyCodeLine{43     qint64 \mbox{\hyperlink{classsquirrel_experiment_a3664fddfc1edac88877bf059ef7ac89f}{GetObjectID}}() \{ \textcolor{keywordflow}{return} objectID; \}}
+\DoxyCodeLine{44     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_experiment_ac587c43de38fe8972aa17a8d72d1b4d3}{SetObjectID}}(\textcolor{keywordtype}{int} \textcolor{keywordtype}{id}) \{ objectID = id; \}}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46     \textcolor{comment}{/* data items */}}
+\DoxyCodeLine{47     QString \mbox{\hyperlink{classsquirrel_experiment_aa1c81ff5c3358d4d7c3da7274abf7378}{experimentName}};     }
+\DoxyCodeLine{48     qint64 \mbox{\hyperlink{classsquirrel_experiment_ae00be505970a4fb4a72f75eae631de0e}{numFiles}};            }
+\DoxyCodeLine{49     qint64 \mbox{\hyperlink{classsquirrel_experiment_a7f13539d7f4b5568b1493a106cadcfa0}{size}};                }
+\DoxyCodeLine{50     QString \mbox{\hyperlink{classsquirrel_experiment_a3ced3d2e835576e9543153692d741dd5}{virtualPath}};        }
+\DoxyCodeLine{51     QStringList \mbox{\hyperlink{classsquirrel_experiment_afde3993d2f04839357568806e5abbfa3}{stagedFiles}};    }
+\DoxyCodeLine{53 \textcolor{keyword}{private}:}
+\DoxyCodeLine{54     \textcolor{keywordtype}{bool} valid = \textcolor{keyword}{false};}
+\DoxyCodeLine{55     QString err;}
+\DoxyCodeLine{56     qint64 objectID = -\/1;}
+\DoxyCodeLine{57 \};}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// SQUIRRELEXPERIMENT\_H}}
+
+\end{DoxyCode}

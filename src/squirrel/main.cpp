@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
             /* 2) write the squirrel file */
             QString filepath;
             sqrl->SetFilename(filepath);
-            sqrl->Write();
+            sqrl->Write(true);
 
             delete dcm;
             delete sqrl;
@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
             QString outpath;
             sqrl->filePath = outputfile;
             sqrl->SetFilename(outputfile);
-            sqrl->Write();
+            sqrl->Write(true);
         }
     }
     /* ---------- Run the squirrel2bids tool ---------- */

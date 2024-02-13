@@ -1,0 +1,363 @@
+\hypertarget{squirrel_8sql_8h}{}\doxysection{C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/squirrel.sql.\+h File Reference}
+\label{squirrel_8sql_8h}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrel.sql.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrel.sql.h}}
+{\ttfamily \#include $<$QString$>$}\newline
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a28d7c2cf492646e17f7115df7f972fe7}{table\+Staged\+Files}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_aee5c65c294a53e3a620f3ecb47ca4c26}{table\+Analysis}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_adb4c579fbfbe1d17d287962d0a12407f}{table\+Data\+Dictionary}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a912eab483ad28479d5cfd8eabb4c3c34}{table\+Data\+Dictionary\+Items}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a674778f41ef3a326361c53904b43c06e}{table\+Drug}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a15a4203d6ea6daa0c51b70f2335a9381}{table\+Experiment}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a6265847044b7160da1eafca3e32fa11f}{table\+Group\+Analysis}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a4773e488c33f954d1c1a1ee09d2149af}{table\+Measure}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_afccafc2136436c0bd4bf68b6f654e464}{table\+Package}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a528c56834313522b706d082ebea8110d}{table\+Params}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a82d5c69e908ba894cf3052bc30a2bdc3}{table\+Pipeline}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_aa9ed1306fc3288b0f9ddbafea7e6485f}{table\+Pipeline\+Data\+Step}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_a48ed38f7ac0c717eb3fdc758a40c82ab}{table\+Series}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_afb7f1b4291120a315d432e67ffec8696}{table\+Study}}
+\item 
+QString \mbox{\hyperlink{squirrel_8sql_8h_aad4c00a2108f75bf31859d0a502b2266}{table\+Subject}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{squirrel_8sql_8h_aee5c65c294a53e3a620f3ecb47ca4c26}\label{squirrel_8sql_8h_aee5c65c294a53e3a620f3ecb47ca4c26}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableAnalysis@{tableAnalysis}}
+\index{tableAnalysis@{tableAnalysis}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableAnalysis}{tableAnalysis}}
+{\footnotesize\ttfamily QString table\+Analysis}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Analysis ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}AnalysisRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StudyRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}PipelineRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}PipelineVersion INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ClusterStartDate TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ClusterEndDate TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StartDate TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}EndDate TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SetupTime INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}RunTime INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumSeries INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Status TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Successful INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Size INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumFiles INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Hostname TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StatusMessage TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}UNIQUE(StudyRowID, PipelineRowID, PipelineVersion))"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_adb4c579fbfbe1d17d287962d0a12407f}\label{squirrel_8sql_8h_adb4c579fbfbe1d17d287962d0a12407f}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableDataDictionary@{tableDataDictionary}}
+\index{tableDataDictionary@{tableDataDictionary}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableDataDictionary}{tableDataDictionary}}
+{\footnotesize\ttfamily QString table\+Data\+Dictionary}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS DataDictionary ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DataDictionaryRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumFiles INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Size INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a912eab483ad28479d5cfd8eabb4c3c34}\label{squirrel_8sql_8h_a912eab483ad28479d5cfd8eabb4c3c34}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableDataDictionaryItems@{tableDataDictionaryItems}}
+\index{tableDataDictionaryItems@{tableDataDictionaryItems}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableDataDictionaryItems}{tableDataDictionaryItems}}
+{\footnotesize\ttfamily QString table\+Data\+Dictionary\+Items}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS DataDictionaryItems ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DataDictionaryItemRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DataDictionaryRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VariableType TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VariableName TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VariableDescription TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}KeyValue TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ExpectedTimepoints INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}RangeLow REAL,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}RangeHigh REAL)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a674778f41ef3a326361c53904b43c06e}\label{squirrel_8sql_8h_a674778f41ef3a326361c53904b43c06e}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableDrug@{tableDrug}}
+\index{tableDrug@{tableDrug}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableDrug}{tableDrug}}
+{\footnotesize\ttfamily QString table\+Drug}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Drug ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DrugRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SubjectRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DrugName TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateStart TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateEnd TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateRecordEntry TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DoseString TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DoseAmount TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DoseFrequency TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}AdministrationRoute TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DrugClass TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DoseKey TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DoseUnit TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FrequencyModifer TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FrequencyValue REAL,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FrequencyUnit TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Description TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Rater TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Notes TEXT)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a15a4203d6ea6daa0c51b70f2335a9381}\label{squirrel_8sql_8h_a15a4203d6ea6daa0c51b70f2335a9381}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableExperiment@{tableExperiment}}
+\index{tableExperiment@{tableExperiment}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableExperiment}{tableExperiment}}
+{\footnotesize\ttfamily QString table\+Experiment}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Experiment ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ExperimentRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ExperimentName TEXT UNIQUE,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Size INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumFiles INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a6265847044b7160da1eafca3e32fa11f}\label{squirrel_8sql_8h_a6265847044b7160da1eafca3e32fa11f}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableGroupAnalysis@{tableGroupAnalysis}}
+\index{tableGroupAnalysis@{tableGroupAnalysis}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableGroupAnalysis}{tableGroupAnalysis}}
+{\footnotesize\ttfamily QString table\+Group\+Analysis}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS GroupAnalysis ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}GroupAnalysisRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}GroupAnalysisName TEXT UNIQUE,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Description TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumFiles INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Size INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a4773e488c33f954d1c1a1ee09d2149af}\label{squirrel_8sql_8h_a4773e488c33f954d1c1a1ee09d2149af}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableMeasure@{tableMeasure}}
+\index{tableMeasure@{tableMeasure}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableMeasure}{tableMeasure}}
+{\footnotesize\ttfamily QString table\+Measure}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Measure ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}MeasureRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SubjectRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}MeasureName TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateStart TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateEnd TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}InstrumentName TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Rater TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Notes TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Value TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Duration INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateRecordEntry TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Description TEXT)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_afccafc2136436c0bd4bf68b6f654e464}\label{squirrel_8sql_8h_afccafc2136436c0bd4bf68b6f654e464}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tablePackage@{tablePackage}}
+\index{tablePackage@{tablePackage}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tablePackage}{tablePackage}}
+{\footnotesize\ttfamily QString table\+Package}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Package ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}PackageRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Name TEXT NOT NULL UNIQUE,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Description TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SubjectDirFormat TEXT DEFAULT 'orig',"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StudyDirFormat TEXT DEFAULT 'orig',"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SeriesDirFormat TEXT DEFAULT 'orig',"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}PackageDataFormat TEXT DEFAULT 'orig',"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}License TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Readme TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Changes TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Notes TEXT)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a528c56834313522b706d082ebea8110d}\label{squirrel_8sql_8h_a528c56834313522b706d082ebea8110d}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableParams@{tableParams}}
+\index{tableParams@{tableParams}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableParams}{tableParams}}
+{\footnotesize\ttfamily QString table\+Params}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Params ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ParamRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SeriesRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ParamKey TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ParamValue TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}UNIQUE(SeriesRowID, ParamKey))"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a82d5c69e908ba894cf3052bc30a2bdc3}\label{squirrel_8sql_8h_a82d5c69e908ba894cf3052bc30a2bdc3}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tablePipeline@{tablePipeline}}
+\index{tablePipeline@{tablePipeline}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tablePipeline}{tablePipeline}}
+{\footnotesize\ttfamily QString table\+Pipeline}
+
+\mbox{\Hypertarget{squirrel_8sql_8h_aa9ed1306fc3288b0f9ddbafea7e6485f}\label{squirrel_8sql_8h_aa9ed1306fc3288b0f9ddbafea7e6485f}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tablePipelineDataStep@{tablePipelineDataStep}}
+\index{tablePipelineDataStep@{tablePipelineDataStep}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tablePipelineDataStep}{tablePipelineDataStep}}
+{\footnotesize\ttfamily QString table\+Pipeline\+Data\+Step}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS PipeplineDataStep ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DataStepRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}PipelineRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}AssociationType TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}BehDir TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}BehFormat TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DataFormat TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ImageType TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DataLevel TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Location TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Modality TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumBOLDReps TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumImagesCriteria TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StepOrder INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Protocol TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SeriesCriteria TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagEnabled INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagOptional INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagGzip INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagPreserveSeriesNum INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagPrimaryProtocol INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagUsePhaseDir INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FlagUseSeries INTEGER)"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a48ed38f7ac0c717eb3fdc758a40c82ab}\label{squirrel_8sql_8h_a48ed38f7ac0c717eb3fdc758a40c82ab}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableSeries@{tableSeries}}
+\index{tableSeries@{tableSeries}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableSeries}{tableSeries}}
+{\footnotesize\ttfamily QString table\+Series}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Series ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SeriesRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StudyRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SeriesNumber INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SeriesUID TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Description TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Protocol TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ExperimentRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Size INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}NumFiles INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}BehSize INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}BehNumFiles INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Sequence INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}UNIQUE(StudyRowID, SeriesNumber))"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_a28d7c2cf492646e17f7115df7f972fe7}\label{squirrel_8sql_8h_a28d7c2cf492646e17f7115df7f972fe7}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableStagedFiles@{tableStagedFiles}}
+\index{tableStagedFiles@{tableStagedFiles}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableStagedFiles}{tableStagedFiles}}
+{\footnotesize\ttfamily QString table\+Staged\+Files}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS StagedFiles ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StagedFileRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ObjectType TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ObjectRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FileSize INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StagedPath TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}FinalDirectory TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}UNIQUE(ObjectRowID, ObjectType, StagedPath) )"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_afb7f1b4291120a315d432e67ffec8696}\label{squirrel_8sql_8h_afb7f1b4291120a315d432e67ffec8696}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableStudy@{tableStudy}}
+\index{tableStudy@{tableStudy}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableStudy}{tableStudy}}
+{\footnotesize\ttfamily QString table\+Study}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Study ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StudyRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SubjectRowID INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StudyNumber INTEGER ,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Age REAL DEFAULT 0.0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Height REAL DEFAULT 0.0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Weight REAL DEFAULT 0.0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Modality TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Description TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}StudyUID TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VisitType TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DayNumber INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Timepoint INTEGER DEFAULT 0,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Equipment TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Sequence INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}UNIQUE(SubjectRowID, StudyNumber))"{}})}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{squirrel_8sql_8h_aad4c00a2108f75bf31859d0a502b2266}\label{squirrel_8sql_8h_aad4c00a2108f75bf31859d0a502b2266}} 
+\index{squirrel.sql.h@{squirrel.sql.h}!tableSubject@{tableSubject}}
+\index{tableSubject@{tableSubject}!squirrel.sql.h@{squirrel.sql.h}}
+\doxysubsubsection{\texorpdfstring{tableSubject}{tableSubject}}
+{\footnotesize\ttfamily QString table\+Subject}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Subject ("{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}SubjectRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}ID TEXT NOT NULL UNIQUE,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}AltIDs TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}GUID TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}DateOfBirth TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Sex TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Gender TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Ethnicity1 TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Ethnicity2 TEXT,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}Sequence INTEGER,"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}})}
+
+\end{DoxyCode}

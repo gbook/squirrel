@@ -12,80 +12,156 @@ The measure class.
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classsquirrel_measure_a51d7ffdf10334ea6e9433abc129b5daf}\label{classsquirrel_measure_a51d7ffdf10334ea6e9433abc129b5daf}} 
-Q\+Json\+Object {\bfseries To\+J\+S\+ON} ()
+\mbox{\hyperlink{classsquirrel_measure_a4ad096b946ea3edc4200c403285483b7}{squirrel\+Measure}} ()
 \item 
-\mbox{\Hypertarget{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}\label{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}} 
+QJson\+Object \mbox{\hyperlink{classsquirrel_measure_a51d7ffdf10334ea6e9433abc129b5daf}{To\+JSON}} ()
+\item 
 void \mbox{\hyperlink{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}{Print\+Measure}} ()
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}{squirrel\+Measure\+::\+Print\+Measure}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}{squirrel\+Measure\+::\+Print\+Measure}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_measure_a47b6f75efffb2f45835bb419b10ae857}{Get}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_measure_a47b6f75efffb2f45835bb419b10ae857}{squirrel\+Measure\+::\+Get}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_measure_a41ade07df29b39b71b32f37a7f05ef57}{Store}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_measure_a41ade07df29b39b71b32f37a7f05ef57}{squirrel\+Measure\+::\+Store}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_measure_a464a0936541f1c2f577c4659e560f38e}{is\+Valid}} ()
+\item 
+QString \mbox{\hyperlink{classsquirrel_measure_a2e2386f3bf9424b1726e0cfa572127a9}{Error}} ()
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_measure_a1f1fda1c7f87b8392d13fe3eecf2c6e6}{Get\+Object\+ID}} ()
+\item 
+void \mbox{\hyperlink{classsquirrel_measure_a5879c22ae1ed73d8fb204a0669adad60}{Set\+Object\+ID}} (int id)
+\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_measure_acd6807fb6d1c0887efe2ce60b4bee87f}{measure\+Name}}
+qint64 \mbox{\hyperlink{classsquirrel_measure_a02922c142a637a691190a200b86e9072}{subject\+Row\+ID}}
 \item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}{date\+Start}}
+QString \mbox{\hyperlink{classsquirrel_measure_acd6807fb6d1c0887efe2ce60b4bee87f}{measure\+Name}}
 \item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_measure_a1ab49285666faac66eb62a8605c8fd8d}{date\+End}}
+QDate\+Time \mbox{\hyperlink{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}{date\+Start}}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_measure_aab9f6317bb50812e155456544704ecd2}{instrument\+Name}}
+QDate\+Time \mbox{\hyperlink{classsquirrel_measure_a1ab49285666faac66eb62a8605c8fd8d}{date\+End}}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_measure_a13f1282967336134a53883a432449ce0}{rater}}
+QString \mbox{\hyperlink{classsquirrel_measure_aab9f6317bb50812e155456544704ecd2}{instrument\+Name}}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_measure_a284082810caf54d74cfd330a7e148672}{notes}}
+QString \mbox{\hyperlink{classsquirrel_measure_a13f1282967336134a53883a432449ce0}{rater}}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_measure_ada0440761192a8306a0d885e27860943}{value}}
+QString \mbox{\hyperlink{classsquirrel_measure_a284082810caf54d74cfd330a7e148672}{notes}}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_measure_a563214ed8d2dd2df3afb1713a1f26cb2}{description}}
+QString \mbox{\hyperlink{classsquirrel_measure_ada0440761192a8306a0d885e27860943}{value}}
+\item 
+QString \mbox{\hyperlink{classsquirrel_measure_a563214ed8d2dd2df3afb1713a1f26cb2}{description}}
 \item 
 double \mbox{\hyperlink{classsquirrel_measure_aa23aa27b99bc671e9e03c5c8a6e096d1}{duration}}
 \item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}{date\+Record\+Entry}}
-\item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_measure_ac13e5d510ea58e4d7fa96f6a0624ea4c}{date\+Record\+Create}}
-\item 
-Q\+Date\+Time \mbox{\hyperlink{classsquirrel_measure_a5ebdf216c6b71b32392d023d171c8f0f}{date\+Record\+Modify}}
+QDate\+Time \mbox{\hyperlink{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}{date\+Record\+Entry}}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 The measure class. 
 
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classsquirrel_measure_a4ad096b946ea3edc4200c403285483b7}\label{classsquirrel_measure_a4ad096b946ea3edc4200c403285483b7}} 
+\index{squirrelMeasure@{squirrelMeasure}!squirrelMeasure@{squirrelMeasure}}
+\index{squirrelMeasure@{squirrelMeasure}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{squirrelMeasure()}{squirrelMeasure()}}
+{\footnotesize\ttfamily squirrel\+Measure\+::squirrel\+Measure (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classsquirrel_measure_a2e2386f3bf9424b1726e0cfa572127a9}\label{classsquirrel_measure_a2e2386f3bf9424b1726e0cfa572127a9}} 
+\index{squirrelMeasure@{squirrelMeasure}!Error@{Error}}
+\index{Error@{Error}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_measure_a47b6f75efffb2f45835bb419b10ae857}\label{classsquirrel_measure_a47b6f75efffb2f45835bb419b10ae857}} 
+\index{squirrelMeasure@{squirrelMeasure}!Get@{Get}}
+\index{Get@{Get}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+{\footnotesize\ttfamily bool squirrel\+Measure\+::\+Get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_measure_a47b6f75efffb2f45835bb419b10ae857}{squirrel\+Measure\+::\+Get}} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the measure data from the database. The measure\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_measure_a1f1fda1c7f87b8392d13fe3eecf2c6e6}\label{classsquirrel_measure_a1f1fda1c7f87b8392d13fe3eecf2c6e6}} 
+\index{squirrelMeasure@{squirrelMeasure}!GetObjectID@{GetObjectID}}
+\index{GetObjectID@{GetObjectID}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{GetObjectID()}{GetObjectID()}}
+{\footnotesize\ttfamily qint64 squirrel\+Measure\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_measure_a464a0936541f1c2f577c4659e560f38e}\label{classsquirrel_measure_a464a0936541f1c2f577c4659e560f38e}} 
+\index{squirrelMeasure@{squirrelMeasure}!isValid@{isValid}}
+\index{isValid@{isValid}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{isValid()}{isValid()}}
+{\footnotesize\ttfamily bool squirrel\+Measure\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}\label{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}} 
+\index{squirrelMeasure@{squirrelMeasure}!PrintMeasure@{PrintMeasure}}
+\index{PrintMeasure@{PrintMeasure}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{PrintMeasure()}{PrintMeasure()}}
+{\footnotesize\ttfamily void squirrel\+Measure\+::\+Print\+Measure (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_measure_af78d9a96e4858bc6f06f2ce212987f6f}{squirrel\+Measure\+::\+Print\+Measure}} 
+
+\mbox{\Hypertarget{classsquirrel_measure_a5879c22ae1ed73d8fb204a0669adad60}\label{classsquirrel_measure_a5879c22ae1ed73d8fb204a0669adad60}} 
+\index{squirrelMeasure@{squirrelMeasure}!SetObjectID@{SetObjectID}}
+\index{SetObjectID@{SetObjectID}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{SetObjectID()}{SetObjectID()}}
+{\footnotesize\ttfamily void squirrel\+Measure\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{int}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_measure_a41ade07df29b39b71b32f37a7f05ef57}\label{classsquirrel_measure_a41ade07df29b39b71b32f37a7f05ef57}} 
+\index{squirrelMeasure@{squirrelMeasure}!Store@{Store}}
+\index{Store@{Store}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{Store()}{Store()}}
+{\footnotesize\ttfamily bool squirrel\+Measure\+::\+Store (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_measure_a41ade07df29b39b71b32f37a7f05ef57}{squirrel\+Measure\+::\+Store}} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the measure data from the database. The measure\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_measure_a51d7ffdf10334ea6e9433abc129b5daf}\label{classsquirrel_measure_a51d7ffdf10334ea6e9433abc129b5daf}} 
+\index{squirrelMeasure@{squirrelMeasure}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+{\footnotesize\ttfamily QJson\+Object squirrel\+Measure\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
 \doxysubsection{Member Data Documentation}
 \mbox{\Hypertarget{classsquirrel_measure_a1ab49285666faac66eb62a8605c8fd8d}\label{classsquirrel_measure_a1ab49285666faac66eb62a8605c8fd8d}} 
 \index{squirrelMeasure@{squirrelMeasure}!dateEnd@{dateEnd}}
 \index{dateEnd@{dateEnd}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{dateEnd}{dateEnd}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Measure\+::date\+End}
+{\footnotesize\ttfamily QDate\+Time squirrel\+Measure\+::date\+End}
 
-end date of the measurement \mbox{\Hypertarget{classsquirrel_measure_ac13e5d510ea58e4d7fa96f6a0624ea4c}\label{classsquirrel_measure_ac13e5d510ea58e4d7fa96f6a0624ea4c}} 
-\index{squirrelMeasure@{squirrelMeasure}!dateRecordCreate@{dateRecordCreate}}
-\index{dateRecordCreate@{dateRecordCreate}!squirrelMeasure@{squirrelMeasure}}
-\doxysubsubsection{\texorpdfstring{dateRecordCreate}{dateRecordCreate}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Measure\+::date\+Record\+Create}
-
-date the record was created (in this database) \mbox{\Hypertarget{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}\label{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}} 
+end date of the measurement \mbox{\Hypertarget{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}\label{classsquirrel_measure_a5e3536db9ce0cab955f93d9ddab677f5}} 
 \index{squirrelMeasure@{squirrelMeasure}!dateRecordEntry@{dateRecordEntry}}
 \index{dateRecordEntry@{dateRecordEntry}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{dateRecordEntry}{dateRecordEntry}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Measure\+::date\+Record\+Entry}
+{\footnotesize\ttfamily QDate\+Time squirrel\+Measure\+::date\+Record\+Entry}
 
-date the record was entered (by a user, which may have occurred in a different database) \mbox{\Hypertarget{classsquirrel_measure_a5ebdf216c6b71b32392d023d171c8f0f}\label{classsquirrel_measure_a5ebdf216c6b71b32392d023d171c8f0f}} 
-\index{squirrelMeasure@{squirrelMeasure}!dateRecordModify@{dateRecordModify}}
-\index{dateRecordModify@{dateRecordModify}!squirrelMeasure@{squirrelMeasure}}
-\doxysubsubsection{\texorpdfstring{dateRecordModify}{dateRecordModify}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Measure\+::date\+Record\+Modify}
-
-date the record was modified (in this database) \mbox{\Hypertarget{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}\label{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}} 
+data entry date \mbox{\Hypertarget{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}\label{classsquirrel_measure_a3c5ad0145a23b2957391093262cfd14b}} 
 \index{squirrelMeasure@{squirrelMeasure}!dateStart@{dateStart}}
 \index{dateStart@{dateStart}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{dateStart}{dateStart}}
-{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Measure\+::date\+Start}
+{\footnotesize\ttfamily QDate\+Time squirrel\+Measure\+::date\+Start}
 
 start date of the measurement (required) \mbox{\Hypertarget{classsquirrel_measure_a563214ed8d2dd2df3afb1713a1f26cb2}\label{classsquirrel_measure_a563214ed8d2dd2df3afb1713a1f26cb2}} 
 \index{squirrelMeasure@{squirrelMeasure}!description@{description}}
 \index{description@{description}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{description}{description}}
-{\footnotesize\ttfamily Q\+String squirrel\+Measure\+::description}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::description}
 
 extended measurement description \mbox{\Hypertarget{classsquirrel_measure_aa23aa27b99bc671e9e03c5c8a6e096d1}\label{classsquirrel_measure_aa23aa27b99bc671e9e03c5c8a6e096d1}} 
 \index{squirrelMeasure@{squirrelMeasure}!duration@{duration}}
@@ -97,35 +173,41 @@ duration of the measure, in seconds \mbox{\Hypertarget{classsquirrel_measure_aab
 \index{squirrelMeasure@{squirrelMeasure}!instrumentName@{instrumentName}}
 \index{instrumentName@{instrumentName}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{instrumentName}{instrumentName}}
-{\footnotesize\ttfamily Q\+String squirrel\+Measure\+::instrument\+Name}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::instrument\+Name}
 
 name of the instrument (test, assessment, etc) from which this measure came \mbox{\Hypertarget{classsquirrel_measure_acd6807fb6d1c0887efe2ce60b4bee87f}\label{classsquirrel_measure_acd6807fb6d1c0887efe2ce60b4bee87f}} 
 \index{squirrelMeasure@{squirrelMeasure}!measureName@{measureName}}
 \index{measureName@{measureName}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{measureName}{measureName}}
-{\footnotesize\ttfamily Q\+String squirrel\+Measure\+::measure\+Name}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::measure\+Name}
 
 measure name (required) \mbox{\Hypertarget{classsquirrel_measure_a284082810caf54d74cfd330a7e148672}\label{classsquirrel_measure_a284082810caf54d74cfd330a7e148672}} 
 \index{squirrelMeasure@{squirrelMeasure}!notes@{notes}}
 \index{notes@{notes}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{notes}{notes}}
-{\footnotesize\ttfamily Q\+String squirrel\+Measure\+::notes}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::notes}
 
 notes about the measure \mbox{\Hypertarget{classsquirrel_measure_a13f1282967336134a53883a432449ce0}\label{classsquirrel_measure_a13f1282967336134a53883a432449ce0}} 
 \index{squirrelMeasure@{squirrelMeasure}!rater@{rater}}
 \index{rater@{rater}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{rater}{rater}}
-{\footnotesize\ttfamily Q\+String squirrel\+Measure\+::rater}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::rater}
 
-name or username of the person who rated the measure \mbox{\Hypertarget{classsquirrel_measure_ada0440761192a8306a0d885e27860943}\label{classsquirrel_measure_ada0440761192a8306a0d885e27860943}} 
+name or username of the person who rated the measure \mbox{\Hypertarget{classsquirrel_measure_a02922c142a637a691190a200b86e9072}\label{classsquirrel_measure_a02922c142a637a691190a200b86e9072}} 
+\index{squirrelMeasure@{squirrelMeasure}!subjectRowID@{subjectRowID}}
+\index{subjectRowID@{subjectRowID}!squirrelMeasure@{squirrelMeasure}}
+\doxysubsubsection{\texorpdfstring{subjectRowID}{subjectRowID}}
+{\footnotesize\ttfamily qint64 squirrel\+Measure\+::subject\+Row\+ID}
+
+\mbox{\Hypertarget{classsquirrel_measure_ada0440761192a8306a0d885e27860943}\label{classsquirrel_measure_ada0440761192a8306a0d885e27860943}} 
 \index{squirrelMeasure@{squirrelMeasure}!value@{value}}
 \index{value@{value}!squirrelMeasure@{squirrelMeasure}}
 \doxysubsubsection{\texorpdfstring{value}{value}}
-{\footnotesize\ttfamily Q\+String squirrel\+Measure\+::value}
+{\footnotesize\ttfamily QString squirrel\+Measure\+::value}
 
 value, in string or number stored as a string 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/squirrel/src/squirrel/squirrel\+Measure.\+h\item 
-C\+:/squirrel/src/squirrel/squirrel\+Measure.\+cpp\end{DoxyCompactItemize}
+C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_measure_8h}{squirrel\+Measure.\+h}}\item 
+C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_measure_8cpp}{squirrel\+Measure.\+cpp}}\end{DoxyCompactItemize}

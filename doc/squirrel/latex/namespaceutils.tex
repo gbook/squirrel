@@ -1,0 +1,278 @@
+\hypertarget{namespaceutils}{}\doxysection{utils Namespace Reference}
+\label{namespaceutils}\index{utils@{utils}}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef QHash$<$ int, QHash$<$ QString, QString $>$ $>$ \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexed\+Hash}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespaceutils_ad92461ddb9d93954842d813e5a757598}{SQLQuery}} (QSql\+Query \&q, QString function, QString file, int line, bool d)
+\item 
+void \mbox{\hyperlink{namespaceutils_affebcb1d5894273ed3758d4dc8b4dbf2}{Print}} (QString s, bool n, bool pad)
+\item 
+QString \mbox{\hyperlink{namespaceutils_a801a6734981f6585398a9539a228dccd}{Create\+Current\+Date\+Time}} (int format)
+\item 
+QString \mbox{\hyperlink{namespaceutils_a7e12ee4aed18f06e36e7f5354a09da64}{Create\+Log\+Date}} ()
+\item 
+QString \mbox{\hyperlink{namespaceutils_adc5fe5f917fe05618635a2d994c306f8}{System\+Command}} (QString s, bool detail, bool truncate, bool buffer\+Output)
+\item 
+bool \mbox{\hyperlink{namespaceutils_acbc2ded105c81c63536e211bc11a691d}{Make\+Path}} (QString p, QString \&msg, bool perm777)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a2ca9c2a798bcb7a607120cef4ff3a316}{Remove\+Dir}} (QString p, QString \&msg)
+\item 
+QString \mbox{\hyperlink{namespaceutils_a6b911c7934acb708a5a96e9b103fac61}{Generate\+Random\+String}} (int n)
+\item 
+QString\+List \mbox{\hyperlink{namespaceutils_a00d98bd6c3b583654087899db8a0f268}{Find\+All\+Files}} (QString dir, QString pattern, bool recursive)
+\item 
+QString\+List \mbox{\hyperlink{namespaceutils_a97ab2327c58041d933ac2bead7aa5d17}{Find\+All\+Dirs}} (QString dir, QString pattern, bool recursive, bool includepath)
+\item 
+void \mbox{\hyperlink{namespaceutils_a24eac88d9ead0c0f7120037af78a7b03}{Get\+Dir\+Size\+And\+File\+Count}} (QString dir, qint64 \&c, qint64 \&b, bool recurse)
+\item 
+QString \mbox{\hyperlink{namespaceutils_a546b7adebb8ae91ecb8c95d7751d6ed2}{Parse\+Date}} (QString s)
+\item 
+QString \mbox{\hyperlink{namespaceutils_ad7078d5849ef1b8e86fd70e824498086}{Parse\+Time}} (QString s)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a699a213c6a0ebe40d122af2e70fe5645}{Parse\+CSV}} (QString csv, \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexed\+Hash}} \&table, QString\+List \&columns, QString \&msg)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a64cc949197af30c1bb613cce5f6421c8}{Parse\+TSV}} (QString tsv, \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexed\+Hash}} \&table, QString\+List \&columns, QString \&msg)
+\item 
+QString \mbox{\hyperlink{namespaceutils_aac4a03a0f09bbeab5d3bb3df68733b70}{Clean\+JSON}} (QString s)
+\item 
+bool \mbox{\hyperlink{namespaceutils_acf4d28448dc62cedc4c5a2f3b0281e21}{Write\+Text\+File}} (QString filepath, QString str, bool append)
+\item 
+QString \mbox{\hyperlink{namespaceutils_ad433122c664f2e5849b6668da507256e}{Read\+Text\+File\+To\+String}} (QString filepath)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a1819698a0776df35c8859dc3f07e9cf8}{Batch\+Rename\+Files}} (QString dir, QString seriesnum, QString studynum, QString uid, int \&numfilesrenamed, QString \&msg)
+\item 
+double \mbox{\hyperlink{namespaceutils_af49a87b705c921d12f473c9361a1da1d}{Get\+Patient\+Age}} (QString Patient\+Age\+Str, QString Study\+Date, QString Patient\+Birth\+Date)
+\item 
+bool \mbox{\hyperlink{namespaceutils_ac8f14812df001f4d2c7feb83b5c63fe3}{Directory\+Exists}} (QString dir)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a5b1277766ca28a596841843338c63797}{File\+Exists}} (QString f)
+\item 
+bool \mbox{\hyperlink{namespaceutils_af47fa8b39d5b3e4cbaf6d9edfdfaeeb3}{Copy\+File}} (QString f, QString dir)
+\item 
+QString\+List \mbox{\hyperlink{namespaceutils_a606285ea178186b25cd608e600db8e35}{Get\+Staged\+File\+List}} (qint64 object\+ID, QString object\+Type)
+\item 
+void \mbox{\hyperlink{namespaceutils_acb558e77b85928208880fb3491ef12a9}{Store\+Staged\+File\+List}} (qint64 object\+ID, QString object\+Type, QString\+List paths)
+\item 
+void \mbox{\hyperlink{namespaceutils_a0da88ac6b11389d8033e436a5f019bf0}{Remove\+Staged\+File\+List}} (qint64 object\+ID, QString object\+Type)
+\item 
+QHash$<$ QString, QString $>$ \mbox{\hyperlink{namespaceutils_acba1c2e042a78403f483964736e17559}{Get\+Params}} (qint64 series\+Row\+ID)
+\item 
+void \mbox{\hyperlink{namespaceutils_a2208439c10651ea16714bc32b1bb2122}{Store\+Params}} (qint64 series\+Row\+ID, QHash$<$ QString, QString $>$ params)
+\item 
+QString \mbox{\hyperlink{namespaceutils_ab28544f34f28e5db5e86d20017ade89e}{Clean\+String}} (QString s)
+\item 
+QHash$<$ QString, QString $>$ \mbox{\hyperlink{namespaceutils_aebfa082e4124a3aebbaf47cae78177c6}{Anonymize\+Params}} (QHash$<$ QString, QString $>$ params)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a3b3419cf8be729230f2321d4fc28bf53}{Rename\+File}} (QString filepathorig, QString filepathnew, bool force=true)
+\item 
+bool \mbox{\hyperlink{namespaceutils_a125a7f9e4457adeb1e0c3e10afcd601b}{Move\+File}} (QString f, QString dir, QString \&m)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}\label{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}} 
+\index{utils@{utils}!indexedHash@{indexedHash}}
+\index{indexedHash@{indexedHash}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{indexedHash}{indexedHash}}
+{\footnotesize\ttfamily typedef QHash$<$int, QHash$<$QString, QString$>$ $>$ \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{utils\+::indexed\+Hash}}}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceutils_aebfa082e4124a3aebbaf47cae78177c6}\label{namespaceutils_aebfa082e4124a3aebbaf47cae78177c6}} 
+\index{utils@{utils}!AnonymizeParams@{AnonymizeParams}}
+\index{AnonymizeParams@{AnonymizeParams}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{AnonymizeParams()}{AnonymizeParams()}}
+{\footnotesize\ttfamily QHash$<$ QString, QString $>$ utils\+::\+Anonymize\+Params (\begin{DoxyParamCaption}\item[{QHash$<$ QString, QString $>$}]{params }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a1819698a0776df35c8859dc3f07e9cf8}\label{namespaceutils_a1819698a0776df35c8859dc3f07e9cf8}} 
+\index{utils@{utils}!BatchRenameFiles@{BatchRenameFiles}}
+\index{BatchRenameFiles@{BatchRenameFiles}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{BatchRenameFiles()}{BatchRenameFiles()}}
+{\footnotesize\ttfamily bool utils\+::\+Batch\+Rename\+Files (\begin{DoxyParamCaption}\item[{QString}]{dir,  }\item[{QString}]{seriesnum,  }\item[{QString}]{studynum,  }\item[{QString}]{uid,  }\item[{int \&}]{numfilesrenamed,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_aac4a03a0f09bbeab5d3bb3df68733b70}\label{namespaceutils_aac4a03a0f09bbeab5d3bb3df68733b70}} 
+\index{utils@{utils}!CleanJSON@{CleanJSON}}
+\index{CleanJSON@{CleanJSON}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{CleanJSON()}{CleanJSON()}}
+{\footnotesize\ttfamily QString utils\+::\+Clean\+JSON (\begin{DoxyParamCaption}\item[{QString}]{s }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_ab28544f34f28e5db5e86d20017ade89e}\label{namespaceutils_ab28544f34f28e5db5e86d20017ade89e}} 
+\index{utils@{utils}!CleanString@{CleanString}}
+\index{CleanString@{CleanString}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{CleanString()}{CleanString()}}
+{\footnotesize\ttfamily QString utils\+::\+Clean\+String (\begin{DoxyParamCaption}\item[{QString}]{s }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_af47fa8b39d5b3e4cbaf6d9edfdfaeeb3}\label{namespaceutils_af47fa8b39d5b3e4cbaf6d9edfdfaeeb3}} 
+\index{utils@{utils}!CopyFile@{CopyFile}}
+\index{CopyFile@{CopyFile}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{CopyFile()}{CopyFile()}}
+{\footnotesize\ttfamily bool utils\+::\+Copy\+File (\begin{DoxyParamCaption}\item[{QString}]{f,  }\item[{QString}]{dir }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a801a6734981f6585398a9539a228dccd}\label{namespaceutils_a801a6734981f6585398a9539a228dccd}} 
+\index{utils@{utils}!CreateCurrentDateTime@{CreateCurrentDateTime}}
+\index{CreateCurrentDateTime@{CreateCurrentDateTime}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{CreateCurrentDateTime()}{CreateCurrentDateTime()}}
+{\footnotesize\ttfamily QString utils\+::\+Create\+Current\+Date\+Time (\begin{DoxyParamCaption}\item[{int}]{format }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a7e12ee4aed18f06e36e7f5354a09da64}\label{namespaceutils_a7e12ee4aed18f06e36e7f5354a09da64}} 
+\index{utils@{utils}!CreateLogDate@{CreateLogDate}}
+\index{CreateLogDate@{CreateLogDate}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{CreateLogDate()}{CreateLogDate()}}
+{\footnotesize\ttfamily QString utils\+::\+Create\+Log\+Date (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_ac8f14812df001f4d2c7feb83b5c63fe3}\label{namespaceutils_ac8f14812df001f4d2c7feb83b5c63fe3}} 
+\index{utils@{utils}!DirectoryExists@{DirectoryExists}}
+\index{DirectoryExists@{DirectoryExists}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{DirectoryExists()}{DirectoryExists()}}
+{\footnotesize\ttfamily bool utils\+::\+Directory\+Exists (\begin{DoxyParamCaption}\item[{QString}]{dir }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a5b1277766ca28a596841843338c63797}\label{namespaceutils_a5b1277766ca28a596841843338c63797}} 
+\index{utils@{utils}!FileExists@{FileExists}}
+\index{FileExists@{FileExists}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{FileExists()}{FileExists()}}
+{\footnotesize\ttfamily bool utils\+::\+File\+Exists (\begin{DoxyParamCaption}\item[{QString}]{f }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a97ab2327c58041d933ac2bead7aa5d17}\label{namespaceutils_a97ab2327c58041d933ac2bead7aa5d17}} 
+\index{utils@{utils}!FindAllDirs@{FindAllDirs}}
+\index{FindAllDirs@{FindAllDirs}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{FindAllDirs()}{FindAllDirs()}}
+{\footnotesize\ttfamily QString\+List utils\+::\+Find\+All\+Dirs (\begin{DoxyParamCaption}\item[{QString}]{dir,  }\item[{QString}]{pattern,  }\item[{bool}]{recursive,  }\item[{bool}]{includepath }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a00d98bd6c3b583654087899db8a0f268}\label{namespaceutils_a00d98bd6c3b583654087899db8a0f268}} 
+\index{utils@{utils}!FindAllFiles@{FindAllFiles}}
+\index{FindAllFiles@{FindAllFiles}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{FindAllFiles()}{FindAllFiles()}}
+{\footnotesize\ttfamily QString\+List utils\+::\+Find\+All\+Files (\begin{DoxyParamCaption}\item[{QString}]{dir,  }\item[{QString}]{pattern,  }\item[{bool}]{recursive }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a6b911c7934acb708a5a96e9b103fac61}\label{namespaceutils_a6b911c7934acb708a5a96e9b103fac61}} 
+\index{utils@{utils}!GenerateRandomString@{GenerateRandomString}}
+\index{GenerateRandomString@{GenerateRandomString}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{GenerateRandomString()}{GenerateRandomString()}}
+{\footnotesize\ttfamily QString utils\+::\+Generate\+Random\+String (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a24eac88d9ead0c0f7120037af78a7b03}\label{namespaceutils_a24eac88d9ead0c0f7120037af78a7b03}} 
+\index{utils@{utils}!GetDirSizeAndFileCount@{GetDirSizeAndFileCount}}
+\index{GetDirSizeAndFileCount@{GetDirSizeAndFileCount}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{GetDirSizeAndFileCount()}{GetDirSizeAndFileCount()}}
+{\footnotesize\ttfamily void utils\+::\+Get\+Dir\+Size\+And\+File\+Count (\begin{DoxyParamCaption}\item[{QString}]{dir,  }\item[{qint64 \&}]{c,  }\item[{qint64 \&}]{b,  }\item[{bool}]{recurse }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_acba1c2e042a78403f483964736e17559}\label{namespaceutils_acba1c2e042a78403f483964736e17559}} 
+\index{utils@{utils}!GetParams@{GetParams}}
+\index{GetParams@{GetParams}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{GetParams()}{GetParams()}}
+{\footnotesize\ttfamily QHash$<$ QString, QString $>$ utils\+::\+Get\+Params (\begin{DoxyParamCaption}\item[{qint64}]{series\+Row\+ID }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_af49a87b705c921d12f473c9361a1da1d}\label{namespaceutils_af49a87b705c921d12f473c9361a1da1d}} 
+\index{utils@{utils}!GetPatientAge@{GetPatientAge}}
+\index{GetPatientAge@{GetPatientAge}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{GetPatientAge()}{GetPatientAge()}}
+{\footnotesize\ttfamily double utils\+::\+Get\+Patient\+Age (\begin{DoxyParamCaption}\item[{QString}]{Patient\+Age\+Str,  }\item[{QString}]{Study\+Date,  }\item[{QString}]{Patient\+Birth\+Date }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a606285ea178186b25cd608e600db8e35}\label{namespaceutils_a606285ea178186b25cd608e600db8e35}} 
+\index{utils@{utils}!GetStagedFileList@{GetStagedFileList}}
+\index{GetStagedFileList@{GetStagedFileList}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{GetStagedFileList()}{GetStagedFileList()}}
+{\footnotesize\ttfamily QString\+List utils\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}\item[{qint64}]{object\+ID,  }\item[{QString}]{object\+Type }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_acbc2ded105c81c63536e211bc11a691d}\label{namespaceutils_acbc2ded105c81c63536e211bc11a691d}} 
+\index{utils@{utils}!MakePath@{MakePath}}
+\index{MakePath@{MakePath}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{MakePath()}{MakePath()}}
+{\footnotesize\ttfamily bool utils\+::\+Make\+Path (\begin{DoxyParamCaption}\item[{QString}]{p,  }\item[{QString \&}]{msg,  }\item[{bool}]{perm777 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a125a7f9e4457adeb1e0c3e10afcd601b}\label{namespaceutils_a125a7f9e4457adeb1e0c3e10afcd601b}} 
+\index{utils@{utils}!MoveFile@{MoveFile}}
+\index{MoveFile@{MoveFile}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{MoveFile()}{MoveFile()}}
+{\footnotesize\ttfamily bool utils\+::\+Move\+File (\begin{DoxyParamCaption}\item[{QString}]{f,  }\item[{QString}]{dir,  }\item[{QString \&}]{m }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a699a213c6a0ebe40d122af2e70fe5645}\label{namespaceutils_a699a213c6a0ebe40d122af2e70fe5645}} 
+\index{utils@{utils}!ParseCSV@{ParseCSV}}
+\index{ParseCSV@{ParseCSV}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{ParseCSV()}{ParseCSV()}}
+{\footnotesize\ttfamily bool utils\+::\+Parse\+CSV (\begin{DoxyParamCaption}\item[{QString}]{csv,  }\item[{\mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexed\+Hash}} \&}]{table,  }\item[{QString\+List \&}]{columns,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a546b7adebb8ae91ecb8c95d7751d6ed2}\label{namespaceutils_a546b7adebb8ae91ecb8c95d7751d6ed2}} 
+\index{utils@{utils}!ParseDate@{ParseDate}}
+\index{ParseDate@{ParseDate}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{ParseDate()}{ParseDate()}}
+{\footnotesize\ttfamily QString utils\+::\+Parse\+Date (\begin{DoxyParamCaption}\item[{QString}]{s }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_ad7078d5849ef1b8e86fd70e824498086}\label{namespaceutils_ad7078d5849ef1b8e86fd70e824498086}} 
+\index{utils@{utils}!ParseTime@{ParseTime}}
+\index{ParseTime@{ParseTime}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{ParseTime()}{ParseTime()}}
+{\footnotesize\ttfamily QString utils\+::\+Parse\+Time (\begin{DoxyParamCaption}\item[{QString}]{s }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a64cc949197af30c1bb613cce5f6421c8}\label{namespaceutils_a64cc949197af30c1bb613cce5f6421c8}} 
+\index{utils@{utils}!ParseTSV@{ParseTSV}}
+\index{ParseTSV@{ParseTSV}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{ParseTSV()}{ParseTSV()}}
+{\footnotesize\ttfamily bool utils\+::\+Parse\+TSV (\begin{DoxyParamCaption}\item[{QString}]{tsv,  }\item[{\mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexed\+Hash}} \&}]{table,  }\item[{QString\+List \&}]{columns,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_affebcb1d5894273ed3758d4dc8b4dbf2}\label{namespaceutils_affebcb1d5894273ed3758d4dc8b4dbf2}} 
+\index{utils@{utils}!Print@{Print}}
+\index{Print@{Print}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{Print()}{Print()}}
+{\footnotesize\ttfamily void utils\+::\+Print (\begin{DoxyParamCaption}\item[{QString}]{s,  }\item[{bool}]{n,  }\item[{bool}]{pad }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_ad433122c664f2e5849b6668da507256e}\label{namespaceutils_ad433122c664f2e5849b6668da507256e}} 
+\index{utils@{utils}!ReadTextFileToString@{ReadTextFileToString}}
+\index{ReadTextFileToString@{ReadTextFileToString}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{ReadTextFileToString()}{ReadTextFileToString()}}
+{\footnotesize\ttfamily QString utils\+::\+Read\+Text\+File\+To\+String (\begin{DoxyParamCaption}\item[{QString}]{filepath }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a2ca9c2a798bcb7a607120cef4ff3a316}\label{namespaceutils_a2ca9c2a798bcb7a607120cef4ff3a316}} 
+\index{utils@{utils}!RemoveDir@{RemoveDir}}
+\index{RemoveDir@{RemoveDir}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{RemoveDir()}{RemoveDir()}}
+{\footnotesize\ttfamily bool utils\+::\+Remove\+Dir (\begin{DoxyParamCaption}\item[{QString}]{p,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a0da88ac6b11389d8033e436a5f019bf0}\label{namespaceutils_a0da88ac6b11389d8033e436a5f019bf0}} 
+\index{utils@{utils}!RemoveStagedFileList@{RemoveStagedFileList}}
+\index{RemoveStagedFileList@{RemoveStagedFileList}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{RemoveStagedFileList()}{RemoveStagedFileList()}}
+{\footnotesize\ttfamily void utils\+::\+Remove\+Staged\+File\+List (\begin{DoxyParamCaption}\item[{qint64}]{object\+ID,  }\item[{QString}]{object\+Type }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a3b3419cf8be729230f2321d4fc28bf53}\label{namespaceutils_a3b3419cf8be729230f2321d4fc28bf53}} 
+\index{utils@{utils}!RenameFile@{RenameFile}}
+\index{RenameFile@{RenameFile}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{RenameFile()}{RenameFile()}}
+{\footnotesize\ttfamily bool utils\+::\+Rename\+File (\begin{DoxyParamCaption}\item[{QString}]{filepathorig,  }\item[{QString}]{filepathnew,  }\item[{bool}]{force = {\ttfamily true} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_ad92461ddb9d93954842d813e5a757598}\label{namespaceutils_ad92461ddb9d93954842d813e5a757598}} 
+\index{utils@{utils}!SQLQuery@{SQLQuery}}
+\index{SQLQuery@{SQLQuery}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{SQLQuery()}{SQLQuery()}}
+{\footnotesize\ttfamily bool utils\+::\+SQLQuery (\begin{DoxyParamCaption}\item[{QSql\+Query \&}]{q,  }\item[{QString}]{function,  }\item[{QString}]{file,  }\item[{int}]{line,  }\item[{bool}]{d }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_a2208439c10651ea16714bc32b1bb2122}\label{namespaceutils_a2208439c10651ea16714bc32b1bb2122}} 
+\index{utils@{utils}!StoreParams@{StoreParams}}
+\index{StoreParams@{StoreParams}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{StoreParams()}{StoreParams()}}
+{\footnotesize\ttfamily void utils\+::\+Store\+Params (\begin{DoxyParamCaption}\item[{qint64}]{series\+Row\+ID,  }\item[{QHash$<$ QString, QString $>$}]{params }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_acb558e77b85928208880fb3491ef12a9}\label{namespaceutils_acb558e77b85928208880fb3491ef12a9}} 
+\index{utils@{utils}!StoreStagedFileList@{StoreStagedFileList}}
+\index{StoreStagedFileList@{StoreStagedFileList}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{StoreStagedFileList()}{StoreStagedFileList()}}
+{\footnotesize\ttfamily void utils\+::\+Store\+Staged\+File\+List (\begin{DoxyParamCaption}\item[{qint64}]{object\+ID,  }\item[{QString}]{object\+Type,  }\item[{QString\+List}]{paths }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_adc5fe5f917fe05618635a2d994c306f8}\label{namespaceutils_adc5fe5f917fe05618635a2d994c306f8}} 
+\index{utils@{utils}!SystemCommand@{SystemCommand}}
+\index{SystemCommand@{SystemCommand}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{SystemCommand()}{SystemCommand()}}
+{\footnotesize\ttfamily QString utils\+::\+System\+Command (\begin{DoxyParamCaption}\item[{QString}]{s,  }\item[{bool}]{detail,  }\item[{bool}]{truncate,  }\item[{bool}]{buffer\+Output }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespaceutils_acf4d28448dc62cedc4c5a2f3b0281e21}\label{namespaceutils_acf4d28448dc62cedc4c5a2f3b0281e21}} 
+\index{utils@{utils}!WriteTextFile@{WriteTextFile}}
+\index{WriteTextFile@{WriteTextFile}!utils@{utils}}
+\doxysubsubsection{\texorpdfstring{WriteTextFile()}{WriteTextFile()}}
+{\footnotesize\ttfamily bool utils\+::\+Write\+Text\+File (\begin{DoxyParamCaption}\item[{QString}]{filepath,  }\item[{QString}]{str,  }\item[{bool}]{append }\end{DoxyParamCaption})}
+

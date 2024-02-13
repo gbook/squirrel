@@ -1,12 +1,21 @@
 var searchData=
 [
-  ['clusterenddate_19',['clusterEndDate',['../classsquirrel_analysis.html#aec9b7ac004aedd35bd537ae64c45c8d5',1,'squirrelAnalysis']]],
-  ['clusterqueue_20',['clusterQueue',['../classsquirrel_pipeline.html#a259fc912cd2e6b9a071bbbbb2facc779',1,'squirrelPipeline']]],
-  ['clusterstartdate_21',['clusterStartDate',['../classsquirrel_analysis.html#adc07520d5df3743248e94ad96da46082',1,'squirrelAnalysis']]],
-  ['clustersubmithost_22',['clusterSubmitHost',['../classsquirrel_pipeline.html#a674ad5252b6d63ca2725f5e79755c7c4',1,'squirrelPipeline']]],
-  ['clustertype_23',['clusterType',['../classsquirrel_pipeline.html#a6ec5247b5ee25a329bc24c4a4e0bc0ef',1,'squirrelPipeline']]],
-  ['clusteruser_24',['clusterUser',['../classsquirrel_pipeline.html#a6a56c6bc5ab847ce7434df02181bf5e9',1,'squirrelPipeline']]],
-  ['completefiles_25',['completeFiles',['../classsquirrel_pipeline.html#a687ce4ad0e171db94f7766e783444074',1,'squirrelPipeline']]],
-  ['convert_26',['convert',['../classconvert.html',1,'']]],
-  ['createdate_27',['createDate',['../classsquirrel_pipeline.html#a694804d179448b48297ec7356224523d',1,'squirrelPipeline']]]
+  ['changes_0',['changes',['../classsquirrel.html#a21dc200c636d13a4ada77ec27af2c152',1,'squirrel']]],
+  ['cleanjson_1',['CleanJSON',['../namespaceutils.html#aac4a03a0f09bbeab5d3bb3df68733b70',1,'utils']]],
+  ['cleanstring_2',['CleanString',['../namespaceutils.html#ab28544f34f28e5db5e86d20017ade89e',1,'utils']]],
+  ['clusterenddate_3',['clusterEndDate',['../classsquirrel_analysis.html#aec9b7ac004aedd35bd537ae64c45c8d5',1,'squirrelAnalysis']]],
+  ['clusterqueue_4',['clusterQueue',['../classsquirrel_pipeline.html#a259fc912cd2e6b9a071bbbbb2facc779',1,'squirrelPipeline']]],
+  ['clusterstartdate_5',['clusterStartDate',['../classsquirrel_analysis.html#adc07520d5df3743248e94ad96da46082',1,'squirrelAnalysis']]],
+  ['clustersubmithost_6',['clusterSubmitHost',['../classsquirrel_pipeline.html#a674ad5252b6d63ca2725f5e79755c7c4',1,'squirrelPipeline']]],
+  ['clustertype_7',['clusterType',['../classsquirrel_pipeline.html#a6ec5247b5ee25a329bc24c4a4e0bc0ef',1,'squirrelPipeline']]],
+  ['clusteruser_8',['clusterUser',['../classsquirrel_pipeline.html#a6a56c6bc5ab847ce7434df02181bf5e9',1,'squirrelPipeline']]],
+  ['completefiles_9',['completeFiles',['../classsquirrel_pipeline.html#a687ce4ad0e171db94f7766e783444074',1,'squirrelPipeline']]],
+  ['convert_10',['convert',['../classconvert.html',1,'convert'],['../classconvert.html#a20aaf90e85ae0b32c0f8022d90d797eb',1,'convert::convert()']]],
+  ['convert_2ecpp_11',['convert.cpp',['../convert_8cpp.html',1,'']]],
+  ['convert_2eh_12',['convert.h',['../convert_8h.html',1,'']]],
+  ['convertdicom_13',['ConvertDicom',['../classsquirrel_image_i_o.html#a48552e3f886e0dec3d0ff92161195d2a',1,'squirrelImageIO']]],
+  ['copyfile_14',['CopyFile',['../namespaceutils.html#af47fa8b39d5b3e4cbaf6d9edfdfaeeb3',1,'utils']]],
+  ['createcurrentdatetime_15',['CreateCurrentDateTime',['../namespaceutils.html#a801a6734981f6585398a9539a228dccd',1,'utils']]],
+  ['createdate_16',['createDate',['../classsquirrel_pipeline.html#a694804d179448b48297ec7356224523d',1,'squirrelPipeline']]],
+  ['createlogdate_17',['CreateLogDate',['../namespaceutils.html#a7e12ee4aed18f06e36e7f5354a09da64',1,'utils']]]
 ];

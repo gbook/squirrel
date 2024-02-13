@@ -343,7 +343,7 @@ bool squirrel::Read(QString filepath, bool headerOnly, bool validateOnly) {
                 sqrlAnalysis.hostname = jsonAnalyses["Hostname"].toString();
                 sqrlAnalysis.status = jsonAnalyses["Status"].toString();
                 sqrlAnalysis.lastMessage = jsonAnalyses["StatusMessage"].toString();
-                sqrlAnalysis.virtualPath = jsonAnalyses["VirtualPath"].toString();
+                //sqrlAnalysis.virtualPath = jsonAnalyses["VirtualPath"].toString();
                 sqrlAnalysis.studyRowID = studyRowID;
                 sqrlAnalysis.Store();
 
@@ -513,6 +513,7 @@ bool squirrel::Read(QString filepath, bool headerOnly, bool validateOnly) {
 /* ------------------------------------------------------------ */
 /**
  * @brief squirrel::Write
+ * @param writeLog true if logfile should be written
  * @return true if successfuly written, false otherwise
  */
 bool squirrel::Write(bool writeLog) {
@@ -925,6 +926,11 @@ qint64 squirrel::GetNumFiles() {
 /* ------------------------------------------------------------ */
 /* ----- GetObjectCount --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetObjectCount
+ * @param object the object to get a count of
+ * @return the number of objects
+ */
 int squirrel::GetObjectCount(QString object) {
     int count(0);
     QString table;
@@ -970,7 +976,7 @@ void squirrel::PrintPackage() {
     qint64 numPipelines = GetObjectCount("pipeline");
     qint64 numGroupAnalyses = GetObjectCount("groupanalysis");
     qint64 numDataDictionaries = GetObjectCount("datadictionary");
-    qint64 numDataDictionaryItems = GetObjectCount("datadictionaryitem");
+    //qint64 numDataDictionaryItems = GetObjectCount("datadictionaryitem");
 
     utils::Print("Squirrel Package: " + filePath);
     utils::Print(QString("  Date: %1").arg(datetime.toString()));
@@ -1261,7 +1267,23 @@ void squirrel::PrintPipelines(bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintGroupAnalyses ----------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::PrintGroupAnalyses
+ * @param details true to print details, false to print list of group analysis names
+ */
 void squirrel::PrintGroupAnalyses(bool details) {
+    QList <squirrelGroupAnalysis> groupAnalyses = GetAllGroupAnalyses();
+    QStringList groupAnalysisNames;
+    foreach (squirrelGroupAnalysis g, groupAnalyses) {
+        if (g.Get()) {
+            if (details)
+                g.PrintGroupAnalysis();
+            else
+                groupAnalysisNames.append(g.groupAnalysisName);
+        }
+    }
+    if (details)
+        utils::Print(groupAnalysisNames.join(" "));
 }
 
 
@@ -1269,12 +1291,28 @@ void squirrel::PrintGroupAnalyses(bool details) {
 /* ----- PrintDataDictionary ---------------------------------- */
 /* ------------------------------------------------------------ */
 void squirrel::PrintDataDictionary(bool details) {
+    QList <squirrelDataDictionary> dataDictionaries = GetAllDataDictionaries();
+    QStringList dataDictionaryNames;
+    foreach (squirrelDataDictionary d, dataDictionaries) {
+        if (d.Get()) {
+            if (details)
+                d.PrintDataDictionary();
+            else
+                dataDictionaryNames.append(d.dataDictionaryName);
+        }
+    }
+    if (details)
+        utils::Print(dataDictionaryNames.join(" "));
 }
 
 
 /* ------------------------------------------------------------ */
 /* ----- GetAllExperiments ------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetAllExperiments
+ * @return list of all experiments
+ */
 QList<squirrelExperiment> squirrel::GetAllExperiments() {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelExperiment> list;
@@ -1295,6 +1333,10 @@ QList<squirrelExperiment> squirrel::GetAllExperiments() {
 /* ------------------------------------------------------------ */
 /* ----- GetAllPipelines -------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetAllPipelines
+ * @return list of all pipelines
+ */
 QList<squirrelPipeline> squirrel::GetAllPipelines() {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelPipeline> list;
@@ -1314,6 +1356,10 @@ QList<squirrelPipeline> squirrel::GetAllPipelines() {
 /* ------------------------------------------------------------ */
 /* ----- GetAllSubjects --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetAllSubjects
+ * @return list of all subjects
+ */
 QList<squirrelSubject> squirrel::GetAllSubjects() {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelSubject> list;
@@ -1335,6 +1381,11 @@ QList<squirrelSubject> squirrel::GetAllSubjects() {
 /* ------------------------------------------------------------ */
 /* ----- GetStudies ------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetStudies
+ * @param subjectRowID database row ID of the subject
+ * @return list of studies
+ */
 QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelStudy> list;
@@ -1356,6 +1407,11 @@ QList<squirrelStudy> squirrel::GetStudies(int subjectRowID) {
 /* ------------------------------------------------------------ */
 /* ----- GetSeries -------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetSeries Get all series for a study
+ * @param studyRowID database row ID of the study
+ * @return list of series
+ */
 QList<squirrelSeries> squirrel::GetSeries(int studyRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelSeries> list;

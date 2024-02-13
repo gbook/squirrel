@@ -1,0 +1,127 @@
+\hypertarget{squirrel_pipeline_8h_source}{}\doxysection{squirrel\+Pipeline.\+h}
+\label{squirrel_pipeline_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelPipeline.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelPipeline.h}}
+\mbox{\hyperlink{squirrel_pipeline_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{  Squirrel pipeline.h}}
+\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
+\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
+\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
+\DoxyCodeLine{8 \textcolor{comment}{}}
+\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
+\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
+\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
+\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
+\DoxyCodeLine{13 \textcolor{comment}{}}
+\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
+\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
+\DoxyCodeLine{18 \textcolor{comment}{}}
+\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
+\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#ifndef SQUIRRELPIPELINE\_H}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define SQUIRRELPIPELINE\_H}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QtSql>}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QString>}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QDateTime>}}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#include <QJsonObject>}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#include <QJsonArray>}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#include <QJsonDocument>}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{39 \textcolor{keyword}{struct }\mbox{\hyperlink{structdata_step}{dataStep}} \{}
+\DoxyCodeLine{40     QString \mbox{\hyperlink{structdata_step_aded19e6ffa33e0d9e54c4613ae1d4c1c}{associationType}};        }
+\DoxyCodeLine{41     QString \mbox{\hyperlink{structdata_step_ad14ffcfe78f421c0131046ea890fb138}{behDir}};                 }
+\DoxyCodeLine{42     QString \mbox{\hyperlink{structdata_step_ae764875383e71ad7744ef18fce5a5728}{behFormat}};              }
+\DoxyCodeLine{43     QString \mbox{\hyperlink{structdata_step_a9c9a1504d3087a2832e9a7f5e40f4c89}{dataFormat}};             }
+\DoxyCodeLine{44     QString \mbox{\hyperlink{structdata_step_aafa9ab064bfbde749f54d18bafc9acff}{imageType}};              }
+\DoxyCodeLine{45     QString \mbox{\hyperlink{structdata_step_ac6052edc2e2acd955808a85ba1eb6d70}{datalevel}};              }
+\DoxyCodeLine{46     QString \mbox{\hyperlink{structdata_step_a8ac1d71b8887008edb200078130da9a2}{location}};               }
+\DoxyCodeLine{47     QString \mbox{\hyperlink{structdata_step_a8ed9372abb08922aaaf2a5eef6d5542e}{modality}};               }
+\DoxyCodeLine{48     QString \mbox{\hyperlink{structdata_step_acece1ac1e2b601362f00fc02eb60b37f}{numBOLDreps}};            }
+\DoxyCodeLine{49     QString \mbox{\hyperlink{structdata_step_a2eec6f4c2c9f3cc31446f8cbb35fa61e}{numImagesCriteria}};      }
+\DoxyCodeLine{50     \textcolor{keywordtype}{int} \mbox{\hyperlink{structdata_step_a6bdffcf61f0d9b0d608cf4c36ff6cbb2}{order}};                      }
+\DoxyCodeLine{51     QString \mbox{\hyperlink{structdata_step_acb992ebf00e81399529a440260b0cde4}{protocol}};               }
+\DoxyCodeLine{52     QString \mbox{\hyperlink{structdata_step_ae882ecffb3844d134114e00fad5ab261}{seriesCriteria}};         }
+\DoxyCodeLine{54     \textcolor{keyword}{struct }\mbox{\hyperlink{structdata_step_1_1flag}{flag}} \{}
+\DoxyCodeLine{55         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_a56b0cb8fb5d087a8a74daff4d4522bba}{enabled}};           }
+\DoxyCodeLine{56         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_a705bd8d726e6e7fa02ea5b6243208139}{optional}};          }
+\DoxyCodeLine{57         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_ac8244048f9ab6d3f455c8f8c3a88c69c}{gzip}};              }
+\DoxyCodeLine{58         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_acebd2d9c19df2bf232a7899b04672707}{preserveSeries}};    }
+\DoxyCodeLine{59         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_ab6521773ad27afd25189b0cc431ab3cc}{primaryProtocol}};   }
+\DoxyCodeLine{60         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_a3e00d416f995f9139168f0584e009f92}{usePhaseDir}};       }
+\DoxyCodeLine{61         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structdata_step_1_1flag_ab5f48c2302b6c1177c4530aef0337eaa}{useSeries}};         }
+\DoxyCodeLine{62     \} \mbox{\hyperlink{structdata_step_abb5d6bbdb7048c139edbfc7623b8d4e5}{flags}};}
+\DoxyCodeLine{63 \};}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65 }
+\DoxyCodeLine{75 \textcolor{keyword}{class }\mbox{\hyperlink{classsquirrel_pipeline}{squirrelPipeline}}}
+\DoxyCodeLine{76 \{}
+\DoxyCodeLine{77 \textcolor{keyword}{public}:}
+\DoxyCodeLine{78     \mbox{\hyperlink{classsquirrel_pipeline_ae7930deb926d3e17079462bd961e4a11}{squirrelPipeline}}();}
+\DoxyCodeLine{79     QJsonObject \mbox{\hyperlink{classsquirrel_pipeline_ab78101ff2328514265dd584db5cf5beb}{ToJSON}}(QString path);}
+\DoxyCodeLine{80     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_pipeline_ac8c015e41039710ada345cfe9fa8ce6e}{PrintPipeline}}();}
+\DoxyCodeLine{81     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_pipeline_a0047e60af4c1b86a22e04b298ec740b9}{Get}}();             \textcolor{comment}{/* gets the object data from the database */}}
+\DoxyCodeLine{82     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_pipeline_ade98b1758d4baaf1eb7412748142263f}{Store}}();           \textcolor{comment}{/* saves the object data from this object into the database */}}
+\DoxyCodeLine{83     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_pipeline_a3ca3626aaedf68fe9735aaedd1eb4c46}{isValid}}() \{ \textcolor{keywordflow}{return} valid; \}}
+\DoxyCodeLine{84     QString \mbox{\hyperlink{classsquirrel_pipeline_af0d645c37939d99b1605484d453f29d0}{Error}}() \{ \textcolor{keywordflow}{return} err; \}}
+\DoxyCodeLine{85     qint64 \mbox{\hyperlink{classsquirrel_pipeline_a2449ba0d472182bacde20ae0555a0821}{GetObjectID}}() \{ \textcolor{keywordflow}{return} objectID; \}}
+\DoxyCodeLine{86     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_pipeline_aed4d64edccc62e6f2bb64952ad460be1}{SetObjectID}}(\textcolor{keywordtype}{int} \textcolor{keywordtype}{id}) \{ objectID = id; \}}
+\DoxyCodeLine{87 }
+\DoxyCodeLine{88     \textcolor{comment}{/* JSON elements */}}
+\DoxyCodeLine{89     \textcolor{comment}{/* pipeline information (required fields) */}}
+\DoxyCodeLine{90     QString \mbox{\hyperlink{classsquirrel_pipeline_a3224c071de317e941e0f41f291775782}{pipelineName}};           }
+\DoxyCodeLine{91     QString \mbox{\hyperlink{classsquirrel_pipeline_ab7313590be75ce70259d9c3ea960b18c}{description}};            }
+\DoxyCodeLine{92     QDateTime \mbox{\hyperlink{classsquirrel_pipeline_a694804d179448b48297ec7356224523d}{createDate}};           }
+\DoxyCodeLine{93     \textcolor{keywordtype}{int} \mbox{\hyperlink{classsquirrel_pipeline_a134b13834aeca0de6401d4b499946ba0}{version}};                    }
+\DoxyCodeLine{94     \textcolor{keywordtype}{int} \mbox{\hyperlink{classsquirrel_pipeline_a5c9dd7d1f81c0cfe8a28db427c6be812}{level}};                  }
+\DoxyCodeLine{95     \textcolor{comment}{/* pipeline options */}}
+\DoxyCodeLine{96     QStringList \mbox{\hyperlink{classsquirrel_pipeline_a4c47f0e846bb6f2150a8ea1b58b153c2}{parentPipelines}};    }
+\DoxyCodeLine{97     QStringList \mbox{\hyperlink{classsquirrel_pipeline_a687ce4ad0e171db94f7766e783444074}{completeFiles}};      }
+\DoxyCodeLine{98     QString \mbox{\hyperlink{classsquirrel_pipeline_abc3c5364ad4fdb39da08c5546bbe9a53}{dataCopyMethod}};         }
+\DoxyCodeLine{99     QString \mbox{\hyperlink{classsquirrel_pipeline_af0031104c11cdc93d4a2b110397bb3b2}{depDir}};                 }
+\DoxyCodeLine{100     QString \mbox{\hyperlink{classsquirrel_pipeline_a3ac3e3ff1c1a3b9d52200136e2bed644}{depLevel}};               }
+\DoxyCodeLine{101     QString \mbox{\hyperlink{classsquirrel_pipeline_a2ee11027da674641bf0e62051b8b6432}{depLinkType}};            }
+\DoxyCodeLine{102     QString \mbox{\hyperlink{classsquirrel_pipeline_ad7337f9272ee25fe2942742c005d0fa3}{dirStructure}};           }
+\DoxyCodeLine{103     QString \mbox{\hyperlink{classsquirrel_pipeline_adbaa08203f053eff89faeb48c00bcf27}{directory}};              }
+\DoxyCodeLine{104     QString \mbox{\hyperlink{classsquirrel_pipeline_a30bb51cb3b9767a31b1624619a207a2d}{group}};                  }
+\DoxyCodeLine{105     QString \mbox{\hyperlink{classsquirrel_pipeline_ae9799e51f4808c31b901d0e61760c62a}{groupType}};              }
+\DoxyCodeLine{106     QString \mbox{\hyperlink{classsquirrel_pipeline_a8bd11b9024d2f64b40256f57b6772b5b}{notes}};                  }
+\DoxyCodeLine{107     QString \mbox{\hyperlink{classsquirrel_pipeline_a0b7486e93b7475032a489c0629245323}{resultScript}};           }
+\DoxyCodeLine{108     QString \mbox{\hyperlink{classsquirrel_pipeline_a710d438a4d81414ab6dce49ae3bea7ec}{tmpDir}};                 }
+\DoxyCodeLine{109     \textcolor{keyword}{struct }\mbox{\hyperlink{structsquirrel_pipeline_1_1flag}{flag}} \{}
+\DoxyCodeLine{110         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structsquirrel_pipeline_1_1flag_a0027e8cd0e31a4cdaaeec7b025dcf1da}{useProfile}};            }
+\DoxyCodeLine{111         \textcolor{keywordtype}{bool} \mbox{\hyperlink{structsquirrel_pipeline_1_1flag_ae79bb48f72e637459abab3a5611c0b14}{useTmpDir}};             }
+\DoxyCodeLine{112     \} \mbox{\hyperlink{classsquirrel_pipeline_a8ec2e7d31351febb1c145a8a260d713b}{flags}};}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114     \textcolor{comment}{/* cluster information */}}
+\DoxyCodeLine{115     QString \mbox{\hyperlink{classsquirrel_pipeline_a6ec5247b5ee25a329bc24c4a4e0bc0ef}{clusterType}};            }
+\DoxyCodeLine{116     QString \mbox{\hyperlink{classsquirrel_pipeline_a6a56c6bc5ab847ce7434df02181bf5e9}{clusterUser}};            }
+\DoxyCodeLine{117     QString \mbox{\hyperlink{classsquirrel_pipeline_a259fc912cd2e6b9a071bbbbb2facc779}{clusterQueue}};           }
+\DoxyCodeLine{118     QString \mbox{\hyperlink{classsquirrel_pipeline_a674ad5252b6d63ca2725f5e79755c7c4}{clusterSubmitHost}};      }
+\DoxyCodeLine{119     \textcolor{keywordtype}{int} \mbox{\hyperlink{classsquirrel_pipeline_abfc6f10206ebe388600f1515fed0462b}{numConcurrentAnalyses}};      }
+\DoxyCodeLine{120     \textcolor{keywordtype}{int} \mbox{\hyperlink{classsquirrel_pipeline_aded0c18e82eb07dd3cdbba549e9e82d9}{maxWallTime}};                }
+\DoxyCodeLine{121     \textcolor{keywordtype}{int} \mbox{\hyperlink{classsquirrel_pipeline_af1c2aeec47f47ce1ec1c4c959cdb076c}{submitDelay}};                }
+\DoxyCodeLine{122     QString \mbox{\hyperlink{classsquirrel_pipeline_a052f823718949df9bfba8f9cb92527bc}{virtualPath}};            }
+\DoxyCodeLine{123     \textcolor{comment}{/* scripts (required) */}}
+\DoxyCodeLine{124     QString \mbox{\hyperlink{classsquirrel_pipeline_ac9e267ec3ca4fa1a1e12ac57555c9ce8}{primaryScript}};}
+\DoxyCodeLine{125     QString \mbox{\hyperlink{classsquirrel_pipeline_a6e203c3a454cc8a1aa586a95a74f67d7}{secondaryScript}};}
+\DoxyCodeLine{126     \textcolor{comment}{/* data */}}
+\DoxyCodeLine{127     QList<dataStep> \mbox{\hyperlink{classsquirrel_pipeline_a84255ab48debb8899ab686d9f6d4bfd8}{dataSteps}};}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129     \textcolor{comment}{/* lib variables */}}
+\DoxyCodeLine{130     QStringList \mbox{\hyperlink{classsquirrel_pipeline_ad88e0c39190844984eaa8669062f972e}{stagedFiles}}; }
+\DoxyCodeLine{132 \textcolor{keyword}{private}:}
+\DoxyCodeLine{133     \textcolor{keywordtype}{bool} valid = \textcolor{keyword}{false};}
+\DoxyCodeLine{134     QString err;}
+\DoxyCodeLine{135     qint64 objectID = -\/1;}
+\DoxyCodeLine{136 \};}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// SQUIRRELPIPELINE\_H}}
+
+\end{DoxyCode}

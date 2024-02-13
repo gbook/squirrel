@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['maxwalltime_328',['maxWallTime',['../classsquirrel_pipeline.html#aded0c18e82eb07dd3cdbba549e9e82d9',1,'squirrelPipeline']]],
-  ['measurelist_329',['measureList',['../classsquirrel_subject.html#aaa1a0b8ac7c0ad97f333a5b5a1e19794',1,'squirrelSubject']]],
-  ['measurename_330',['measureName',['../classsquirrel_measure.html#acd6807fb6d1c0887efe2ce60b4bee87f',1,'squirrelMeasure']]],
-  ['modality_331',['modality',['../structdata_step.html#a8ed9372abb08922aaaf2a5eef6d5542e',1,'dataStep::modality()'],['../classsquirrel_study.html#adaa59c802cd6ebfd5433597b028b5dba',1,'squirrelStudy::modality()']]]
+  ['lastmessage_0',['lastMessage',['../classsquirrel_analysis.html#ad494d3d80a6e4ed96cd1e21ad0c289b4',1,'squirrelAnalysis']]],
+  ['level_1',['level',['../classsquirrel_pipeline.html#a5c9dd7d1f81c0cfe8a28db427c6be812',1,'squirrelPipeline']]],
+  ['license_2',['license',['../classsquirrel.html#aa802583cb739a0ee77e3f93b463cf80c',1,'squirrel']]],
+  ['location_3',['location',['../structdata_step.html#a8ac1d71b8887008edb200078130da9a2',1,'dataStep']]]
 ];

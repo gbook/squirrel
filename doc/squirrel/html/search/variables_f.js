@@ -1,21 +1,4 @@
 var searchData=
 [
-  ['seriescriteria_357',['seriesCriteria',['../structdata_step.html#ae882ecffb3844d134114e00fad5ab261',1,'dataStep']]],
-  ['seriesdirformat_358',['seriesDirFormat',['../classsquirrel.html#a2d13c7157ed754865d49e90456ad0b3b',1,'squirrel']]],
-  ['serieslist_359',['seriesList',['../classsquirrel_study.html#ad3eb52823cd9d8441a0f8f04b21b3efe',1,'squirrelStudy']]],
-  ['seriesuid_360',['seriesUID',['../classsquirrel_series.html#ac1cb9c6d5afa054fc9ec1c8b5e0272e0',1,'squirrelSeries']]],
-  ['setuptime_361',['setupTime',['../classsquirrel_analysis.html#a30eaa50e509b1623a0fdc234d069d5bc',1,'squirrelAnalysis']]],
-  ['sex_362',['sex',['../classsquirrel_subject.html#a5041b44033d67dace72c4218d8e72122',1,'squirrelSubject']]],
-  ['size_363',['size',['../classsquirrel_analysis.html#acfe2efc37624f70a4d5239dc31affd3e',1,'squirrelAnalysis::size()'],['../classsquirrel_experiment.html#a7f13539d7f4b5568b1493a106cadcfa0',1,'squirrelExperiment::size()'],['../classsquirrel_group_analysis.html#a36f4a10d11a159386c92cafdf6e5b847',1,'squirrelGroupAnalysis::size()'],['../classsquirrel_series.html#a9e906319ff0dcbfb7b864f749b23ba60',1,'squirrelSeries::size()']]],
-  ['stagedbehfiles_364',['stagedBehFiles',['../classsquirrel_series.html#a73768263e2ca3bcc5d7787f8f1b44062',1,'squirrelSeries']]],
-  ['stagedfiles_365',['stagedFiles',['../classsquirrel_series.html#a442ad2f1e9631ac17d4ba6ddcdb0809c',1,'squirrelSeries']]],
-  ['startdate_366',['startDate',['../classsquirrel_analysis.html#a11d791d8edb4bbf2bba69c3d9bc27087',1,'squirrelAnalysis::startDate()'],['../classsquirrel_group_analysis.html#a4fe52bb3f903e50ebeddca54ab48419b',1,'squirrelGroupAnalysis::startDate()']]],
-  ['status_367',['status',['../classsquirrel_analysis.html#a9a0fc1bf588215f802fdb99d510b5629',1,'squirrelAnalysis']]],
-  ['studydirformat_368',['studyDirFormat',['../classsquirrel.html#a5b5e85e44946d23085576a88929d7da1',1,'squirrel']]],
-  ['studylist_369',['studyList',['../classsquirrel_subject.html#a8b0fc3561a3587b79bc2e2cf067ae4e6',1,'squirrelSubject']]],
-  ['studyuid_370',['studyUID',['../classsquirrel_study.html#a354e790979a6e860ec4dc06eab94fae8',1,'squirrelStudy']]],
-  ['subjectdirformat_371',['subjectDirFormat',['../classsquirrel.html#a18267ab510b042423b4579c2e9b8a715',1,'squirrel']]],
-  ['subjectlist_372',['subjectList',['../classsquirrel.html#ae89b262e006bbee36720da63d3ae7257',1,'squirrel']]],
-  ['submitdelay_373',['submitDelay',['../classsquirrel_pipeline.html#af1c2aeec47f47ce1ec1c4c959cdb076c',1,'squirrelPipeline']]],
-  ['successful_374',['successful',['../classsquirrel_analysis.html#a5a827295e0fb4104263872c9673e611b',1,'squirrelAnalysis']]]
+  ['quiet_0',['quiet',['../classsquirrel.html#a71389a54da2ba72c88003d87dbb0d963',1,'squirrel']]]
 ];

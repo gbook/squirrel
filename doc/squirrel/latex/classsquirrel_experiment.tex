@@ -12,34 +12,126 @@ The experiment class.
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}\label{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}} 
-Q\+Json\+Object {\bfseries To\+J\+S\+ON} ()
+\mbox{\hyperlink{classsquirrel_experiment_ad9488f2b25da74c24f51a321333b2a6f}{squirrel\+Experiment}} ()
 \item 
-\mbox{\Hypertarget{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}\label{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}} 
+QJson\+Object \mbox{\hyperlink{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}{To\+JSON}} ()
+\item 
 void \mbox{\hyperlink{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}{Print\+Experiment}} ()
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}{squirrel\+Experiment\+::\+Print\+Experiment}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}{squirrel\+Experiment\+::\+Print\+Experiment}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}{Get}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}{squirrel\+Experiment\+::\+Get}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}{Store}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}{squirrel\+Experiment\+::\+Store}} \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsquirrel_experiment_a1c05f4e0c523d38b1f24b83c9a09a51d}{is\+Valid}} ()
+\item 
+QString \mbox{\hyperlink{classsquirrel_experiment_a5276e737121a8976866c4a9cbdf23049}{Error}} ()
+\item 
+qint64 \mbox{\hyperlink{classsquirrel_experiment_a3664fddfc1edac88877bf059ef7ac89f}{Get\+Object\+ID}} ()
+\item 
+void \mbox{\hyperlink{classsquirrel_experiment_ac587c43de38fe8972aa17a8d72d1b4d3}{Set\+Object\+ID}} (int id)
+\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_experiment_aa1c81ff5c3358d4d7c3da7274abf7378}{experiment\+Name}}
+QString \mbox{\hyperlink{classsquirrel_experiment_aa1c81ff5c3358d4d7c3da7274abf7378}{experiment\+Name}}
 \item 
 qint64 \mbox{\hyperlink{classsquirrel_experiment_ae00be505970a4fb4a72f75eae631de0e}{num\+Files}}
 \item 
 qint64 \mbox{\hyperlink{classsquirrel_experiment_a7f13539d7f4b5568b1493a106cadcfa0}{size}}
 \item 
-Q\+String \mbox{\hyperlink{classsquirrel_experiment_a17b955bbfc5abbd6dece1d4454001f5a}{path}}
+QString \mbox{\hyperlink{classsquirrel_experiment_a3ced3d2e835576e9543153692d741dd5}{virtual\+Path}}
+\item 
+QString\+List \mbox{\hyperlink{classsquirrel_experiment_afde3993d2f04839357568806e5abbfa3}{staged\+Files}}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 The experiment class. 
 
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classsquirrel_experiment_ad9488f2b25da74c24f51a321333b2a6f}\label{classsquirrel_experiment_ad9488f2b25da74c24f51a321333b2a6f}} 
+\index{squirrelExperiment@{squirrelExperiment}!squirrelExperiment@{squirrelExperiment}}
+\index{squirrelExperiment@{squirrelExperiment}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{squirrelExperiment()}{squirrelExperiment()}}
+{\footnotesize\ttfamily squirrel\+Experiment\+::squirrel\+Experiment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classsquirrel_experiment_a5276e737121a8976866c4a9cbdf23049}\label{classsquirrel_experiment_a5276e737121a8976866c4a9cbdf23049}} 
+\index{squirrelExperiment@{squirrelExperiment}!Error@{Error}}
+\index{Error@{Error}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}}
+{\footnotesize\ttfamily QString squirrel\+Experiment\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}\label{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}} 
+\index{squirrelExperiment@{squirrelExperiment}!Get@{Get}}
+\index{Get@{Get}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+{\footnotesize\ttfamily bool squirrel\+Experiment\+::\+Get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}{squirrel\+Experiment\+::\+Get}} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_experiment_a3664fddfc1edac88877bf059ef7ac89f}\label{classsquirrel_experiment_a3664fddfc1edac88877bf059ef7ac89f}} 
+\index{squirrelExperiment@{squirrelExperiment}!GetObjectID@{GetObjectID}}
+\index{GetObjectID@{GetObjectID}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{GetObjectID()}{GetObjectID()}}
+{\footnotesize\ttfamily qint64 squirrel\+Experiment\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_experiment_a1c05f4e0c523d38b1f24b83c9a09a51d}\label{classsquirrel_experiment_a1c05f4e0c523d38b1f24b83c9a09a51d}} 
+\index{squirrelExperiment@{squirrelExperiment}!isValid@{isValid}}
+\index{isValid@{isValid}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{isValid()}{isValid()}}
+{\footnotesize\ttfamily bool squirrel\+Experiment\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}\label{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}} 
+\index{squirrelExperiment@{squirrelExperiment}!PrintExperiment@{PrintExperiment}}
+\index{PrintExperiment@{PrintExperiment}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{PrintExperiment()}{PrintExperiment()}}
+{\footnotesize\ttfamily void squirrel\+Experiment\+::\+Print\+Experiment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f}{squirrel\+Experiment\+::\+Print\+Experiment}} 
+
+\mbox{\Hypertarget{classsquirrel_experiment_ac587c43de38fe8972aa17a8d72d1b4d3}\label{classsquirrel_experiment_ac587c43de38fe8972aa17a8d72d1b4d3}} 
+\index{squirrelExperiment@{squirrelExperiment}!SetObjectID@{SetObjectID}}
+\index{SetObjectID@{SetObjectID}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{SetObjectID()}{SetObjectID()}}
+{\footnotesize\ttfamily void squirrel\+Experiment\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{int}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}\label{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}} 
+\index{squirrelExperiment@{squirrelExperiment}!Store@{Store}}
+\index{Store@{Store}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{Store()}{Store()}}
+{\footnotesize\ttfamily bool squirrel\+Experiment\+::\+Store (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}{squirrel\+Experiment\+::\+Store}} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}\label{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}} 
+\index{squirrelExperiment@{squirrelExperiment}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+{\footnotesize\ttfamily QJson\+Object squirrel\+Experiment\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
 \doxysubsection{Member Data Documentation}
 \mbox{\Hypertarget{classsquirrel_experiment_aa1c81ff5c3358d4d7c3da7274abf7378}\label{classsquirrel_experiment_aa1c81ff5c3358d4d7c3da7274abf7378}} 
 \index{squirrelExperiment@{squirrelExperiment}!experimentName@{experimentName}}
 \index{experimentName@{experimentName}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{\texorpdfstring{experimentName}{experimentName}}
-{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::experiment\+Name}
+{\footnotesize\ttfamily QString squirrel\+Experiment\+::experiment\+Name}
 
 experiment name (required) \mbox{\Hypertarget{classsquirrel_experiment_ae00be505970a4fb4a72f75eae631de0e}\label{classsquirrel_experiment_ae00be505970a4fb4a72f75eae631de0e}} 
 \index{squirrelExperiment@{squirrelExperiment}!numFiles@{numFiles}}
@@ -47,21 +139,27 @@ experiment name (required) \mbox{\Hypertarget{classsquirrel_experiment_ae00be505
 \doxysubsubsection{\texorpdfstring{numFiles}{numFiles}}
 {\footnotesize\ttfamily qint64 squirrel\+Experiment\+::num\+Files}
 
-number of experiment files (required) \mbox{\Hypertarget{classsquirrel_experiment_a17b955bbfc5abbd6dece1d4454001f5a}\label{classsquirrel_experiment_a17b955bbfc5abbd6dece1d4454001f5a}} 
-\index{squirrelExperiment@{squirrelExperiment}!path@{path}}
-\index{path@{path}!squirrelExperiment@{squirrelExperiment}}
-\doxysubsubsection{\texorpdfstring{path}{path}}
-{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::path}
-
-path to the experiment files, relative to the package root (required) \mbox{\Hypertarget{classsquirrel_experiment_a7f13539d7f4b5568b1493a106cadcfa0}\label{classsquirrel_experiment_a7f13539d7f4b5568b1493a106cadcfa0}} 
+number of experiment files (required) \mbox{\Hypertarget{classsquirrel_experiment_a7f13539d7f4b5568b1493a106cadcfa0}\label{classsquirrel_experiment_a7f13539d7f4b5568b1493a106cadcfa0}} 
 \index{squirrelExperiment@{squirrelExperiment}!size@{size}}
 \index{size@{size}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{\texorpdfstring{size}{size}}
 {\footnotesize\ttfamily qint64 squirrel\+Experiment\+::size}
 
-total size in bytes of the experiment files (required) 
+total size in bytes of the experiment files (required) \mbox{\Hypertarget{classsquirrel_experiment_afde3993d2f04839357568806e5abbfa3}\label{classsquirrel_experiment_afde3993d2f04839357568806e5abbfa3}} 
+\index{squirrelExperiment@{squirrelExperiment}!stagedFiles@{stagedFiles}}
+\index{stagedFiles@{stagedFiles}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{stagedFiles}{stagedFiles}}
+{\footnotesize\ttfamily QString\+List squirrel\+Experiment\+::staged\+Files}
+
+staged file list -\/ list of files in their own original paths which will be copied in before the package is zipped up \mbox{\Hypertarget{classsquirrel_experiment_a3ced3d2e835576e9543153692d741dd5}\label{classsquirrel_experiment_a3ced3d2e835576e9543153692d741dd5}} 
+\index{squirrelExperiment@{squirrelExperiment}!virtualPath@{virtualPath}}
+\index{virtualPath@{virtualPath}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{\texorpdfstring{virtualPath}{virtualPath}}
+{\footnotesize\ttfamily QString squirrel\+Experiment\+::virtual\+Path}
+
+path to the experiment files, relative to the package root (required) 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/squirrel/src/squirrel/squirrel\+Experiment.\+h\item 
-C\+:/squirrel/src/squirrel/squirrel\+Experiment.\+cpp\end{DoxyCompactItemize}
+C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_experiment_8h}{squirrel\+Experiment.\+h}}\item 
+C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_experiment_8cpp}{squirrel\+Experiment.\+cpp}}\end{DoxyCompactItemize}

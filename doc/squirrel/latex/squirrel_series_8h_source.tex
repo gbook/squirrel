@@ -1,0 +1,83 @@
+\hypertarget{squirrel_series_8h_source}{}\doxysection{squirrel\+Series.\+h}
+\label{squirrel_series_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelSeries.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelSeries.h}}
+\mbox{\hyperlink{squirrel_series_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{  Squirrel series.h}}
+\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
+\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
+\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
+\DoxyCodeLine{8 \textcolor{comment}{}}
+\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
+\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
+\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
+\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
+\DoxyCodeLine{13 \textcolor{comment}{}}
+\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
+\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
+\DoxyCodeLine{18 \textcolor{comment}{}}
+\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
+\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#ifndef SQUIRRELSERIES\_H}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define SQUIRRELSERIES\_H}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#include <QtSql>}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QString>}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QHash>}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QList>}}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#include <QJsonObject>}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#include <QJsonArray>}}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{37 \textcolor{keyword}{class }\mbox{\hyperlink{classsquirrel_series}{squirrelSeries}}}
+\DoxyCodeLine{38 \{}
+\DoxyCodeLine{39 \textcolor{keyword}{public}:}
+\DoxyCodeLine{40     \mbox{\hyperlink{classsquirrel_series_ac4aee3be57ee42862007ba4681a93bd4}{squirrelSeries}}();}
+\DoxyCodeLine{41     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_series_adf0c3524f2f9d2b3bb7bf6c60f584c86}{PrintSeries}}();}
+\DoxyCodeLine{42     QJsonObject \mbox{\hyperlink{classsquirrel_series_a2edaad24c5c20e66ef96b48e86515a69}{ToJSON}}();}
+\DoxyCodeLine{43     QJsonObject \mbox{\hyperlink{classsquirrel_series_a9fe6c2798c4de5b8351ab09c0f3c0baf}{ParamsToJSON}}();}
+\DoxyCodeLine{44     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_series_a0da8067e59555668398ad6b24cdd3f8d}{Get}}();             \textcolor{comment}{/* gets the object data from the database */}}
+\DoxyCodeLine{45     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_series_ab1a55d70843cc9e30aa003dcd36ebcb7}{Store}}();           \textcolor{comment}{/* saves the object data from this object into the database */}}
+\DoxyCodeLine{46     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_series_a9c9e83d3b33bec7ef0de23d7f64435df}{Remove}}();}
+\DoxyCodeLine{47     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_series_abfe2c8e89b575442fe562b28fc6bdb2f}{isValid}}() \{ \textcolor{keywordflow}{return} valid; \}}
+\DoxyCodeLine{48     QString \mbox{\hyperlink{classsquirrel_series_ad22a6edf6d62a03726f186b4d33a7cd9}{Error}}() \{ \textcolor{keywordflow}{return} err; \}}
+\DoxyCodeLine{49     qint64 \mbox{\hyperlink{classsquirrel_series_a307345161406a3b4f7f6a9030396503a}{GetObjectID}}() \{ \textcolor{keywordflow}{return} objectID; \}}
+\DoxyCodeLine{50     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_series_a93c8efaf380df6dfecc6b16b3e7b0f70}{SetObjectID}}(\textcolor{keywordtype}{int} \textcolor{keywordtype}{id}) \{ objectID = id; \}}
+\DoxyCodeLine{51     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_series_ae4ffb3315c192dd1b6f2fbfc94309366}{SetDirFormat}}(QString subject\_DirFormat, QString study\_DirFormat, QString series\_DirFormat) \{subjectDirFormat = subject\_DirFormat; studyDirFormat = study\_DirFormat; seriesDirFormat = series\_DirFormat; \}}
+\DoxyCodeLine{52     QString \mbox{\hyperlink{classsquirrel_series_adf0dd205bef6864e2c3afea117e11d16}{VirtualPath}}();}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54     \textcolor{comment}{/* JSON elements */}}
+\DoxyCodeLine{55     qint64 \mbox{\hyperlink{classsquirrel_series_a3544362f121b68946192e80086839159}{studyRowID}};}
+\DoxyCodeLine{56     qint64 \mbox{\hyperlink{classsquirrel_series_ac78b79e74685f7a0f471ec8ab0511369}{number}} = -\/1;             }
+\DoxyCodeLine{57     QDateTime \mbox{\hyperlink{classsquirrel_series_a5ffb2c7de63a9a204d8c1eb8a03405e5}{dateTime}};             }
+\DoxyCodeLine{58     QString \mbox{\hyperlink{classsquirrel_series_ac1cb9c6d5afa054fc9ec1c8b5e0272e0}{seriesUID}};              }
+\DoxyCodeLine{59     QString \mbox{\hyperlink{classsquirrel_series_a422cdf7a00de7d02d6bc5924da59e604}{description}};            }
+\DoxyCodeLine{60     QString \mbox{\hyperlink{classsquirrel_series_a4585dd931aee8a4a923ae7a7b84c77d7}{protocol}};               }
+\DoxyCodeLine{61     qint64 \mbox{\hyperlink{classsquirrel_series_a4d43627794f1188e34e3e6bbcf5a8597}{experimentRowID}} = -\/1;    }
+\DoxyCodeLine{62     qint64 \mbox{\hyperlink{classsquirrel_series_affa6d0b50ebd162da43803ee08b96026}{numFiles}} = 0;            }
+\DoxyCodeLine{63     qint64 \mbox{\hyperlink{classsquirrel_series_a9e906319ff0dcbfb7b864f749b23ba60}{size}} = 0;                }
+\DoxyCodeLine{64     qint64 \mbox{\hyperlink{classsquirrel_series_a3d9e8fb3af007ba0c78d021c2058796f}{numBehFiles}} = 0;         }
+\DoxyCodeLine{65     qint64 \mbox{\hyperlink{classsquirrel_series_a8313f0d594f1afba40f26ba4fc610205}{behSize}} = 0;             }
+\DoxyCodeLine{66     QHash<QString, QString> \mbox{\hyperlink{classsquirrel_series_a064f009bfab65d36653177f9c3daeb67}{params}}; }
+\DoxyCodeLine{67     \textcolor{keywordtype}{int} \mbox{\hyperlink{classsquirrel_series_a62a50f4895e0b09a45cbc7bc249b0573}{sequence}} = 0;}
+\DoxyCodeLine{68     \textcolor{comment}{//QString virtualPath;            /*!< path within the squirrel package, no leading slash */}}
+\DoxyCodeLine{69 }
+\DoxyCodeLine{70     \textcolor{comment}{/* lib variables */}}
+\DoxyCodeLine{71     QStringList \mbox{\hyperlink{classsquirrel_series_a442ad2f1e9631ac17d4ba6ddcdb0809c}{stagedFiles}};        }
+\DoxyCodeLine{72     QStringList \mbox{\hyperlink{classsquirrel_series_a73768263e2ca3bcc5d7787f8f1b44062}{stagedBehFiles}};     }
+\DoxyCodeLine{74 \textcolor{keyword}{private}:}
+\DoxyCodeLine{75     \textcolor{keywordtype}{bool} valid = \textcolor{keyword}{false};}
+\DoxyCodeLine{76     QString err;}
+\DoxyCodeLine{77     qint64 objectID = -\/1;}
+\DoxyCodeLine{78     QString subjectDirFormat = \textcolor{stringliteral}{"{}orig"{}};}
+\DoxyCodeLine{79     QString studyDirFormat = \textcolor{stringliteral}{"{}orig"{}};}
+\DoxyCodeLine{80     QString seriesDirFormat = \textcolor{stringliteral}{"{}orig"{}};}
+\DoxyCodeLine{81 \};}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{83 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// SQUIRRELSERIES\_H}}
+
+\end{DoxyCode}
