@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    QString bindir = QDir::currentPath();
+
     /* this whole section reads the command line parameters */
     a.setApplicationVersion(QString("Build %1.%2.%3  (squirrellib %4.%5)").arg(UTIL_VERSION_MAJ).arg(UTIL_VERSION_MIN).arg(UTIL_BUILD_NUM).arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN));
     a.setApplicationName("Squirrel Utilities");
@@ -44,7 +46,85 @@ int main(int argc, char *argv[])
     p.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsOptions);
     p.addHelpOption();
     p.addVersionOption();
-    p.addPositionalArgument("tool", "Available tools:  validate  dicom2squirrel  bids2squirrel  squirrel2bids  modify  list");
+
+    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel\n   dicom2squirrel\n   list\n   modify\n   validate");
+    p.parse(QCoreApplication::arguments());
+
+    const QStringList args = p.positionalArguments();
+    const QString command = args.isEmpty() ? QString() : args.first();
+    if (command == "dicom2squirrel") {
+        p.clearPositionalArguments();
+        p.addPositionalArgument("dicom2squirrel", "Convert DICOM directory to squirrel.", "dicom2squirrel [options]");
+
+        /* command line flag options */
+        p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
+        p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Dont print headers and checks"));
+        p.addOption(QCommandLineOption(QStringList() << "i" << "input", "Input path", "dir"));
+        p.addOption(QCommandLineOption(QStringList() << "o" << "outout", "Output path", "zipfilename"));
+        p.addOption(QCommandLineOption(QStringList() << "output-data-format", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "dataformat"));
+        p.addOption(QCommandLineOption(QStringList() << "output-dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "dirformat"));
+        p.addOption(QCommandLineOption(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "packageformat"));
+
+        p.process(a);
+
+        bool debug = p.isSet("d");
+        bool quiet = p.isSet("q");
+        QString paramOutputFile = p.value("o").trimmed();
+        QString paramInput = p.value("i").trimmed();
+        QString paramOutputDataFormat = p.value("output-data-format").trimmed();
+        QString paramOutputDirFormat = p.value("output-dir-format").trimmed();
+        QString paramOutputPackageFormat = p.value("output-package-format").trimmed();
+
+        if (paramInput == "") {
+            std::cout << p.helpText().toStdString().c_str();
+            std::cout << "\n**** Missing input parameter. Use -i to specify an input directory. ****\n";
+            return 0;
+        }
+        if (paramOutputFile == "") {
+            std::cout << p.helpText().toStdString().c_str();
+            std::cout << "\n**** Missing output path. Use -o to specify an output path. ****\n";
+            return 0;
+        }
+
+        /* check if the outfile's parent directory exists */
+        QFileInfo outinfo(paramOutputFile);
+        QDir outdir = outinfo.absolutePath();
+        if (!outdir.exists()) {
+            utils::Print(QString("Output directory [%1] does not exist").arg(outdir.absolutePath()));
+        }
+        else {
+            dicom *dcm = new dicom();
+            squirrel *sqrl = new squirrel(debug, quiet);
+
+            if (paramOutputDataFormat != "")
+                sqrl->dataFormat = paramOutputDataFormat;
+
+            if (paramOutputDirFormat != "") {
+                sqrl->subjectDirFormat = paramOutputDirFormat;
+                sqrl->studyDirFormat = paramOutputDirFormat;
+                sqrl->seriesDirFormat = paramOutputDirFormat;
+            }
+
+            if (paramOutputPackageFormat != "")
+                sqrl->format = paramOutputPackageFormat;
+
+            /* 1) load the DICOM data to a squirrel object */
+            dcm->LoadToSquirrel(paramInput, bindir, sqrl);
+
+            /* 2) write the squirrel file */
+            QString filepath;
+            sqrl->SetFilename(filepath);
+            sqrl->Write(true);
+
+            delete dcm;
+            delete sqrl;
+        }
+
+    }
+    else {
+        std::cout << p.helpText().toStdString().c_str();
+        return 0;
+    }
 
     /* command line flag options */
     QCommandLineOption optDebug(QStringList() << "d" << "debug", "Enable debugging");
@@ -91,7 +171,7 @@ int main(int argc, char *argv[])
     //bool renumberIDs;
     bool listDetails;
 
-    const QStringList args = p.positionalArguments();
+    //const QStringList args = p.positionalArguments();
     if (args.size() > 0)
         tool = args.at(0).trimmed();
 
@@ -123,7 +203,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QString bindir = QDir::currentPath();
+    //QString bindir = QDir::currentPath();
 
     if (!quiet) {
         utils::Print("+----------------------------------------------------+");
