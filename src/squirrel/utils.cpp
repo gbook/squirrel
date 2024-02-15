@@ -854,6 +854,7 @@ namespace utils {
         QStringList anonFields;
         anonFields << "AcquisitionDate";
         anonFields << "AcquisitionTime";
+        anonFields << "CommentsOnThePerformedProcedureSte";
         anonFields << "ContentDate";
         anonFields << "ContentTime";
         anonFields << "Filename";
@@ -861,7 +862,9 @@ namespace utils {
         anonFields << "InstanceCreationTime";
         anonFields << "InstitutionAddress";
         anonFields << "InstitutionName";
+        anonFields << "InstitutionalDepartmentName";
         anonFields << "OperatorsName";
+        anonFields << "ParentDirectory";
         anonFields << "PatientBirthDate";
         anonFields << "PatientID";
         anonFields << "PatientName";
@@ -871,8 +874,8 @@ namespace utils {
         anonFields << "PerformedProcedureStepStartTime";
         anonFields << "PerformingPhysicianName";
         anonFields << "ReferringPhysicianName";
-        anonFields << "RequestingPhysician";
         anonFields << "RequestedProcedureDescription";
+        anonFields << "RequestingPhysician";
         anonFields << "SeriesDate";
         anonFields << "SeriesDateTime";
         anonFields << "SeriesTime";
