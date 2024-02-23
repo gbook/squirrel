@@ -24,7 +24,6 @@
 #include <QCommandLineParser>
 #include <iostream>
 #include "squirrelVersion.h"
-#include "validate.h"
 #include "dicom.h"
 #include "bids.h"
 #include "squirrel.h"
