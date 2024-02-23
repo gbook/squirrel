@@ -38,7 +38,8 @@ squirrel::squirrel(bool dbg, bool q)
     datetime = QDateTime::currentDateTime();
     description = "Squirrel package";
     name = "Squirrel package";
-    version = QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN);
+    squirrelVersion = QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN);
+    squirrelBuild = QString("%1.%2.%3").arg(UTIL_VERSION_MAJ).arg(UTIL_VERSION_MIN).arg(UTIL_BUILD_NUM);
     format = "squirrel";
     subjectDirFormat = "orig";
     studyDirFormat = "orig";
@@ -624,11 +625,20 @@ bool squirrel::Write(bool writeLog) {
     QJsonObject root;
 
     QJsonObject pkgInfo;
-    pkgInfo["PackageName"] = name;
-    pkgInfo["Description"] = description;
+    pkgInfo["Changes"] = changes;
+    pkgInfo["DataFormat"] = dataFormat;
     pkgInfo["Datetime"] = utils::CreateCurrentDateTime(2);
+    pkgInfo["Description"] = description;
+    pkgInfo["License"] = license;
+    pkgInfo["Notes"] = notes;
     pkgInfo["PackageFormat"] = format;
-    pkgInfo["SquirrelVersion"] = version;
+    pkgInfo["PackageName"] = name;
+    pkgInfo["Readme"] = readme;
+    pkgInfo["SeriesDirectoryFormat"] = seriesDirFormat;
+    pkgInfo["SquirrelBuild"] = squirrelBuild;
+    pkgInfo["SquirrelVersion"] = squirrelVersion;
+    pkgInfo["StudyDirectoryFormat"] = studyDirFormat;
+    pkgInfo["SubjectDirectoryFormat"] = subjectDirFormat;
 
     root["package"] = pkgInfo;
 
@@ -970,13 +980,14 @@ void squirrel::PrintPackage() {
     //qint64 numDataDictionaryItems = GetObjectCount("datadictionaryitem");
 
     utils::Print("Squirrel Package: " + filePath);
+    utils::Print(QString("  DataFormat: %1").arg(dataFormat));
     utils::Print(QString("  Date: %1").arg(datetime.toString()));
     utils::Print(QString("  Description: %1").arg(description));
-    utils::Print(QString("  Name: %1").arg(name));
-    utils::Print(QString("  Version: %1").arg(version));
-    utils::Print(QString("  Directory Format (subject, study, series): %1, %2, %3").arg(subjectDirFormat).arg(studyDirFormat).arg(seriesDirFormat));
-    utils::Print(QString("  Data Format: %1").arg(dataFormat));
+    utils::Print(QString("  DirectoryFormat (subject, study, series): %1, %2, %3").arg(subjectDirFormat).arg(studyDirFormat).arg(seriesDirFormat));
     utils::Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetNumFiles()).arg(GetUnzipSize()));
+    utils::Print(QString("  PackageName: %1").arg(name));
+    utils::Print(QString("  SquirrelBuild: %1").arg(squirrelBuild));
+    utils::Print(QString("  SquirrelVersion: %1").arg(squirrelVersion));
     utils::Print(QString("  Object count:\n    %1 subjects\n    %2 studies\n    %3 series\n    %4 measures\n    %5 drugs\n    %6 analyses\n    %7 experiments\n    %8 pipelines\n    %9 group analyses\n    %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
 }
 

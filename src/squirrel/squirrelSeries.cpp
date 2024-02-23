@@ -226,14 +226,6 @@ QJsonObject squirrelSeries::ToJSON() {
     json["Size"] = size;
     json["VirtualPath"] = VirtualPath();
 
-    /* experiments */
-    //QJsonArray JSONseriess;
-    //for (int i=0; i<seriesNames.size(); i++) {
-    //    JSONseriess.append(seriesNames[i]);
-    //}
-    //if (JSONseriess.size() > 0)
-    //    json["SeriesNames"] = JSONseriess;
-
     return json;
 }
 
@@ -247,6 +239,8 @@ QJsonObject squirrelSeries::ToJSON() {
  */
 QJsonObject squirrelSeries::ParamsToJSON() {
 	QJsonObject json;
+
+    AnonymizeParams();
 
 	for(QHash<QString, QString>::iterator a = params.begin(); a != params.end(); ++a) {
 		json[a.key()] = a.value();
