@@ -307,8 +307,8 @@ bool squirrel::Read(QString filepath, bool headerOnly, bool validateOnly) {
                 //sqrlSeries.experimentNames = jsonSeries["ExperimentNames"].toString().split(",");
                 sqrlSeries.Size = jsonSeries["Size"].toInteger();
                 sqrlSeries.FileCount = jsonSeries["FileCount"].toInteger();
-                sqrlSeries.BehavioralSize = jsonSeries["BehSize"].toInteger();
-                sqrlSeries.BehavioralFileCount = jsonSeries["BehFileCount"].toInteger();
+                sqrlSeries.BehavioralSize = jsonSeries["BehavioralSize"].toInteger();
+                sqrlSeries.BehavioralFileCount = jsonSeries["BehavioralFileCount"].toInteger();
                 sqrlSeries.studyRowID = studyRowID;
 
                 /* read any params from the data/Subject/Study/Series/params.json file */
@@ -864,11 +864,11 @@ qint64 squirrel::GetUnzipSize() {
     unzipSize += q.value("Size").toLongLong();
 
     /* Series */
-    q.prepare("select sum(Size) 'Size', sum(BehSize) 'BehSize' from Series");
+    q.prepare("select sum(Size) 'Size', sum(BehavioralSize) 'BehavioralSize' from Series");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     q.first();
     unzipSize += q.value("Size").toLongLong();
-    unzipSize += q.value("BehSize").toLongLong();
+    unzipSize += q.value("BehavioralSize").toLongLong();
 
     return unzipSize;
 }
@@ -911,11 +911,11 @@ qint64 squirrel::GetFileCount() {
     total += q.value("FileCount").toLongLong();
 
     /* Series */
-    q.prepare("select sum(FileCount) 'FileCount', sum(BehFileCount) 'BehFileCount' from Series");
+    q.prepare("select sum(FileCount) 'FileCount', sum(BehavioralFileCount) 'BehavioralFileCount' from Series");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     q.first();
     total += q.value("FileCount").toLongLong();
-    total += q.value("BehFileCount").toLongLong();
+    total += q.value("BehavioralFileCount").toLongLong();
 
     return total;
 }

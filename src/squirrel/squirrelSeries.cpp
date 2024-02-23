@@ -64,7 +64,7 @@ bool squirrelSeries::Get() {
         FileCount = q.value("FileCount").toLongLong();
         Size = q.value("Size").toLongLong();
         BehavioralFileCount = q.value("BehavioralFileCount").toLongLong();
-        BehavioralSize = q.value("BehSize").toLongLong();
+        BehavioralSize = q.value("BehavioralSize").toLongLong();
         SequenceNumber = q.value("SequenceNumber").toInt();
 
         /* get any params */
@@ -102,7 +102,7 @@ bool squirrelSeries::Store() {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, FileCount, BehSize, BehFileCount, SequenceNumber, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :FileCount, :BehSize, :BehFileCount, :SequenceNumber, :VirtualPath)");
+        q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, ExperimentRowID, Size, FileCount, BehavioralSize, BehavioralFileCount, SequenceNumber, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :ExperimentRowID, :Size, :FileCount, :BehavioralSize, :BehavioralFileCount, :SequenceNumber, :VirtualPath)");
         q.bindValue(":StudyRowID", studyRowID);
         q.bindValue(":SeriesNumber", SeriesNumber);
         q.bindValue(":Datetime", DateTime);
@@ -112,8 +112,8 @@ bool squirrelSeries::Store() {
         q.bindValue(":ExperimentRowID", experimentRowID);
         q.bindValue(":Size", Size);
         q.bindValue(":FileCount", FileCount);
-        q.bindValue(":BehSize", BehavioralSize);
-        q.bindValue(":BehFileCount", BehavioralFileCount);
+        q.bindValue(":BehavioralSize", BehavioralSize);
+        q.bindValue(":BehavioralFileCount", BehavioralFileCount);
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -121,7 +121,7 @@ bool squirrelSeries::Store() {
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNumber = :SeriesNumber, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, FileCount = :FileCount, BehSize = :BehSize, BehFileCount = :BehFileCount, SequenceNumber = :SequenceNumber, VirtualPath = :VirtualPath where SeriesRowID = :id");
+        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNumber = :SeriesNumber, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, ExperimentRowID = :ExperimentRowID, Size = :Size, FileCount = :FileCount, BehavioralSize = :BehavioralSize, BehavioralFileCount = :BehavioralFileCount, SequenceNumber = :SequenceNumber, VirtualPath = :VirtualPath where SeriesRowID = :id");
         q.bindValue(":StudyRowID", studyRowID);
         q.bindValue(":SeriesNumber", SeriesNumber);
         q.bindValue(":Datetime", DateTime);
@@ -131,8 +131,8 @@ bool squirrelSeries::Store() {
         q.bindValue(":ExperimentRowID", experimentRowID);
         q.bindValue(":Size", Size);
         q.bindValue(":FileCount", FileCount);
-        q.bindValue(":BehSize", BehavioralSize);
-        q.bindValue(":BehFileCount", BehavioralFileCount);
+        q.bindValue(":BehavioralSize", BehavioralSize);
+        q.bindValue(":BehavioralFileCount", BehavioralFileCount);
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
         q.bindValue(":id", objectID);
