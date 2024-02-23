@@ -89,7 +89,7 @@ public:
     QList<squirrelDataDictionary> GetAllDataDictionaries();
 
     /* get numbers of objects */
-    qint64 GetNumFiles();
+    qint64 GetFileCount();
     int GetObjectCount(QString object);
 
     /* find objects */
