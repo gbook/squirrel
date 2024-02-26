@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
         QString objectData = p.value("objectdata").trimmed();
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
-        int studyNum = p.value("studynum");
+        int studyNum = p.value("studynum").toInt();
         bool recursive = p.isSet("recursive");
 
         QString m;
