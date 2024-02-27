@@ -193,9 +193,9 @@ int main(int argc, char *argv[])
             sqrl->Write(true);
         }
     }
-    else if (command == "list") {
+    else if (command == "info") {
         p.clearPositionalArguments();
-        p.addPositionalArgument("list", "List all instances of an object within a squirrel package.", "list [options]");
+        p.addPositionalArgument("info", "Display instances of an object within a squirrel package.", "info [options]");
 
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
@@ -227,6 +227,7 @@ int main(int argc, char *argv[])
         else {
             squirrel *sqrl = new squirrel(debug, quiet);
             sqrl->quiet = quiet;
+            sqrl->SetFilename(inputPath);
             sqrl->Read(true);
 
             if (object == "package") {
