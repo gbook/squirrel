@@ -123,8 +123,7 @@ int main(int argc, char *argv[])
             dcm->LoadToSquirrel(paramInput, bindir, sqrl);
 
             /* 2) write the squirrel file */
-            QString filepath;
-            sqrl->SetFilename(filepath);
+            sqrl->SetFilename(paramOutputFile);
             sqrl->Write(true);
 
             delete dcm;
