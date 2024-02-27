@@ -628,6 +628,8 @@ namespace utils {
             }
         }
 
+        a = a.replace("\r\n", "\n");
+
         return a;
     }
 
