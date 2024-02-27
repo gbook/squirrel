@@ -982,7 +982,7 @@ void squirrel::PrintPackage() {
     utils::Print(QString("  PackageName: %1").arg(name));
     utils::Print(QString("  SquirrelBuild: %1").arg(squirrelBuild));
     utils::Print(QString("  SquirrelVersion: %1").arg(squirrelVersion));
-    utils::Print(QString("  Object count:\n    %1 subjects\n    %2 studies\n    %3 series\n    %4 measures\n    %5 drugs\n    %6 analyses\n    %7 experiments\n    %8 pipelines\n    %9 group analyses\n    %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+    utils::Print(QString("  Object count:\n    %1 subjects\n     └ %2 studies\n     └ %3 series\n    └ %4 measures\n    └ %5 drugs\n     └ %6 analyses\n    %7 experiments\n    %8 pipelines\n    %9 group analyses\n    %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
 }
 
 

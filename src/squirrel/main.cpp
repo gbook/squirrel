@@ -31,7 +31,7 @@
 
 void CommandLineError(QCommandLineParser &p, QString m) {
     std::cout << p.helpText().toStdString().c_str();
-    std::cout << QString("\n**** ERROR %1 ****\n").arg(m).toLatin1();
+    std::cout << "\n**** ERROR " << m.toStdString().c_str() << " ****\n";
 }
 
 int main(int argc, char *argv[])
@@ -284,8 +284,8 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "datapath", "Path to new object data. Can include wildcard: /path/*.dcm", "path"));
         p.addOption(QCommandLineOption(QStringList() << "recursive", "Search the data path recursively"));
         p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to remove.", "id"));
-        p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID; used when adding a study, series, measure, drug, or analysis object.", "id"));
-        p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number; used when adding a series or analysis object (subjectid is also needed).", "num"));
+        p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when adding a study, series, measure, drug, or analysis object.", "id"));
+        p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when adding a series or analysis object (subjectid is also needed).", "num"));
         p.addOption(QCommandLineOption(QStringList() << "objectdata", "String specifying the new object meta-data.", "string"));
 
         p.process(a);
