@@ -31,7 +31,7 @@
 
 void CommandLineError(QCommandLineParser &p, QString m) {
     std::cout << p.helpText().toStdString().c_str();
-    std::cout << "\n**** ERROR " << m.toStdString().c_str() << " ****\n";
+    std::cout << "\n----- ERROR -----> " << m.toStdString().c_str() << "\n\n";
 }
 
 int main(int argc, char *argv[])
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     p.addVersionOption();
 
     /* setup and obtain the tool we're supposed to run */
-    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel\n   dicom2squirrel\n   list\n   modify\n   validate");
+    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel - Converts BIDS to squirrel\n   dicom2squirrel - Convert DICOM to squirrel\n   info - Display information about a package or its contents\n   modify - Add/remove objects from a package\n   validate - Check if a package is valid");
     p.parse(QCoreApplication::arguments());
     const QStringList args = p.positionalArguments();
     const QString command = args.isEmpty() ? QString() : args.first();
@@ -68,9 +68,8 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Dont print headers and checks"));
         p.addOption(QCommandLineOption(QStringList() << "i" << "input", "Input path", "dir"));
         p.addOption(QCommandLineOption(QStringList() << "o" << "outout", "Output path", "zipfilename"));
-        p.addOption(QCommandLineOption(QStringList() << "data-format", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "format"));
-        p.addOption(QCommandLineOption(QStringList() << "dir-format", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "format"));
-        //p.addOption(QCommandLineOption(QStringList() << "output-package-format", "Output package format\n  dir - Directory\n  zip - .zip file (default)", "packageformat"));
+        p.addOption(QCommandLineOption(QStringList() << "dataformat", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "format"));
+        p.addOption(QCommandLineOption(QStringList() << "dirformat", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "format"));
 
         p.process(a);
 
@@ -78,18 +77,15 @@ int main(int argc, char *argv[])
         bool quiet = p.isSet("q");
         QString paramOutputFile = p.value("o").trimmed();
         QString paramInput = p.value("i").trimmed();
-        QString paramOutputDataFormat = p.value("output-data-format").trimmed();
-        QString paramOutputDirFormat = p.value("output-dir-format").trimmed();
-        QString paramOutputPackageFormat = p.value("output-package-format").trimmed();
+        QString paramOutputDataFormat = p.value("dataformat").trimmed();
+        QString paramOutputDirFormat = p.value("dirformat").trimmed();
 
         if (paramInput == "") {
-            std::cout << p.helpText().toStdString().c_str();
-            std::cout << "\n**** ERROR - Missing input path. Use -i to specify an input directory. ****\n";
+            CommandLineError(p,"Missing input path. Use -i to specify an input directory.");
             return 0;
         }
         if (paramOutputFile == "") {
-            std::cout << p.helpText().toStdString().c_str();
-            std::cout << "\n**** ERROR - Missing output path. Use -o to specify an output path. ****\n";
+            CommandLineError(p, "Missing output path. Use -o to specify an output path.");
             return 0;
         }
 
@@ -115,9 +111,6 @@ int main(int argc, char *argv[])
                 sqrl->StudyDirFormat = paramOutputDirFormat;
                 sqrl->SeriesDirFormat = paramOutputDirFormat;
             }
-
-            if (paramOutputPackageFormat != "")
-                sqrl->PackageFormat = paramOutputPackageFormat;
 
             /* 1) load the DICOM data to a squirrel object */
             dcm->LoadToSquirrel(paramInput, bindir, sqrl);
@@ -149,13 +142,11 @@ int main(int argc, char *argv[])
         QString paramInput = p.value("i").trimmed();
 
         if (paramInput == "") {
-            std::cout << p.helpText().toStdString().c_str();
-            std::cout << "\n**** Missing input parameter. Use -i to specify an input directory. ****\n";
+            CommandLineError(p, "Missing input parameter. Use -i to specify an input directory.");
             return 0;
         }
         if (paramOutputFile == "") {
-            std::cout << p.helpText().toStdString().c_str();
-            std::cout << "\n**** Missing output path. Use -o to specify an output path. ****\n";
+            CommandLineError(p, "Missing output path. Use -o to specify an output path.");
             return 0;
         }
 
@@ -202,9 +193,8 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Dont print headers and checks"));
         p.addOption(QCommandLineOption(QStringList() << "i" << "input", "Input path", "dir"));
         p.addOption(QCommandLineOption(QStringList() << "object", "List an object [package  subject  study  series  experiment  pipeline  groupanalysis  datadictionary].", "object"));
-        p.addOption(QCommandLineOption(QStringList() << "subject-id", "Subject ID.", "subjectid"));
-        p.addOption(QCommandLineOption(QStringList() << "study-num", "Study Number\n  -subject-id must also be specified.", "studynum"));
-        //p.addOption(QCommandLineOption(QStringList() << "series-num", "Series Number\n  -subject-id and -study-num must also be specified.", "seriesnum"));
+        p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
+        p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  -subject-id must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "details", "Include details when printing lists."));
         p.process(a);
 
@@ -212,16 +202,14 @@ int main(int argc, char *argv[])
         bool quiet = p.isSet("q");
         QString inputPath = p.value("i").trimmed();
         QString object = p.value("object").trimmed();
-        QString subjectID = p.value("i").trimmed();
-        int studyNum = p.value("i").toInt();
-        //QString seriesNum = p.value("i").trimmed();
+        QString subjectID = p.value("subjectid").trimmed();
+        int studyNum = p.value("studynum").toInt();
         bool details = p.isSet("details");
 
         /* check if the infile exists */
         QFile infile(inputPath);
         if (!infile.exists()) {
-            std::cout << p.helpText().toStdString().c_str();
-            std::cout << "\n**** ERROR - Missing input file path. Use -i to specify an input file. ****\n";
+            CommandLineError(p, "Missing input file path. Use -i to specify an input file.");
             return 0;
         }
         else {
@@ -322,8 +310,7 @@ int main(int argc, char *argv[])
         QString paramInput = p.value("i").trimmed();
 
         if (paramInput == "") {
-            std::cout << p.helpText().toStdString().c_str();
-            std::cout << "\n**** ERROR - Missing input parameter. Use -i to specify an input directory. ****\n";
+            CommandLineError(p, "Missing input parameter. Use -i to specify an input directory.");
             return 0;
         }
 
