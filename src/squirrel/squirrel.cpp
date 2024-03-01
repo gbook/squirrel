@@ -434,6 +434,9 @@ bool squirrel::Read(bool readonly) {
         QJsonObject jsonPipeline = v.toObject();
         squirrelPipeline sqrlPipeline;
 
+        sqrlPipeline.ClusterMaxWallTime = jsonPipeline["ClusterMaxWallTime"].toInt();
+        sqrlPipeline.ClusterMemory = jsonPipeline["ClusterMemory"].toInt();
+        sqrlPipeline.ClusterNumberCores = jsonPipeline["ClusterNumberCores"].toInt();
         sqrlPipeline.ClusterQueue = jsonPipeline["ClusterQueue"].toString();
         sqrlPipeline.ClusterSubmitHost = jsonPipeline["ClusterSubmitHost"].toString();
         sqrlPipeline.ClusterType = jsonPipeline["ClusterType"].toString();
@@ -444,14 +447,11 @@ bool squirrel::Read(bool readonly) {
         sqrlPipeline.DependencyLevel = jsonPipeline["DependencyLevel"].toString();
         sqrlPipeline.DependencyLinkType = jsonPipeline["DependencyLinkType"].toString();
         sqrlPipeline.Description = jsonPipeline["Description"].toString();
-        sqrlPipeline.DirectoryStructure = jsonPipeline["DirectoryStructure"].toString();
         sqrlPipeline.Directory = jsonPipeline["Directory"].toString();
-        sqrlPipeline.flags.UseProfile = jsonPipeline["UseProfile"].toBool();
-        sqrlPipeline.flags.UseTempDirectory = jsonPipeline["UseTempDirectory"].toBool();
+        sqrlPipeline.DirectoryStructure = jsonPipeline["DirectoryStructure"].toString();
         sqrlPipeline.Group = jsonPipeline["Group"].toString();
         sqrlPipeline.GroupType = jsonPipeline["GroupType"].toString();
         sqrlPipeline.Level = jsonPipeline["Level"].toInt();
-        sqrlPipeline.MaxWallTime = jsonPipeline["MaxWallTime"].toInt();
         sqrlPipeline.Notes = jsonPipeline["Notes"].toString();
         sqrlPipeline.NumberConcurrentAnalyses = jsonPipeline["NumberConcurrentAnalyses"].toInt();
         sqrlPipeline.ParentPipelines = jsonPipeline["ParentPipelines"].toString().split(",");
@@ -462,6 +462,8 @@ bool squirrel::Read(bool readonly) {
         sqrlPipeline.SubmitDelay = jsonPipeline["SubmitDelay"].toInt();
         sqrlPipeline.TempDirectory = jsonPipeline["TempDir"].toString();
         sqrlPipeline.Version = jsonPipeline["Version"].toInt();
+        sqrlPipeline.flags.UseProfile = jsonPipeline["UseProfile"].toBool();
+        sqrlPipeline.flags.UseTempDirectory = jsonPipeline["UseTempDirectory"].toBool();
 
         QJsonArray jsonCompleteFiles;
         jsonCompleteFiles = jsonPipeline["CompleteFiles"].toArray();
