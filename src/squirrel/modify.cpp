@@ -136,14 +136,61 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 sqrl->ResequenceStudies(subjectRowID);
             }
             else {
-                m = QString("Study with ID [%1] already exist for subject [%2] in package").arg(vars["StudyNumber"], subjectID);
+                m = QString("Study with StudyNumber [%1] already exists for subject [%2] in package").arg(vars["StudyNumber"], subjectID);
                 delete sqrl;
                 return false;
             }
         }
         else if (addObject == "series") {
+            int studyRowID = sqrl->FindStudy(subjectID, studyNum);
+            int seriesRowID = sqrl->FindSeries(subjectID, studyNum, vars["SeriesNumber"].toInt());
+            if (seriesRowID < 0) {
+                squirrelSeries series;
+                sqrl->Log(QString("Creating squirrel Series [%1]").arg(vars["SeriesNumber"]), __FUNCTION__);
+                series.SeriesNumber = vars["StudyNumber"].toInt();
+                series.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
+                series.Description = vars["Description"];
+                series.Protocol = vars["Protocol"];
+                series.SeriesUID = vars["SeriesUID"];
+                series.stagedBehFiles = vars["StagedBehFiles"].split(",");
+                series.stagedFiles = vars["StagedFiles"].split(",");
+                series.studyRowID = studyRowID;
+                series.Store();
+                seriesRowID = series.GetObjectID();
+                /* resequence the newly added subject */
+                sqrl->ResequenceSeries(studyRowID);
+            }
+            else {
+                m = QString("Series with SeriesNumber [%1] already exists for study [%2] and subject [%3] in package").arg(vars["SeriesNumber"], studyNum, subjectID);
+                delete sqrl;
+                return false;
+            }
         }
         else if (addObject == "measure") {
+            int subjectRowID = sqrl->FindSubject(subjectID);
+            if (subjectRowID < 0) {
+                m = QString("Subject [%3] not found in package").arg(subjectID);
+                delete sqrl;
+                return false;
+            }
+            else {
+                squirrelMeasure measure;
+                sqrl->Log(QString("Creating squirrel Measure [%1]").arg(vars["SeriesNumber"]), __FUNCTION__);
+                measure.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
+                measure.DateRecordCreate = QDateTime::fromString(vars["DateRecordCreate"], "yyyy-MM-dd HH:mm:ss");
+                measure.DateRecordEntry = QDateTime::fromString(vars["DateRecordEntry"], "yyyy-MM-dd HH:mm:ss");
+                measure.DateRecordModify = QDateTime::fromString(vars["DateRecordModify"], "yyyy-MM-dd HH:mm:ss");
+                measure.DateStart = QDateTime::fromString(vars["DateStart"], "yyyy-MM-dd HH:mm:ss");
+                measure.Description = vars["Description"];
+                measure.Duration = vars["Duration"].toDouble();
+                measure.InstrumentName = vars["InstrumentName"];
+                measure.MeasureName = vars["MeasureName"];
+                measure.Notes = vars["Notes"];
+                measure.Rater = vars["Rater"];
+                measure.Value = vars["Value"];
+                measure.subjectRowID = subjectRowID;
+                measure.Store();
+            }
         }
         else if (addObject == "drug") {
         }
