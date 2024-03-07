@@ -136,7 +136,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 sqrl->ResequenceStudies(subjectRowID);
             }
             else {
-                m = QString("Study with StudyNumber [%1] already exists for subject [%2] in package").arg(vars["StudyNumber"], subjectID);
+                m = QString("Study with StudyNumber [%1] already exists for subject [%2] in package").arg(vars["StudyNumber"]).arg(subjectID);
                 delete sqrl;
                 return false;
             }
@@ -161,7 +161,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 sqrl->ResequenceSeries(studyRowID);
             }
             else {
-                m = QString("Series with SeriesNumber [%1] already exists for study [%2] and subject [%3] in package").arg(vars["SeriesNumber"], studyNum, subjectID);
+                m = QString("Series with SeriesNumber [%1] already exists for study [%2] and subject [%3] in package").arg(vars["SeriesNumber"]).arg(studyNum).arg(subjectID);
                 delete sqrl;
                 return false;
             }
@@ -175,7 +175,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
             }
             else {
                 squirrelMeasure measure;
-                sqrl->Log(QString("Creating squirrel Measure [%1]").arg(vars["SeriesNumber"]), __FUNCTION__);
+                sqrl->Log(QString("Creating squirrel Measure [%1]").arg(vars["MeasureName"]), __FUNCTION__);
                 measure.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
                 measure.DateRecordCreate = QDateTime::fromString(vars["DateRecordCreate"], "yyyy-MM-dd HH:mm:ss");
                 measure.DateRecordEntry = QDateTime::fromString(vars["DateRecordEntry"], "yyyy-MM-dd HH:mm:ss");
@@ -193,6 +193,33 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
             }
         }
         else if (addObject == "drug") {
+            int subjectRowID = sqrl->FindSubject(subjectID);
+            if (subjectRowID < 0) {
+                m = QString("Subject [%3] not found in package").arg(subjectID);
+                delete sqrl;
+                return false;
+            }
+            else {
+                squirrelDrug drug;
+                sqrl->Log(QString("Creating squirrel Drug [%1]").arg(vars["DrugName"]), __FUNCTION__);
+                drug.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
+                drug.DateRecordCreate = QDateTime::fromString(vars["DateRecordCreate"], "yyyy-MM-dd HH:mm:ss");
+                drug.DateRecordEntry = QDateTime::fromString(vars["DateRecordEntry"], "yyyy-MM-dd HH:mm:ss");
+                drug.DateRecordModify = QDateTime::fromString(vars["DateRecordModify"], "yyyy-MM-dd HH:mm:ss");
+                drug.DateStart = QDateTime::fromString(vars["DateStart"], "yyyy-MM-dd HH:mm:ss");
+                drug.Description = vars["Description"];
+                drug.DoseAmount = vars["DoseAmount"].toDouble();
+                drug.DoseFrequency = vars["DoseFrequency"];
+                drug.DoseKey = vars["DoseKey"];
+                drug.DoseString = vars["DoseString"];
+                drug.DoseUnit = vars["DoseUnit"];
+                drug.DrugClass = vars["DrugClass"];
+                drug.DrugName = vars["DrugName"];
+                drug.Notes = vars["Notes"];
+                drug.Rater = vars["Rater"];
+                drug.subjectRowID = subjectRowID;
+                drug.Store();
+            }
         }
         else if (addObject == "analysis") {
         }
