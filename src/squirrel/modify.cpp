@@ -85,7 +85,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
             return false;
         }
 
-        /* --- add a subject --- */
+        /* ----- subject ----- */
         if (addObject == "subject") {
             int subjectRowID;
             subjectRowID = sqrl->FindSubject(vars["PatientID"]);
@@ -111,6 +111,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 return false;
             }
         }
+        /* ----- study ----- */
         else if (addObject == "study") {
             int subjectRowID = sqrl->FindSubject(subjectID);
             int studyRowID = sqrl->FindStudy(subjectID, vars["StudyNumber"].toInt());
@@ -141,6 +142,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 return false;
             }
         }
+        /* ----- series ----- */
         else if (addObject == "series") {
             int studyRowID = sqrl->FindStudy(subjectID, studyNum);
             int seriesRowID = sqrl->FindSeries(subjectID, studyNum, vars["SeriesNumber"].toInt());
@@ -166,6 +168,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 return false;
             }
         }
+        /* ----- measure ----- */
         else if (addObject == "measure") {
             int subjectRowID = sqrl->FindSubject(subjectID);
             if (subjectRowID < 0) {
@@ -192,6 +195,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 measure.Store();
             }
         }
+        /* ----- drug ----- */
         else if (addObject == "drug") {
             int subjectRowID = sqrl->FindSubject(subjectID);
             if (subjectRowID < 0) {
@@ -221,7 +225,37 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 drug.Store();
             }
         }
+        /* ----- analysis ----- */
         else if (addObject == "analysis") {
+            int studyRowID = sqrl->FindStudy(subjectID, studyNum);
+            int analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
+            if (analysisRowID < 0) {
+                squirrelAnalysis analysis;
+                sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(vars["AnalysisName"]), __FUNCTION__);
+                analysis.AnalysisName = vars["AnalysisName"];
+                analysis.DateClusterEnd = QDateTime::fromString(vars["DateClusterEnd"], "yyyy-MM-dd HH:mm:ss");
+                analysis.DateClusterStart = QDateTime::fromString(vars["DateClusterStart"], "yyyy-MM-dd HH:mm:ss");
+                analysis.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
+                analysis.DateStart = QDateTime::fromString(vars["DateStart"], "yyyy-MM-dd HH:mm:ss");
+                analysis.Hostname = vars["Hostname"];
+                analysis.LastMessage = vars["LastMessage"];
+                analysis.PipelineName = vars["PipelineName"];
+                analysis.PipelineVersion = vars["PipelineVersion"].toInt();
+                analysis.RunTime = vars["RunTime"].toInt();
+                analysis.SeriesCount = vars["SeriesCount"].toInt();
+                analysis.SetupTime = vars["SetupTime"].toInt();
+                analysis.Size = vars["Size"].toInt();
+                analysis.Status = vars["Status"];
+                analysis.Successful = vars["Successful"].toInt();
+                analysis.stagedFiles = vars["StagedFiles"].split(",");
+                analysis.studyRowID = studyRowID;
+                analysis.Store();
+            }
+            else {
+                m = QString("Series with SeriesNumber [%1] already exists for study [%2] and subject [%3] in package").arg(vars["SeriesNumber"]).arg(studyNum).arg(subjectID);
+                delete sqrl;
+                return false;
+            }
         }
         else if (addObject == "experiment") {
         }

@@ -1655,6 +1655,24 @@ int squirrel::FindSeriesByUID(QString seriesUID) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- FindAnalysis ----------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisName) {
+    int rowid(-1);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select * from Analysis a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.AnalyisName = :analysisname and b.StudyNumber = :studynum and c.ID = :id");
+    q.bindValue(":analysisname", analysisName);
+    q.bindValue(":studynum", studyNum);
+    q.bindValue(":id", subjectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("AnalysisRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ResequenceSubjects ----------------------------------- */
 /* ------------------------------------------------------------ */
 void squirrel::ResequenceSubjects() {

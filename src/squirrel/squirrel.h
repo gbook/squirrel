@@ -98,6 +98,7 @@ public:
     int FindStudyByUID(QString studyUID);
     int FindSeries(QString subjectID, int studyNum, int seriesNum);
     int FindSeriesByUID(QString seriesUID);
+    int FindAnalysis(QString subjectID, int studyNum, QString analysisName);
 
     bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
 
