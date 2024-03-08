@@ -196,15 +196,21 @@ bool squirrel::Read(bool readonly) {
         return false;
     }
 
-    using namespace bit7z;
-    Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
-    BitFileExtractor extractor(lib, BitFormat::Lzma);
-    std::vector<unsigned char> buffer;
-    extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
-    std::string json{buffer.begin(), buffer.end()};
-    QString jsonstr = QString::fromStdString(json);
+    try {
+        using namespace bit7z;
+        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+        BitFileExtractor extractor(lib, BitFormat::Lzma);
+        std::vector<unsigned char> buffer;
+        extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+        std::string json{buffer.begin(), buffer.end()};
+        QString jsonstr = QString::fromStdString(json);
+        utils::Print(jsonstr);
+    }
+    catch ( const bit7z::BitException& ex ) {
+        /* Do something with ex.what()...*/
+        utils::Print(ex.what());
+    }
 
-    utils::Print(jsonstr);
 
     /* get listing of the zip the file, check if the squirrel.json exists in the root */
     QString systemstring;
