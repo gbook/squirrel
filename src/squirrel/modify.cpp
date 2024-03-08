@@ -101,7 +101,6 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 subject.Ethnicity1 = vars["Ethnicity1"];
                 subject.Ethnicity2 = vars["Ethnicity2"];
                 subject.Store();
-                subjectRowID = subject.GetObjectID();
                 /* resequence the newly added subject */
                 sqrl->ResequenceSubjects();
             }
@@ -158,7 +157,6 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 series.stagedFiles = vars["StagedFiles"].split(",");
                 series.studyRowID = studyRowID;
                 series.Store();
-                seriesRowID = series.GetObjectID();
                 /* resequence the newly added subject */
                 sqrl->ResequenceSeries(studyRowID);
             }
@@ -257,14 +255,110 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 return false;
             }
         }
+        /* ----- experiment ----- */
         else if (addObject == "experiment") {
+            int experimentRowID = sqrl->FindExperiment(vars["ExperimentName"]);
+            if (experimentRowID < 0) {
+                squirrelExperiment experiment;
+                sqrl->Log(QString("Creating squirrel Experiment [%1]").arg(vars["ExperimentName"]), __FUNCTION__);
+                experiment.ExperimentName = vars["ExperimentName"];
+                experiment.FileCount = vars["FileCount"].toLongLong();
+                experiment.Size = vars["Size"].toLongLong();
+                experiment.stagedFiles = vars["StagedFiles"].split(",");
+                experiment.Store();
+            }
+            else {
+                m = QString("Experiment [%1] already exists in this package").arg(vars["ExperimentName"]);
+                delete sqrl;
+                return false;
+            }
         }
+        /* ----- pipeline ----- */
         else if (addObject == "pipeline") {
+            int pipelineRowID = sqrl->FindPipeline(vars["PipelineName"]);
+            if (pipelineRowID < 0) {
+                squirrelPipeline pipeline;
+                sqrl->Log(QString("Creating squirrel Pipeline [%1]").arg(vars["PipelineName"]), __FUNCTION__);
+                pipeline.ClusterMaxWallTime = vars["ClusterMaxWallTime"].toInt();
+                pipeline.ClusterMemory = vars["ClusterMemory"].toInt();
+                pipeline.ClusterNumberCores = vars["ClusterNumberCores"].toInt();
+                pipeline.ClusterQueue = vars["ClusterQueue"];
+                pipeline.ClusterSubmitHost = vars["ClusterSubmitHost"];
+                pipeline.ClusterType = vars["ClusterType"];
+                pipeline.ClusterUser = vars["ClusterUser"];
+                pipeline.CompleteFiles = vars["CompleteFiles"].split(",");
+                pipeline.CreateDate = QDateTime::fromString(vars["CreateDate"], "yyyy-MM-dd HH:mm:ss");
+                pipeline.DataCopyMethod = vars["DataCopyMethod"];
+                //pipeline.dataSteps = vars["PipelineName"];
+                pipeline.DependencyDirectory = vars["DependencyDirectory"];
+                pipeline.DependencyLevel = vars["DependencyLevel"];
+                pipeline.DependencyLinkType = vars["DependencyLinkType"];
+                pipeline.Description = vars["Description"];
+                pipeline.Directory = vars["Directory"];
+                pipeline.DirectoryStructure = vars["DirectoryStructure"];
+                pipeline.Group = vars["Group"];
+                pipeline.GroupType = vars["GroupType"];
+                pipeline.Level = vars["Level"].toInt();
+                pipeline.Notes = vars["Notes"];
+                pipeline.NumberConcurrentAnalyses = vars["NumberConcurrentAnalyses"].toInt();
+                pipeline.ParentPipelines = vars["ParentPipelines"].split(",");
+                pipeline.PipelineName = vars["PipelineName"];
+                pipeline.PrimaryScript = vars["PrimaryScript"];
+                pipeline.ResultScript = vars["ResultScript"];
+                pipeline.SecondaryScript = vars["SecondaryScript"];
+                pipeline.SubmitDelay = vars["SubmitDelay"].toInt();
+                pipeline.TempDirectory = vars["TempDirectory"];
+                pipeline.Version = vars["Version"].toInt();
+                pipeline.stagedFiles = vars["StagedFiles"].split(",");
+                pipeline.Store();
+            }
+            else {
+                m = QString("Pipeline [%1] already exists in this package").arg(vars["PipelineName"]);
+                delete sqrl;
+                return false;
+            }
         }
+        /* ----- groupanalysis ----- */
         else if (addObject == "groupanalysis") {
+            int groupAnalysisRowID = sqrl->FindGroupAnalysis(vars["GroupAnalysisName"]);
+            if (groupAnalysisRowID < 0) {
+                squirrelGroupAnalysis groupAnalysis;
+                sqrl->Log(QString("Creating squirrel GroupAnalysis [%1]").arg(vars["GroupAnalysisName"]), __FUNCTION__);
+                groupAnalysis.DateTime = QDateTime::fromString(vars["DateTime"], "yyyy-MM-dd HH:mm:ss");
+                groupAnalysis.Description = vars["Description"];
+                groupAnalysis.Notes = vars["Notes"];
+                groupAnalysis.GroupAnalysisName = vars["GroupAnalysisName"];
+                groupAnalysis.FileCount = vars["FileCount"].toLongLong();
+                groupAnalysis.Size = vars["Size"].toLongLong();
+                groupAnalysis.stagedFiles = vars["StagedFiles"].split(",");
+                groupAnalysis.Store();
+            }
+            else {
+                m = QString("GroupAnalysis [%1] already exists in this package").arg(vars["GroupAnalysisName"]);
+                delete sqrl;
+                return false;
+            }
         }
+        /* ----- datadictionary ----- */
         else if (addObject == "datadictionary") {
+            int dataDictionaryRowID = sqrl->FindDataDictionary(vars["DataDictionaryName"]);
+            if (dataDictionaryRowID < 0) {
+                squirrelDataDictionary dataDictionary;
+                sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(vars["DataDictionaryName"]), __FUNCTION__);
+                //dataDictionary.dictItems;
+                dataDictionary.DataDictionaryName = vars["DataDictionaryName"];
+                dataDictionary.FileCount = vars["FileCount"].toLongLong();
+                dataDictionary.Size = vars["Size"].toLongLong();
+                dataDictionary.stagedFiles = vars["StagedFiles"].split(",");
+                dataDictionary.Store();
+            }
+            else {
+                m = QString("DataDictionary [%1] already exists in this package").arg(vars["DataDictionaryName"]);
+                delete sqrl;
+                return false;
+            }
         }
+        /* ----- unknown ----- */
         else {
             m = QString("Unrecognized object type [%1]").arg(addObject);
             delete sqrl;

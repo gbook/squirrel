@@ -54,7 +54,7 @@ public:
     bool Write(bool writeLog);
     bool Validate();
     void Print();
-    void SetFilename(QString p) { zipPath = p; }
+    void SetFilename(QString p);
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
@@ -73,10 +73,7 @@ public:
     QString StudyDirFormat;     /*!< orig, seq */
     QString SubjectDirFormat;   /*!< orig, seq */
 
-    /* lib variables */
-    //QString filePath;           /*!< full path to the zip file */
-
-    /* new, SQLite based functions */
+    /* get list(s) of objects */
     QList<squirrelExperiment> GetAllExperiments();
     QList<squirrelPipeline> GetAllPipelines();
     QList<squirrelSubject> GetAllSubjects();
@@ -92,13 +89,17 @@ public:
     qint64 GetFileCount();
     int GetObjectCount(QString object);
 
-    /* find objects */
+    /* find objects, return rowID */
     int FindSubject(QString id);
     int FindStudy(QString subjectID, int studyNum);
     int FindStudyByUID(QString studyUID);
     int FindSeries(QString subjectID, int studyNum, int seriesNum);
     int FindSeriesByUID(QString seriesUID);
     int FindAnalysis(QString subjectID, int studyNum, QString analysisName);
+    int FindExperiment(QString experimentName);
+    int FindPipeline(QString pipelineName);
+    int FindGroupAnalysis(QString groupAnalysisName);
+    int FindDataDictionary(QString dataDictionaryName);
 
     bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
 

@@ -24,6 +24,9 @@
 #include "squirrelImageIO.h"
 #include "utils.h"
 #include "squirrel.sql.h"
+#include "bit7z.hpp"
+//#include "bitarchivereader.hpp"
+#include "bitfileextractor.hpp"
 
 /* ------------------------------------------------------------ */
 /* ----- squirrel --------------------------------------------- */
@@ -160,6 +163,17 @@ bool squirrel::InitializeDatabase() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- SetFilename ------------------------------------------ */
+/* ------------------------------------------------------------ */
+void squirrel::SetFilename(QString p) {
+    if (!p.endsWith(".sqrl", Qt::CaseInsensitive))
+        p.append(".sqrl");
+
+    zipPath = p;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- Read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -181,6 +195,16 @@ bool squirrel::Read(bool readonly) {
         Log(QString("File %1 does not exist").arg(zipPath), __FUNCTION__);
         return false;
     }
+
+    using namespace bit7z;
+    Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+    BitFileExtractor extractor(lib, BitFormat::Lzma);
+    std::vector<unsigned char> buffer;
+    extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+    std::string json{buffer.begin(), buffer.end()};
+    QString jsonstr = QString::fromStdString(json);
+
+    utils::Print(jsonstr);
 
     /* get listing of the zip the file, check if the squirrel.json exists in the root */
     QString systemstring;
@@ -1575,7 +1599,7 @@ QList<squirrelDataDictionary> squirrel::GetAllDataDictionaries() {
 int squirrel::FindSubject(QString id) {
     int rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select * from Subject where ID = :id");
+    q.prepare("select SubjectRowID from Subject where ID = :id");
     q.bindValue(":id", id);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
@@ -1591,7 +1615,7 @@ int squirrel::FindSubject(QString id) {
 int squirrel::FindStudy(QString subjectID, int studyNum) {
     int rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select * from Study a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.StudyNumber = :studynum and b.ID = :id");
+    q.prepare("select SubjectRowID from Study a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.StudyNumber = :studynum and b.ID = :id");
     q.bindValue(":studynum", studyNum);
     q.bindValue(":id", subjectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -1608,7 +1632,7 @@ int squirrel::FindStudy(QString subjectID, int studyNum) {
 int squirrel::FindStudyByUID(QString studyUID) {
     int rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select * from Study where StudyUID = :studyuid");
+    q.prepare("select StudyRowID from Study where StudyUID = :studyuid");
     q.bindValue(":studyuid", studyUID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
@@ -1643,11 +1667,10 @@ int squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
 int squirrel::FindSeriesByUID(QString seriesUID) {
     int rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select * from Series where SeriesUID = :seriesuid");
+    q.prepare("select SeriesRowID from Series where SeriesUID = :seriesuid");
     q.bindValue(":seriesuid", seriesUID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
-        //q.first();
         rowid = q.value("SeriesRowID").toInt();
     }
     return rowid;
@@ -1660,13 +1683,77 @@ int squirrel::FindSeriesByUID(QString seriesUID) {
 int squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisName) {
     int rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select * from Analysis a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.AnalyisName = :analysisname and b.StudyNumber = :studynum and c.ID = :id");
+    q.prepare("select AnalysisRowID from Analysis a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.AnalyisName = :analysisname and b.StudyNumber = :studynum and c.ID = :id");
     q.bindValue(":analysisname", analysisName);
     q.bindValue(":studynum", studyNum);
     q.bindValue(":id", subjectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("AnalysisRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindExperiment --------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::FindExperiment(QString experimentName) {
+    int rowid(-1);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select ExperimentRowID from Experiment where ExperimentName = :experimentName");
+    q.bindValue(":experimentName", experimentName);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("ExperimentRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindPipeline ----------------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::FindPipeline(QString pipelineName) {
+    int rowid(-1);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select PipelineRowID from Pipeline where PipelineName = :pipelineName");
+    q.bindValue(":pipelineName", pipelineName);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("PipelineRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindGroupAnalysis ------------------------------------ */
+/* ------------------------------------------------------------ */
+int squirrel::FindGroupAnalysis(QString groupAnalysisName) {
+    int rowid(-1);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select GroupAnalysisRowID from GroupAnalysis where GroupAnalysisName = :groupAnalysisName");
+    q.bindValue(":groupAnalysisName", groupAnalysisName);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("GroupAnalysisRowID").toInt();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindDataDictionary ----------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrel::FindDataDictionary(QString dataDictionaryName) {
+    int rowid(-1);
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select DataDictionaryRowID from DataDictionary where DataDictionaryName = :dataDictionaryName");
+    q.bindValue(":dataDictionaryName", dataDictionaryName);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("DataDictionaryRowID").toInt();
     }
     return rowid;
 }
