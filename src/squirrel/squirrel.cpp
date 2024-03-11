@@ -166,8 +166,8 @@ bool squirrel::InitializeDatabase() {
 /* ----- SetFilename ------------------------------------------ */
 /* ------------------------------------------------------------ */
 void squirrel::SetFilename(QString p) {
-    if (!p.endsWith(".sqrl", Qt::CaseInsensitive))
-        p.append(".sqrl");
+    //if (!p.endsWith(".sqrl", Qt::CaseInsensitive))
+    //    p.append(".sqrl");
 
     zipPath = p;
 }
@@ -196,71 +196,81 @@ bool squirrel::Read(bool readonly) {
         return false;
     }
 
+    QString jsonstr;
     try {
         using namespace bit7z;
-        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
-        BitFileExtractor extractor(lib, BitFormat::Lzma);
         std::vector<unsigned char> buffer;
-        extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+        #ifdef Q_OS_WINDOWS
+        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+        #else
+        Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+        #endif
+        if (zipPath.endsWith(".zip", Qt::CaseInsensitive)) {
+            BitFileExtractor extractor(lib, BitFormat::Zip);
+            extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+        }
+        else {
+            BitFileExtractor extractor(lib, BitFormat::SevenZip);
+            extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+        }
         std::string json{buffer.begin(), buffer.end()};
-        QString jsonstr = QString::fromStdString(json);
-        utils::Print(jsonstr);
+        jsonstr = QString::fromStdString(json);
+        //utils::Print(jsonstr);
     }
     catch ( const bit7z::BitException& ex ) {
         /* Do something with ex.what()...*/
+        Log("Unable to read squirrel package using bit7z library", __FUNCTION__);
         utils::Print(ex.what());
-    }
-
-
-    /* get listing of the zip the file, check if the squirrel.json exists in the root */
-    QString systemstring;
-    #ifdef Q_OS_WINDOWS
-        systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" l \"" + zipPath + "\"");
-    #else
-        systemstring = "unzip -l " + zipPath;
-    #endif
-    QString output = utils::SystemCommand(systemstring, true);
-    Log(output, __FUNCTION__);
-    if (!output.contains("squirrel.json")) {
-        Log(QString("File " + zipPath + " does not appear to be a squirrel package"), __FUNCTION__);
         return false;
     }
 
-    /* get the header .json file (either by unzipping or extracting only the file) */
-    QString jsonStr;
-    if (readonly) {
-        #ifdef Q_OS_WINDOWS
-            systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + zipPath + "\" -o\"" + workingDir + "\" squirrel.json -y");
-            Log(systemstring, __FUNCTION__);
-            output = utils::SystemCommand(systemstring, true);
-            /* read from .json file */
-            jsonStr = utils::ReadTextFileToString(workingDir + "/squirrel.json");
-        #else
-            systemstring = QString("unzip -p " + zipPath + " squirrel.json");
-        output = utils::SystemCommand(systemstring, true);
-        #endif
-    }
-    else {
-        /* unzip the .zip to the working dir */
-        #ifdef Q_OS_WINDOWS
-            systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + zipPath + "\" -o\"" + workingDir + "\" -y");
-        #else
-            systemstring = QString("unzip " + zipPath + " -d " + workingDir);
-        #endif
-        output = utils::SystemCommand(systemstring, true);
-        Log(output, __FUNCTION__);
+    // /* get listing of the zip the file, check if the squirrel.json exists in the root */
+    // QString systemstring;
+    // #ifdef Q_OS_WINDOWS
+    //     systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" l \"" + zipPath + "\"");
+    // #else
+    //     systemstring = "unzip -l " + zipPath;
+    // #endif
+    // QString output = utils::SystemCommand(systemstring, true);
+    // Log(output, __FUNCTION__);
+    // if (!output.contains("squirrel.json")) {
+    //     Log(QString("File " + zipPath + " does not appear to be a squirrel package"), __FUNCTION__);
+    //     return false;
+    // }
 
-        /* read from .json file */
-        jsonStr = utils::ReadTextFileToString(workingDir + "/squirrel.json");
-    }
+    // /* get the header .json file (either by unzipping or extracting only the file) */
+    // QString jsonStr;
+    // if (readonly) {
+    //     #ifdef Q_OS_WINDOWS
+    //         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + zipPath + "\" -o\"" + workingDir + "\" squirrel.json -y");
+    //         Log(systemstring, __FUNCTION__);
+    //         output = utils::SystemCommand(systemstring, true);
+    //         /* read from .json file */
+    //         jsonStr = utils::ReadTextFileToString(workingDir + "/squirrel.json");
+    //     #else
+    //         systemstring = QString("unzip -p " + zipPath + " squirrel.json");
+    //     output = utils::SystemCommand(systemstring, true);
+    //     #endif
+    // }
+    // else {
+    //     /* unzip the .zip to the working dir */
+    //     #ifdef Q_OS_WINDOWS
+    //         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + zipPath + "\" -o\"" + workingDir + "\" -y");
+    //     #else
+    //         systemstring = QString("unzip " + zipPath + " -d " + workingDir);
+    //     #endif
+    //     output = utils::SystemCommand(systemstring, true);
+    //     Log(output, __FUNCTION__);
+
+    //     /* read from .json file */
+    //     jsonStr = utils::ReadTextFileToString(workingDir + "/squirrel.json");
+    // }
 
     /* get the JSON document and root object */
-    QJsonDocument d = QJsonDocument::fromJson(jsonStr.toUtf8());
+    QJsonDocument d = QJsonDocument::fromJson(jsonstr.toUtf8());
     QJsonObject root = d.object();
 
     /* get the package info */
-    //QJsonValue pkgVal = root.value("package");
-    //QJsonObject pkgObj = pkgVal.toObject();
     QJsonObject pkgObj = root["package"].toObject();
     Changes = pkgObj["Changes"].toString();
     DataFormat = pkgObj["DataFormat"].toString();
@@ -313,7 +323,7 @@ bool squirrel::Read(bool readonly) {
         sqrlSubject.Ethnicity2 = jsonSubject["Ethnicity2"].toString();
         //sqrlSubject.virtualPath = jsonSubject["VirtualPath"].toString();
         sqrlSubject.Store();
-        int subjectRowID = sqrlSubject.GetObjectID();
+        qint64 subjectRowID = sqrlSubject.GetObjectID();
 
         Log(QString("Reading subject [%1]").arg(sqrlSubject.ID), __FUNCTION__);
 

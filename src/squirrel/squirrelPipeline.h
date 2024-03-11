@@ -126,6 +126,8 @@ public:
     /* lib variables */
     QStringList stagedFiles; /*!< staged file list: list of files in their own original directories which will be copied in before the package is zipped up */
 
+    QStringList files; /* actual files in the package, with virtual paths */
+
 private:
     bool valid = false;
     QString err;

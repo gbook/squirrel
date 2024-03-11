@@ -39,6 +39,8 @@
 #include "squirrelDataDictionary.h"
 #include "squirrelVersion.h"
 
+enum FileMode { ReadOnly, New, Update }; /* 'New' will create a new archive from scratch, 'Update' will update an existing archive */
+
 /**
  * @brief The squirrel class
  *
@@ -55,6 +57,7 @@ public:
     bool Validate();
     void Print();
     void SetFilename(QString p);
+    void SetFileMode(FileMode m);
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
@@ -65,7 +68,7 @@ public:
     QString NiDBversion;        /*!< NiDB version that wrote this package */
     QString Notes;              /*!< JSON string of notes (may contain JSON sub-elements of 'import', 'merge', 'export') */
     QString PackageFormat;      /*!< 'squirrel' */
-    QString PackageName;               /*!< name of the package */
+    QString PackageName;        /*!< name of the package */
     QString Readme;             /*!< a README */
     QString SeriesDirFormat;    /*!< orig, seq */
     QString SquirrelBuild;      /*!< squirrel build */
@@ -148,6 +151,8 @@ private:
     QStringList msgs; /* squirrel messages to be passed back through the squirrel library */
     QString log;
     QString zipPath;
+
+    FileMode fileMode;
 
     bool debug;
     bool isValid;

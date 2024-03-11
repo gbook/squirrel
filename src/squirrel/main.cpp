@@ -278,8 +278,8 @@ int main(int argc, char *argv[])
 
         p.process(a);
 
-        bool debug = p.isSet("d");
-        bool quiet = p.isSet("q");
+        //bool debug = p.isSet("d");
+        //bool quiet = p.isSet("q");
         QString packagePath = p.value("p").trimmed();
         QString addObject = p.value("add").trimmed(); /* possible objects: subject study series measure drug analysis experiment pipeline groupanalysis datadictionary */
         QString removeObject = p.value("remove").trimmed();

@@ -345,7 +345,6 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
             if (dataDictionaryRowID < 0) {
                 squirrelDataDictionary dataDictionary;
                 sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(vars["DataDictionaryName"]), __FUNCTION__);
-                //dataDictionary.dictItems;
                 dataDictionary.DataDictionaryName = vars["DataDictionaryName"];
                 dataDictionary.FileCount = vars["FileCount"].toLongLong();
                 dataDictionary.Size = vars["Size"].toLongLong();
