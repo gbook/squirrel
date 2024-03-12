@@ -39,7 +39,7 @@
 #include "squirrelDataDictionary.h"
 #include "squirrelVersion.h"
 
-enum FileMode { ReadOnly, New, Update }; /* 'New' will create a new archive from scratch, 'Update' will update an existing archive */
+enum FileMode { TempDir, Archive };
 
 /**
  * @brief The squirrel class
@@ -57,7 +57,7 @@ public:
     bool Validate();
     void Print();
     void SetFilename(QString p);
-    void SetFileMode(FileMode m);
+    void SetFileMode(FileMode m) { fileMode = m; }
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
@@ -145,6 +145,10 @@ private:
     bool MakeTempDir(QString &dir);
     bool DatabaseConnect();
     bool InitializeDatabase();
+    bool ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents);
+    bool CompressDirectoryToArchive(QString dir, QString archivePath, QString &m);
+    bool CompressFileToArchive(QString filePath, QString compressedFilePath, QString archivePath, QString &m);
+    bool CompressMemoryFileToArchive(QByteArray file, QString compressedFilePath, QString archivePath, QString &m);
 
     QString workingDir;
     QString logfile;

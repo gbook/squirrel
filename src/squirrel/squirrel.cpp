@@ -25,7 +25,8 @@
 #include "utils.h"
 #include "squirrel.sql.h"
 #include "bit7z.hpp"
-//#include "bitarchivereader.hpp"
+#include "bitarchivewriter.hpp"
+#include "bitarchiveeditor.hpp"
 #include "bitfileextractor.hpp"
 
 /* ------------------------------------------------------------ */
@@ -197,32 +198,33 @@ bool squirrel::Read(bool readonly) {
     }
 
     QString jsonstr;
-    try {
-        using namespace bit7z;
-        std::vector<unsigned char> buffer;
-        #ifdef Q_OS_WINDOWS
-        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
-        #else
-        Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
-        #endif
-        if (zipPath.endsWith(".zip", Qt::CaseInsensitive)) {
-            BitFileExtractor extractor(lib, BitFormat::Zip);
-            extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
-        }
-        else {
-            BitFileExtractor extractor(lib, BitFormat::SevenZip);
-            extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
-        }
-        std::string json{buffer.begin(), buffer.end()};
-        jsonstr = QString::fromStdString(json);
-        //utils::Print(jsonstr);
-    }
-    catch ( const bit7z::BitException& ex ) {
-        /* Do something with ex.what()...*/
-        Log("Unable to read squirrel package using bit7z library", __FUNCTION__);
-        utils::Print(ex.what());
-        return false;
-    }
+    ExtractFileFromArchive(zipPath, "squirrel.json", jsonstr);
+
+    // try {
+    //     using namespace bit7z;
+    //     std::vector<unsigned char> buffer;
+    //     #ifdef Q_OS_WINDOWS
+    //     Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+    //     #else
+    //     Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+    //     #endif
+    //     if (zipPath.endsWith(".zip", Qt::CaseInsensitive)) {
+    //         BitFileExtractor extractor(lib, BitFormat::Zip);
+    //         extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+    //     }
+    //     else {
+    //         BitFileExtractor extractor(lib, BitFormat::SevenZip);
+    //         extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
+    //     }
+    //     std::string json{buffer.begin(), buffer.end()};
+    //     jsonstr = QString::fromStdString(json);
+    // }
+    // catch ( const bit7z::BitException& ex ) {
+    //     /* Do something with ex.what()...*/
+    //     Log("Unable to read squirrel package using bit7z library", __FUNCTION__);
+    //     utils::Print(ex.what());
+    //     return false;
+    // }
 
     // /* get listing of the zip the file, check if the squirrel.json exists in the root */
     // QString systemstring;
@@ -772,38 +774,54 @@ bool squirrel::Write(bool writeLog) {
     root["TotalSize"] = GetUnzipSize();
     root["TotalFileCount"] = GetFileCount();
 
-    /* write the final .json file */
-    QString jsonFilePath = workingDir + "/squirrel.json";
     QByteArray j = QJsonDocument(root).toJson();
-    if (!utils::WriteTextFile(jsonFilePath, j))
-        Log("Error writing [" + jsonFilePath + "]", __FUNCTION__);
 
-    QString systemstring;
-    #ifdef Q_OS_WINDOWS
-        systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipPath + "\" \"" + workingDir + "/*\"");
-    #else
-        systemstring = "cd " + workingDir + "; zip -1rv " + zipPath + " .";
-    #endif
+    /* write the final .json file */
+    if (fileMode == TempDir) {
+        Log("Zipping the archive from a temp directory", __FUNCTION__);
 
-    Log("Beginning zipping package", __FUNCTION__);
-    utils::SystemCommand(systemstring);
+        /* write the .json file to the temp dir */
+        QString jsonFilePath = workingDir + "/squirrel.json";
+        if (!utils::WriteTextFile(jsonFilePath, j))
+            Log("Error writing [" + jsonFilePath + "]", __FUNCTION__);
 
-    if (utils::FileExists(zipPath)) {
-        QFileInfo fi(zipPath);
-        qint64 zipSize = fi.size();
-        Log(QString("Finished zipping package [%1]. Size is [%2] bytes").arg(zipPath).arg(zipSize), __FUNCTION__);
+//         QString systemstring;
+// #ifdef Q_OS_WINDOWS
+//         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipPath + "\" \"" + workingDir + "/*\"");
+// #else
+//         systemstring = "cd " + workingDir + "; zip -1rv " + zipPath + " .";
+// #endif
 
-        /* delete the tmp dir, if it exists */
-        if (utils::DirectoryExists(workingDir)) {
-            Log("Temporary export dir [" + workingDir + "] exists and will be deleted", __FUNCTION__);
-            QString m;
-            if (!utils::RemoveDir(workingDir, m))
-                Log("Error [" + m + "] removing directory [" + workingDir + "]", __FUNCTION__);
+//         Log("Beginning zipping package", __FUNCTION__);
+//         utils::SystemCommand(systemstring);
+
+        //if (utils::FileExists(zipPath)) {
+        QString m;
+        if (CompressDirectoryToArchive(workingDir, zipPath, m)) {
+            QFileInfo fi(zipPath);
+            qint64 zipSize = fi.size();
+            Log(QString("Finished zipping package [%1]. Size is [%2] bytes").arg(zipPath).arg(zipSize), __FUNCTION__);
+
+            /* delete the tmp dir, if it exists */
+            if (utils::DirectoryExists(workingDir)) {
+                Log("Temporary export dir [" + workingDir + "] exists and will be deleted", __FUNCTION__);
+                QString m;
+                if (!utils::RemoveDir(workingDir, m))
+                    Log("Error [" + m + "] removing directory [" + workingDir + "]", __FUNCTION__);
+            }
+        }
+        else {
+            Log("Error creating zip file [" + zipPath + "]  message [" + m + "]", __FUNCTION__);
+            return false;
         }
     }
     else {
-        Log("Error creating zip file [" + zipPath + "]", __FUNCTION__);
-        return false;
+        /* only update the archive with the new .json file */
+        Log("Updating a single file in the archive", __FUNCTION__);
+        QString m;
+        if (!CompressMemoryFileToArchive(j, "squirrel.json", zipPath, m)) {
+            Log("Error [" + m + "] compressing memory file to archive", __FUNCTION__);
+        }
     }
 
     /* write the log file */
@@ -1822,5 +1840,146 @@ void squirrel::ResequenceSeries(int studyRowID) {
         series.SequenceNumber = i;
         series.Store();
         i++;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ExtractFileFromArchive ------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents) {
+    try {
+        using namespace bit7z;
+        std::vector<unsigned char> buffer;
+        #ifdef Q_OS_WINDOWS
+           Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+        #else
+           Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+        #endif
+        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            BitFileExtractor extractor(lib, BitFormat::Zip);
+            extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
+        }
+        else {
+            BitFileExtractor extractor(lib, BitFormat::SevenZip);
+            extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
+        }
+        std::string str{buffer.begin(), buffer.end()};
+        fileContents = QString::fromStdString(str);
+        return true;
+    }
+    catch ( const bit7z::BitException& ex ) {
+        /* Do something with ex.what()...*/
+        fileContents = "Unable to extract file from archive using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- CompressDirectoryToArchive --------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QString &m) {
+    try {
+        using namespace bit7z;
+#ifdef Q_OS_WINDOWS
+        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+#else
+        Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+#endif
+        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            BitArchiveWriter archive(lib, BitFormat::Zip);
+            //archive.setOverwriteMode(OverwriteMode::Overwrite);
+            archive.setUpdateMode(UpdateMode::Update);
+            archive.addDirectory(dir.toStdString());
+            archive.compressTo(archivePath.toStdString());
+        }
+        else {
+            BitArchiveWriter archive(lib, BitFormat::SevenZip);
+            //archive.setOverwriteMode(OverwriteMode::Overwrite);
+            archive.setUpdateMode(UpdateMode::Update);
+            archive.addDirectory(dir.toStdString());
+            archive.compressTo(archivePath.toStdString());
+        }
+        m = "Successfully compressed directory [" + dir + "] to archive [" + archivePath + "]";
+        return true;
+    }
+    catch ( const bit7z::BitException& ex ) {
+        /* Do something with ex.what()...*/
+        m = "Unable to compress directory into archive using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- CompressFileToArchive -------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::CompressFileToArchive(QString filePath, QString compressedFilePath, QString archivePath, QString &m) {
+    try {
+        using namespace bit7z;
+#ifdef Q_OS_WINDOWS
+        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+#else
+        Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+#endif
+        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            BitArchiveEditor archive(lib, archivePath.toStdString(), BitFormat::Zip);
+            //archive.setOverwriteMode(OverwriteMode::Overwrite);
+            archive.setUpdateMode(UpdateMode::Update);
+            archive.addFile(filePath.toStdString(), compressedFilePath.toStdString());
+            archive.compressTo(archivePath.toStdString());
+        }
+        else {
+            BitArchiveEditor archive(lib, archivePath.toStdString(), BitFormat::SevenZip);
+            //archive.setOverwriteMode(OverwriteMode::Overwrite);
+            archive.setUpdateMode(UpdateMode::Update);
+            archive.addFile(filePath.toStdString(), compressedFilePath.toStdString());
+            archive.compressTo(archivePath.toStdString());
+        }
+        m = "Successfully compressed file [" + filePath + "] to archive [" + archivePath + "]";
+        return true;
+    }
+    catch ( const bit7z::BitException& ex ) {
+        /* Do something with ex.what()...*/
+        m = "Unable to compress directory into archive using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- CompressMemoryFileToArchive -------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::CompressMemoryFileToArchive(QByteArray file, QString compressedFilePath, QString archivePath, QString &m) {
+    try {
+        using namespace bit7z;
+#ifdef Q_OS_WINDOWS
+        Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
+#else
+        Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+#endif
+        std::vector<unsigned char> vectorFile(file.begin(), file.end());
+        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            BitArchiveEditor archive(lib, archivePath.toStdString(), BitFormat::Zip);
+            archive.setOverwriteMode(OverwriteMode::Overwrite);
+            archive.setUpdateMode(UpdateMode::Update);
+            archive.addFile(vectorFile, compressedFilePath.toStdString());
+            archive.compressTo(archivePath.toStdString());
+        }
+        else {
+            BitArchiveEditor archive(lib, archivePath.toStdString(), BitFormat::SevenZip);
+            archive.setOverwriteMode(OverwriteMode::Overwrite);
+            archive.setUpdateMode(UpdateMode::Update);
+            archive.addFile(vectorFile, compressedFilePath.toStdString());
+            archive.compressTo(archivePath.toStdString());
+        }
+        m = "Successfully compressed memory file to archive [" + archivePath + "]";
+        return true;
+    }
+    catch ( const bit7z::BitException& ex ) {
+        /* Do something with ex.what()...*/
+        m = "Unable to compress directory into archive using bit7z library [" + QString(ex.what()) + "]";
+        return false;
     }
 }
