@@ -72,7 +72,7 @@ linux: LIBS += -L$$LZMABIN
 INCLUDEPATH += $$LZMAINCLUDE
 HEADERS += $$LZMAINCLUDE/bit7z.hpp
 win32:LIBS += -lbit7z
-linux:LIBS += -llibbit7z64.a
+linux:LIBS += -lbit7z -ldl
 
 # gdcm library
 GDCMBIN = ../../bin/gdcm
