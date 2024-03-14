@@ -774,7 +774,7 @@ bool squirrel::Write(bool writeLog) {
     root["TotalSize"] = GetUnzipSize();
     root["TotalFileCount"] = GetFileCount();
 
-    QByteArray j = QJsonDocument(root).toJson();
+    QString j = QJsonDocument(root).toJson();
 
     /* write the final .json file */
     if (fileMode == TempDir) {
@@ -819,7 +819,7 @@ bool squirrel::Write(bool writeLog) {
         /* only update the archive with the new .json file */
         Log("Updating a single file in the archive", __FUNCTION__);
         QString m;
-        if (!CompressMemoryFileToArchive(j, "squirrel.json", zipPath, m)) {
+        if (!UpdateMemoryFileToArchive(j, "squirrel.json", zipPath, m)) {
             Log("Error [" + m + "] compressing memory file to archive", __FUNCTION__);
         }
     }
@@ -1949,9 +1949,9 @@ bool squirrel::CompressFileToArchive(QString filePath, QString compressedFilePat
 
 
 /* ------------------------------------------------------------ */
-/* ----- CompressMemoryFileToArchive -------------------------- */
+/* ----- UpdateMemoryFileToArchive -------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::CompressMemoryFileToArchive(QByteArray file, QString compressedFilePath, QString archivePath, QString &m) {
+bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m) {
     try {
         using namespace bit7z;
 #ifdef Q_OS_WINDOWS
@@ -1959,20 +1959,18 @@ bool squirrel::CompressMemoryFileToArchive(QByteArray file, QString compressedFi
 #else
         Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
 #endif
-        std::vector<unsigned char> vectorFile(file.begin(), file.end());
+        /* convert the QString to a istream */
+        std::istringstream i(file.toStdString());
+
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
-            BitArchiveEditor archive(lib, archivePath.toStdString(), BitFormat::Zip);
-            archive.setOverwriteMode(OverwriteMode::Overwrite);
-            archive.setUpdateMode(UpdateMode::Update);
-            archive.addFile(vectorFile, compressedFilePath.toStdString());
-            archive.compressTo(archivePath.toStdString());
+            bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
+            editor.updateItem(compressedFilePath.toStdString(), i);
+            editor.applyChanges();
         }
         else {
-            BitArchiveEditor archive(lib, archivePath.toStdString(), BitFormat::SevenZip);
-            archive.setOverwriteMode(OverwriteMode::Overwrite);
-            archive.setUpdateMode(UpdateMode::Update);
-            archive.addFile(vectorFile, compressedFilePath.toStdString());
-            archive.compressTo(archivePath.toStdString());
+            bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
+            editor.updateItem(compressedFilePath.toStdString(), i);
+            editor.applyChanges();
         }
         m = "Successfully compressed memory file to archive [" + archivePath + "]";
         return true;

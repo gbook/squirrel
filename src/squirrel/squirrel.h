@@ -148,7 +148,7 @@ private:
     bool ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents);
     bool CompressDirectoryToArchive(QString dir, QString archivePath, QString &m);
     bool CompressFileToArchive(QString filePath, QString compressedFilePath, QString archivePath, QString &m);
-    bool CompressMemoryFileToArchive(QByteArray file, QString compressedFilePath, QString archivePath, QString &m);
+    bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
 
     QString workingDir;
     QString logfile;
