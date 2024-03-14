@@ -77,11 +77,10 @@ LZMABIN = ../../bit7z/lib/x64
 LZMAINCLUDE = ../../bit7z/include/bit7z
 *msvc*:CONFIG(release, debug|release): LIBS += -L$$LZMABIN/Release
 else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$LZMABIN/Debug
-linux: LIBS += -L$$LZMABIN
+linux: LIBS += -L$$LZMABIN -lbit7z64 -ldl
 INCLUDEPATH += $$LZMAINCLUDE
 HEADERS += $$LZMAINCLUDE/bit7z.hpp
 win32:LIBS += -lbit7z
-linux:LIBS += -llibbit7z64.a
 
 # gdcm library
 GDCMBIN = ../../bin/gdcm
