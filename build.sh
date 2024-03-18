@@ -30,24 +30,34 @@ echo "Creating build directory"
 mkdir -p $BUILDDIR
 
 # ----- build pre-requisites -----
-
 command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x. Install using 'yum install cmake' or 'apt-get cmake'.\n"; exit 1; }
 
-echo -e "\ngdcm not built. Building gdcm now\n"
+# ----- build GDCM library -----
+echo -e "\n ----- Building gdcm -----\n"
 mkdir -p $BUILDDIR/gdcm
 cd $BUILDDIR/gdcm
 cmake -DGDCM_BUILD_APPLICATIONS:STRING=NO -DGDCM_BUILD_DOCBOOK_MANPAGES:BOOL=OFF -DGDCM_BUILD_SHARED_LIBS:STRING=YES -DGDCM_BUILD_TESTING:STRING=NO -DGDCM_BUILD_EXAMPLES:STRING=NO $SRCDIR/gdcm
 make -j 16
 
+# ----- build bit7z library -----
+echo -e "\n ----- Building bit7z -----\n"
+mkdir -p $BUILDDIR/bit7z
+cd $BUILDDIR/bit7z
+cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC $SRCDIR/bit7z
+make -j 16
+echo -e "\nCopying bit7z library to $BUILDDIR\n"
+mkdir -pv $BUILDDIR/../bit7z/lib/x64
+cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/../bit7z/lib/x64
+
 # ----- build squirrel library -----
-echo -e "\nBuilding squirrel library\n"
+echo -e "\n ----- Building squirrel library -----\n"
 echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
 $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
 cd $BUILDDIR/squirrel
-make -j 16
+make -B -j 16
 
 # ----- build squirrel command line utilities -----
-echo -e "\nBuilding squirrel utilities\n"
+echo -e "\n ----- Building squirrel utilities -----\n"
 echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
 $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
 cd $BUILDDIR/squirrel
