@@ -1252,8 +1252,8 @@ void squirrel::PrintSubjects(bool details) {
                 subjectIDs.append(s.ID);
         }
     }
-    if (details)
-        utils::Print(subjectIDs.join(" "));
+    if (!details)
+        utils::Print("Subjects: " + subjectIDs.join(" "));
 }
 
 
@@ -1276,8 +1276,8 @@ void squirrel::PrintStudies(int subjectRowID, bool details) {
                 studyNumbers.append(QString("%1").arg(s.StudyNumber));
         }
     }
-    if (details)
-        utils::Print(studyNumbers.join(" "));
+    if (!details)
+        utils::Print("Studies: " + studyNumbers.join(" "));
 }
 
 
@@ -1301,8 +1301,8 @@ void squirrel::PrintSeries(int studyRowID, bool details) {
                 seriesNumbers.append(QString("%1").arg(s.SeriesNumber));
         }
     }
-    if (details)
-        utils::Print(seriesNumbers.join(" "));
+    if (!details)
+        utils::Print("Series: " + seriesNumbers.join(" "));
 }
 
 
@@ -1315,14 +1315,17 @@ void squirrel::PrintSeries(int studyRowID, bool details) {
  */
 void squirrel::PrintExperiments(bool details) {
     QList <squirrelExperiment> exps = GetAllExperiments();
+    QStringList experimentNames;
     foreach (squirrelExperiment e, exps) {
         if (e.Get()) {
             if (details)
                 e.PrintExperiment();
             else
-                utils::Print(e.ExperimentName);
+                experimentNames.append(e.ExperimentName);
         }
     }
+    if (!details)
+        utils::Print("Experiments: " + experimentNames.join(" "));
 }
 
 
@@ -1344,8 +1347,8 @@ void squirrel::PrintPipelines(bool details) {
                 pipelineNames.append(p.PipelineName);
         }
     }
-    if (details)
-        utils::Print(pipelineNames.join(" "));
+    if (!details)
+        utils::Print("Pipelines: " + pipelineNames.join(" "));
 }
 
 
@@ -1367,8 +1370,8 @@ void squirrel::PrintGroupAnalyses(bool details) {
                 groupAnalysisNames.append(g.GroupAnalysisName);
         }
     }
-    if (details)
-        utils::Print(groupAnalysisNames.join(" "));
+    if (!details)
+        utils::Print("GroupAnalysis: " + groupAnalysisNames.join(" "));
 }
 
 
@@ -1386,8 +1389,8 @@ void squirrel::PrintDataDictionary(bool details) {
                 dataDictionaryNames.append(d.DataDictionaryName);
         }
     }
-    if (details)
-        utils::Print(dataDictionaryNames.join(" "));
+    if (!details)
+        utils::Print("DataDictionary: " + dataDictionaryNames.join(" "));
 }
 
 

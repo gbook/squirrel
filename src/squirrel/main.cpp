@@ -186,25 +186,30 @@ int main(int argc, char *argv[])
     }
     else if (command == "info") {
         p.clearPositionalArguments();
-        p.addPositionalArgument("info", "Display instances of an object within a squirrel package.", "info [options]");
+        p.addPositionalArgument("info", "Display instances of an object within a squirrel package.", "info");
+        p.addPositionalArgument("package", "The squirrel package.", "package");
+        p.parse(QCoreApplication::arguments());
+        QStringList args = p.positionalArguments();
+        QString inputPath;
+        if (args.size() > 1)
+            inputPath = args[1];
 
         /* command line flag options */
-        p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
-        p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Dont print headers and checks"));
-        p.addOption(QCommandLineOption(QStringList() << "i" << "input", "Input path", "dir"));
         p.addOption(QCommandLineOption(QStringList() << "object", "List an object [package  subject  study  series  experiment  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  -subject-id must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "details", "Include details when printing lists."));
         p.process(a);
 
-        bool debug = p.isSet("d");
-        bool quiet = p.isSet("q");
-        QString inputPath = p.value("i").trimmed();
+        bool debug = false;
+        bool quiet = true;
         QString object = p.value("object").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
         bool details = p.isSet("details");
+
+        if (object == "")
+            object = "package";
 
         /* check if the infile exists */
         QFile infile(inputPath);
