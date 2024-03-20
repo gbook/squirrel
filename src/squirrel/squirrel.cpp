@@ -198,75 +198,10 @@ bool squirrel::Read(bool readonly) {
     }
 
     QString jsonstr;
-    ExtractFileFromArchive(zipPath, "squirrel.json", jsonstr);
-
-    // try {
-    //     using namespace bit7z;
-    //     std::vector<unsigned char> buffer;
-    //     #ifdef Q_OS_WINDOWS
-    //     Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
-    //     #else
-    //     Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
-    //     #endif
-    //     if (zipPath.endsWith(".zip", Qt::CaseInsensitive)) {
-    //         BitFileExtractor extractor(lib, BitFormat::Zip);
-    //         extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
-    //     }
-    //     else {
-    //         BitFileExtractor extractor(lib, BitFormat::SevenZip);
-    //         extractor.extractMatching(zipPath.toStdString().c_str(), "squirrel.json", buffer);
-    //     }
-    //     std::string json{buffer.begin(), buffer.end()};
-    //     jsonstr = QString::fromStdString(json);
-    // }
-    // catch ( const bit7z::BitException& ex ) {
-    //     /* Do something with ex.what()...*/
-    //     Log("Unable to read squirrel package using bit7z library", __FUNCTION__);
-    //     utils::Print(ex.what());
-    //     return false;
-    // }
-
-    // /* get listing of the zip the file, check if the squirrel.json exists in the root */
-    // QString systemstring;
-    // #ifdef Q_OS_WINDOWS
-    //     systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" l \"" + zipPath + "\"");
-    // #else
-    //     systemstring = "unzip -l " + zipPath;
-    // #endif
-    // QString output = utils::SystemCommand(systemstring, true);
-    // Log(output, __FUNCTION__);
-    // if (!output.contains("squirrel.json")) {
-    //     Log(QString("File " + zipPath + " does not appear to be a squirrel package"), __FUNCTION__);
-    //     return false;
-    // }
-
-    // /* get the header .json file (either by unzipping or extracting only the file) */
-    // QString jsonStr;
-    // if (readonly) {
-    //     #ifdef Q_OS_WINDOWS
-    //         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + zipPath + "\" -o\"" + workingDir + "\" squirrel.json -y");
-    //         Log(systemstring, __FUNCTION__);
-    //         output = utils::SystemCommand(systemstring, true);
-    //         /* read from .json file */
-    //         jsonStr = utils::ReadTextFileToString(workingDir + "/squirrel.json");
-    //     #else
-    //         systemstring = QString("unzip -p " + zipPath + " squirrel.json");
-    //     output = utils::SystemCommand(systemstring, true);
-    //     #endif
-    // }
-    // else {
-    //     /* unzip the .zip to the working dir */
-    //     #ifdef Q_OS_WINDOWS
-    //         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" x \"" + zipPath + "\" -o\"" + workingDir + "\" -y");
-    //     #else
-    //         systemstring = QString("unzip " + zipPath + " -d " + workingDir);
-    //     #endif
-    //     output = utils::SystemCommand(systemstring, true);
-    //     Log(output, __FUNCTION__);
-
-    //     /* read from .json file */
-    //     jsonStr = utils::ReadTextFileToString(workingDir + "/squirrel.json");
-    // }
+    if (!ExtractFileFromArchive(zipPath, "squirrel.json", jsonstr)) {
+        Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
+        return false;
+    }
 
     /* get the JSON document and root object */
     QJsonDocument d = QJsonDocument::fromJson(jsonstr.toUtf8());
@@ -785,17 +720,6 @@ bool squirrel::Write(bool writeLog) {
         if (!utils::WriteTextFile(jsonFilePath, j))
             Log("Error writing [" + jsonFilePath + "]", __FUNCTION__);
 
-//         QString systemstring;
-// #ifdef Q_OS_WINDOWS
-//         systemstring = QString("\"C:/Program Files/7-Zip/7z.exe\" a \"" + zipPath + "\" \"" + workingDir + "/*\"");
-// #else
-//         systemstring = "cd " + workingDir + "; zip -1rv " + zipPath + " .";
-// #endif
-
-//         Log("Beginning zipping package", __FUNCTION__);
-//         utils::SystemCommand(systemstring);
-
-        //if (utils::FileExists(zipPath)) {
         QString m;
         if (CompressDirectoryToArchive(workingDir, zipPath, m)) {
             QFileInfo fi(zipPath);

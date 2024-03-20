@@ -82,8 +82,6 @@ int main(int argc, char *argv[])
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Dont print headers and checks"));
-        //p.addOption(QCommandLineOption(QStringList() << "i" << "input", "Input path", "dir"));
-        //p.addOption(QCommandLineOption(QStringList() << "o" << "outout", "Output path", "zipfilename"));
         p.addOption(QCommandLineOption(QStringList() << "dataformat", "Output data format if converted from DICOM:\n  anon - Anonymized DICOM\n  nifti4d - Nifti 4D\n  nifti4dgz - Nifti 4D gz (default)\n  nifti3d - Nifti 3D\n  nifti3dgz - Nifti 3D gz", "format"));
         p.addOption(QCommandLineOption(QStringList() << "dirformat", "Output directory structure\n  seq - Sequentially numbered\n  orig - Original ID (default)", "format"));
 
@@ -91,8 +89,6 @@ int main(int argc, char *argv[])
 
         bool debug = p.isSet("d");
         bool quiet = p.isSet("q");
-        //QString paramOutputFile = p.value("o").trimmed();
-        //QString inputPath = p.value("i").trimmed();
         QString paramOutputDataFormat = p.value("dataformat").trimmed();
         QString paramOutputDirFormat = p.value("dirformat").trimmed();
 
