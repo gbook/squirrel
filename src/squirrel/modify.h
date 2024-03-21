@@ -24,8 +24,6 @@
 #define MODIFY_H
 #include "squirrel.h"
 
-//enum FileMode { TempDir, Archive };
-
 class modify
 {
 public:

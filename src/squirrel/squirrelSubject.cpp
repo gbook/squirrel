@@ -242,7 +242,7 @@ QJsonObject squirrelSubject::ToJSON() {
     QJsonArray JSONstudies;
     while (q.next()) {
         squirrelStudy s;
-        s.SetObjectID(q.value("StudyRowID").toInt());
+        s.SetObjectID(q.value("StudyRowID").toLongLong());
         if (s.Get()) {
             JSONstudies.append(s.ToJSON());
         }
@@ -259,7 +259,7 @@ QJsonObject squirrelSubject::ToJSON() {
     QJsonArray JSONmeasures;
     while (q.next()) {
         squirrelMeasure m;
-        m.SetObjectID(q.value("MeasureRowID").toInt());
+        m.SetObjectID(q.value("MeasureRowID").toLongLong());
         if (m.Get()) {
             JSONmeasures.append(m.ToJSON());
         }
@@ -276,7 +276,7 @@ QJsonObject squirrelSubject::ToJSON() {
     QJsonArray JSONdrugs;
     while (q.next()) {
         squirrelDrug d;
-        d.SetObjectID(q.value("DrugRowID").toInt());
+        d.SetObjectID(q.value("DrugRowID").toLongLong());
         if (d.Get()) {
             JSONdrugs.append(d.ToJSON());
         }

@@ -268,7 +268,7 @@ QJsonObject squirrelStudy::ToJSON() {
     QJsonArray JSONseries;
     while (q.next()) {
         squirrelSeries s;
-        s.SetObjectID(q.value("SeriesRowID").toInt());
+        s.SetObjectID(q.value("SeriesRowID").toLongLong());
         if (s.Get()) {
             JSONseries.append(s.ToJSON());
         }
@@ -285,7 +285,7 @@ QJsonObject squirrelStudy::ToJSON() {
     QJsonArray JSONanalysis;
     while (q.next()) {
         squirrelSeries s;
-        s.SetObjectID(q.value("AnalysisRowID").toInt());
+        s.SetObjectID(q.value("AnalysisRowID").toLongLong());
         if (s.Get()) {
             JSONanalysis.append(s.ToJSON());
         }

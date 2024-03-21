@@ -78,8 +78,8 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
 
         /* load the package */
         squirrel *sqrl = new squirrel();
-        sqrl->SetFileMode(FileMode::Archive);
-        sqrl->SetFilename(packagePath);
+        sqrl->SetFileMode(FileMode::ExistingPackage);
+        sqrl->SetPackagePath(packagePath);
         if (!sqrl->Read(true)) {
             m = QString("Package unreadable [%1] already exists in package").arg(vars["SubjectID"]);
             delete sqrl;
@@ -88,7 +88,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
 
         /* ----- subject ----- */
         if (addObject == "subject") {
-            int subjectRowID;
+            qint64 subjectRowID;
             subjectRowID = sqrl->FindSubject(vars["PatientID"]);
             if (subjectRowID < 0) {
                 squirrelSubject subject;
@@ -113,8 +113,8 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- study ----- */
         else if (addObject == "study") {
-            int subjectRowID = sqrl->FindSubject(subjectID);
-            int studyRowID = sqrl->FindStudy(subjectID, vars["StudyNumber"].toInt());
+            qint64 subjectRowID = sqrl->FindSubject(subjectID);
+            qint64 studyRowID = sqrl->FindStudy(subjectID, vars["StudyNumber"].toInt());
             if (studyRowID < 0) {
                 squirrelStudy study;
                 sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["PatientID"]), __FUNCTION__);
@@ -226,7 +226,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- analysis ----- */
         else if (addObject == "analysis") {
-            int studyRowID = sqrl->FindStudy(subjectID, studyNum);
+            qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
             int analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
             if (analysisRowID < 0) {
                 squirrelAnalysis analysis;
@@ -276,7 +276,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- pipeline ----- */
         else if (addObject == "pipeline") {
-            int pipelineRowID = sqrl->FindPipeline(vars["PipelineName"]);
+            qint64 pipelineRowID = sqrl->FindPipeline(vars["PipelineName"]);
             if (pipelineRowID < 0) {
                 squirrelPipeline pipeline;
                 sqrl->Log(QString("Creating squirrel Pipeline [%1]").arg(vars["PipelineName"]), __FUNCTION__);

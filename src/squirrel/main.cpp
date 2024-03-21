@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
             dcm->LoadToSquirrel(inputPath, bindir, sqrl);
 
             /* 2) write the squirrel file */
-            sqrl->SetFilename(outputPath);
+            sqrl->SetPackagePath(outputPath);
             sqrl->Write(true);
 
             delete dcm;
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
             bds->LoadToSquirrel(indir.path(), sqrl);
 
             /* save the squirrel object */
-            sqrl->SetFilename(outputfile);
+            sqrl->SetPackagePath(outputfile);
             sqrl->Write(true);
         }
     }
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
         else {
             squirrel *sqrl = new squirrel(debug, quiet);
             sqrl->quiet = quiet;
-            sqrl->SetFilename(inputPath);
+            sqrl->SetPackagePath(inputPath);
             sqrl->Read(true);
 
             if (object == "package") {
@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 
         /* create squirrel object and validate */
         squirrel *sqrl = new squirrel(debug);
-        sqrl->SetFilename(inputPath);
+        sqrl->SetPackagePath(inputPath);
         if (sqrl->Read(true)) {
             sqrl->Log("Valid squirrel file", __FUNCTION__);
         }

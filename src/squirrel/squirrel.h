@@ -39,7 +39,7 @@
 #include "squirrelDataDictionary.h"
 #include "squirrelVersion.h"
 
-enum FileMode { TempDir, Archive };
+enum FileMode { NewPackage, ExistingPackage };
 
 /**
  * @brief The squirrel class
@@ -56,7 +56,8 @@ public:
     bool Write(bool writeLog);
     bool Validate();
     void Print();
-    void SetFilename(QString p);
+    void SetPackagePath(QString p) { packagePath = p; }
+    QString GetPackagePath();
     void SetFileMode(FileMode m) { fileMode = m; }
 
     /* package JSON elements */
@@ -80,36 +81,36 @@ public:
     QList<squirrelExperiment> GetAllExperiments();
     QList<squirrelPipeline> GetAllPipelines();
     QList<squirrelSubject> GetAllSubjects();
-    QList<squirrelStudy> GetStudies(int subjectRowID);
-    QList<squirrelSeries> GetSeries(int studyRowID);
-    QList<squirrelAnalysis> GetAnalyses(int studyRowID);
-    QList<squirrelMeasure> GetMeasures(int subjectRowID);
-    QList<squirrelDrug> GetDrugs(int subjectRowID);
+    QList<squirrelStudy> GetStudies(qint64 subjectRowID);
+    QList<squirrelSeries> GetSeries(qint64 studyRowID);
+    QList<squirrelAnalysis> GetAnalyses(qint64 studyRowID);
+    QList<squirrelMeasure> GetMeasures(qint64 subjectRowID);
+    QList<squirrelDrug> GetDrugs(qint64 subjectRowID);
     QList<squirrelGroupAnalysis> GetAllGroupAnalyses();
     QList<squirrelDataDictionary> GetAllDataDictionaries();
 
     /* get numbers of objects */
     qint64 GetFileCount();
-    int GetObjectCount(QString object);
+    qint64 GetObjectCount(QString object);
 
     /* find objects, return rowID */
-    int FindSubject(QString id);
-    int FindStudy(QString subjectID, int studyNum);
-    int FindStudyByUID(QString studyUID);
-    int FindSeries(QString subjectID, int studyNum, int seriesNum);
-    int FindSeriesByUID(QString seriesUID);
-    int FindAnalysis(QString subjectID, int studyNum, QString analysisName);
-    int FindExperiment(QString experimentName);
-    int FindPipeline(QString pipelineName);
-    int FindGroupAnalysis(QString groupAnalysisName);
-    int FindDataDictionary(QString dataDictionaryName);
+    qint64 FindSubject(QString id);
+    qint64 FindStudy(QString subjectID, int studyNum);
+    qint64 FindStudyByUID(QString studyUID);
+    qint64 FindSeries(QString subjectID, int studyNum, int seriesNum);
+    qint64 FindSeriesByUID(QString seriesUID);
+    qint64 FindAnalysis(QString subjectID, int studyNum, QString analysisName);
+    qint64 FindExperiment(QString experimentName);
+    qint64 FindPipeline(QString pipelineName);
+    qint64 FindGroupAnalysis(QString groupAnalysisName);
+    qint64 FindDataDictionary(QString dataDictionaryName);
 
-    bool AddStagedFiles(QString objectType, int rowid, QStringList files, QString destDir="");
+    bool AddStagedFiles(QString objectType, qint64 rowid, QStringList files);
 
     /* requence the subject data */
     void ResequenceSubjects();
-    void ResequenceStudies(int subjectRowID);
-    void ResequenceSeries(int studyRowID);
+    void ResequenceStudies(qint64 subjectRowID);
+    void ResequenceSeries(qint64 studyRowID);
 
     /* package information */
     qint64 GetUnzipSize();
@@ -132,8 +133,8 @@ public:
     /* printing of information to console */
     void PrintPackage();
     void PrintSubjects(bool details=false);
-    void PrintStudies(int subjectRowID, bool details=false);
-    void PrintSeries(int studyRowID, bool details=false);
+    void PrintStudies(qint64 subjectRowID, bool details=false);
+    void PrintSeries(qint64 studyRowID, bool details=false);
     void PrintExperiments(bool details=false);
     void PrintPipelines(bool details=false);
     void PrintGroupAnalyses(bool details=false);
@@ -147,14 +148,15 @@ private:
     bool InitializeDatabase();
     bool ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents);
     bool CompressDirectoryToArchive(QString dir, QString archivePath, QString &m);
-    bool CompressFileToArchive(QString filePath, QString compressedFilePath, QString archivePath, QString &m);
+    bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
+    bool RemoveFilesFromArchive(QStringList compressedFilePaths, QString archivePath, QString &m);
     bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
 
     QString workingDir;
     QString logfile;
     QStringList msgs; /* squirrel messages to be passed back through the squirrel library */
     QString log;
-    QString zipPath;
+    QString packagePath;
 
     FileMode fileMode;
 
