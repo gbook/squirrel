@@ -23,6 +23,7 @@
 #ifndef SQUIRREL_H
 #define SQUIRREL_H
 
+#include <string>
 #include <QString>
 #include <QDate>
 #include <QDateTime>
@@ -40,6 +41,8 @@
 #include "squirrelVersion.h"
 
 enum FileMode { NewPackage, ExistingPackage };
+typedef QPair<QString, QString> QStringPair;
+typedef QList<QStringPair> pairList;
 
 /**
  * @brief The squirrel class

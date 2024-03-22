@@ -44,6 +44,7 @@ public:
     qint64 GetObjectID() { return objectID; }
     void SetObjectID(qint64 id) { objectID = id; }
     QString VirtualPath();
+    QList<QPair<QString,QString>> GetStagedFileList();
 
     /* JSON elements */
     QString GroupAnalysisName;  /*!< name of the group analysis */

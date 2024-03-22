@@ -261,7 +261,6 @@ bool squirrel::Read(bool readonly) {
         sqrlSubject.Gender = jsonSubject["Gender"].toString();
         sqrlSubject.Ethnicity1 = jsonSubject["Ethnicity1"].toString();
         sqrlSubject.Ethnicity2 = jsonSubject["Ethnicity2"].toString();
-        //sqrlSubject.virtualPath = jsonSubject["VirtualPath"].toString();
         sqrlSubject.Store();
         qint64 subjectRowID = sqrlSubject.GetObjectID();
 
@@ -483,16 +482,6 @@ bool squirrel::Read(bool readonly) {
         sqrlPipeline.Store();
     }
 
-    /* delete the tmpdir if it exists */
-    // if (!readonly) {
-    //     if (utils::DirectoryExists(workingDir)) {
-    //         Log(QString("Temporary export dir [" + workingDir + "] exists and will be deleted"), __FUNCTION__);
-    //         QString m;
-    //         if (!utils::RemoveDir(workingDir, m))
-    //             Log(QString("Error [" + m + "] removing directory [" + workingDir + "]"), __FUNCTION__);
-    //     }
-    // }
-
     return true;
 }
 
@@ -518,6 +507,8 @@ bool squirrel::Write(bool writeLog) {
     else {
         Log(QString("Updating existing squirrel package [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
     }
+
+    pairList stagedFiles;
 
     /* ----- 1) Write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
@@ -646,10 +637,15 @@ bool squirrel::Write(bool writeLog) {
     QJsonObject data;
     QJsonArray JSONsubjects;
 
-    /* add subjects */
+    /* add subjects to JSON */
     QList<squirrelSubject> subjectses = GetAllSubjects();
     foreach (squirrelSubject subject, subjectses) {
         JSONsubjects.append(subject.ToJSON());
+    }
+
+    /* add staged files to list */
+    foreach (squirrelSubject subject, subjectses) {
+        stagedFiles += subject.GetStagedFileList();
     }
 
     /* add group-analyses */
@@ -660,6 +656,7 @@ bool squirrel::Write(bool writeLog) {
         foreach (squirrelGroupAnalysis g, groupAnalyses) {
             if (g.Get()) {
                 JSONgroupanalyses.append(g.ToJSON());
+                stagedFiles += g.GetStagedFileList();
                 Log(QString("Added group-analysis [%1]").arg(g.GroupAnalysisName), __FUNCTION__);
             }
         }
@@ -679,6 +676,7 @@ bool squirrel::Write(bool writeLog) {
         foreach (squirrelPipeline p, pipelines) {
             if (p.Get()) {
                 JSONpipelines.append(p.ToJSON(workingDir));
+                stagedFiles += p.GetStagedFileList();
                 Log(QString("Added pipeline [%1]").arg(p.PipelineName), __FUNCTION__);
             }
         }
@@ -694,6 +692,7 @@ bool squirrel::Write(bool writeLog) {
         foreach (squirrelExperiment e, exps) {
             if (e.Get()) {
                 JSONexperiments.append(e.ToJSON());
+                stagedFiles += e.GetStagedFileList();
                 Log(QString("Added experiment [%1]").arg(e.ExperimentName), __FUNCTION__);
             }
         }
@@ -709,6 +708,7 @@ bool squirrel::Write(bool writeLog) {
         foreach (squirrelDataDictionary d, dicts) {
             if (d.Get()) {
                 JSONdataDictionaries.append(d.ToJSON());
+                stagedFiles += d.GetStagedFileList();
                 Log("Added data-dictionary", __FUNCTION__);
             }
         }
@@ -722,6 +722,16 @@ bool squirrel::Write(bool writeLog) {
 
     /* write the final .json file */
     if (fileMode == NewPackage) {
+
+        /* copy in all files from the staged files list */
+        for (int i=0; i<stagedFiles.size(); i++) {
+            QStringPair file = stagedFiles.at(i);
+            QString source = file.first;
+            QString dest = workingDir + "/" + file.first;
+            if (!QFile::copy(source, dest))
+                Log(QString("Error copying [%1] to [%2]").arg(source).arg(dest), __FUNCTION__);
+        }
+
         Log("Zipping the archive from a temp directory", __FUNCTION__);
 
         /* write the .json file to the temp dir */
@@ -749,9 +759,23 @@ bool squirrel::Write(bool writeLog) {
         }
     }
     else {
-        /* update the archive in place with the new .json file */
-        Log("Updating a single file in the archive", __FUNCTION__);
+
+        /* update all files from the staged files list */
+        QStringList diskPaths, archivePaths;
+        for (int i=0; i<stagedFiles.size(); i++) {
+            QStringPair file = stagedFiles.at(i);
+            QString source = file.first;
+            QString dest = workingDir + "/" + file.first;
+            diskPaths.append(source);
+            archivePaths.append(dest);
+        }
+        Log("Adding/updating files in existing package", __FUNCTION__);
         QString m;
+        if (!AddFilesToArchive(diskPaths, archivePaths, GetPackagePath(), m))
+            Log("Error [" + m + "] adding file(s) to archive", __FUNCTION__);
+
+        /* update the package in place with the new .json file */
+        Log("Updating existing package", __FUNCTION__);
         if (!UpdateMemoryFileToArchive(j, "squirrel.json", GetPackagePath(), m)) {
             Log("Error [" + m + "] compressing memory file to archive", __FUNCTION__);
         }

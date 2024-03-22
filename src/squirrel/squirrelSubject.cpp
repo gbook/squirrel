@@ -308,3 +308,27 @@ QString squirrelSubject::VirtualPath() {
 
     return vPath;
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetStagedFileList ------------------------------------ */
+/* ------------------------------------------------------------ */
+QList<QPair<QString,QString>> squirrelSubject::GetStagedFileList() {
+
+    QList<QPair<QString,QString>> stagedList;
+
+    /* add all studies staged files */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select StudyRowID from Study where SubjectRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        squirrelStudy s;
+        s.SetObjectID(q.value("StudyRowID").toLongLong());
+        if (s.Get()) {
+            stagedList += s.GetStagedFileList();
+        }
+    }
+
+    return stagedList;
+}

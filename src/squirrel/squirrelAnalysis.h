@@ -45,6 +45,7 @@ public:
     void SetObjectID(qint64 id) { objectID = id; }
     void SetDirFormat(QString subject_DirFormat, QString study_DirFormat) {subjectDirFormat = subject_DirFormat; studyDirFormat = study_DirFormat; }
     QString VirtualPath();
+    QList<QPair<QString,QString>> GetStagedFileList();
 
     /* squirrel database variables */
     qint64 studyRowID;          /*!< database row id of the parent study */

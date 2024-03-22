@@ -51,6 +51,7 @@ public:
     void SetDirFormat(QString subject_DirFormat, QString study_DirFormat, QString series_DirFormat) {subjectDirFormat = subject_DirFormat; studyDirFormat = study_DirFormat; seriesDirFormat = series_DirFormat; }
     QString VirtualPath();
     void AnonymizeParams();
+    QList<QPair<QString,QString>> GetStagedFileList();
 
     qint64 studyRowID;
     qint64 experimentRowID = -1;

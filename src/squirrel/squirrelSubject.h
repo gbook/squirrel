@@ -53,6 +53,7 @@ public:
     void SetObjectID(qint64 id) { objectID = id; }
     void SetDirFormat(QString subject_DirFormat) {subjectDirFormat = subject_DirFormat; }
     QString VirtualPath();
+    QList<QPair<QString,QString>> GetStagedFileList();
 
     /* JSON elements */
     QDate DateOfBirth;      /*!< Date of birth. Not required, but can be useful to calculate age during studies. Can also contain only year... or contain only year and month */
