@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['rangehigh_0',['rangeHigh',['../structdata_dictionary_item.html#ac5ea75910dd50781c24eef20d4ac8339',1,'dataDictionaryItem']]],
-  ['rangelow_1',['rangeLow',['../structdata_dictionary_item.html#aaaf8e793400ec32e96a014ca849d0dc6',1,'dataDictionaryItem']]],
-  ['rater_2',['rater',['../classsquirrel_drug.html#a9941412993576376dc129d233fa636b2',1,'squirrelDrug::rater()'],['../classsquirrel_measure.html#a13f1282967336134a53883a432449ce0',1,'squirrelMeasure::rater()']]],
-  ['readme_3',['readme',['../classsquirrel.html#a8a47e33a20b372c3c0041dea2f8fe9fa',1,'squirrel']]],
-  ['resultscript_4',['resultScript',['../classsquirrel_pipeline.html#a0b7486e93b7475032a489c0629245323',1,'squirrelPipeline']]],
-  ['route_5',['route',['../classsquirrel_drug.html#ac8d471ac923d7bcce700abba8d9f0f36',1,'squirrelDrug']]],
-  ['runtime_6',['runTime',['../classsquirrel_analysis.html#abe4787ee09c29292bc98eb429c815e10',1,'squirrelAnalysis']]]
+  ['rangehigh_0',['RangeHigh',['../structdata_dictionary_item.html#abd8f764bb9f02e278d8f5b4c0a51c2d6',1,'dataDictionaryItem']]],
+  ['rangelow_1',['RangeLow',['../structdata_dictionary_item.html#a417e0686e19cbaa05ba70aa7d2e9cbf4',1,'dataDictionaryItem']]],
+  ['rater_2',['Rater',['../classsquirrel_drug.html#a80ae55d1b8288ee3d103021af0d758f3',1,'squirrelDrug::Rater'],['../classsquirrel_measure.html#a9240edba41850721710f16cb6ba1d0c1',1,'squirrelMeasure::Rater']]],
+  ['readme_3',['Readme',['../classsquirrel.html#a55f00c3f2d9752adfa7ce63c1c17006a',1,'squirrel']]],
+  ['resultscript_4',['ResultScript',['../classsquirrel_pipeline.html#a22e34ec6133d1cd20e83466f815dddde',1,'squirrelPipeline']]],
+  ['runtime_5',['RunTime',['../classsquirrel_analysis.html#ac35608ad7e661898a0867db16ca4be55',1,'squirrelAnalysis']]]
 ];

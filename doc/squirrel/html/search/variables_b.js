@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['maxwalltime_0',['maxWallTime',['../classsquirrel_pipeline.html#aded0c18e82eb07dd3cdbba549e9e82d9',1,'squirrelPipeline']]],
-  ['measurename_1',['measureName',['../classsquirrel_measure.html#acd6807fb6d1c0887efe2ce60b4bee87f',1,'squirrelMeasure']]],
-  ['modality_2',['modality',['../structdata_step.html#a8ed9372abb08922aaaf2a5eef6d5542e',1,'dataStep::modality()'],['../classsquirrel_study.html#adaa59c802cd6ebfd5433597b028b5dba',1,'squirrelStudy::modality()']]]
+  ['measurename_0',['MeasureName',['../classsquirrel_measure.html#a1cd051574c99282075cf948773bbd522',1,'squirrelMeasure']]],
+  ['modality_1',['Modality',['../structdata_step.html#a02575e452025d9ccf23a3b8caceef175',1,'dataStep::Modality'],['../classsquirrel_study.html#a407472769b8fb17bdce70297c76d9f23',1,'squirrelStudy::Modality']]]
 ];

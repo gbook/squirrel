@@ -1,89 +1,90 @@
-\hypertarget{utils_8h_source}{}\doxysection{utils.\+h}
-\label{utils_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/utils.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/utils.h}}
-\mbox{\hyperlink{utils_8h}{Go to the documentation of this file.}}
+\doxysection{utils.\+h}
+\label{utils_8h_source}\index{src/squirrel/utils.h@{src/squirrel/utils.h}}
+\textbf{ Go to the documentation of this file.}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{2 \textcolor{comment}{  NIDB utils.h}}
-\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
-\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
-\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
-\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
-\DoxyCodeLine{8 \textcolor{comment}{}}
-\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
-\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
-\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
-\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
-\DoxyCodeLine{13 \textcolor{comment}{}}
-\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
-\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
-\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
-\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
-\DoxyCodeLine{18 \textcolor{comment}{}}
-\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
-\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
-\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
-\DoxyCodeLine{22 }
-\DoxyCodeLine{23 \textcolor{preprocessor}{\#ifndef UTILS\_H}}
-\DoxyCodeLine{24 \textcolor{preprocessor}{\#define UTILS\_H}}
-\DoxyCodeLine{25 }
-\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QString>}}
-\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QFile>}}
-\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QDir>}}
-\DoxyCodeLine{29 \textcolor{preprocessor}{\#include <QList>}}
-\DoxyCodeLine{30 \textcolor{preprocessor}{\#include <QHash>}}
-\DoxyCodeLine{31 \textcolor{preprocessor}{\#include <QDate>}}
-\DoxyCodeLine{32 \textcolor{preprocessor}{\#include <QtSql>}}
-\DoxyCodeLine{33 \textcolor{preprocessor}{\#include <QProcess>}}
-\DoxyCodeLine{34 \textcolor{preprocessor}{\#include <QDirIterator>}}
-\DoxyCodeLine{35 \textcolor{preprocessor}{\#include <QCryptographicHash>}}
-\DoxyCodeLine{36 \textcolor{preprocessor}{\#include <QRandomGenerator>}}
-\DoxyCodeLine{37 \textcolor{preprocessor}{\#include <QCollator>}}
-\DoxyCodeLine{38 \textcolor{preprocessor}{\#include <QRegularExpression>}}
-\DoxyCodeLine{39 \textcolor{preprocessor}{\#include <QCoreApplication>}}
-\DoxyCodeLine{40 }
-\DoxyCodeLine{41 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespaceutils}{utils}} \{}
-\DoxyCodeLine{42     \textcolor{keyword}{typedef} QHash <int, QHash<QString, QString>> \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexedHash}};}
-\DoxyCodeLine{43 }
-\DoxyCodeLine{44     \textcolor{comment}{/* generic functions */}}
-\DoxyCodeLine{45     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespaceutils_affebcb1d5894273ed3758d4dc8b4dbf2}{Print}}(QString s, \textcolor{keywordtype}{bool} n=\textcolor{keyword}{true}, \textcolor{keywordtype}{bool} pad=\textcolor{keyword}{false});}
-\DoxyCodeLine{46     QString \mbox{\hyperlink{namespaceutils_a801a6734981f6585398a9539a228dccd}{CreateCurrentDateTime}}(\textcolor{keywordtype}{int} format=1);}
-\DoxyCodeLine{47     QString \mbox{\hyperlink{namespaceutils_a7e12ee4aed18f06e36e7f5354a09da64}{CreateLogDate}}();}
-\DoxyCodeLine{48     QString \mbox{\hyperlink{namespaceutils_adc5fe5f917fe05618635a2d994c306f8}{SystemCommand}}(QString s, \textcolor{keywordtype}{bool} detail=\textcolor{keyword}{true}, \textcolor{keywordtype}{bool} truncate=\textcolor{keyword}{false}, \textcolor{keywordtype}{bool} bufferOutput=\textcolor{keyword}{true});}
-\DoxyCodeLine{49     QString \mbox{\hyperlink{namespaceutils_a6b911c7934acb708a5a96e9b103fac61}{GenerateRandomString}}(\textcolor{keywordtype}{int} n);}
-\DoxyCodeLine{50     QString \mbox{\hyperlink{namespaceutils_a546b7adebb8ae91ecb8c95d7751d6ed2}{ParseDate}}(QString s);}
-\DoxyCodeLine{51     QString \mbox{\hyperlink{namespaceutils_ad7078d5849ef1b8e86fd70e824498086}{ParseTime}}(QString s);}
-\DoxyCodeLine{52     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a699a213c6a0ebe40d122af2e70fe5645}{ParseCSV}}(QString csv, \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexedHash}} \&table, QStringList \&columns, QString \&msg);}
-\DoxyCodeLine{53     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a64cc949197af30c1bb613cce5f6421c8}{ParseTSV}}(QString tsv, \mbox{\hyperlink{namespaceutils_ab2e46a1f5828a7baea967fed17bdced2}{indexedHash}} \&table, QStringList \&columns, QString \&msg);}
-\DoxyCodeLine{54     QString \mbox{\hyperlink{namespaceutils_aac4a03a0f09bbeab5d3bb3df68733b70}{CleanJSON}}(QString s);}
-\DoxyCodeLine{55     \textcolor{keywordtype}{double} \mbox{\hyperlink{namespaceutils_af49a87b705c921d12f473c9361a1da1d}{GetPatientAge}}(QString PatientAgeStr, QString StudyDate, QString PatientBirthDate);}
-\DoxyCodeLine{56     QString \mbox{\hyperlink{namespaceutils_ab28544f34f28e5db5e86d20017ade89e}{CleanString}}(QString s);}
-\DoxyCodeLine{57 }
-\DoxyCodeLine{58     \textcolor{comment}{/* file and directory operations */}}
-\DoxyCodeLine{59     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_af47fa8b39d5b3e4cbaf6d9edfdfaeeb3}{CopyFile}}(QString f, QString dir);}
-\DoxyCodeLine{60     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_acbc2ded105c81c63536e211bc11a691d}{MakePath}}(QString p, QString \&msg, \textcolor{keywordtype}{bool} perm777=\textcolor{keyword}{true});}
-\DoxyCodeLine{61     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a2ca9c2a798bcb7a607120cef4ff3a316}{RemoveDir}}(QString p, QString \&msg);}
-\DoxyCodeLine{62     QStringList \mbox{\hyperlink{namespaceutils_a00d98bd6c3b583654087899db8a0f268}{FindAllFiles}}(QString dir, QString pattern, \textcolor{keywordtype}{bool} recursive=\textcolor{keyword}{false});}
-\DoxyCodeLine{63     QStringList \mbox{\hyperlink{namespaceutils_a97ab2327c58041d933ac2bead7aa5d17}{FindAllDirs}}(QString dir, QString pattern, \textcolor{keywordtype}{bool} recursive=\textcolor{keyword}{false}, \textcolor{keywordtype}{bool} includepath=\textcolor{keyword}{false});}
-\DoxyCodeLine{64     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a3b3419cf8be729230f2321d4fc28bf53}{RenameFile}}(QString filepathorig, QString filepathnew, \textcolor{keywordtype}{bool} force=\textcolor{keyword}{true});}
-\DoxyCodeLine{65     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a125a7f9e4457adeb1e0c3e10afcd601b}{MoveFile}}(QString f, QString dir, QString \&m);}
-\DoxyCodeLine{66     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespaceutils_a24eac88d9ead0c0f7120037af78a7b03}{GetDirSizeAndFileCount}}(QString dir, qint64 \&c, qint64 \&b, \textcolor{keywordtype}{bool} recurse=\textcolor{keyword}{false});}
-\DoxyCodeLine{67     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_acf4d28448dc62cedc4c5a2f3b0281e21}{WriteTextFile}}(QString filepath, QString str, \textcolor{keywordtype}{bool} append=\textcolor{keyword}{true});}
-\DoxyCodeLine{68     QString \mbox{\hyperlink{namespaceutils_ad433122c664f2e5849b6668da507256e}{ReadTextFileToString}}(QString filepath);}
-\DoxyCodeLine{69     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a1819698a0776df35c8859dc3f07e9cf8}{BatchRenameFiles}}(QString dir, QString seriesnum, QString studynum, QString uid, \textcolor{keywordtype}{int} \&numfilesrenamed, QString \&msg);}
-\DoxyCodeLine{70     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_ac8f14812df001f4d2c7feb83b5c63fe3}{DirectoryExists}}(QString dir);}
-\DoxyCodeLine{71     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_a5b1277766ca28a596841843338c63797}{FileExists}}(QString f);}
-\DoxyCodeLine{72 }
-\DoxyCodeLine{73     \textcolor{comment}{/* database functions */}}
-\DoxyCodeLine{74     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespaceutils_ad92461ddb9d93954842d813e5a757598}{SQLQuery}}(QSqlQuery \&q, QString function, QString file, \textcolor{keywordtype}{int} line, \textcolor{keywordtype}{bool} d=\textcolor{keyword}{false});}
-\DoxyCodeLine{75     QStringList \mbox{\hyperlink{namespaceutils_a606285ea178186b25cd608e600db8e35}{GetStagedFileList}}(qint64 objectID, QString objectType);}
-\DoxyCodeLine{76     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespaceutils_acb558e77b85928208880fb3491ef12a9}{StoreStagedFileList}}(qint64 objectID, QString objectType, QStringList paths);}
-\DoxyCodeLine{77     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespaceutils_a0da88ac6b11389d8033e436a5f019bf0}{RemoveStagedFileList}}(qint64 objectID, QString objectType);}
-\DoxyCodeLine{78     QHash<QString, QString> \mbox{\hyperlink{namespaceutils_acba1c2e042a78403f483964736e17559}{GetParams}}(qint64 seriesRowID);}
-\DoxyCodeLine{79     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespaceutils_a2208439c10651ea16714bc32b1bb2122}{StoreParams}}(qint64 seriesRowID, QHash<QString, QString> params);}
-\DoxyCodeLine{80     QHash<QString, QString> \mbox{\hyperlink{namespaceutils_aebfa082e4124a3aebbaf47cae78177c6}{AnonymizeParams}}(QHash<QString, QString> params);}
-\DoxyCodeLine{81 }
-\DoxyCodeLine{82 \}}
-\DoxyCodeLine{83 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// UTILS\_H}}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ NIDB\ utils.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ Copyright\ (C)\ 2004\ -\/\ 2024}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ Gregory\ A\ Book\ <gregory.book@hhchealth.org>\ <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ Olin\ Neuropsychiatry\ Research\ Center,\ Hartford\ Hospital}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ GPLv3\ License:}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ This\ program\ is\ free\ software:\ you\ can\ redistribute\ it\ and/or\ modify}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ it\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License\ as\ published\ by}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ the\ Free\ Software\ Foundation,\ either\ version\ 3\ of\ the\ License,\ or}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ GNU\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ General\ Public\ License}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ along\ with\ this\ program.\ \ If\ not,\ see\ <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ UTILS\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ UTILS\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <QFile>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <QDir>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <QList>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <QHash>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <QDate>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <QtSql>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <QProcess>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <QDirIterator>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <QCryptographicHash>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <QRandomGenerator>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <QCollator>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <QRegularExpression>}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <QCoreApplication>}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{namespace\ }utils\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{typedef}\ QHash\ <int,\ QHash<QString,\ QString>>\ indexedHash;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*\ generic\ functions\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ Print(QString\ s,\ \textcolor{keywordtype}{bool}\ n=\textcolor{keyword}{true},\ \textcolor{keywordtype}{bool}\ pad=\textcolor{keyword}{false});}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ PrintHeader();}
+\DoxyCodeLine{00047\ \ \ \ \ QString\ CreateCurrentDateTime(\textcolor{keywordtype}{int}\ format=1);}
+\DoxyCodeLine{00048\ \ \ \ \ QString\ CreateLogDate();}
+\DoxyCodeLine{00049\ \ \ \ \ QString\ SystemCommand(QString\ s,\ \textcolor{keywordtype}{bool}\ detail=\textcolor{keyword}{true},\ \textcolor{keywordtype}{bool}\ truncate=\textcolor{keyword}{false});}
+\DoxyCodeLine{00050\ \ \ \ \ QString\ GenerateRandomString(\textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00051\ \ \ \ \ QString\ ParseDate(QString\ s);}
+\DoxyCodeLine{00052\ \ \ \ \ QString\ ParseTime(QString\ s);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{bool}\ ParseCSV(QString\ csv,\ indexedHash\ \&table,\ QStringList\ \&columns,\ QString\ \&msg);}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{bool}\ ParseTSV(QString\ tsv,\ indexedHash\ \&table,\ QStringList\ \&columns,\ QString\ \&msg);}
+\DoxyCodeLine{00055\ \ \ \ \ QString\ CleanJSON(QString\ s);}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{double}\ GetPatientAge(QString\ PatientAgeStr,\ QString\ StudyDate,\ QString\ PatientBirthDate);}
+\DoxyCodeLine{00057\ \ \ \ \ QString\ CleanString(QString\ s);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*\ file\ and\ directory\ operations\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ CopyFile(QString\ f,\ QString\ dir);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{bool}\ MakePath(QString\ p,\ QString\ \&msg,\ \textcolor{keywordtype}{bool}\ perm777=\textcolor{keyword}{true});}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{bool}\ RemoveDir(QString\ p,\ QString\ \&msg);}
+\DoxyCodeLine{00063\ \ \ \ \ QStringList\ FindAllFiles(QString\ dir,\ QString\ pattern,\ \textcolor{keywordtype}{bool}\ recursive=\textcolor{keyword}{false});}
+\DoxyCodeLine{00064\ \ \ \ \ QStringList\ FindAllDirs(QString\ dir,\ QString\ pattern,\ \textcolor{keywordtype}{bool}\ recursive=\textcolor{keyword}{false},\ \textcolor{keywordtype}{bool}\ includepath=\textcolor{keyword}{false});}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{bool}\ RenameFile(QString\ filepathorig,\ QString\ filepathnew,\ \textcolor{keywordtype}{bool}\ force=\textcolor{keyword}{true});}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{bool}\ MoveFile(QString\ f,\ QString\ dir,\ QString\ \&m);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ GetDirSizeAndFileCount(QString\ dir,\ qint64\ \&c,\ qint64\ \&b,\ \textcolor{keywordtype}{bool}\ recurse=\textcolor{keyword}{false});}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{bool}\ WriteTextFile(QString\ filepath,\ QString\ str,\ \textcolor{keywordtype}{bool}\ append=\textcolor{keyword}{true});}
+\DoxyCodeLine{00069\ \ \ \ \ QString\ ReadTextFileToString(QString\ filepath);}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ BatchRenameFiles(QString\ dir,\ QString\ seriesnum,\ QString\ studynum,\ QString\ uid,\ \textcolor{keywordtype}{int}\ \&numfilesrenamed,\ QString\ \&msg);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{bool}\ DirectoryExists(QString\ dir);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{bool}\ FileExists(QString\ f);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{/*\ database\ functions\ */}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{bool}\ SQLQuery(QSqlQuery\ \&q,\ QString\ function,\ QString\ file,\ \textcolor{keywordtype}{int}\ line,\ \textcolor{keywordtype}{bool}\ d=\textcolor{keyword}{false});}
+\DoxyCodeLine{00076\ \ \ \ \ QStringList\ GetStagedFileList(qint64\ objectID,\ QString\ objectType);}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ StoreStagedFileList(qint64\ objectID,\ QString\ objectType,\ QStringList\ paths);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ RemoveStagedFileList(qint64\ objectID,\ QString\ objectType);}
+\DoxyCodeLine{00079\ \ \ \ \ QHash<QString,\ QString>\ GetParams(qint64\ seriesRowID);}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{void}\ StoreParams(qint64\ seriesRowID,\ QHash<QString,\ QString>\ params);}
+\DoxyCodeLine{00081\ \ \ \ \ QHash<QString,\ QString>\ AnonymizeParams(QHash<QString,\ QString>\ params);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ UTILS\_H}}
 
 \end{DoxyCode}

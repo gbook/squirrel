@@ -1,71 +1,74 @@
-\hypertarget{utils_8cpp}{}\doxysection{C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/utils.cpp File Reference}
-\label{utils_8cpp}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/utils.cpp@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/utils.cpp}}
-{\ttfamily \#include \char`\"{}utils.\+h\char`\"{}}\newline
-\doxysubsection*{Namespaces}
+\doxysection{src/squirrel/utils.cpp File Reference}
+\label{utils_8cpp}\index{src/squirrel/utils.cpp@{src/squirrel/utils.cpp}}
+{\ttfamily \#include "{}utils.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Version.\+h"{}}\newline
+\doxysubsubsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
-namespace \mbox{\hyperlink{namespaceutils}{utils}}
+namespace \textbf{ utils}
 \end{DoxyCompactItemize}
-\doxysubsection*{Functions}
+\doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool \mbox{\hyperlink{namespaceutils_ad92461ddb9d93954842d813e5a757598}{utils\+::\+SQLQuery}} (QSql\+Query \&q, QString function, QString file, int line, bool d)
+bool \textbf{ utils\+::\+SQLQuery} (QSql\+Query \&q, QString function, QString file, int line, bool d)
 \item 
-void \mbox{\hyperlink{namespaceutils_affebcb1d5894273ed3758d4dc8b4dbf2}{utils\+::\+Print}} (QString s, bool n, bool pad)
+void \textbf{ utils\+::\+Print} (QString s, bool n, bool pad)
 \item 
-QString \mbox{\hyperlink{namespaceutils_a801a6734981f6585398a9539a228dccd}{utils\+::\+Create\+Current\+Date\+Time}} (int format)
+QString \textbf{ utils\+::\+Create\+Current\+Date\+Time} (int format)
 \item 
-QString \mbox{\hyperlink{namespaceutils_a7e12ee4aed18f06e36e7f5354a09da64}{utils\+::\+Create\+Log\+Date}} ()
+QString \textbf{ utils\+::\+Create\+Log\+Date} ()
 \item 
-QString \mbox{\hyperlink{namespaceutils_adc5fe5f917fe05618635a2d994c306f8}{utils\+::\+System\+Command}} (QString s, bool detail, bool truncate, bool buffer\+Output)
+QString \textbf{ utils\+::\+System\+Command} (QString s, bool detail, bool truncate)
 \item 
-bool \mbox{\hyperlink{namespaceutils_acbc2ded105c81c63536e211bc11a691d}{utils\+::\+Make\+Path}} (QString p, QString \&msg, bool perm777)
+bool \textbf{ utils\+::\+Make\+Path} (QString p, QString \&msg, bool perm777)
 \item 
-bool \mbox{\hyperlink{namespaceutils_a2ca9c2a798bcb7a607120cef4ff3a316}{utils\+::\+Remove\+Dir}} (QString p, QString \&msg)
+bool \textbf{ utils\+::\+Remove\+Dir} (QString p, QString \&msg)
 \item 
-QString \mbox{\hyperlink{namespaceutils_a6b911c7934acb708a5a96e9b103fac61}{utils\+::\+Generate\+Random\+String}} (int n)
+QString \textbf{ utils\+::\+Generate\+Random\+String} (int n)
 \item 
-QString\+List \mbox{\hyperlink{namespaceutils_a00d98bd6c3b583654087899db8a0f268}{utils\+::\+Find\+All\+Files}} (QString dir, QString pattern, bool recursive)
+QString\+List \textbf{ utils\+::\+Find\+All\+Files} (QString dir, QString pattern, bool recursive)
 \item 
-QString\+List \mbox{\hyperlink{namespaceutils_a97ab2327c58041d933ac2bead7aa5d17}{utils\+::\+Find\+All\+Dirs}} (QString dir, QString pattern, bool recursive, bool includepath)
+QString\+List \textbf{ utils\+::\+Find\+All\+Dirs} (QString dir, QString pattern, bool recursive, bool includepath)
 \item 
-void \mbox{\hyperlink{namespaceutils_a24eac88d9ead0c0f7120037af78a7b03}{utils\+::\+Get\+Dir\+Size\+And\+File\+Count}} (QString dir, qint64 \&c, qint64 \&b, bool recurse)
+void \textbf{ utils\+::\+Get\+Dir\+Size\+And\+File\+Count} (QString dir, qint64 \&c, qint64 \&b, bool recurse)
 \item 
-QString \mbox{\hyperlink{namespaceutils_a546b7adebb8ae91ecb8c95d7751d6ed2}{utils\+::\+Parse\+Date}} (QString s)
+QString \textbf{ utils\+::\+Parse\+Date} (QString s)
 \item 
-QString \mbox{\hyperlink{namespaceutils_ad7078d5849ef1b8e86fd70e824498086}{utils\+::\+Parse\+Time}} (QString s)
+QString \textbf{ utils\+::\+Parse\+Time} (QString s)
 \item 
-bool \mbox{\hyperlink{namespaceutils_a699a213c6a0ebe40d122af2e70fe5645}{utils\+::\+Parse\+CSV}} (QString csv, indexed\+Hash \&table, QString\+List \&columns, QString \&msg)
+bool \textbf{ utils\+::\+Parse\+CSV} (QString csv, \textbf{ indexed\+Hash} \&table, QString\+List \&columns, QString \&msg)
 \item 
-bool \mbox{\hyperlink{namespaceutils_a64cc949197af30c1bb613cce5f6421c8}{utils\+::\+Parse\+TSV}} (QString tsv, indexed\+Hash \&table, QString\+List \&columns, QString \&msg)
+bool \textbf{ utils\+::\+Parse\+TSV} (QString tsv, \textbf{ indexed\+Hash} \&table, QString\+List \&columns, QString \&msg)
 \item 
-QString \mbox{\hyperlink{namespaceutils_aac4a03a0f09bbeab5d3bb3df68733b70}{utils\+::\+Clean\+JSON}} (QString s)
+QString \textbf{ utils\+::\+Clean\+JSON} (QString s)
 \item 
-bool \mbox{\hyperlink{namespaceutils_acf4d28448dc62cedc4c5a2f3b0281e21}{utils\+::\+Write\+Text\+File}} (QString filepath, QString str, bool append)
+bool \textbf{ utils\+::\+Write\+Text\+File} (QString filepath, QString str, bool append)
 \item 
-QString \mbox{\hyperlink{namespaceutils_ad433122c664f2e5849b6668da507256e}{utils\+::\+Read\+Text\+File\+To\+String}} (QString filepath)
+QString \textbf{ utils\+::\+Read\+Text\+File\+To\+String} (QString filepath)
 \item 
-bool \mbox{\hyperlink{namespaceutils_a1819698a0776df35c8859dc3f07e9cf8}{utils\+::\+Batch\+Rename\+Files}} (QString dir, QString seriesnum, QString studynum, QString uid, int \&numfilesrenamed, QString \&msg)
+bool \textbf{ utils\+::\+Batch\+Rename\+Files} (QString dir, QString seriesnum, QString studynum, QString uid, int \&numfilesrenamed, QString \&msg)
 \item 
-double \mbox{\hyperlink{namespaceutils_af49a87b705c921d12f473c9361a1da1d}{utils\+::\+Get\+Patient\+Age}} (QString Patient\+Age\+Str, QString Study\+Date, QString Patient\+Birth\+Date)
+double \textbf{ utils\+::\+Get\+Patient\+Age} (QString Patient\+Age\+Str, QString Study\+Date, QString Patient\+Birth\+Date)
 \item 
-bool \mbox{\hyperlink{namespaceutils_ac8f14812df001f4d2c7feb83b5c63fe3}{utils\+::\+Directory\+Exists}} (QString dir)
+bool \textbf{ utils\+::\+Directory\+Exists} (QString dir)
 \item 
-bool \mbox{\hyperlink{namespaceutils_a5b1277766ca28a596841843338c63797}{utils\+::\+File\+Exists}} (QString f)
+bool \textbf{ utils\+::\+File\+Exists} (QString f)
 \item 
-bool \mbox{\hyperlink{namespaceutils_af47fa8b39d5b3e4cbaf6d9edfdfaeeb3}{utils\+::\+Copy\+File}} (QString f, QString dir)
+bool \textbf{ utils\+::\+Copy\+File} (QString f, QString dir)
 \item 
-QString\+List \mbox{\hyperlink{namespaceutils_a606285ea178186b25cd608e600db8e35}{utils\+::\+Get\+Staged\+File\+List}} (qint64 object\+ID, QString object\+Type)
+QString\+List \textbf{ utils\+::\+Get\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type)
 \item 
-void \mbox{\hyperlink{namespaceutils_acb558e77b85928208880fb3491ef12a9}{utils\+::\+Store\+Staged\+File\+List}} (qint64 object\+ID, QString object\+Type, QString\+List paths)
+void \textbf{ utils\+::\+Store\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type, QString\+List paths)
 \item 
-void \mbox{\hyperlink{namespaceutils_a0da88ac6b11389d8033e436a5f019bf0}{utils\+::\+Remove\+Staged\+File\+List}} (qint64 object\+ID, QString object\+Type)
+void \textbf{ utils\+::\+Remove\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type)
 \item 
-QHash$<$ QString, QString $>$ \mbox{\hyperlink{namespaceutils_acba1c2e042a78403f483964736e17559}{utils\+::\+Get\+Params}} (qint64 series\+Row\+ID)
+QHash$<$ QString, QString $>$ \textbf{ utils\+::\+Get\+Params} (qint64 series\+Row\+ID)
 \item 
-void \mbox{\hyperlink{namespaceutils_a2208439c10651ea16714bc32b1bb2122}{utils\+::\+Store\+Params}} (qint64 series\+Row\+ID, QHash$<$ QString, QString $>$ params)
+void \textbf{ utils\+::\+Store\+Params} (qint64 series\+Row\+ID, QHash$<$ QString, QString $>$ params)
 \item 
-QString \mbox{\hyperlink{namespaceutils_ab28544f34f28e5db5e86d20017ade89e}{utils\+::\+Clean\+String}} (QString s)
+QString \textbf{ utils\+::\+Clean\+String} (QString s)
 \item 
-QHash$<$ QString, QString $>$ \mbox{\hyperlink{namespaceutils_aebfa082e4124a3aebbaf47cae78177c6}{utils\+::\+Anonymize\+Params}} (QHash$<$ QString, QString $>$ params)
+QHash$<$ QString, QString $>$ \textbf{ utils\+::\+Anonymize\+Params} (QHash$<$ QString, QString $>$ params)
+\item 
+void \textbf{ utils\+::\+Print\+Header} ()
 \end{DoxyCompactItemize}

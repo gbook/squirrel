@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['height_0',['height',['../classsquirrel_study.html#aa15004ee2448406273bd7ef0b615e627',1,'squirrelStudy']]],
-  ['hostname_1',['hostname',['../classsquirrel_analysis.html#a53a470026e4d72fce1c2383f90545f81',1,'squirrelAnalysis']]]
+  ['height_0',['Height',['../classsquirrel_study.html#ab96ae1d95ef2642f8879a6af3297ed00',1,'squirrelStudy']]],
+  ['hostname_1',['Hostname',['../classsquirrel_analysis.html#aaecfa33a02ce6cd8712ebd972c733523',1,'squirrelAnalysis']]]
 ];

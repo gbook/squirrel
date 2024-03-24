@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['gender_0',['gender',['../classsquirrel_subject.html#ad0ddf9ae887ea07652e1efc7d6a354cc',1,'squirrelSubject']]],
-  ['group_1',['group',['../classsquirrel_pipeline.html#a30bb51cb3b9767a31b1624619a207a2d',1,'squirrelPipeline']]],
-  ['groupanalysisname_2',['groupAnalysisName',['../classsquirrel_group_analysis.html#a6f0df17020cd751543949c3255066e78',1,'squirrelGroupAnalysis']]],
-  ['grouptype_3',['groupType',['../classsquirrel_pipeline.html#ae9799e51f4808c31b901d0e61760c62a',1,'squirrelPipeline']]],
+  ['gender_0',['Gender',['../classsquirrel_subject.html#aada722afe6898c4841a7716d3d7338b8',1,'squirrelSubject']]],
+  ['group_1',['Group',['../classsquirrel_pipeline.html#af9eb80ea2a317bc611aaaf474613ce19',1,'squirrelPipeline']]],
+  ['groupanalysisname_2',['GroupAnalysisName',['../classsquirrel_group_analysis.html#a80806526b19f76b898ca33bb98d83d90',1,'squirrelGroupAnalysis']]],
+  ['grouptype_3',['GroupType',['../classsquirrel_pipeline.html#a66a1cca8857bf92a6264888a478b7383',1,'squirrelPipeline']]],
   ['guid_4',['GUID',['../classsquirrel_subject.html#aeb1cc91a12b18be80cb54fd58f7e0cf9',1,'squirrelSubject']]],
-  ['gzip_5',['gzip',['../structdata_step_1_1flag.html#ac8244048f9ab6d3f455c8f8c3a88c69c',1,'dataStep::flag']]]
+  ['gzip_5',['Gzip',['../structdata_step_1_1flag.html#a55c4a9e30d52c3454c71bf1bbe115913',1,'dataStep::flag']]]
 ];

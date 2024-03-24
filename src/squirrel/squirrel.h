@@ -55,7 +55,7 @@ public:
     squirrel(bool dbg=false, bool q=false);
     ~squirrel();
 
-    bool Read(bool readonly=true);
+    bool Read();
     bool Write(bool writeLog);
     bool Validate();
     void Print();

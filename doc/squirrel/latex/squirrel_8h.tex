@@ -1,22 +1,71 @@
-\hypertarget{squirrel_8h}{}\doxysection{C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/squirrel.h File Reference}
-\label{squirrel_8h}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrel.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrel.h}}
+\doxysection{src/squirrel/squirrel.h File Reference}
+\label{squirrel_8h}\index{src/squirrel/squirrel.h@{src/squirrel/squirrel.h}}
+{\ttfamily \#include $<$string$>$}\newline
 {\ttfamily \#include $<$QString$>$}\newline
 {\ttfamily \#include $<$QDate$>$}\newline
 {\ttfamily \#include $<$QDate\+Time$>$}\newline
 {\ttfamily \#include $<$QDebug$>$}\newline
 {\ttfamily \#include $<$Qt\+Sql$>$}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Subject.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Study.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Series.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Experiment.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Pipeline.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Measure.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Drug.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Group\+Analysis.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Data\+Dictionary.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Version.\+h\char`\"{}}\newline
-\doxysubsection*{Classes}
+{\ttfamily \#include "{}squirrel\+Subject.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Study.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Series.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Experiment.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Pipeline.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Measure.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Drug.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Group\+Analysis.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Data\+Dictionary.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel\+Version.\+h"{}}\newline
+\doxysubsubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \mbox{\hyperlink{classsquirrel}{squirrel}}
+class \textbf{ squirrel}
 \begin{DoxyCompactList}\small\item\em The squirrel class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef QPair$<$ QString, QString $>$ \textbf{ QString\+Pair}
+\item 
+typedef QList$<$ \textbf{ QString\+Pair} $>$ \textbf{ pair\+List}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ File\+Mode} \{ \textbf{ New\+Package}
+, \textbf{ Existing\+Package}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\label{squirrel_8h_a0d648f677b470ea4e5657a23758dfc8f} 
+\index{squirrel.h@{squirrel.h}!pairList@{pairList}}
+\index{pairList@{pairList}!squirrel.h@{squirrel.h}}
+\doxysubsubsection{pairList}
+{\footnotesize\ttfamily typedef QList$<$\textbf{ QString\+Pair}$>$ \textbf{ pair\+List}}
+
+\label{squirrel_8h_ac5badbbeff190b14f4096ec06da5f6d6} 
+\index{squirrel.h@{squirrel.h}!QStringPair@{QStringPair}}
+\index{QStringPair@{QStringPair}!squirrel.h@{squirrel.h}}
+\doxysubsubsection{QStringPair}
+{\footnotesize\ttfamily typedef QPair$<$QString, QString$>$ \textbf{ QString\+Pair}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\label{squirrel_8h_a031770da453a180e21dcbef5cf5aeab6} 
+\index{squirrel.h@{squirrel.h}!FileMode@{FileMode}}
+\index{FileMode@{FileMode}!squirrel.h@{squirrel.h}}
+\doxysubsubsection{FileMode}
+{\footnotesize\ttfamily enum \textbf{ File\+Mode}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NewPackage@{NewPackage}!squirrel.h@{squirrel.h}}\index{squirrel.h@{squirrel.h}!NewPackage@{NewPackage}}}\label{squirrel_8h_a031770da453a180e21dcbef5cf5aeab6ab117b55b876863d5c244093282b2d63d} 
+New\+Package&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ExistingPackage@{ExistingPackage}!squirrel.h@{squirrel.h}}\index{squirrel.h@{squirrel.h}!ExistingPackage@{ExistingPackage}}}\label{squirrel_8h_a031770da453a180e21dcbef5cf5aeab6a280f21feba5b47ccd84d1fd0250abd66} 
+Existing\+Package&\\
+\hline
+
+\end{DoxyEnumFields}

@@ -1,12 +1,14 @@
 var searchData=
 [
-  ['params_0',['params',['../classsquirrel_series.html#a064f009bfab65d36653177f9c3daeb67',1,'squirrelSeries']]],
-  ['parentpipelines_1',['parentPipelines',['../classsquirrel_pipeline.html#a4c47f0e846bb6f2150a8ea1b58b153c2',1,'squirrelPipeline']]],
-  ['pipelinename_2',['pipelineName',['../classsquirrel_analysis.html#a9d6e016d1bb10ffef19afd97fdd9d7f3',1,'squirrelAnalysis::pipelineName()'],['../classsquirrel_pipeline.html#a3224c071de317e941e0f41f291775782',1,'squirrelPipeline::pipelineName()']]],
-  ['pipelinerowid_3',['pipelineRowID',['../classsquirrel_analysis.html#a60ca424848784abf1044a25dd2c2b12e',1,'squirrelAnalysis']]],
-  ['pipelineversion_4',['pipelineVersion',['../classsquirrel_analysis.html#a72ae846eeb76ffb7deac41feea35fa9e',1,'squirrelAnalysis']]],
-  ['preserveseries_5',['preserveSeries',['../structdata_step_1_1flag.html#acebd2d9c19df2bf232a7899b04672707',1,'dataStep::flag']]],
-  ['primaryprotocol_6',['primaryProtocol',['../structdata_step_1_1flag.html#ab6521773ad27afd25189b0cc431ab3cc',1,'dataStep::flag']]],
-  ['primaryscript_7',['primaryScript',['../classsquirrel_pipeline.html#ac9e267ec3ca4fa1a1e12ac57555c9ce8',1,'squirrelPipeline']]],
-  ['protocol_8',['protocol',['../structdata_step.html#acb992ebf00e81399529a440260b0cde4',1,'dataStep::protocol()'],['../classsquirrel_series.html#a4585dd931aee8a4a923ae7a7b84c77d7',1,'squirrelSeries::protocol()']]]
+  ['packageformat_0',['PackageFormat',['../classsquirrel.html#ab9296b83e930f6fc8da1f455d2a64e26',1,'squirrel']]],
+  ['packagename_1',['PackageName',['../classsquirrel.html#ab06dea972d0b6b87e9cf536dcc7311dc',1,'squirrel']]],
+  ['params_2',['params',['../classsquirrel_series.html#a064f009bfab65d36653177f9c3daeb67',1,'squirrelSeries']]],
+  ['parentpipelines_3',['ParentPipelines',['../classsquirrel_pipeline.html#a0b9b1c4345537632c5e487ea51776ac3',1,'squirrelPipeline']]],
+  ['pipelinename_4',['PipelineName',['../classsquirrel_analysis.html#a73d5ec1caadf7135b2a7ae5376ab408a',1,'squirrelAnalysis::PipelineName'],['../classsquirrel_pipeline.html#aebb0dfb0b342082265ee976eddd4ddf5',1,'squirrelPipeline::PipelineName']]],
+  ['pipelinerowid_5',['pipelineRowID',['../classsquirrel_analysis.html#a60ca424848784abf1044a25dd2c2b12e',1,'squirrelAnalysis']]],
+  ['pipelineversion_6',['PipelineVersion',['../classsquirrel_analysis.html#a1be62b3b16f8b905a873a6329c74d481',1,'squirrelAnalysis']]],
+  ['preserveseries_7',['PreserveSeries',['../structdata_step_1_1flag.html#a298ed5879a2fb0645052037cdb4a5949',1,'dataStep::flag']]],
+  ['primaryprotocol_8',['PrimaryProtocol',['../structdata_step_1_1flag.html#a8abf83bacffcbcd2f72fcf8a70256225',1,'dataStep::flag']]],
+  ['primaryscript_9',['PrimaryScript',['../classsquirrel_pipeline.html#a95cdc882e130ea728ab1387369f2d67d',1,'squirrelPipeline']]],
+  ['protocol_10',['Protocol',['../structdata_step.html#a57305c72f81de34fa1279153448d706d',1,'dataStep::Protocol'],['../classsquirrel_series.html#acf4f3e61103c0efea1514036e4b917d5',1,'squirrelSeries::Protocol']]]
 ];

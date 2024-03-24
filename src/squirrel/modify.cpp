@@ -132,7 +132,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
                 study.Equipment = vars["Equipment"];
                 study.subjectRowID = subjectRowID;
                 study.Store();
-                studyRowID = study.GetObjectID();
+                //studyRowID = study.GetObjectID();
                 /* resequence the newly added subject */
                 sqrl->ResequenceStudies(subjectRowID);
             }

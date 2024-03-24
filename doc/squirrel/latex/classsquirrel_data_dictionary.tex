@@ -1,165 +1,181 @@
-\hypertarget{classsquirrel_data_dictionary}{}\doxysection{squirrel\+Data\+Dictionary Class Reference}
+\doxysection{squirrel\+Data\+Dictionary Class Reference}
 \label{classsquirrel_data_dictionary}\index{squirrelDataDictionary@{squirrelDataDictionary}}
 
 
-The \mbox{\hyperlink{classsquirrel_data_dictionary}{squirrel\+Data\+Dictionary}} class.  
+The \doxyref{squirrel\+Data\+Dictionary}{p.}{classsquirrel_data_dictionary} class.  
 
 
 
 
 {\ttfamily \#include $<$squirrel\+Data\+Dictionary.\+h$>$}
 
-\doxysubsection*{Public Member Functions}
+\doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classsquirrel_data_dictionary_a9b166bce0962be88e44e6dea764aabb5}{squirrel\+Data\+Dictionary}} ()
+\textbf{ squirrel\+Data\+Dictionary} ()
 \item 
-QJson\+Object \mbox{\hyperlink{classsquirrel_data_dictionary_a4f254f7c5a8d6866a50c79e479dd0d60}{To\+JSON}} ()
+QJson\+Object \textbf{ To\+JSON} ()
 \item 
-void \mbox{\hyperlink{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f}{Print\+Data\+Dictionary}} ()
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f}{squirrel\+Data\+Dictionary\+::\+Print\+Data\+Dictionary}} \end{DoxyCompactList}\item 
-bool \mbox{\hyperlink{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d}{Get}} ()
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d}{squirrel\+Data\+Dictionary\+::\+Get}} \end{DoxyCompactList}\item 
-bool \mbox{\hyperlink{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a}{Store}} ()
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a}{squirrel\+Data\+Dictionary\+::\+Store}} \end{DoxyCompactList}\item 
-bool \mbox{\hyperlink{classsquirrel_data_dictionary_a39af717c2144d079fd44f924dacb5a60}{is\+Valid}} ()
+void \textbf{ Print\+Data\+Dictionary} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Data\+Dictionary\+::\+Print\+Data\+Dictionary}{p.}{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f} \end{DoxyCompactList}\item 
+bool \textbf{ Get} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Data\+Dictionary\+::\+Get}{p.}{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d} \end{DoxyCompactList}\item 
+bool \textbf{ Store} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Data\+Dictionary\+::\+Store}{p.}{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a} \end{DoxyCompactList}\item 
+bool \textbf{ is\+Valid} ()
 \item 
-QString \mbox{\hyperlink{classsquirrel_data_dictionary_addccb7b82b40a071c40ff3a42dfe1653}{Error}} ()
+QString \textbf{ Error} ()
 \item 
-qint64 \mbox{\hyperlink{classsquirrel_data_dictionary_af7639969b0a31bf8fd708c0d838885ca}{Get\+Object\+ID}} ()
+qint64 \textbf{ Get\+Object\+ID} ()
 \item 
-void \mbox{\hyperlink{classsquirrel_data_dictionary_a7abef92f54dc14dc30cee2e103616ffa}{Set\+Object\+ID}} (int id)
+void \textbf{ Set\+Object\+ID} (qint64 id)
+\item 
+QString \textbf{ Virtual\+Path} ()
+\item 
+QList$<$ QPair$<$ QString, QString $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
 \end{DoxyCompactItemize}
-\doxysubsection*{Public Attributes}
+\doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-QList$<$ \mbox{\hyperlink{structdata_dictionary_item}{data\+Dictionary\+Item}} $>$ \mbox{\hyperlink{classsquirrel_data_dictionary_a2b600caebf16333d4701b7f32b7d5763}{dict\+Items}}
+QList$<$ \textbf{ data\+Dictionary\+Item} $>$ \textbf{ dict\+Items}
 \item 
-qint64 \mbox{\hyperlink{classsquirrel_data_dictionary_abdd7f5546b6613b9ff8651331e0303cf}{numfiles}}
+QString \textbf{ Data\+Dictionary\+Name}
 \item 
-qint64 \mbox{\hyperlink{classsquirrel_data_dictionary_a14cda891ec0e0500a62d32c42ad65f0a}{size}}
+qint64 \textbf{ File\+Count}
 \item 
-QString \mbox{\hyperlink{classsquirrel_data_dictionary_a2aaa62436db5f1d3efb6d3454f646d2e}{virtual\+Path}} = \char`\"{}data-\/dictionary\char`\"{}
+qint64 \textbf{ Size}
 \item 
-QString\+List \mbox{\hyperlink{classsquirrel_data_dictionary_ad345b510d771ccaf384103136a7fa065}{staged\+Files}}
+QString\+List \textbf{ staged\+Files}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-The \mbox{\hyperlink{classsquirrel_data_dictionary}{squirrel\+Data\+Dictionary}} class. 
+The \doxyref{squirrel\+Data\+Dictionary}{p.}{classsquirrel_data_dictionary} class. 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classsquirrel_data_dictionary_a9b166bce0962be88e44e6dea764aabb5}\label{classsquirrel_data_dictionary_a9b166bce0962be88e44e6dea764aabb5}} 
+\label{classsquirrel_data_dictionary_a9b166bce0962be88e44e6dea764aabb5} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!squirrelDataDictionary@{squirrelDataDictionary}}
 \index{squirrelDataDictionary@{squirrelDataDictionary}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{squirrelDataDictionary()}{squirrelDataDictionary()}}
+\doxysubsubsection{squirrelDataDictionary()}
 {\footnotesize\ttfamily squirrel\+Data\+Dictionary\+::squirrel\+Data\+Dictionary (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{classsquirrel_data_dictionary_addccb7b82b40a071c40ff3a42dfe1653}\label{classsquirrel_data_dictionary_addccb7b82b40a071c40ff3a42dfe1653}} 
+\label{classsquirrel_data_dictionary_addccb7b82b40a071c40ff3a42dfe1653} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!Error@{Error}}
 \index{Error@{Error}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{Error()}{Error()}}
+\doxysubsubsection{Error()}
 {\footnotesize\ttfamily QString squirrel\+Data\+Dictionary\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d}\label{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d}} 
+\label{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!Get@{Get}}
 \index{Get@{Get}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{Get()}{Get()}}
+\doxysubsubsection{Get()}
 {\footnotesize\ttfamily bool squirrel\+Data\+Dictionary\+::\+Get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-\mbox{\hyperlink{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d}{squirrel\+Data\+Dictionary\+::\+Get}} 
+\doxyref{squirrel\+Data\+Dictionary\+::\+Get}{p.}{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d} 
 
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the data\+Dictionary data from the database. The data\+Dictionary\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_data_dictionary_af7639969b0a31bf8fd708c0d838885ca}\label{classsquirrel_data_dictionary_af7639969b0a31bf8fd708c0d838885ca}} 
+This function will attempt to load the data\+Dictionary data from the database. The data\+Dictionary\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_data_dictionary_af7639969b0a31bf8fd708c0d838885ca} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!GetObjectID@{GetObjectID}}
 \index{GetObjectID@{GetObjectID}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{GetObjectID()}{GetObjectID()}}
+\doxysubsubsection{GetObjectID()}
 {\footnotesize\ttfamily qint64 squirrel\+Data\+Dictionary\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{classsquirrel_data_dictionary_a39af717c2144d079fd44f924dacb5a60}\label{classsquirrel_data_dictionary_a39af717c2144d079fd44f924dacb5a60}} 
+\label{classsquirrel_data_dictionary_af12c57921af10829377d4320d3cb874a} 
+\index{squirrelDataDictionary@{squirrelDataDictionary}!GetStagedFileList@{GetStagedFileList}}
+\index{GetStagedFileList@{GetStagedFileList}!squirrelDataDictionary@{squirrelDataDictionary}}
+\doxysubsubsection{GetStagedFileList()}
+{\footnotesize\ttfamily QList$<$ QPair$<$ QString, QString $>$ $>$ squirrel\+Data\+Dictionary\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\label{classsquirrel_data_dictionary_a39af717c2144d079fd44f924dacb5a60} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!isValid@{isValid}}
 \index{isValid@{isValid}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{isValid()}{isValid()}}
+\doxysubsubsection{isValid()}
 {\footnotesize\ttfamily bool squirrel\+Data\+Dictionary\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f}\label{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f}} 
+\label{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!PrintDataDictionary@{PrintDataDictionary}}
 \index{PrintDataDictionary@{PrintDataDictionary}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{PrintDataDictionary()}{PrintDataDictionary()}}
+\doxysubsubsection{PrintDataDictionary()}
 {\footnotesize\ttfamily void squirrel\+Data\+Dictionary\+::\+Print\+Data\+Dictionary (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-\mbox{\hyperlink{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f}{squirrel\+Data\+Dictionary\+::\+Print\+Data\+Dictionary}} 
+\doxyref{squirrel\+Data\+Dictionary\+::\+Print\+Data\+Dictionary}{p.}{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f} 
 
-\mbox{\Hypertarget{classsquirrel_data_dictionary_a7abef92f54dc14dc30cee2e103616ffa}\label{classsquirrel_data_dictionary_a7abef92f54dc14dc30cee2e103616ffa}} 
+\label{classsquirrel_data_dictionary_aa351372242cb8010cf3f0ba7d84225ce} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!SetObjectID@{SetObjectID}}
 \index{SetObjectID@{SetObjectID}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{SetObjectID()}{SetObjectID()}}
-{\footnotesize\ttfamily void squirrel\+Data\+Dictionary\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{int}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\doxysubsubsection{SetObjectID()}
+{\footnotesize\ttfamily void squirrel\+Data\+Dictionary\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a}\label{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a}} 
+\label{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!Store@{Store}}
 \index{Store@{Store}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{Store()}{Store()}}
+\doxysubsubsection{Store()}
 {\footnotesize\ttfamily bool squirrel\+Data\+Dictionary\+::\+Store (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-\mbox{\hyperlink{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a}{squirrel\+Data\+Dictionary\+::\+Store}} 
+\doxyref{squirrel\+Data\+Dictionary\+::\+Store}{p.}{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a} 
 
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the data\+Dictionary data from the database. The data\+Dictionary\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\Hypertarget{classsquirrel_data_dictionary_a4f254f7c5a8d6866a50c79e479dd0d60}\label{classsquirrel_data_dictionary_a4f254f7c5a8d6866a50c79e479dd0d60}} 
+This function will attempt to load the data\+Dictionary data from the database. The data\+Dictionary\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_data_dictionary_a4f254f7c5a8d6866a50c79e479dd0d60} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!ToJSON@{ToJSON}}
 \index{ToJSON@{ToJSON}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{ToJSON()}{ToJSON()}}
+\doxysubsubsection{ToJSON()}
 {\footnotesize\ttfamily QJson\+Object squirrel\+Data\+Dictionary\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\label{classsquirrel_data_dictionary_a1d87ed5d206b23b20d194d576ce0a072} 
+\index{squirrelDataDictionary@{squirrelDataDictionary}!VirtualPath@{VirtualPath}}
+\index{VirtualPath@{VirtualPath}!squirrelDataDictionary@{squirrelDataDictionary}}
+\doxysubsubsection{VirtualPath()}
+{\footnotesize\ttfamily QString squirrel\+Data\+Dictionary\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Data Documentation}
-\mbox{\Hypertarget{classsquirrel_data_dictionary_a2b600caebf16333d4701b7f32b7d5763}\label{classsquirrel_data_dictionary_a2b600caebf16333d4701b7f32b7d5763}} 
+\label{classsquirrel_data_dictionary_ab553b3a77ff6ecb50c2d5fdc4843309e} 
+\index{squirrelDataDictionary@{squirrelDataDictionary}!DataDictionaryName@{DataDictionaryName}}
+\index{DataDictionaryName@{DataDictionaryName}!squirrelDataDictionary@{squirrelDataDictionary}}
+\doxysubsubsection{DataDictionaryName}
+{\footnotesize\ttfamily QString squirrel\+Data\+Dictionary\+::\+Data\+Dictionary\+Name}
+
+\label{classsquirrel_data_dictionary_a2b600caebf16333d4701b7f32b7d5763} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!dictItems@{dictItems}}
 \index{dictItems@{dictItems}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{dictItems}{dictItems}}
-{\footnotesize\ttfamily QList$<$\mbox{\hyperlink{structdata_dictionary_item}{data\+Dictionary\+Item}}$>$ squirrel\+Data\+Dictionary\+::dict\+Items}
+\doxysubsubsection{dictItems}
+{\footnotesize\ttfamily QList$<$\textbf{ data\+Dictionary\+Item}$>$ squirrel\+Data\+Dictionary\+::dict\+Items}
 
-List of data dictionary items \mbox{\Hypertarget{classsquirrel_data_dictionary_abdd7f5546b6613b9ff8651331e0303cf}\label{classsquirrel_data_dictionary_abdd7f5546b6613b9ff8651331e0303cf}} 
-\index{squirrelDataDictionary@{squirrelDataDictionary}!numfiles@{numfiles}}
-\index{numfiles@{numfiles}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{numfiles}{numfiles}}
-{\footnotesize\ttfamily qint64 squirrel\+Data\+Dictionary\+::numfiles}
+List of data dictionary items \label{classsquirrel_data_dictionary_a2f1f644b51c270fb93e5be9cdb0ea8db} 
+\index{squirrelDataDictionary@{squirrelDataDictionary}!FileCount@{FileCount}}
+\index{FileCount@{FileCount}!squirrelDataDictionary@{squirrelDataDictionary}}
+\doxysubsubsection{FileCount}
+{\footnotesize\ttfamily qint64 squirrel\+Data\+Dictionary\+::\+File\+Count}
 
-total number of files \mbox{\Hypertarget{classsquirrel_data_dictionary_a14cda891ec0e0500a62d32c42ad65f0a}\label{classsquirrel_data_dictionary_a14cda891ec0e0500a62d32c42ad65f0a}} 
-\index{squirrelDataDictionary@{squirrelDataDictionary}!size@{size}}
-\index{size@{size}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{size}{size}}
-{\footnotesize\ttfamily qint64 squirrel\+Data\+Dictionary\+::size}
+total number of files \label{classsquirrel_data_dictionary_ac2b1c3e501e88b093977da97337e1eb8} 
+\index{squirrelDataDictionary@{squirrelDataDictionary}!Size@{Size}}
+\index{Size@{Size}!squirrelDataDictionary@{squirrelDataDictionary}}
+\doxysubsubsection{Size}
+{\footnotesize\ttfamily qint64 squirrel\+Data\+Dictionary\+::\+Size}
 
-disk size in bytes of the data dictionary \mbox{\Hypertarget{classsquirrel_data_dictionary_ad345b510d771ccaf384103136a7fa065}\label{classsquirrel_data_dictionary_ad345b510d771ccaf384103136a7fa065}} 
+disk size in bytes of the data dictionary \label{classsquirrel_data_dictionary_ad345b510d771ccaf384103136a7fa065} 
 \index{squirrelDataDictionary@{squirrelDataDictionary}!stagedFiles@{stagedFiles}}
 \index{stagedFiles@{stagedFiles}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{stagedFiles}{stagedFiles}}
+\doxysubsubsection{stagedFiles}
 {\footnotesize\ttfamily QString\+List squirrel\+Data\+Dictionary\+::staged\+Files}
 
-staged file list\+: list of files in their own original paths which will be copied in before the package is zipped up \mbox{\Hypertarget{classsquirrel_data_dictionary_a2aaa62436db5f1d3efb6d3454f646d2e}\label{classsquirrel_data_dictionary_a2aaa62436db5f1d3efb6d3454f646d2e}} 
-\index{squirrelDataDictionary@{squirrelDataDictionary}!virtualPath@{virtualPath}}
-\index{virtualPath@{virtualPath}!squirrelDataDictionary@{squirrelDataDictionary}}
-\doxysubsubsection{\texorpdfstring{virtualPath}{virtualPath}}
-{\footnotesize\ttfamily QString squirrel\+Data\+Dictionary\+::virtual\+Path = \char`\"{}data-\/dictionary\char`\"{}}
-
-path within the squirrel package, no leading slash 
+staged file list\+: list of files in their own original paths which will be copied in before the package is zipped up 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_data_dictionary_8h}{squirrel\+Data\+Dictionary.\+h}}\item 
-C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_data_dictionary_8cpp}{squirrel\+Data\+Dictionary.\+cpp}}\end{DoxyCompactItemize}
+src/squirrel/\textbf{ squirrel\+Data\+Dictionary.\+h}\item 
+src/squirrel/\textbf{ squirrel\+Data\+Dictionary.\+cpp}\end{DoxyCompactItemize}

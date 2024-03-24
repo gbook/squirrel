@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['weight_0',['weight',['../classsquirrel_study.html#a6d13e4230520895b1d67707747dbfdc0',1,'squirrelStudy']]]
+  ['weight_0',['Weight',['../classsquirrel_study.html#a45b9b00eac09190100aec5212dc89d5c',1,'squirrelStudy']]]
 ];

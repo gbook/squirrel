@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['changes_0',['changes',['../classsquirrel.html#a21dc200c636d13a4ada77ec27af2c152',1,'squirrel']]],
-  ['clusterenddate_1',['clusterEndDate',['../classsquirrel_analysis.html#aec9b7ac004aedd35bd537ae64c45c8d5',1,'squirrelAnalysis']]],
-  ['clusterqueue_2',['clusterQueue',['../classsquirrel_pipeline.html#a259fc912cd2e6b9a071bbbbb2facc779',1,'squirrelPipeline']]],
-  ['clusterstartdate_3',['clusterStartDate',['../classsquirrel_analysis.html#adc07520d5df3743248e94ad96da46082',1,'squirrelAnalysis']]],
-  ['clustersubmithost_4',['clusterSubmitHost',['../classsquirrel_pipeline.html#a674ad5252b6d63ca2725f5e79755c7c4',1,'squirrelPipeline']]],
-  ['clustertype_5',['clusterType',['../classsquirrel_pipeline.html#a6ec5247b5ee25a329bc24c4a4e0bc0ef',1,'squirrelPipeline']]],
-  ['clusteruser_6',['clusterUser',['../classsquirrel_pipeline.html#a6a56c6bc5ab847ce7434df02181bf5e9',1,'squirrelPipeline']]],
-  ['completefiles_7',['completeFiles',['../classsquirrel_pipeline.html#a687ce4ad0e171db94f7766e783444074',1,'squirrelPipeline']]],
-  ['createdate_8',['createDate',['../classsquirrel_pipeline.html#a694804d179448b48297ec7356224523d',1,'squirrelPipeline']]]
+  ['changes_0',['Changes',['../classsquirrel.html#a71f32e23b3209f6bdf16fb27e039cd9c',1,'squirrel']]],
+  ['clustermaxwalltime_1',['ClusterMaxWallTime',['../classsquirrel_pipeline.html#aa7a36e1d9e8edea04ce951bad6eb2f34',1,'squirrelPipeline']]],
+  ['clustermemory_2',['ClusterMemory',['../classsquirrel_pipeline.html#aa4267eff925192c2926a5f10e3c4cbe3',1,'squirrelPipeline']]],
+  ['clusternumbercores_3',['ClusterNumberCores',['../classsquirrel_pipeline.html#ac151a41f9af6a382acaba9d8f58bb2ff',1,'squirrelPipeline']]],
+  ['clusterqueue_4',['ClusterQueue',['../classsquirrel_pipeline.html#a5e22b03f9251081ba4069461436ab0de',1,'squirrelPipeline']]],
+  ['clustersubmithost_5',['ClusterSubmitHost',['../classsquirrel_pipeline.html#a336282d2061026df85e86a5a509c66de',1,'squirrelPipeline']]],
+  ['clustertype_6',['ClusterType',['../classsquirrel_pipeline.html#a006a9f1836729fbdf05d713eb5825368',1,'squirrelPipeline']]],
+  ['clusteruser_7',['ClusterUser',['../classsquirrel_pipeline.html#a086f16ae48538de114daa4084edec087',1,'squirrelPipeline']]],
+  ['completefiles_8',['CompleteFiles',['../classsquirrel_pipeline.html#ae1941963ef5f0b109023a36975c6df60',1,'squirrelPipeline']]],
+  ['createdate_9',['CreateDate',['../classsquirrel_pipeline.html#a859a7e4cc3d0e05965d115f8c5168191',1,'squirrelPipeline']]]
 ];

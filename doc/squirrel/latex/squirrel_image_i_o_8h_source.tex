@@ -1,59 +1,59 @@
-\hypertarget{squirrel_image_i_o_8h_source}{}\doxysection{squirrel\+Image\+IO.\+h}
-\label{squirrel_image_i_o_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelImageIO.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelImageIO.h}}
-\mbox{\hyperlink{squirrel_image_i_o_8h}{Go to the documentation of this file.}}
+\doxysection{squirrel\+Image\+IO.\+h}
+\label{squirrel_image_i_o_8h_source}\index{src/squirrel/squirrelImageIO.h@{src/squirrel/squirrelImageIO.h}}
+\textbf{ Go to the documentation of this file.}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{2 \textcolor{comment}{  NIDB imageio.h}}
-\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
-\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
-\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
-\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
-\DoxyCodeLine{8 \textcolor{comment}{}}
-\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
-\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
-\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
-\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
-\DoxyCodeLine{13 \textcolor{comment}{}}
-\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
-\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
-\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
-\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
-\DoxyCodeLine{18 \textcolor{comment}{}}
-\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
-\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
-\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
-\DoxyCodeLine{22 }
-\DoxyCodeLine{23 \textcolor{preprocessor}{\#ifndef SQUIRRELIMAGEIO\_H}}
-\DoxyCodeLine{24 \textcolor{preprocessor}{\#define SQUIRRELIMAGEIO\_H}}
-\DoxyCodeLine{25 }
-\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QFile>}}
-\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QString>}}
-\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QDir>}}
-\DoxyCodeLine{29 \textcolor{preprocessor}{\#include "{}gdcmReader.h"{}}}
-\DoxyCodeLine{30 \textcolor{preprocessor}{\#include "{}gdcmWriter.h"{}}}
-\DoxyCodeLine{31 \textcolor{preprocessor}{\#include "{}gdcmAttribute.h"{}}}
-\DoxyCodeLine{32 \textcolor{preprocessor}{\#include "{}gdcmStringFilter.h"{}}}
-\DoxyCodeLine{33 \textcolor{preprocessor}{\#include "{}gdcmAnonymizer.h"{}}}
-\DoxyCodeLine{34 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{utils_8h}{utils.h}}"{}}}
-\DoxyCodeLine{35 }
-\DoxyCodeLine{41 \textcolor{keyword}{class }\mbox{\hyperlink{classsquirrel_image_i_o}{squirrelImageIO}}}
-\DoxyCodeLine{42 \{}
-\DoxyCodeLine{43 \textcolor{keyword}{public}:}
-\DoxyCodeLine{44     \mbox{\hyperlink{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}{squirrelImageIO}}();}
-\DoxyCodeLine{45     \mbox{\hyperlink{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}{\string~squirrelImageIO}}();}
-\DoxyCodeLine{46 }
-\DoxyCodeLine{47     \textcolor{comment}{/* DICOM \& image functions */}}
-\DoxyCodeLine{48     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a}{ConvertDicom}}(QString filetype, QString indir, QString outdir, QString bindir, \textcolor{keywordtype}{bool} gzip, QString uid, QString studynum, QString seriesnum, QString datatype, \textcolor{keywordtype}{int} \&numfilesconv, \textcolor{keywordtype}{int} \&numfilesrenamed, QString \&msg);}
-\DoxyCodeLine{49     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764}{IsDICOMFile}}(QString f);}
-\DoxyCodeLine{50     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343}{AnonymizeDir}}(QString dir, \textcolor{keywordtype}{int} anonlevel, QString randstr1, QString randstr2, QString \&msg);}
-\DoxyCodeLine{51     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35}{AnonymizeDicomFile}}(gdcm::Anonymizer \&anon, QString infile, QString outfile, std::vector<gdcm::Tag> \textcolor{keyword}{const} \&empty\_tags, std::vector<gdcm::Tag> \textcolor{keyword}{const} \&remove\_tags, std::vector< std::pair<gdcm::Tag, std::string> > \textcolor{keyword}{const} \& replace\_tags, QString \&msg);}
-\DoxyCodeLine{52     QString \mbox{\hyperlink{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3}{GetDicomModality}}(QString f);}
-\DoxyCodeLine{53     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2}{GetFileType}}(QString f, QString \&fileType, QString \&fileModality, QString \&filePatientID, QString \&fileProtocol);}
-\DoxyCodeLine{54     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2}{GetImageFileTags}}(QString f, QString bindir, \textcolor{keywordtype}{bool} enablecsa, QHash<QString, QString> \&tags, QString \&msg);}
-\DoxyCodeLine{55 }
-\DoxyCodeLine{56 \};}
-\DoxyCodeLine{57 }
-\DoxyCodeLine{58 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// SQUIRRELIMAGEIO\_H}}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ NIDB\ imageio.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ Copyright\ (C)\ 2004\ -\/\ 2024}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ Gregory\ A\ Book\ <gregory.book@hhchealth.org>\ <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ Olin\ Neuropsychiatry\ Research\ Center,\ Hartford\ Hospital}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ GPLv3\ License:}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ This\ program\ is\ free\ software:\ you\ can\ redistribute\ it\ and/or\ modify}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ it\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License\ as\ published\ by}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ the\ Free\ Software\ Foundation,\ either\ version\ 3\ of\ the\ License,\ or}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ GNU\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ General\ Public\ License}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ along\ with\ this\ program.\ \ If\ not,\ see\ <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ SQUIRRELIMAGEIO\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ SQUIRRELIMAGEIO\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <QFile>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <QDir>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}gdcmReader.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}gdcmWriter.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}gdcmAttribute.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}gdcmStringFilter.h"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ "{}gdcmAnonymizer.h"{}}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}utils.h"{}}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{class\ }squirrelImageIO}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ squirrelImageIO();}
+\DoxyCodeLine{00045\ \ \ \ \ \string~squirrelImageIO();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{/*\ DICOM\ \&\ image\ functions\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ ConvertDicom(QString\ filetype,\ QString\ indir,\ QString\ outdir,\ QString\ bindir,\ \textcolor{keywordtype}{bool}\ gzip,\ QString\ uid,\ QString\ studynum,\ QString\ seriesnum,\ QString\ datatype,\ \textcolor{keywordtype}{int}\ \&numfilesconv,\ \textcolor{keywordtype}{int}\ \&numfilesrenamed,\ QString\ \&msg);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsDICOMFile(QString\ f);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{bool}\ AnonymizeDir(QString\ dir,\ \textcolor{keywordtype}{int}\ anonlevel,\ QString\ randstr1,\ QString\ randstr2,\ QString\ \&msg);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{bool}\ AnonymizeDicomFile(gdcm::Anonymizer\ \&anon,\ QString\ infile,\ QString\ outfile,\ std::vector<gdcm::Tag>\ \textcolor{keyword}{const}\ \&empty\_tags,\ std::vector<gdcm::Tag>\ \textcolor{keyword}{const}\ \&remove\_tags,\ std::vector<\ std::pair<gdcm::Tag,\ std::string>\ >\ \textcolor{keyword}{const}\ \&\ replace\_tags,\ QString\ \&msg);}
+\DoxyCodeLine{00052\ \ \ \ \ QString\ GetDicomModality(QString\ f);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ GetFileType(QString\ f,\ QString\ \&fileType,\ QString\ \&fileModality,\ QString\ \&filePatientID,\ QString\ \&fileProtocol);}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetImageFileTags(QString\ f,\ QString\ bindir,\ \textcolor{keywordtype}{bool}\ enablecsa,\ QHash<QString,\ QString>\ \&tags,\ QString\ \&msg);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SQUIRRELIMAGEIO\_H}}
 
 \end{DoxyCode}

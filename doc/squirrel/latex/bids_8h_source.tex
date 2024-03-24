@@ -1,51 +1,51 @@
-\hypertarget{bids_8h_source}{}\doxysection{bids.\+h}
-\label{bids_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/bids.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/bids.h}}
-\mbox{\hyperlink{bids_8h}{Go to the documentation of this file.}}
+\doxysection{bids.\+h}
+\label{bids_8h_source}\index{src/squirrel/bids.h@{src/squirrel/bids.h}}
+\textbf{ Go to the documentation of this file.}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{2 \textcolor{comment}{  Squirrel bids.h}}
-\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
-\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
-\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
-\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
-\DoxyCodeLine{8 \textcolor{comment}{}}
-\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
-\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
-\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
-\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
-\DoxyCodeLine{13 \textcolor{comment}{}}
-\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
-\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
-\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
-\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
-\DoxyCodeLine{18 \textcolor{comment}{}}
-\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
-\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
-\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
-\DoxyCodeLine{22 }
-\DoxyCodeLine{23 }
-\DoxyCodeLine{24 \textcolor{preprocessor}{\#ifndef BIDS\_H}}
-\DoxyCodeLine{25 \textcolor{preprocessor}{\#define BIDS\_H}}
-\DoxyCodeLine{26 }
-\DoxyCodeLine{27 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{utils_8h}{utils.h}}"{}}}
-\DoxyCodeLine{28 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{squirrel_8h}{squirrel.h}}"{}}}
-\DoxyCodeLine{29 }
-\DoxyCodeLine{30 \textcolor{keyword}{class }\mbox{\hyperlink{classbids}{bids}}}
-\DoxyCodeLine{31 \{}
-\DoxyCodeLine{32 \textcolor{keyword}{public}:}
-\DoxyCodeLine{33     \mbox{\hyperlink{classbids_a8f3d95f58a724e27cd65ca2a78865de3}{bids}}();}
-\DoxyCodeLine{34 }
-\DoxyCodeLine{35     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbids_ae79a0fb52541ac1823218a9659593ccc}{LoadToSquirrel}}(QString dir, \mbox{\hyperlink{classsquirrel}{squirrel}} *sqrl);}
-\DoxyCodeLine{36 }
-\DoxyCodeLine{37     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbids_ab789628a55750b44457f828fc77c28c3}{LoadRootFiles}}(QStringList rootfiles, \mbox{\hyperlink{classsquirrel}{squirrel}} *sqrl);}
-\DoxyCodeLine{38     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbids_aa5418b2f36a6a1e2e0eba4baa4900564}{LoadSubjectFiles}}(QStringList subjfiles, QString ID, \mbox{\hyperlink{classsquirrel}{squirrel}} *sqrl);}
-\DoxyCodeLine{39     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbids_a2c32c5036d44f6ea18827e6bb4bfe9a2}{LoadSessionDir}}(QString sesdir, \textcolor{keywordtype}{int} studyNum, \mbox{\hyperlink{classsquirrel}{squirrel}} *sqrl);}
-\DoxyCodeLine{40 }
-\DoxyCodeLine{41     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbids_ab0c8ec4471aa6f529d169050bdcc40f1}{LoadParticipantsFile}}(QString f, \mbox{\hyperlink{classsquirrel}{squirrel}} *sqrl);}
-\DoxyCodeLine{42     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbids_a26587021ad53f5bdb811a47db4743506}{LoadTaskFile}}(QString f, \mbox{\hyperlink{classsquirrel}{squirrel}} *sqrl);}
-\DoxyCodeLine{43 \};}
-\DoxyCodeLine{44 }
-\DoxyCodeLine{45 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// BIDS\_H}}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ Squirrel\ bids.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ Copyright\ (C)\ 2004\ -\/\ 2024}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ Gregory\ A\ Book\ <gregory.book@hhchealth.org>\ <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ Olin\ Neuropsychiatry\ Research\ Center,\ Hartford\ Hospital}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ GPLv3\ License:}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ This\ program\ is\ free\ software:\ you\ can\ redistribute\ it\ and/or\ modify}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ it\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License\ as\ published\ by}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ the\ Free\ Software\ Foundation,\ either\ version\ 3\ of\ the\ License,\ or}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ GNU\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ General\ Public\ License}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ along\ with\ this\ program.\ \ If\ not,\ see\ <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#ifndef\ BIDS\_H}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ BIDS\_H}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}utils.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}squirrel.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }bids}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ \ \ \ \ bids();}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{bool}\ LoadToSquirrel(QString\ dir,\ squirrel\ *sqrl);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ LoadRootFiles(QStringList\ rootfiles,\ squirrel\ *sqrl);}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{bool}\ LoadSubjectFiles(QStringList\ subjfiles,\ QString\ ID,\ squirrel\ *sqrl);}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ LoadSessionDir(QString\ sesdir,\ \textcolor{keywordtype}{int}\ studyNum,\ squirrel\ *sqrl);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{bool}\ LoadParticipantsFile(QString\ f,\ squirrel\ *sqrl);}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{bool}\ LoadTaskFile(QString\ f,\ squirrel\ *sqrl);}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ BIDS\_H}}
 
 \end{DoxyCode}

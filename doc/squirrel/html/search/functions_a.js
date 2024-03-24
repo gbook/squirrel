@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['numfiles_0',['NumFiles',['../classdicom.html#af770f175047e064cc802a0f3731e70ff',1,'dicom']]]
+  ['oktodelete_0',['OkToDelete',['../classsquirrel.html#a0e586af53fe82a2f51c3a3a1a341aa22',1,'squirrel']]]
 ];

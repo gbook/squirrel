@@ -165,6 +165,10 @@ bool squirrel::InitializeDatabase() {
 /* ------------------------------------------------------------ */
 /* ----- GetPackagePath --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief squirrel::GetPackagePath
+ * @return the full path to the package, with extension
+ */
 QString squirrel::GetPackagePath() {
 
     if (fileMode == NewPackage) {
@@ -181,18 +185,12 @@ QString squirrel::GetPackagePath() {
 /* ----- Read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Reads a squirrel package from disk
- * @param filepath Full filepath of the package
- * @param headerOnly true if only reading the header
- * @param validateOnly true if validating the package
- * @return
+ * @brief squirrel::Read
+ * @return true if read succesful
  */
-bool squirrel::Read(bool readonly) {
+bool squirrel::Read() {
 
-    if (readonly)
-        Log(QString("Validating [%1]").arg(GetPackagePath()), __FUNCTION__);
-    else
-        Log(QString("Reading squirrel file [%1]").arg(GetPackagePath()), __FUNCTION__);
+    Log(QString("Reading squirrel file [%1]").arg(GetPackagePath()), __FUNCTION__);
 
     /* check if file exists */
     if (!utils::FileExists(GetPackagePath())) {
@@ -798,7 +796,10 @@ bool squirrel::Write(bool writeLog) {
  */
 bool squirrel::Validate() {
 
-    return true;
+    if (Read())
+        return true;
+    else
+        return false;
 }
 
 
@@ -1059,7 +1060,6 @@ bool squirrel::MakeTempDir(QString &dir) {
  * @param objectType one of the object types
  * @param rowid the database row ID of the object
  * @param files the list of files to be staged
- * @param destDir subdirectory in the package the files should be staged
  * @return
  */
 bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList files) {
@@ -1134,7 +1134,6 @@ QString squirrel::GetTempDir() {
  * @brief Record a log - prints to screen and stores in log string
  * @param s log message
  * @param func function that called this function
- * @param dbg is this is a debug message, to be displayed only if debug is enabled at the command line
  */
 void squirrel::Log(QString s, QString func) {
     if (!quiet) {
@@ -1168,13 +1167,6 @@ void squirrel::Debug(QString s, QString func) {
  * @return list of key/value pairs
  */
 QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
-
-    // QString jsonStr;
-    // QFile file;
-    // file.setFileName(f);
-    // file.open(QIODevice::ReadOnly | QIODevice::Text);
-    // jsonStr = file.readAll();
-    // file.close();
 
     /* get the JSON document and root object */
     QJsonDocument d = QJsonDocument::fromJson(f.toUtf8());
@@ -1478,6 +1470,11 @@ QList<squirrelSeries> squirrel::GetSeries(qint64 studyRowID) {
 /* ------------------------------------------------------------ */
 /* ----- GetAnalyses ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get list of all Analysis objects for the specified studyRowID
+ * @param studyRowID of the parent study
+ * @return QList of squirrelAnalysis objects
+ */
 QList<squirrelAnalysis> squirrel::GetAnalyses(qint64 studyRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelAnalysis> list;
@@ -1499,6 +1496,11 @@ QList<squirrelAnalysis> squirrel::GetAnalyses(qint64 studyRowID) {
 /* ------------------------------------------------------------ */
 /* ----- GetMeasures ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get a list of all Measure objects for a subject
+ * @param subjectRowID of the parent subject
+ * @return QList of squirrelMeasure objects
+ */
 QList<squirrelMeasure> squirrel::GetMeasures(qint64 subjectRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelMeasure> list;
@@ -1519,6 +1521,11 @@ QList<squirrelMeasure> squirrel::GetMeasures(qint64 subjectRowID) {
 /* ------------------------------------------------------------ */
 /* ----- GetDrugs --------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get a list of all Drug objects
+ * @param subjectRowID
+ * @return list of all squirrelDrug objects
+ */
 QList<squirrelDrug> squirrel::GetDrugs(qint64 subjectRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     QList<squirrelDrug> list;
@@ -1540,7 +1547,7 @@ QList<squirrelDrug> squirrel::GetDrugs(qint64 subjectRowID) {
 /* ----- GetAllGroupAnalyses ---------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetAllGroupAnalyses
+ * @brief Get a list of all GroupAnalysis objects
  * @return list of all groupAnalysis objects
  */
 QList<squirrelGroupAnalysis> squirrel::GetAllGroupAnalyses() {
@@ -1563,7 +1570,7 @@ QList<squirrelGroupAnalysis> squirrel::GetAllGroupAnalyses() {
 /* ----- GetAllDataDictionaries ------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetAllDataDictionaries
+ * @brief Get a list of all DataDictionary objects
  * @return list of all dataDictionary objects
  */
 QList<squirrelDataDictionary> squirrel::GetAllDataDictionaries() {
@@ -1586,8 +1593,8 @@ QList<squirrelDataDictionary> squirrel::GetAllDataDictionaries() {
 /* ----- FindSubject ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::FindSubject
- * @param id the PatientID field
+ * @brief Find a Subject by subject ID
+ * @param id the SubjectID field
  * @return the database rowID of the subject if found, -1 otherwise
  */
 qint64 squirrel::FindSubject(QString id) {
@@ -1606,6 +1613,12 @@ qint64 squirrel::FindSubject(QString id) {
 /* ------------------------------------------------------------ */
 /* ----- FindStudy -------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a Study by subject ID and study number
+ * @param subjectID Subject ID to search for
+ * @param studyNum Study number to search for
+ * @return the database row ID
+ */
 qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1623,6 +1636,11 @@ qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
 /* ------------------------------------------------------------ */
 /* ----- FindStudyByUID --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a Study by the DICOM StudyUID field
+ * @param studyUID The DICOM StudyUID field to search for
+ * @return the database row ID
+ */
 qint64 squirrel::FindStudyByUID(QString studyUID) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1640,6 +1658,13 @@ qint64 squirrel::FindStudyByUID(QString studyUID) {
 /* ------------------------------------------------------------ */
 /* ----- FindSeries ------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a Series by subject ID, study number, and series number
+ * @param subjectID Subject ID to search for
+ * @param studyNum Study number to search for
+ * @param seriesNum Series number to search for
+ * @return The database rowid
+ */
 qint64 squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1658,6 +1683,11 @@ qint64 squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
 /* ------------------------------------------------------------ */
 /* ----- FindSeriesByUID -------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a Series by the DICOM SeriesUID field
+ * @param seriesUID DICOM SeriesUID field to search by
+ * @return The database rowid
+ */
 qint64 squirrel::FindSeriesByUID(QString seriesUID) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1674,6 +1704,13 @@ qint64 squirrel::FindSeriesByUID(QString seriesUID) {
 /* ------------------------------------------------------------ */
 /* ----- FindAnalysis ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find an Anlaysis using subject ID, study number, and analysis name
+ * @param subjectID Subject ID to search by
+ * @param studyNum Study number to search by
+ * @param analysisName Analysis name to search
+ * @return The database rowid
+ */
 qint64 squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisName) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1692,6 +1729,11 @@ qint64 squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisN
 /* ------------------------------------------------------------ */
 /* ----- FindExperiment --------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find an Experiment by name
+ * @param experimentName Experiment name to search for
+ * @return The database rowid
+ */
 qint64 squirrel::FindExperiment(QString experimentName) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1708,6 +1750,11 @@ qint64 squirrel::FindExperiment(QString experimentName) {
 /* ------------------------------------------------------------ */
 /* ----- FindPipeline ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a Pipeline by name
+ * @param pipelineName Pipeline name to search for
+ * @return The database rowid
+ */
 qint64 squirrel::FindPipeline(QString pipelineName) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1724,6 +1771,11 @@ qint64 squirrel::FindPipeline(QString pipelineName) {
 /* ------------------------------------------------------------ */
 /* ----- FindGroupAnalysis ------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a GroupAnalysis by group analysis name
+ * @param groupAnalysisName GroupAnalysis name to search for
+ * @return The database rowid
+ */
 qint64 squirrel::FindGroupAnalysis(QString groupAnalysisName) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1740,6 +1792,11 @@ qint64 squirrel::FindGroupAnalysis(QString groupAnalysisName) {
 /* ------------------------------------------------------------ */
 /* ----- FindDataDictionary ----------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find a DataDictionary by data dictonary name
+ * @param dataDictionaryName DataDictionary name to search for
+ * @return The database rowid
+ */
 qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -1756,6 +1813,10 @@ qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
 /* ------------------------------------------------------------ */
 /* ----- ResequenceSubjects ----------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Resequences (renumbers) the subjects. Used when writing
+ * package with sequential directory names instead of subject IDs.
+ */
 void squirrel::ResequenceSubjects() {
 
     QList<squirrelSubject> subjects = GetAllSubjects();

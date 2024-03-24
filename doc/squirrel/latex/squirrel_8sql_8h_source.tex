@@ -1,263 +1,270 @@
-\hypertarget{squirrel_8sql_8h_source}{}\doxysection{squirrel.\+sql.\+h}
-\label{squirrel_8sql_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrel.sql.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrel.sql.h}}
-\mbox{\hyperlink{squirrel_8sql_8h}{Go to the documentation of this file.}}
+\doxysection{squirrel.\+sql.\+h}
+\label{squirrel_8sql_8h_source}\index{src/squirrel/squirrel.sql.h@{src/squirrel/squirrel.sql.h}}
+\textbf{ Go to the documentation of this file.}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{2 \textcolor{comment}{  Squirrel squirrel.sql.h}}
-\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
-\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
-\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
-\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
-\DoxyCodeLine{8 \textcolor{comment}{}}
-\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
-\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
-\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
-\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
-\DoxyCodeLine{13 \textcolor{comment}{}}
-\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
-\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
-\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
-\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
-\DoxyCodeLine{18 \textcolor{comment}{}}
-\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
-\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
-\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
-\DoxyCodeLine{22 \textcolor{preprocessor}{\#include <QString>}}
-\DoxyCodeLine{23 }
-\DoxyCodeLine{24 \textcolor{comment}{/* Notes about this file:}}
-\DoxyCodeLine{25 \textcolor{comment}{ *}}
-\DoxyCodeLine{26 \textcolor{comment}{    SQLite does not support multiple statements for each query. So instead,}}
-\DoxyCodeLine{27 \textcolor{comment}{    each table must have it's own statement. This isn't too bad because we only}}
-\DoxyCodeLine{28 \textcolor{comment}{    have 12 tables to create.}}
-\DoxyCodeLine{29 \textcolor{comment}{}}
-\DoxyCodeLine{30 \textcolor{comment}{    Also, SQLite's datatype and table creation syntax is much simpler than}}
-\DoxyCodeLine{31 \textcolor{comment}{    regular SQL}}
-\DoxyCodeLine{32 \textcolor{comment}{ */}}
-\DoxyCodeLine{33 }
-\DoxyCodeLine{34 QString \mbox{\hyperlink{squirrel_8sql_8h_a28d7c2cf492646e17f7115df7f972fe7}{tableStagedFiles}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS StagedFiles ("{}}}
-\DoxyCodeLine{35     \textcolor{stringliteral}{"{}StagedFileRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{36     \textcolor{stringliteral}{"{}ObjectType TEXT,"{}}}
-\DoxyCodeLine{37     \textcolor{stringliteral}{"{}ObjectRowID INTEGER,"{}}}
-\DoxyCodeLine{38     \textcolor{stringliteral}{"{}FileSize INTEGER,"{}}}
-\DoxyCodeLine{39     \textcolor{stringliteral}{"{}StagedPath TEXT,"{}}}
-\DoxyCodeLine{40     \textcolor{stringliteral}{"{}FinalDirectory TEXT,"{}}}
-\DoxyCodeLine{41     \textcolor{stringliteral}{"{}UNIQUE(ObjectRowID, ObjectType, StagedPath) )"{}});}
-\DoxyCodeLine{42 }
-\DoxyCodeLine{43 QString \mbox{\hyperlink{squirrel_8sql_8h_aee5c65c294a53e3a620f3ecb47ca4c26}{tableAnalysis}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Analysis ("{}}}
-\DoxyCodeLine{44     \textcolor{stringliteral}{"{}AnalysisRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{45     \textcolor{stringliteral}{"{}StudyRowID INTEGER,"{}}}
-\DoxyCodeLine{46     \textcolor{stringliteral}{"{}PipelineRowID INTEGER,"{}}}
-\DoxyCodeLine{47     \textcolor{stringliteral}{"{}PipelineVersion INTEGER,"{}}}
-\DoxyCodeLine{48     \textcolor{stringliteral}{"{}ClusterStartDate TEXT,"{}}}
-\DoxyCodeLine{49     \textcolor{stringliteral}{"{}ClusterEndDate TEXT,"{}}}
-\DoxyCodeLine{50     \textcolor{stringliteral}{"{}StartDate TEXT,"{}}}
-\DoxyCodeLine{51     \textcolor{stringliteral}{"{}EndDate TEXT,"{}}}
-\DoxyCodeLine{52     \textcolor{stringliteral}{"{}SetupTime INTEGER,"{}}}
-\DoxyCodeLine{53     \textcolor{stringliteral}{"{}RunTime INTEGER,"{}}}
-\DoxyCodeLine{54     \textcolor{stringliteral}{"{}NumSeries INTEGER,"{}}}
-\DoxyCodeLine{55     \textcolor{stringliteral}{"{}Status TEXT,"{}}}
-\DoxyCodeLine{56     \textcolor{stringliteral}{"{}Successful INTEGER,"{}}}
-\DoxyCodeLine{57     \textcolor{stringliteral}{"{}Size INTEGER,"{}}}
-\DoxyCodeLine{58     \textcolor{stringliteral}{"{}NumFiles INTEGER,"{}}}
-\DoxyCodeLine{59     \textcolor{stringliteral}{"{}Hostname TEXT,"{}}}
-\DoxyCodeLine{60     \textcolor{stringliteral}{"{}StatusMessage TEXT,"{}}}
-\DoxyCodeLine{61     \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
-\DoxyCodeLine{62     \textcolor{stringliteral}{"{}UNIQUE(StudyRowID, PipelineRowID, PipelineVersion))"{}});}
-\DoxyCodeLine{63 }
-\DoxyCodeLine{64 QString \mbox{\hyperlink{squirrel_8sql_8h_adb4c579fbfbe1d17d287962d0a12407f}{tableDataDictionary}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS DataDictionary ("{}}}
-\DoxyCodeLine{65     \textcolor{stringliteral}{"{}DataDictionaryRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{66     \textcolor{stringliteral}{"{}NumFiles INTEGER,"{}}}
-\DoxyCodeLine{67     \textcolor{stringliteral}{"{}Size INTEGER,"{}}}
-\DoxyCodeLine{68     \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}});}
-\DoxyCodeLine{69 }
-\DoxyCodeLine{70 QString \mbox{\hyperlink{squirrel_8sql_8h_a912eab483ad28479d5cfd8eabb4c3c34}{tableDataDictionaryItems}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS DataDictionaryItems ("{}}}
-\DoxyCodeLine{71     \textcolor{stringliteral}{"{}DataDictionaryItemRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{72     \textcolor{stringliteral}{"{}DataDictionaryRowID INTEGER,"{}}}
-\DoxyCodeLine{73     \textcolor{stringliteral}{"{}VariableType TEXT,"{}}}
-\DoxyCodeLine{74     \textcolor{stringliteral}{"{}VariableName TEXT,"{}}}
-\DoxyCodeLine{75     \textcolor{stringliteral}{"{}VariableDescription TEXT,"{}}}
-\DoxyCodeLine{76     \textcolor{stringliteral}{"{}KeyValue TEXT,"{}}}
-\DoxyCodeLine{77     \textcolor{stringliteral}{"{}ExpectedTimepoints INTEGER,"{}}}
-\DoxyCodeLine{78     \textcolor{stringliteral}{"{}RangeLow REAL,"{}}}
-\DoxyCodeLine{79     \textcolor{stringliteral}{"{}RangeHigh REAL)"{}});}
-\DoxyCodeLine{80 }
-\DoxyCodeLine{81 QString \mbox{\hyperlink{squirrel_8sql_8h_a674778f41ef3a326361c53904b43c06e}{tableDrug}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Drug ("{}}}
-\DoxyCodeLine{82     \textcolor{stringliteral}{"{}DrugRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{83     \textcolor{stringliteral}{"{}SubjectRowID INTEGER,"{}}}
-\DoxyCodeLine{84     \textcolor{stringliteral}{"{}DrugName TEXT,"{}}}
-\DoxyCodeLine{85     \textcolor{stringliteral}{"{}DateStart TEXT,"{}}}
-\DoxyCodeLine{86     \textcolor{stringliteral}{"{}DateEnd TEXT,"{}}}
-\DoxyCodeLine{87     \textcolor{stringliteral}{"{}DateRecordEntry TEXT,"{}}}
-\DoxyCodeLine{88     \textcolor{stringliteral}{"{}DoseString TEXT,"{}}}
-\DoxyCodeLine{89     \textcolor{stringliteral}{"{}DoseAmount TEXT,"{}}}
-\DoxyCodeLine{90     \textcolor{stringliteral}{"{}DoseFrequency TEXT,"{}}}
-\DoxyCodeLine{91     \textcolor{stringliteral}{"{}AdministrationRoute TEXT,"{}}}
-\DoxyCodeLine{92     \textcolor{stringliteral}{"{}DrugClass TEXT,"{}}}
-\DoxyCodeLine{93     \textcolor{stringliteral}{"{}DoseKey TEXT,"{}}}
-\DoxyCodeLine{94     \textcolor{stringliteral}{"{}DoseUnit TEXT,"{}}}
-\DoxyCodeLine{95     \textcolor{stringliteral}{"{}FrequencyModifer TEXT,"{}}}
-\DoxyCodeLine{96     \textcolor{stringliteral}{"{}FrequencyValue REAL,"{}}}
-\DoxyCodeLine{97     \textcolor{stringliteral}{"{}FrequencyUnit TEXT,"{}}}
-\DoxyCodeLine{98     \textcolor{stringliteral}{"{}Description TEXT,"{}}}
-\DoxyCodeLine{99     \textcolor{stringliteral}{"{}Rater TEXT,"{}}}
-\DoxyCodeLine{100     \textcolor{stringliteral}{"{}Notes TEXT)"{}});}
-\DoxyCodeLine{101 }
-\DoxyCodeLine{102 QString \mbox{\hyperlink{squirrel_8sql_8h_a15a4203d6ea6daa0c51b70f2335a9381}{tableExperiment}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Experiment ("{}}}
-\DoxyCodeLine{103     \textcolor{stringliteral}{"{}ExperimentRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{104     \textcolor{stringliteral}{"{}ExperimentName TEXT UNIQUE,"{}}}
-\DoxyCodeLine{105     \textcolor{stringliteral}{"{}Size INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{106     \textcolor{stringliteral}{"{}NumFiles INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{107     \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}});}
-\DoxyCodeLine{108 }
-\DoxyCodeLine{109 QString \mbox{\hyperlink{squirrel_8sql_8h_a6265847044b7160da1eafca3e32fa11f}{tableGroupAnalysis}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS GroupAnalysis ("{}}}
-\DoxyCodeLine{110     \textcolor{stringliteral}{"{}GroupAnalysisRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{111     \textcolor{stringliteral}{"{}GroupAnalysisName TEXT UNIQUE,"{}}}
-\DoxyCodeLine{112     \textcolor{stringliteral}{"{}Description TEXT,"{}}}
-\DoxyCodeLine{113     \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
-\DoxyCodeLine{114     \textcolor{stringliteral}{"{}NumFiles INTEGER,"{}}}
-\DoxyCodeLine{115     \textcolor{stringliteral}{"{}Size INTEGER,"{}}}
-\DoxyCodeLine{116     \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}});}
-\DoxyCodeLine{117 }
-\DoxyCodeLine{118 QString \mbox{\hyperlink{squirrel_8sql_8h_a4773e488c33f954d1c1a1ee09d2149af}{tableMeasure}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Measure ("{}}}
-\DoxyCodeLine{119     \textcolor{stringliteral}{"{}MeasureRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{120     \textcolor{stringliteral}{"{}SubjectRowID INTEGER,"{}}}
-\DoxyCodeLine{121     \textcolor{stringliteral}{"{}MeasureName TEXT,"{}}}
-\DoxyCodeLine{122     \textcolor{stringliteral}{"{}DateStart TEXT,"{}}}
-\DoxyCodeLine{123     \textcolor{stringliteral}{"{}DateEnd TEXT,"{}}}
-\DoxyCodeLine{124     \textcolor{stringliteral}{"{}InstrumentName TEXT,"{}}}
-\DoxyCodeLine{125     \textcolor{stringliteral}{"{}Rater TEXT,"{}}}
-\DoxyCodeLine{126     \textcolor{stringliteral}{"{}Notes TEXT,"{}}}
-\DoxyCodeLine{127     \textcolor{stringliteral}{"{}Value TEXT,"{}}}
-\DoxyCodeLine{128     \textcolor{stringliteral}{"{}Duration INTEGER,"{}}}
-\DoxyCodeLine{129     \textcolor{stringliteral}{"{}DateRecordEntry TEXT,"{}}}
-\DoxyCodeLine{130     \textcolor{stringliteral}{"{}Description TEXT)"{}});}
-\DoxyCodeLine{131 }
-\DoxyCodeLine{132 QString \mbox{\hyperlink{squirrel_8sql_8h_afccafc2136436c0bd4bf68b6f654e464}{tablePackage}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Package ("{}}}
-\DoxyCodeLine{133     \textcolor{stringliteral}{"{}PackageRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{134     \textcolor{stringliteral}{"{}Name TEXT NOT NULL UNIQUE,"{}}}
-\DoxyCodeLine{135     \textcolor{stringliteral}{"{}Description TEXT,"{}}}
-\DoxyCodeLine{136     \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
-\DoxyCodeLine{137     \textcolor{stringliteral}{"{}SubjectDirFormat TEXT DEFAULT 'orig',"{}}}
-\DoxyCodeLine{138     \textcolor{stringliteral}{"{}StudyDirFormat TEXT DEFAULT 'orig',"{}}}
-\DoxyCodeLine{139     \textcolor{stringliteral}{"{}SeriesDirFormat TEXT DEFAULT 'orig',"{}}}
-\DoxyCodeLine{140     \textcolor{stringliteral}{"{}PackageDataFormat TEXT DEFAULT 'orig',"{}}}
-\DoxyCodeLine{141     \textcolor{stringliteral}{"{}License TEXT,"{}}}
-\DoxyCodeLine{142     \textcolor{stringliteral}{"{}Readme TEXT,"{}}}
-\DoxyCodeLine{143     \textcolor{stringliteral}{"{}Changes TEXT,"{}}}
-\DoxyCodeLine{144     \textcolor{stringliteral}{"{}Notes TEXT)"{}});}
-\DoxyCodeLine{145 }
-\DoxyCodeLine{146 QString \mbox{\hyperlink{squirrel_8sql_8h_a528c56834313522b706d082ebea8110d}{tableParams}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Params ("{}}}
-\DoxyCodeLine{147     \textcolor{stringliteral}{"{}ParamRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{148     \textcolor{stringliteral}{"{}SeriesRowID INTEGER,"{}}}
-\DoxyCodeLine{149     \textcolor{stringliteral}{"{}ParamKey TEXT,"{}}}
-\DoxyCodeLine{150     \textcolor{stringliteral}{"{}ParamValue TEXT,"{}}}
-\DoxyCodeLine{151     \textcolor{stringliteral}{"{}UNIQUE(SeriesRowID, ParamKey))"{}});}
-\DoxyCodeLine{152 }
-\DoxyCodeLine{153 QString \mbox{\hyperlink{squirrel_8sql_8h_a82d5c69e908ba894cf3052bc30a2bdc3}{tablePipeline}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Pipeline ("{}}}
-\DoxyCodeLine{154     \textcolor{stringliteral}{"{}PipelineRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{155     \textcolor{stringliteral}{"{}PipelineName TEXT,"{}}}
-\DoxyCodeLine{156     \textcolor{stringliteral}{"{}Description TEXT,"{}}}
-\DoxyCodeLine{157     \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
-\DoxyCodeLine{158     \textcolor{stringliteral}{"{}Level INTEGER,"{}}}
-\DoxyCodeLine{159     \textcolor{stringliteral}{"{}PrimaryScript TEXT,"{}}}
-\DoxyCodeLine{160     \textcolor{stringliteral}{"{}SecondaryScript TEXT,"{}}}
-\DoxyCodeLine{161     \textcolor{stringliteral}{"{}Version INTEGER ,"{}}}
-\DoxyCodeLine{162     \textcolor{stringliteral}{"{}CompleteFiles TEXT,"{}}}
-\DoxyCodeLine{163     \textcolor{stringliteral}{"{}DataCopyMethod TEXT,"{}}}
-\DoxyCodeLine{164     \textcolor{stringliteral}{"{}DependencyDirectory TEXT,"{}}}
-\DoxyCodeLine{165     \textcolor{stringliteral}{"{}DependencyLevel TEXT,"{}}}
-\DoxyCodeLine{166     \textcolor{stringliteral}{"{}DependencyLinkType TEXT,"{}}}
-\DoxyCodeLine{167     \textcolor{stringliteral}{"{}DirStructure TEXT,"{}}}
-\DoxyCodeLine{168     \textcolor{stringliteral}{"{}Directory TEXT,"{}}}
-\DoxyCodeLine{169     \textcolor{stringliteral}{"{}GroupName TEXT,"{}}}
-\DoxyCodeLine{170     \textcolor{stringliteral}{"{}GroupType TEXT,"{}}}
-\DoxyCodeLine{171     \textcolor{stringliteral}{"{}Notes TEXT,"{}}}
-\DoxyCodeLine{172     \textcolor{stringliteral}{"{}ResultScript TEXT,"{}}}
-\DoxyCodeLine{173     \textcolor{stringliteral}{"{}TempDir TEXT,"{}}}
-\DoxyCodeLine{174     \textcolor{stringliteral}{"{}FlagUseProfile INTEGER,"{}}}
-\DoxyCodeLine{175     \textcolor{stringliteral}{"{}FlagUseTempDir INTEGER,"{}}}
-\DoxyCodeLine{176     \textcolor{stringliteral}{"{}ClusterType TEXT,"{}}}
-\DoxyCodeLine{177     \textcolor{stringliteral}{"{}ClusterUser TEXT,"{}}}
-\DoxyCodeLine{178     \textcolor{stringliteral}{"{}ClusterQueue TEXT,"{}}}
-\DoxyCodeLine{179     \textcolor{stringliteral}{"{}ClusterSubmitHost TEXT,"{}}}
-\DoxyCodeLine{180     \textcolor{stringliteral}{"{}NumConcurrentAnalysis INTEGER,"{}}}
-\DoxyCodeLine{181     \textcolor{stringliteral}{"{}MaxWallTime INTEGER,"{}}}
-\DoxyCodeLine{182     \textcolor{stringliteral}{"{}SubmitDelay INTEGER,"{}}}
-\DoxyCodeLine{183     \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
-\DoxyCodeLine{184     \textcolor{stringliteral}{"{}UNIQUE(PipelineName, Version))"{}});}
-\DoxyCodeLine{185 }
-\DoxyCodeLine{186 QString \mbox{\hyperlink{squirrel_8sql_8h_aa9ed1306fc3288b0f9ddbafea7e6485f}{tablePipelineDataStep}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS PipeplineDataStep ("{}}}
-\DoxyCodeLine{187     \textcolor{stringliteral}{"{}DataStepRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{188     \textcolor{stringliteral}{"{}PipelineRowID INTEGER,"{}}}
-\DoxyCodeLine{189     \textcolor{stringliteral}{"{}AssociationType TEXT,"{}}}
-\DoxyCodeLine{190     \textcolor{stringliteral}{"{}BehDir TEXT,"{}}}
-\DoxyCodeLine{191     \textcolor{stringliteral}{"{}BehFormat TEXT,"{}}}
-\DoxyCodeLine{192     \textcolor{stringliteral}{"{}DataFormat TEXT,"{}}}
-\DoxyCodeLine{193     \textcolor{stringliteral}{"{}ImageType TEXT,"{}}}
-\DoxyCodeLine{194     \textcolor{stringliteral}{"{}DataLevel TEXT,"{}}}
-\DoxyCodeLine{195     \textcolor{stringliteral}{"{}Location TEXT,"{}}}
-\DoxyCodeLine{196     \textcolor{stringliteral}{"{}Modality TEXT,"{}}}
-\DoxyCodeLine{197     \textcolor{stringliteral}{"{}NumBOLDReps TEXT,"{}}}
-\DoxyCodeLine{198     \textcolor{stringliteral}{"{}NumImagesCriteria TEXT,"{}}}
-\DoxyCodeLine{199     \textcolor{stringliteral}{"{}StepOrder INTEGER,"{}}}
-\DoxyCodeLine{200     \textcolor{stringliteral}{"{}Protocol TEXT,"{}}}
-\DoxyCodeLine{201     \textcolor{stringliteral}{"{}SeriesCriteria TEXT,"{}}}
-\DoxyCodeLine{202     \textcolor{stringliteral}{"{}FlagEnabled INTEGER,"{}}}
-\DoxyCodeLine{203     \textcolor{stringliteral}{"{}FlagOptional INTEGER,"{}}}
-\DoxyCodeLine{204     \textcolor{stringliteral}{"{}FlagGzip INTEGER,"{}}}
-\DoxyCodeLine{205     \textcolor{stringliteral}{"{}FlagPreserveSeriesNum INTEGER,"{}}}
-\DoxyCodeLine{206     \textcolor{stringliteral}{"{}FlagPrimaryProtocol INTEGER,"{}}}
-\DoxyCodeLine{207     \textcolor{stringliteral}{"{}FlagUsePhaseDir INTEGER,"{}}}
-\DoxyCodeLine{208     \textcolor{stringliteral}{"{}FlagUseSeries INTEGER)"{}});}
-\DoxyCodeLine{209 }
-\DoxyCodeLine{210 QString \mbox{\hyperlink{squirrel_8sql_8h_a48ed38f7ac0c717eb3fdc758a40c82ab}{tableSeries}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Series ("{}}}
-\DoxyCodeLine{211     \textcolor{stringliteral}{"{}SeriesRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{212     \textcolor{stringliteral}{"{}StudyRowID INTEGER,"{}}}
-\DoxyCodeLine{213     \textcolor{stringliteral}{"{}SeriesNumber INTEGER,"{}}}
-\DoxyCodeLine{214     \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
-\DoxyCodeLine{215     \textcolor{stringliteral}{"{}SeriesUID TEXT,"{}}}
-\DoxyCodeLine{216     \textcolor{stringliteral}{"{}Description TEXT,"{}}}
-\DoxyCodeLine{217     \textcolor{stringliteral}{"{}Protocol TEXT,"{}}}
-\DoxyCodeLine{218     \textcolor{stringliteral}{"{}ExperimentRowID INTEGER,"{}}}
-\DoxyCodeLine{219     \textcolor{stringliteral}{"{}Size INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{220     \textcolor{stringliteral}{"{}NumFiles INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{221     \textcolor{stringliteral}{"{}BehSize INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{222     \textcolor{stringliteral}{"{}BehNumFiles INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{223     \textcolor{stringliteral}{"{}Sequence INTEGER,"{}}}
-\DoxyCodeLine{224     \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
-\DoxyCodeLine{225     \textcolor{stringliteral}{"{}UNIQUE(StudyRowID, SeriesNumber))"{}});}
-\DoxyCodeLine{226 }
-\DoxyCodeLine{227 QString \mbox{\hyperlink{squirrel_8sql_8h_afb7f1b4291120a315d432e67ffec8696}{tableStudy}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Study ("{}}}
-\DoxyCodeLine{228     \textcolor{stringliteral}{"{}StudyRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{229     \textcolor{stringliteral}{"{}SubjectRowID INTEGER,"{}}}
-\DoxyCodeLine{230     \textcolor{stringliteral}{"{}StudyNumber INTEGER ,"{}}}
-\DoxyCodeLine{231     \textcolor{stringliteral}{"{}Datetime TEXT,"{}}}
-\DoxyCodeLine{232     \textcolor{stringliteral}{"{}Age REAL DEFAULT 0.0,"{}}}
-\DoxyCodeLine{233     \textcolor{stringliteral}{"{}Height REAL DEFAULT 0.0,"{}}}
-\DoxyCodeLine{234     \textcolor{stringliteral}{"{}Weight REAL DEFAULT 0.0,"{}}}
-\DoxyCodeLine{235     \textcolor{stringliteral}{"{}Modality TEXT,"{}}}
-\DoxyCodeLine{236     \textcolor{stringliteral}{"{}Description TEXT,"{}}}
-\DoxyCodeLine{237     \textcolor{stringliteral}{"{}StudyUID TEXT,"{}}}
-\DoxyCodeLine{238     \textcolor{stringliteral}{"{}VisitType TEXT,"{}}}
-\DoxyCodeLine{239     \textcolor{stringliteral}{"{}DayNumber INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{240     \textcolor{stringliteral}{"{}Timepoint INTEGER DEFAULT 0,"{}}}
-\DoxyCodeLine{241     \textcolor{stringliteral}{"{}Equipment TEXT,"{}}}
-\DoxyCodeLine{242     \textcolor{stringliteral}{"{}Sequence INTEGER,"{}}}
-\DoxyCodeLine{243     \textcolor{stringliteral}{"{}VirtualPath TEXT,"{}}}
-\DoxyCodeLine{244     \textcolor{stringliteral}{"{}UNIQUE(SubjectRowID, StudyNumber))"{}});}
-\DoxyCodeLine{245 }
-\DoxyCodeLine{246 QString \mbox{\hyperlink{squirrel_8sql_8h_aad4c00a2108f75bf31859d0a502b2266}{tableSubject}} = QString(\textcolor{stringliteral}{"{}CREATE TABLE IF NOT EXISTS Subject ("{}}}
-\DoxyCodeLine{247     \textcolor{stringliteral}{"{}SubjectRowID INTEGER PRIMARY KEY AUTOINCREMENT,"{}}}
-\DoxyCodeLine{248     \textcolor{stringliteral}{"{}ID TEXT NOT NULL UNIQUE,"{}}}
-\DoxyCodeLine{249     \textcolor{stringliteral}{"{}AltIDs TEXT,"{}}}
-\DoxyCodeLine{250     \textcolor{stringliteral}{"{}GUID TEXT,"{}}}
-\DoxyCodeLine{251     \textcolor{stringliteral}{"{}DateOfBirth TEXT,"{}}}
-\DoxyCodeLine{252     \textcolor{stringliteral}{"{}Sex TEXT,"{}}}
-\DoxyCodeLine{253     \textcolor{stringliteral}{"{}Gender TEXT,"{}}}
-\DoxyCodeLine{254     \textcolor{stringliteral}{"{}Ethnicity1 TEXT,"{}}}
-\DoxyCodeLine{255     \textcolor{stringliteral}{"{}Ethnicity2 TEXT,"{}}}
-\DoxyCodeLine{256     \textcolor{stringliteral}{"{}Sequence INTEGER,"{}}}
-\DoxyCodeLine{257     \textcolor{stringliteral}{"{}VirtualPath TEXT)"{}});}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ Squirrel\ squirrel.sql.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ Copyright\ (C)\ 2004\ -\/\ 2024}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ Gregory\ A\ Book\ <gregory.book@hhchealth.org>\ <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ Olin\ Neuropsychiatry\ Research\ Center,\ Hartford\ Hospital}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ GPLv3\ License:}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ This\ program\ is\ free\ software:\ you\ can\ redistribute\ it\ and/or\ modify}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ it\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License\ as\ published\ by}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ the\ Free\ Software\ Foundation,\ either\ version\ 3\ of\ the\ License,\ or}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ GNU\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ General\ Public\ License}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ along\ with\ this\ program.\ \ If\ not,\ see\ <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Notes\ about\ this\ file:}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ SQLite\ does\ not\ support\ multiple\ statements\ for\ each\ query.\ So\ instead,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ each\ table\ must\ have\ it's\ own\ statement.\ This\ isn't\ too\ bad\ because\ we\ only}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ have\ 12\ tables\ to\ create.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ Also,\ SQLite's\ datatype\ and\ table\ creation\ syntax\ is\ much\ simpler\ than}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ regular\ SQL}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ QString\ tableStagedFiles\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ StagedFiles\ ("{}}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{stringliteral}{"{}StagedFileRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{stringliteral}{"{}ObjectType\ TEXT,"{}}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{stringliteral}{"{}ObjectRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{stringliteral}{"{}FileSize\ INTEGER,"{}}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{stringliteral}{"{}StagedPath\ TEXT,"{}}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{stringliteral}{"{}FinalDirectory\ TEXT,"{}}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{stringliteral}{"{}UNIQUE(ObjectRowID,\ ObjectType,\ StagedPath)\ )"{}});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ QString\ tableAnalysis\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Analysis\ ("{}}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{stringliteral}{"{}AnalysisRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{stringliteral}{"{}StudyRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{stringliteral}{"{}PipelineRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{stringliteral}{"{}PipelineVersion\ INTEGER,"{}}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{stringliteral}{"{}AnalysisName\ TEXT,"{}}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterStartDate\ TEXT,"{}}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterEndDate\ TEXT,"{}}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{stringliteral}{"{}StartDate\ TEXT,"{}}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{stringliteral}{"{}EndDate\ TEXT,"{}}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{stringliteral}{"{}SetupTime\ INTEGER,"{}}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{stringliteral}{"{}RunTime\ INTEGER,"{}}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{stringliteral}{"{}NumSeries\ INTEGER,"{}}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{stringliteral}{"{}Status\ TEXT,"{}}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{stringliteral}{"{}Successful\ INTEGER,"{}}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{stringliteral}{"{}Size\ INTEGER,"{}}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{stringliteral}{"{}FileCount\ INTEGER,"{}}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{stringliteral}{"{}Hostname\ TEXT,"{}}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{stringliteral}{"{}StatusMessage\ TEXT,"{}}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT,"{}}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{stringliteral}{"{}UNIQUE(StudyRowID,\ PipelineRowID,\ PipelineVersion))"{}});}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ QString\ tableDataDictionary\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ DataDictionary\ ("{}}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{stringliteral}{"{}DataDictionaryRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{stringliteral}{"{}FileCount\ INTEGER,"{}}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{stringliteral}{"{}Size\ INTEGER,"{}}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT)"{}});}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ QString\ tableDataDictionaryItems\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ DataDictionaryItems\ ("{}}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{stringliteral}{"{}DataDictionaryItemRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{stringliteral}{"{}DataDictionaryRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{stringliteral}{"{}VariableType\ TEXT,"{}}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{stringliteral}{"{}VariableName\ TEXT,"{}}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{stringliteral}{"{}VariableDescription\ TEXT,"{}}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{stringliteral}{"{}KeyValue\ TEXT,"{}}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{stringliteral}{"{}ExpectedTimepoints\ INTEGER,"{}}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{stringliteral}{"{}RangeLow\ REAL,"{}}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{stringliteral}{"{}RangeHigh\ REAL)"{}});}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ QString\ tableDrug\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Drug\ ("{}}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{stringliteral}{"{}DrugRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{stringliteral}{"{}SubjectRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{stringliteral}{"{}DrugName\ TEXT,"{}}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{stringliteral}{"{}DateStart\ TEXT,"{}}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{stringliteral}{"{}DateEnd\ TEXT,"{}}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{stringliteral}{"{}DateRecordCreate\ TEXT,"{}}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{stringliteral}{"{}DateRecordEntry\ TEXT,"{}}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{stringliteral}{"{}DateRecordModify\ TEXT,"{}}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{stringliteral}{"{}DoseString\ TEXT,"{}}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{stringliteral}{"{}DoseAmount\ TEXT,"{}}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{stringliteral}{"{}DoseFrequency\ TEXT,"{}}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{stringliteral}{"{}AdministrationRoute\ TEXT,"{}}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{stringliteral}{"{}DrugClass\ TEXT,"{}}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{stringliteral}{"{}DoseKey\ TEXT,"{}}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{stringliteral}{"{}DoseUnit\ TEXT,"{}}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{stringliteral}{"{}FrequencyModifer\ TEXT,"{}}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{stringliteral}{"{}FrequencyValue\ REAL,"{}}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{stringliteral}{"{}FrequencyUnit\ TEXT,"{}}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT,"{}}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{stringliteral}{"{}Rater\ TEXT,"{}}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{stringliteral}{"{}Notes\ TEXT)"{}});}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ QString\ tableExperiment\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Experiment\ ("{}}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{stringliteral}{"{}ExperimentRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{stringliteral}{"{}ExperimentName\ TEXT\ UNIQUE,"{}}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{stringliteral}{"{}Size\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{stringliteral}{"{}FileCount\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT)"{}});}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ QString\ tableGroupAnalysis\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ GroupAnalysis\ ("{}}}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{stringliteral}{"{}GroupAnalysisRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{stringliteral}{"{}GroupAnalysisName\ TEXT\ UNIQUE,"{}}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT,"{}}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{stringliteral}{"{}Datetime\ TEXT,"{}}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{stringliteral}{"{}FileCount\ INTEGER,"{}}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{stringliteral}{"{}Size\ INTEGER,"{}}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT)"{}});}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ QString\ tableMeasure\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Measure\ ("{}}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{stringliteral}{"{}MeasureRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{stringliteral}{"{}SubjectRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{stringliteral}{"{}MeasureName\ TEXT,"{}}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{stringliteral}{"{}DateStart\ TEXT,"{}}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{stringliteral}{"{}DateEnd\ TEXT,"{}}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{stringliteral}{"{}InstrumentName\ TEXT,"{}}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{stringliteral}{"{}Rater\ TEXT,"{}}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{stringliteral}{"{}Notes\ TEXT,"{}}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{stringliteral}{"{}Value\ TEXT,"{}}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{stringliteral}{"{}Duration\ INTEGER,"{}}}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{stringliteral}{"{}DateRecordCreate\ TEXT,"{}}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{stringliteral}{"{}DateRecordEntry\ TEXT,"{}}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{stringliteral}{"{}DateRecordModify\ TEXT,"{}}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT)"{}});}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ QString\ tablePackage\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Package\ ("{}}}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{stringliteral}{"{}PackageRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{stringliteral}{"{}Name\ TEXT\ NOT\ NULL\ UNIQUE,"{}}}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT,"{}}}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{stringliteral}{"{}Datetime\ TEXT,"{}}}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{stringliteral}{"{}SubjectDirFormat\ TEXT\ DEFAULT\ 'orig',"{}}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{stringliteral}{"{}StudyDirFormat\ TEXT\ DEFAULT\ 'orig',"{}}}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{stringliteral}{"{}SeriesDirFormat\ TEXT\ DEFAULT\ 'orig',"{}}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{stringliteral}{"{}PackageDataFormat\ TEXT\ DEFAULT\ 'orig',"{}}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{stringliteral}{"{}License\ TEXT,"{}}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{stringliteral}{"{}Readme\ TEXT,"{}}}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{stringliteral}{"{}Changes\ TEXT,"{}}}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{stringliteral}{"{}Notes\ TEXT)"{}});}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ QString\ tableParams\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Params\ ("{}}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{stringliteral}{"{}ParamRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{stringliteral}{"{}SeriesRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{stringliteral}{"{}ParamKey\ TEXT,"{}}}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{stringliteral}{"{}ParamValue\ TEXT,"{}}}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{stringliteral}{"{}UNIQUE(SeriesRowID,\ ParamKey))"{}});}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ QString\ tablePipeline\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Pipeline\ ("{}}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{stringliteral}{"{}PipelineRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{stringliteral}{"{}PipelineName\ TEXT,"{}}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT,"{}}}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{stringliteral}{"{}Datetime\ TEXT,"{}}}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{stringliteral}{"{}Level\ INTEGER,"{}}}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{stringliteral}{"{}PrimaryScript\ TEXT,"{}}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{stringliteral}{"{}SecondaryScript\ TEXT,"{}}}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{stringliteral}{"{}Version\ INTEGER\ ,"{}}}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{stringliteral}{"{}CompleteFiles\ TEXT,"{}}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{stringliteral}{"{}DataCopyMethod\ TEXT,"{}}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{stringliteral}{"{}DependencyDirectory\ TEXT,"{}}}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{stringliteral}{"{}DependencyLevel\ TEXT,"{}}}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{stringliteral}{"{}DependencyLinkType\ TEXT,"{}}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{stringliteral}{"{}DirectoryStructure\ TEXT,"{}}}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{stringliteral}{"{}Directory\ TEXT,"{}}}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{stringliteral}{"{}GroupName\ TEXT,"{}}}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{stringliteral}{"{}GroupType\ TEXT,"{}}}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{stringliteral}{"{}Notes\ TEXT,"{}}}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{stringliteral}{"{}ResultScript\ TEXT,"{}}}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{stringliteral}{"{}TempDirectory\ TEXT,"{}}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{stringliteral}{"{}FlagUseProfile\ INTEGER,"{}}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{stringliteral}{"{}FlagUseTempDirectory\ INTEGER,"{}}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterType\ TEXT,"{}}}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterUser\ TEXT,"{}}}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterQueue\ TEXT,"{}}}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterSubmitHost\ TEXT,"{}}}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterNumberCores\ INTEGER,"{}}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterMemory\ INTEGER,"{}}}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{stringliteral}{"{}ClusterMaxWallTime\ INTEGER,"{}}}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{stringliteral}{"{}NumConcurrentAnalysis\ INTEGER,"{}}}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{stringliteral}{"{}SubmitDelay\ INTEGER,"{}}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT,"{}}}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{stringliteral}{"{}UNIQUE(PipelineName,\ Version))"{}});}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ QString\ tablePipelineDataStep\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ PipeplineDataStep\ ("{}}}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{stringliteral}{"{}DataStepRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{stringliteral}{"{}PipelineRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{stringliteral}{"{}AssociationType\ TEXT,"{}}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{stringliteral}{"{}BehavioralDirectory\ TEXT,"{}}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{stringliteral}{"{}BehavioralFormat\ TEXT,"{}}}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{stringliteral}{"{}DataFormat\ TEXT,"{}}}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{stringliteral}{"{}ImageType\ TEXT,"{}}}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{stringliteral}{"{}DataLevel\ TEXT,"{}}}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{stringliteral}{"{}Location\ TEXT,"{}}}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{stringliteral}{"{}Modality\ TEXT,"{}}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{stringliteral}{"{}NumBOLDReps\ TEXT,"{}}}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{stringliteral}{"{}NumImagesCriteria\ TEXT,"{}}}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{stringliteral}{"{}StepOrder\ INTEGER,"{}}}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{stringliteral}{"{}Protocol\ TEXT,"{}}}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{stringliteral}{"{}SeriesCriteria\ TEXT,"{}}}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{stringliteral}{"{}FlagEnabled\ INTEGER,"{}}}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{stringliteral}{"{}FlagOptional\ INTEGER,"{}}}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{stringliteral}{"{}FlagGzip\ INTEGER,"{}}}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{stringliteral}{"{}FlagPreserveSeriesNum\ INTEGER,"{}}}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{stringliteral}{"{}FlagPrimaryProtocol\ INTEGER,"{}}}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{stringliteral}{"{}FlagUsePhaseDir\ INTEGER,"{}}}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{stringliteral}{"{}FlagUseSeries\ INTEGER)"{}});}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ QString\ tableSeries\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Series\ ("{}}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{stringliteral}{"{}SeriesRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{stringliteral}{"{}StudyRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{stringliteral}{"{}SeriesNumber\ INTEGER,"{}}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{stringliteral}{"{}Datetime\ TEXT,"{}}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{stringliteral}{"{}SeriesUID\ TEXT,"{}}}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT,"{}}}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{stringliteral}{"{}Protocol\ TEXT,"{}}}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{stringliteral}{"{}ExperimentRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{stringliteral}{"{}Size\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{stringliteral}{"{}FileCount\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{stringliteral}{"{}BehavioralSize\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{stringliteral}{"{}BehavioralFileCount\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{stringliteral}{"{}SequenceNumber\ INTEGER,"{}}}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT,"{}}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{stringliteral}{"{}UNIQUE(StudyRowID,\ SeriesNumber))"{}});}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ QString\ tableStudy\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Study\ ("{}}}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{stringliteral}{"{}StudyRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{stringliteral}{"{}SubjectRowID\ INTEGER,"{}}}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{stringliteral}{"{}StudyNumber\ INTEGER\ ,"{}}}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{stringliteral}{"{}Datetime\ TEXT,"{}}}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{stringliteral}{"{}Age\ REAL\ DEFAULT\ 0.0,"{}}}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{stringliteral}{"{}Height\ REAL\ DEFAULT\ 0.0,"{}}}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{stringliteral}{"{}Weight\ REAL\ DEFAULT\ 0.0,"{}}}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{stringliteral}{"{}Modality\ TEXT,"{}}}
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{stringliteral}{"{}Description\ TEXT,"{}}}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{stringliteral}{"{}StudyUID\ TEXT,"{}}}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{stringliteral}{"{}VisitType\ TEXT,"{}}}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{stringliteral}{"{}DayNumber\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{stringliteral}{"{}Timepoint\ INTEGER\ DEFAULT\ 0,"{}}}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{stringliteral}{"{}Equipment\ TEXT,"{}}}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{stringliteral}{"{}SequenceNumber\ INTEGER,"{}}}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT,"{}}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{stringliteral}{"{}UNIQUE(SubjectRowID,\ StudyNumber))"{}});}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ QString\ tableSubject\ =\ QString(\textcolor{stringliteral}{"{}CREATE\ TABLE\ IF\ NOT\ EXISTS\ Subject\ ("{}}}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{stringliteral}{"{}SubjectRowID\ INTEGER\ PRIMARY\ KEY\ AUTOINCREMENT,"{}}}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{stringliteral}{"{}ID\ TEXT\ NOT\ NULL\ UNIQUE,"{}}}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{stringliteral}{"{}AltIDs\ TEXT,"{}}}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{stringliteral}{"{}GUID\ TEXT,"{}}}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{stringliteral}{"{}DateOfBirth\ TEXT,"{}}}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{stringliteral}{"{}Sex\ TEXT,"{}}}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{stringliteral}{"{}Gender\ TEXT,"{}}}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{stringliteral}{"{}Ethnicity1\ TEXT,"{}}}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{stringliteral}{"{}Ethnicity2\ TEXT,"{}}}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{stringliteral}{"{}SequenceNumber\ INTEGER,"{}}}
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{stringliteral}{"{}VirtualPath\ TEXT)"{}});}
 
 \end{DoxyCode}

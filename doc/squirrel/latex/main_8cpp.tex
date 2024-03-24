@@ -1,24 +1,40 @@
-\hypertarget{main_8cpp}{}\doxysection{C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/main.cpp File Reference}
-\label{main_8cpp}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/main.cpp@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/main.cpp}}
+\doxysection{src/squirrel/main.cpp File Reference}
+\label{main_8cpp}\index{src/squirrel/main.cpp@{src/squirrel/main.cpp}}
 {\ttfamily \#include $<$QCore\+Application$>$}\newline
 {\ttfamily \#include $<$QCommand\+Line\+Parser$>$}\newline
 {\ttfamily \#include $<$iostream$>$}\newline
-{\ttfamily \#include \char`\"{}squirrel\+Version.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}validate.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}dicom.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}bids.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}squirrel.\+h\char`\"{}}\newline
-\doxysubsection*{Functions}
+{\ttfamily \#include "{}squirrel\+Version.\+h"{}}\newline
+{\ttfamily \#include "{}dicom.\+h"{}}\newline
+{\ttfamily \#include "{}bids.\+h"{}}\newline
+{\ttfamily \#include "{}modify.\+h"{}}\newline
+{\ttfamily \#include "{}squirrel.\+h"{}}\newline
+\doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+void \textbf{ Command\+Line\+Error} (QCommand\+Line\+Parser \&p, QString m)
+\item 
+void \textbf{ Print\+Example\+Usage} ()
+\item 
+int \textbf{ main} (int argc, char $\ast$argv[$\,$])
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}\label{main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}} 
+\label{main_8cpp_abe63e44274c8835e8b3e2743941c3e4c} 
+\index{main.cpp@{main.cpp}!CommandLineError@{CommandLineError}}
+\index{CommandLineError@{CommandLineError}!main.cpp@{main.cpp}}
+\doxysubsubsection{CommandLineError()}
+{\footnotesize\ttfamily void Command\+Line\+Error (\begin{DoxyParamCaption}\item[{QCommand\+Line\+Parser \&}]{p,  }\item[{QString}]{m }\end{DoxyParamCaption})}
+
+\label{main_8cpp_a0ddf1224851353fc92bfbff6f499fa97} 
 \index{main.cpp@{main.cpp}!main@{main}}
 \index{main@{main}!main.cpp@{main.cpp}}
-\doxysubsubsection{\texorpdfstring{main()}{main()}}
-{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+\label{main_8cpp_ad81b1acbc1c9fd7584c1ea1858f1af99} 
+\index{main.cpp@{main.cpp}!PrintExampleUsage@{PrintExampleUsage}}
+\index{PrintExampleUsage@{PrintExampleUsage}!main.cpp@{main.cpp}}
+\doxysubsubsection{PrintExampleUsage()}
+{\footnotesize\ttfamily void Print\+Example\+Usage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 

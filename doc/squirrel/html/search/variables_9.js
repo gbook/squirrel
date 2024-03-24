@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['keyvalue_0',['keyValue',['../structdata_dictionary_item.html#abb418b14cc8773188919ae471a172e60',1,'dataDictionaryItem']]]
+  ['keyvaluemapping_0',['KeyValueMapping',['../structdata_dictionary_item.html#abf1eac8a84ed526302114d155d7686ec',1,'dataDictionaryItem']]]
 ];

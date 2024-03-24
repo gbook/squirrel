@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['optional_0',['optional',['../structdata_step_1_1flag.html#a705bd8d726e6e7fa02ea5b6243208139',1,'dataStep::flag']]],
-  ['order_1',['order',['../structdata_step.html#a6bdffcf61f0d9b0d608cf4c36ff6cbb2',1,'dataStep']]]
+  ['optional_0',['Optional',['../structdata_step_1_1flag.html#a73b630f05dff540769a99aba8ccb8bf5',1,'dataStep::flag']]],
+  ['order_1',['Order',['../structdata_step.html#af47d78996804772992bfc7e71e05bc58',1,'dataStep']]]
 ];

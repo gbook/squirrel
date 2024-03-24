@@ -1,74 +1,76 @@
-\hypertarget{squirrel_data_dictionary_8h_source}{}\doxysection{squirrel\+Data\+Dictionary.\+h}
-\label{squirrel_data_dictionary_8h_source}\index{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelDataDictionary.h@{C:/Users/Greg/Documents/GitHub/squirrel/src/squirrel/squirrelDataDictionary.h}}
-\mbox{\hyperlink{squirrel_data_dictionary_8h}{Go to the documentation of this file.}}
+\doxysection{squirrel\+Data\+Dictionary.\+h}
+\label{squirrel_data_dictionary_8h_source}\index{src/squirrel/squirrelDataDictionary.h@{src/squirrel/squirrelDataDictionary.h}}
+\textbf{ Go to the documentation of this file.}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{1 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{2 \textcolor{comment}{  Squirrel squirrelDataDictionary.h}}
-\DoxyCodeLine{3 \textcolor{comment}{  Copyright (C) 2004 -\/ 2024}}
-\DoxyCodeLine{4 \textcolor{comment}{  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>}}
-\DoxyCodeLine{5 \textcolor{comment}{  Olin Neuropsychiatry Research Center, Hartford Hospital}}
-\DoxyCodeLine{6 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{7 \textcolor{comment}{  GPLv3 License:}}
-\DoxyCodeLine{8 \textcolor{comment}{}}
-\DoxyCodeLine{9 \textcolor{comment}{  This program is free software: you can redistribute it and/or modify}}
-\DoxyCodeLine{10 \textcolor{comment}{  it under the terms of the GNU General Public License as published by}}
-\DoxyCodeLine{11 \textcolor{comment}{  the Free Software Foundation, either version 3 of the License, or}}
-\DoxyCodeLine{12 \textcolor{comment}{  (at your option) any later version.}}
-\DoxyCodeLine{13 \textcolor{comment}{}}
-\DoxyCodeLine{14 \textcolor{comment}{  This program is distributed in the hope that it will be useful,}}
-\DoxyCodeLine{15 \textcolor{comment}{  but WITHOUT ANY WARRANTY; without even the implied warranty of}}
-\DoxyCodeLine{16 \textcolor{comment}{  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the}}
-\DoxyCodeLine{17 \textcolor{comment}{  GNU General Public License for more details.}}
-\DoxyCodeLine{18 \textcolor{comment}{}}
-\DoxyCodeLine{19 \textcolor{comment}{  You should have received a copy of the GNU General Public License}}
-\DoxyCodeLine{20 \textcolor{comment}{  along with this program.  If not, see <http://www.gnu.org/licenses/>.}}
-\DoxyCodeLine{21 \textcolor{comment}{  -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ */}}
-\DoxyCodeLine{22 }
-\DoxyCodeLine{23 \textcolor{preprocessor}{\#ifndef SQUIRRELDATADICTIONARY\_H}}
-\DoxyCodeLine{24 \textcolor{preprocessor}{\#define SQUIRRELDATADICTIONARY\_H}}
-\DoxyCodeLine{25 \textcolor{preprocessor}{\#include <QtSql>}}
-\DoxyCodeLine{26 \textcolor{preprocessor}{\#include <QString>}}
-\DoxyCodeLine{27 \textcolor{preprocessor}{\#include <QJsonObject>}}
-\DoxyCodeLine{28 \textcolor{preprocessor}{\#include <QJsonArray>}}
-\DoxyCodeLine{29 }
-\DoxyCodeLine{33 \textcolor{keyword}{struct }\mbox{\hyperlink{structdata_dictionary_item}{dataDictionaryItem}} \{}
-\DoxyCodeLine{34     QString \mbox{\hyperlink{structdata_dictionary_item_a1c89e767f641eaa9b65c14f2a604de06}{type}};           }
-\DoxyCodeLine{35     QString \mbox{\hyperlink{structdata_dictionary_item_a5716a858253ff342c05e887791719f2a}{variableName}};   }
-\DoxyCodeLine{36     QString \mbox{\hyperlink{structdata_dictionary_item_a3ab9d00c92ca4860df4c9cccfb1e0a53}{desc}};           }
-\DoxyCodeLine{37     QString \mbox{\hyperlink{structdata_dictionary_item_abb418b14cc8773188919ae471a172e60}{keyValue}};       }
-\DoxyCodeLine{38     \textcolor{keywordtype}{int} \mbox{\hyperlink{structdata_dictionary_item_a9d95136590c30002e08ab6a9a84849d4}{expectedTimepoints}}; }
-\DoxyCodeLine{39     \textcolor{keywordtype}{double} \mbox{\hyperlink{structdata_dictionary_item_aaaf8e793400ec32e96a014ca849d0dc6}{rangeLow}};        }
-\DoxyCodeLine{40     \textcolor{keywordtype}{double} \mbox{\hyperlink{structdata_dictionary_item_ac5ea75910dd50781c24eef20d4ac8339}{rangeHigh}};       }
-\DoxyCodeLine{41 \};}
-\DoxyCodeLine{42 }
-\DoxyCodeLine{43 }
-\DoxyCodeLine{47 \textcolor{keyword}{class }\mbox{\hyperlink{classsquirrel_data_dictionary}{squirrelDataDictionary}}}
-\DoxyCodeLine{48 \{}
-\DoxyCodeLine{49 \textcolor{keyword}{public}:}
-\DoxyCodeLine{50     \mbox{\hyperlink{classsquirrel_data_dictionary_a9b166bce0962be88e44e6dea764aabb5}{squirrelDataDictionary}}();}
-\DoxyCodeLine{51 }
-\DoxyCodeLine{52     QJsonObject \mbox{\hyperlink{classsquirrel_data_dictionary_a4f254f7c5a8d6866a50c79e479dd0d60}{ToJSON}}();}
-\DoxyCodeLine{53     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_data_dictionary_ac58213df633e6bb5f1c6e3b07381129f}{PrintDataDictionary}}();}
-\DoxyCodeLine{54     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_data_dictionary_a0539f7b29d686cd5b7080823e37d164d}{Get}}();             \textcolor{comment}{/* gets the object data from the database */}}
-\DoxyCodeLine{55     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_data_dictionary_a53ab5625c1b532e231904f44a1e59f1a}{Store}}();           \textcolor{comment}{/* saves the object data from this object into the database */}}
-\DoxyCodeLine{56     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classsquirrel_data_dictionary_a39af717c2144d079fd44f924dacb5a60}{isValid}}() \{ \textcolor{keywordflow}{return} valid; \}}
-\DoxyCodeLine{57     QString \mbox{\hyperlink{classsquirrel_data_dictionary_addccb7b82b40a071c40ff3a42dfe1653}{Error}}() \{ \textcolor{keywordflow}{return} err; \}}
-\DoxyCodeLine{58     qint64 \mbox{\hyperlink{classsquirrel_data_dictionary_af7639969b0a31bf8fd708c0d838885ca}{GetObjectID}}() \{ \textcolor{keywordflow}{return} objectID; \}}
-\DoxyCodeLine{59     \textcolor{keywordtype}{void} \mbox{\hyperlink{classsquirrel_data_dictionary_a7abef92f54dc14dc30cee2e103616ffa}{SetObjectID}}(\textcolor{keywordtype}{int} \textcolor{keywordtype}{id}) \{ objectID = id; \}}
-\DoxyCodeLine{60 }
-\DoxyCodeLine{61     \textcolor{comment}{/* JSON elements */}}
-\DoxyCodeLine{62     QList<dataDictionaryItem> \mbox{\hyperlink{classsquirrel_data_dictionary_a2b600caebf16333d4701b7f32b7d5763}{dictItems}}; }
-\DoxyCodeLine{63     qint64 \mbox{\hyperlink{classsquirrel_data_dictionary_abdd7f5546b6613b9ff8651331e0303cf}{numfiles}};                     }
-\DoxyCodeLine{64     qint64 \mbox{\hyperlink{classsquirrel_data_dictionary_a14cda891ec0e0500a62d32c42ad65f0a}{size}};                         }
-\DoxyCodeLine{66     \textcolor{comment}{/* lib variables */}}
-\DoxyCodeLine{67     QString \mbox{\hyperlink{classsquirrel_data_dictionary_a2aaa62436db5f1d3efb6d3454f646d2e}{virtualPath}} = \textcolor{stringliteral}{"{}data-\/dictionary"{}};    }
-\DoxyCodeLine{68     QStringList \mbox{\hyperlink{classsquirrel_data_dictionary_ad345b510d771ccaf384103136a7fa065}{stagedFiles}};                    }
-\DoxyCodeLine{70 \textcolor{keyword}{private}:}
-\DoxyCodeLine{71     \textcolor{keywordtype}{bool} valid = \textcolor{keyword}{false};}
-\DoxyCodeLine{72     QString err;}
-\DoxyCodeLine{73     qint64 objectID = -\/1;}
-\DoxyCodeLine{74 \};}
-\DoxyCodeLine{75 }
-\DoxyCodeLine{76 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// SQUIRRELDATADICTIONARY\_H}}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ Squirrel\ squirrelDataDictionary.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ Copyright\ (C)\ 2004\ -\/\ 2024}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ Gregory\ A\ Book\ <gregory.book@hhchealth.org>\ <gregory.a.book@gmail.com>}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ Olin\ Neuropsychiatry\ Research\ Center,\ Hartford\ Hospital}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ GPLv3\ License:}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ This\ program\ is\ free\ software:\ you\ can\ redistribute\ it\ and/or\ modify}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ it\ under\ the\ terms\ of\ the\ GNU\ General\ Public\ License\ as\ published\ by}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ the\ Free\ Software\ Foundation,\ either\ version\ 3\ of\ the\ License,\ or}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ This\ program\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ GNU\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ General\ Public\ License}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ along\ with\ this\ program.\ \ If\ not,\ see\ <http://www.gnu.org/licenses/>.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ SQUIRRELDATADICTIONARY\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ SQUIRRELDATADICTIONARY\_H}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <QtSql>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <QJsonObject>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <QJsonArray>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }dataDictionaryItem\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ QString\ VariableType;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ QString\ VariableName;\ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ QString\ Description;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00037\ \ \ \ \ QString\ KeyValueMapping;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{int}\ ExpectedTimepoints;\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{double}\ RangeLow;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{double}\ RangeHigh;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{class\ }squirrelDataDictionary}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00050\ \ \ \ \ squirrelDataDictionary();}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ QJsonObject\ ToJSON();}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ PrintDataDictionary();}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{bool}\ Get();\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ gets\ the\ object\ data\ from\ the\ database\ */}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{bool}\ Store();\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ saves\ the\ object\ data\ from\ this\ object\ into\ the\ database\ */}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{bool}\ isValid()\ \{\ \textcolor{keywordflow}{return}\ valid;\ \}}
+\DoxyCodeLine{00057\ \ \ \ \ QString\ Error()\ \{\ \textcolor{keywordflow}{return}\ err;\ \}}
+\DoxyCodeLine{00058\ \ \ \ \ qint64\ GetObjectID()\ \{\ \textcolor{keywordflow}{return}\ objectID;\ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ SetObjectID(qint64\ \textcolor{keywordtype}{id})\ \{\ objectID\ =\ id;\ \}}
+\DoxyCodeLine{00060\ \ \ \ \ QString\ VirtualPath();}
+\DoxyCodeLine{00061\ \ \ \ \ QList<QPair<QString,QString>>\ GetStagedFileList();}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{/*\ JSON\ elements\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ QList<dataDictionaryItem>\ dictItems;\ }
+\DoxyCodeLine{00065\ \ \ \ \ QString\ DataDictionaryName;}
+\DoxyCodeLine{00066\ \ \ \ \ qint64\ FileCount;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00067\ \ \ \ \ qint64\ Size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*\ lib\ variables\ */}}
+\DoxyCodeLine{00070\ \ \ \ \ QStringList\ stagedFiles;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{bool}\ valid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00074\ \ \ \ \ QString\ err;}
+\DoxyCodeLine{00075\ \ \ \ \ qint64\ objectID\ =\ -\/1;}
+\DoxyCodeLine{00076\ \};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SQUIRRELDATADICTIONARY\_H}}
 
 \end{DoxyCode}

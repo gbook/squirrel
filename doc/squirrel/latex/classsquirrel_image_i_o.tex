@@ -1,103 +1,103 @@
-\hypertarget{classsquirrel_image_i_o}{}\doxysection{squirrel\+Image\+IO Class Reference}
+\doxysection{squirrel\+Image\+IO Class Reference}
 \label{classsquirrel_image_i_o}\index{squirrelImageIO@{squirrelImageIO}}
 
 
-The \mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} class.  
+The \doxyref{squirrel\+Image\+IO}{p.}{classsquirrel_image_i_o} class.  
 
 
 
 
 {\ttfamily \#include $<$squirrel\+Image\+IO.\+h$>$}
 
-\doxysubsection*{Public Member Functions}
+\doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}{squirrel\+Image\+IO}} ()
+\textbf{ squirrel\+Image\+IO} ()
 \item 
-\mbox{\hyperlink{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}{$\sim$squirrel\+Image\+IO}} ()
+\textbf{ $\sim$squirrel\+Image\+IO} ()
 \item 
-bool \mbox{\hyperlink{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a}{Convert\+Dicom}} (QString filetype, QString indir, QString outdir, QString bindir, bool gzip, QString uid, QString studynum, QString seriesnum, QString datatype, int \&numfilesconv, int \&numfilesrenamed, QString \&msg)
+bool \textbf{ Convert\+Dicom} (QString filetype, QString indir, QString outdir, QString bindir, bool gzip, QString uid, QString studynum, QString seriesnum, QString datatype, int \&numfilesconv, int \&numfilesrenamed, QString \&msg)
 \item 
-bool \mbox{\hyperlink{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764}{Is\+DICOMFile}} (QString f)
+bool \textbf{ Is\+DICOMFile} (QString f)
 \item 
-bool \mbox{\hyperlink{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343}{Anonymize\+Dir}} (QString dir, int anonlevel, QString randstr1, QString randstr2, QString \&msg)
+bool \textbf{ Anonymize\+Dir} (QString dir, int anonlevel, QString randstr1, QString randstr2, QString \&msg)
 \item 
-bool \mbox{\hyperlink{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35}{Anonymize\+Dicom\+File}} (gdcm\+::\+Anonymizer \&anon, QString infile, QString outfile, std\+::vector$<$ gdcm\+::\+Tag $>$ const \&empty\+\_\+tags, std\+::vector$<$ gdcm\+::\+Tag $>$ const \&remove\+\_\+tags, std\+::vector$<$ std\+::pair$<$ gdcm\+::\+Tag, std\+::string $>$ $>$ const \&replace\+\_\+tags, QString \&msg)
+bool \textbf{ Anonymize\+Dicom\+File} (gdcm\+::\+Anonymizer \&anon, QString infile, QString outfile, std\+::vector$<$ gdcm\+::\+Tag $>$ const \&empty\+\_\+tags, std\+::vector$<$ gdcm\+::\+Tag $>$ const \&remove\+\_\+tags, std\+::vector$<$ std\+::pair$<$ gdcm\+::\+Tag, std\+::string $>$ $>$ const \&replace\+\_\+tags, QString \&msg)
 \item 
-QString \mbox{\hyperlink{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3}{Get\+Dicom\+Modality}} (QString f)
+QString \textbf{ Get\+Dicom\+Modality} (QString f)
 \item 
-void \mbox{\hyperlink{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2}{Get\+File\+Type}} (QString f, QString \&file\+Type, QString \&file\+Modality, QString \&file\+Patient\+ID, QString \&file\+Protocol)
+void \textbf{ Get\+File\+Type} (QString f, QString \&file\+Type, QString \&file\+Modality, QString \&file\+Patient\+ID, QString \&file\+Protocol)
 \item 
-bool \mbox{\hyperlink{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2}{Get\+Image\+File\+Tags}} (QString f, QString bindir, bool enablecsa, QHash$<$ QString, QString $>$ \&tags, QString \&msg)
+bool \textbf{ Get\+Image\+File\+Tags} (QString f, QString bindir, bool enablecsa, QHash$<$ QString, QString $>$ \&tags, QString \&msg)
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-The \mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} class. 
+The \doxyref{squirrel\+Image\+IO}{p.}{classsquirrel_image_i_o} class. 
 
-\mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} class provides functions to read image headers such as DICOM, PAR/\+REC, and other formats 
+\doxyref{squirrel\+Image\+IO}{p.}{classsquirrel_image_i_o} class provides functions to read image headers such as DICOM, PAR/\+REC, and other formats 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}\label{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2}} 
+\label{classsquirrel_image_i_o_aeb19f7a34163c756171c574fa00aa8c2} 
 \index{squirrelImageIO@{squirrelImageIO}!squirrelImageIO@{squirrelImageIO}}
 \index{squirrelImageIO@{squirrelImageIO}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{squirrelImageIO()}{squirrelImageIO()}}
+\doxysubsubsection{squirrelImageIO()}
 {\footnotesize\ttfamily squirrel\+Image\+IO\+::squirrel\+Image\+IO (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} constructor \mbox{\Hypertarget{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}\label{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578}} 
+\doxyref{squirrel\+Image\+IO}{p.}{classsquirrel_image_i_o} constructor \label{classsquirrel_image_i_o_a0e7460a87b5ee772189cedc96755f578} 
 \index{squirrelImageIO@{squirrelImageIO}!````~squirrelImageIO@{$\sim$squirrelImageIO}}
 \index{````~squirrelImageIO@{$\sim$squirrelImageIO}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{$\sim$squirrelImageIO()}{~squirrelImageIO()}}
+\doxysubsubsection{$\sim$squirrelImageIO()}
 {\footnotesize\ttfamily squirrel\+Image\+IO\+::$\sim$squirrel\+Image\+IO (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\mbox{\hyperlink{classsquirrel_image_i_o}{squirrel\+Image\+IO}} destructor 
+\doxyref{squirrel\+Image\+IO}{p.}{classsquirrel_image_i_o} destructor 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35}\label{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35}} 
+\label{classsquirrel_image_i_o_a57c5f4aff87ec03f7c8675e0bf5dcd35} 
 \index{squirrelImageIO@{squirrelImageIO}!AnonymizeDicomFile@{AnonymizeDicomFile}}
 \index{AnonymizeDicomFile@{AnonymizeDicomFile}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{AnonymizeDicomFile()}{AnonymizeDicomFile()}}
+\doxysubsubsection{AnonymizeDicomFile()}
 {\footnotesize\ttfamily bool squirrel\+Image\+IO\+::\+Anonymize\+Dicom\+File (\begin{DoxyParamCaption}\item[{gdcm\+::\+Anonymizer \&}]{anon,  }\item[{QString}]{infile,  }\item[{QString}]{outfile,  }\item[{std\+::vector$<$ gdcm\+::\+Tag $>$ const \&}]{empty\+\_\+tags,  }\item[{std\+::vector$<$ gdcm\+::\+Tag $>$ const \&}]{remove\+\_\+tags,  }\item[{std\+::vector$<$ std\+::pair$<$ gdcm\+::\+Tag, std\+::string $>$ $>$ const \&}]{replace\+\_\+tags,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343}\label{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343}} 
+\label{classsquirrel_image_i_o_a5d43947172c67f263f2dd0d69c943343} 
 \index{squirrelImageIO@{squirrelImageIO}!AnonymizeDir@{AnonymizeDir}}
 \index{AnonymizeDir@{AnonymizeDir}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{AnonymizeDir()}{AnonymizeDir()}}
+\doxysubsubsection{AnonymizeDir()}
 {\footnotesize\ttfamily bool squirrel\+Image\+IO\+::\+Anonymize\+Dir (\begin{DoxyParamCaption}\item[{QString}]{dir,  }\item[{int}]{anonlevel,  }\item[{QString}]{randstr1,  }\item[{QString}]{randstr2,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a}\label{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a}} 
+\label{classsquirrel_image_i_o_a48552e3f886e0dec3d0ff92161195d2a} 
 \index{squirrelImageIO@{squirrelImageIO}!ConvertDicom@{ConvertDicom}}
 \index{ConvertDicom@{ConvertDicom}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{ConvertDicom()}{ConvertDicom()}}
+\doxysubsubsection{ConvertDicom()}
 {\footnotesize\ttfamily bool squirrel\+Image\+IO\+::\+Convert\+Dicom (\begin{DoxyParamCaption}\item[{QString}]{filetype,  }\item[{QString}]{indir,  }\item[{QString}]{outdir,  }\item[{QString}]{bindir,  }\item[{bool}]{gzip,  }\item[{QString}]{uid,  }\item[{QString}]{studynum,  }\item[{QString}]{seriesnum,  }\item[{QString}]{datatype,  }\item[{int \&}]{numfilesconv,  }\item[{int \&}]{numfilesrenamed,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3}\label{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3}} 
+\label{classsquirrel_image_i_o_a9d69340fba46ad29104d1d8949429ab3} 
 \index{squirrelImageIO@{squirrelImageIO}!GetDicomModality@{GetDicomModality}}
 \index{GetDicomModality@{GetDicomModality}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{GetDicomModality()}{GetDicomModality()}}
+\doxysubsubsection{GetDicomModality()}
 {\footnotesize\ttfamily QString squirrel\+Image\+IO\+::\+Get\+Dicom\+Modality (\begin{DoxyParamCaption}\item[{QString}]{f }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2}\label{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2}} 
+\label{classsquirrel_image_i_o_ac5e19e787614450f88090bd1325dc7a2} 
 \index{squirrelImageIO@{squirrelImageIO}!GetFileType@{GetFileType}}
 \index{GetFileType@{GetFileType}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{GetFileType()}{GetFileType()}}
+\doxysubsubsection{GetFileType()}
 {\footnotesize\ttfamily void squirrel\+Image\+IO\+::\+Get\+File\+Type (\begin{DoxyParamCaption}\item[{QString}]{f,  }\item[{QString \&}]{file\+Type,  }\item[{QString \&}]{file\+Modality,  }\item[{QString \&}]{file\+Patient\+ID,  }\item[{QString \&}]{file\+Protocol }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2}\label{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2}} 
+\label{classsquirrel_image_i_o_a6904e441c3ae70ca941e06ab352e83a2} 
 \index{squirrelImageIO@{squirrelImageIO}!GetImageFileTags@{GetImageFileTags}}
 \index{GetImageFileTags@{GetImageFileTags}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{GetImageFileTags()}{GetImageFileTags()}}
+\doxysubsubsection{GetImageFileTags()}
 {\footnotesize\ttfamily bool squirrel\+Image\+IO\+::\+Get\+Image\+File\+Tags (\begin{DoxyParamCaption}\item[{QString}]{f,  }\item[{QString}]{bindir,  }\item[{bool}]{enablecsa,  }\item[{QHash$<$ QString, QString $>$ \&}]{tags,  }\item[{QString \&}]{msg }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764}\label{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764}} 
+\label{classsquirrel_image_i_o_ae1c73f26bb71b5b42a7f6679a872b764} 
 \index{squirrelImageIO@{squirrelImageIO}!IsDICOMFile@{IsDICOMFile}}
 \index{IsDICOMFile@{IsDICOMFile}!squirrelImageIO@{squirrelImageIO}}
-\doxysubsubsection{\texorpdfstring{IsDICOMFile()}{IsDICOMFile()}}
+\doxysubsubsection{IsDICOMFile()}
 {\footnotesize\ttfamily bool squirrel\+Image\+IO\+::\+Is\+DICOMFile (\begin{DoxyParamCaption}\item[{QString}]{f }\end{DoxyParamCaption})}
 
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_image_i_o_8h}{squirrel\+Image\+IO.\+h}}\item 
-C\+:/\+Users/\+Greg/\+Documents/\+Git\+Hub/squirrel/src/squirrel/\mbox{\hyperlink{squirrel_image_i_o_8cpp}{squirrel\+Image\+IO.\+cpp}}\end{DoxyCompactItemize}
+src/squirrel/\textbf{ squirrel\+Image\+IO.\+h}\item 
+src/squirrel/\textbf{ squirrel\+Image\+IO.\+cpp}\end{DoxyCompactItemize}
