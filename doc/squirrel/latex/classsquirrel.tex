@@ -13,13 +13,13 @@ The squirrel class.
 \begin{DoxyCompactItemize}
 \item 
 \textbf{ squirrel} (bool dbg=false, bool q=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::squirrel}{p.}{classsquirrel_a1af3586cc908460881798dd72c0103f0} constructor \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
 \textbf{ $\sim$squirrel} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::$\sim$squirrel}{p.}{classsquirrel_a7c2bad2ef13d00976770d7aae16ccfc8} \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
 bool \textbf{ Read} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Read}{p.}{classsquirrel_a4468a79ec12852f8b677908dc3ceb926} \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Read a squirrel package. All parameters must be set first. \end{DoxyCompactList}\item 
 bool \textbf{ Write} (bool write\+Log)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Write}{p.}{classsquirrel_aec053b79aa62fa47dc653f5e80d857b5} \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Write a squirrel package. All parameters should be set first. \end{DoxyCompactList}\item 
 bool \textbf{ Validate} ()
 \begin{DoxyCompactList}\small\item\em Validate if a squirrel package is readable. \end{DoxyCompactList}\item 
 void \textbf{ Print} ()
@@ -27,7 +27,7 @@ void \textbf{ Print} ()
 void \textbf{ Set\+Package\+Path} (QString p)
 \item 
 QString \textbf{ Get\+Package\+Path} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Package\+Path}{p.}{classsquirrel_ac0ed0c68207fa719668b22dcf12072c0} \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Get the package path, with extension. \end{DoxyCompactList}\item 
 void \textbf{ Set\+File\+Mode} (\textbf{ File\+Mode} m)
 \item 
 QList$<$ \textbf{ squirrel\+Experiment} $>$ \textbf{ Get\+All\+Experiments} ()
@@ -81,7 +81,7 @@ void \textbf{ Resequence\+Subjects} ()
 void \textbf{ Resequence\+Studies} (qint64 subject\+Row\+ID)
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Resequence\+Studies}{p.}{classsquirrel_aed67764e5845964af0ae637d82f555d9} \end{DoxyCompactList}\item 
 void \textbf{ Resequence\+Series} (qint64 study\+Row\+ID)
-\item 
+\begin{DoxyCompactList}\small\item\em Resequence the series numbers for a specified study. \end{DoxyCompactList}\item 
 qint64 \textbf{ Get\+Unzip\+Size} ()
 \begin{DoxyCompactList}\small\item\em Get the unzipped size of the squirrel package in bytes. \end{DoxyCompactList}\item 
 QString \textbf{ Get\+Temp\+Dir} ()
@@ -169,7 +169,7 @@ provides a complete class to read, write, and validate squirrel files
 
 
 
-\doxyref{squirrel\+::squirrel}{p.}{classsquirrel_a1af3586cc908460881798dd72c0103f0} constructor 
+Constructor. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -186,7 +186,7 @@ provides a complete class to read, write, and validate squirrel files
 
 
 
-\doxyref{squirrel\+::$\sim$squirrel}{p.}{classsquirrel_a7c2bad2ef13d00976770d7aae16ccfc8} 
+Destructor. 
 
 
 
@@ -579,10 +579,10 @@ the number of objects
 
 
 
-\doxyref{squirrel\+::\+Get\+Package\+Path}{p.}{classsquirrel_ac0ed0c68207fa719668b22dcf12072c0} 
+Get the package path, with extension. 
 
 \begin{DoxyReturn}{Returns}
-the full path to the package, with extension 
+the full path to the package 
 \end{DoxyReturn}
 \label{classsquirrel_a59fbbda3717a442fdf571bdd8dff7bba} 
 \index{squirrel@{squirrel}!GetSeries@{GetSeries}}
@@ -805,7 +805,7 @@ Print package details.
 
 
 
-\doxyref{squirrel\+::\+Read}{p.}{classsquirrel_a4468a79ec12852f8b677908dc3ceb926} 
+Read a squirrel package. All parameters must be set first. 
 
 \begin{DoxyReturn}{Returns}
 true if read succesful 
@@ -834,6 +834,15 @@ list of key/value pairs
 \doxysubsubsection{ResequenceSeries()}
 {\footnotesize\ttfamily void squirrel\+::\+Resequence\+Series (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID }\end{DoxyParamCaption})}
 
+
+
+Resequence the series numbers for a specified study. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em study\+Row\+ID} & The study\+Row\+ID to resequence \\
+\hline
+\end{DoxyParams}
 \label{classsquirrel_aed67764e5845964af0ae637d82f555d9} 
 \index{squirrel@{squirrel}!ResequenceStudies@{ResequenceStudies}}
 \index{ResequenceStudies@{ResequenceStudies}!squirrel@{squirrel}}
@@ -892,7 +901,7 @@ true if valid squirrel file, false otherwise
 
 
 
-\doxyref{squirrel\+::\+Write}{p.}{classsquirrel_aec053b79aa62fa47dc653f5e80d857b5} 
+Write a squirrel package. All parameters should be set first. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -1011,5 +1020,5 @@ orig, seq
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-src/squirrel/\textbf{ squirrel.\+h}\item 
-src/squirrel/\textbf{ squirrel.\+cpp}\end{DoxyCompactItemize}
+C\+:/squirrel/src/squirrel/\textbf{ squirrel.\+h}\item 
+C\+:/squirrel/src/squirrel/\textbf{ squirrel.\+cpp}\end{DoxyCompactItemize}

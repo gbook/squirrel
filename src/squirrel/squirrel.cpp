@@ -33,7 +33,7 @@
 /* ----- squirrel --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::squirrel constructor
+ * @brief Constructor
  * @param dbg true for debug logging
  * @param q true to turn off all output
  */
@@ -64,7 +64,7 @@ squirrel::squirrel(bool dbg, bool q)
 /* ----- ~squirrel -------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::~squirrel
+ * @brief Destructor
  */
 squirrel::~squirrel()
 {
@@ -80,8 +80,7 @@ squirrel::~squirrel()
 /* --------- DatabaseConnect -------------------------------- */
 /* ---------------------------------------------------------- */
 /**
- * @brief squirrel::DatabaseConnect - connect to SQLite memory
- * database
+ * @brief Connect to SQLite memory database
  * @return true if successful, false otherwise
  */
 bool squirrel::DatabaseConnect() {
@@ -104,7 +103,7 @@ bool squirrel::DatabaseConnect() {
 /* --------- InitializeDatabase ----------------------------- */
 /* ---------------------------------------------------------- */
 /**
- * @brief squirrel::InitializeDatabase - Create SQLite tables
+ * @brief Initialize the SQLite database by creating necessary tables
  * @return true if successul, false otherwise
  */
 bool squirrel::InitializeDatabase() {
@@ -166,8 +165,8 @@ bool squirrel::InitializeDatabase() {
 /* ----- GetPackagePath --------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetPackagePath
- * @return the full path to the package, with extension
+ * @brief Get the package path, with extension
+ * @return the full path to the package
  */
 QString squirrel::GetPackagePath() {
 
@@ -185,7 +184,7 @@ QString squirrel::GetPackagePath() {
 /* ----- Read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::Read
+ * @brief Read a squirrel package. All parameters must be set first.
  * @return true if read succesful
  */
 bool squirrel::Read() {
@@ -488,7 +487,7 @@ bool squirrel::Read() {
 /* ----- Write ------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::Write
+ * @brief Write a squirrel package. All parameters should be set first
  * @param writeLog true if logfile should be written
  * @return true if successfuly written, false otherwise
  */
@@ -1131,9 +1130,9 @@ QString squirrel::GetTempDir() {
 /* ----- Log -------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Record a log - prints to screen and stores in log string
- * @param s log message
- * @param func function that called this function
+ * @brief Record a log to a string and print to the screen
+ * @param s The log message
+ * @param func The function that called this function
  */
 void squirrel::Log(QString s, QString func) {
     if (!quiet) {
@@ -1833,10 +1832,8 @@ void squirrel::ResequenceSubjects() {
 /* ----- ResequenceStudies ------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::ResequenceStudies
- * @param subjectRowID
- * Renumber the sequence field for the studies associated with
- * this subject
+ * @brief Renumber the sequence field for the studies associated with the subject
+ * @param subjectRowID The subjectRowID of the parent
  */
 void squirrel::ResequenceStudies(qint64 subjectRowID) {
 
@@ -1853,6 +1850,10 @@ void squirrel::ResequenceStudies(qint64 subjectRowID) {
 /* ------------------------------------------------------------ */
 /* ----- ResequenceSeries ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Resequence the series numbers for a specified study
+ * @param studyRowID The studyRowID to resequence
+ */
 void squirrel::ResequenceSeries(qint64 studyRowID) {
 
     QList<squirrelSeries> serieses = GetSeries(studyRowID);
@@ -1868,6 +1869,13 @@ void squirrel::ResequenceSeries(qint64 studyRowID) {
 /* ------------------------------------------------------------ */
 /* ----- ExtractFileFromArchive ------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Extract a single file from an existing archive and return it as a string
+ * @param archivePath Path to the archive
+ * @param filePath File path within the archive
+ * @param fileContents File contents as a QString
+ * @return true if successful, false otherwise
+ */
 bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents) {
     try {
         using namespace bit7z;
@@ -1900,6 +1908,13 @@ bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QSt
 /* ------------------------------------------------------------ */
 /* ----- CompressDirectoryToArchive --------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Compress an existing directory to a new archive
+ * @param dir Directory containing the files to compress
+ * @param archivePath Path to the archive
+ * @param m Any messages generated during the operation
+ * @return true if successful, false otherwise
+ */
 bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QString &m) {
     try {
         using namespace bit7z;
@@ -1936,6 +1951,14 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
 /* ------------------------------------------------------------ */
 /* ----- AddFilesToArchive ------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Add/update files to an existing archive
+ * @param filePaths File paths to add
+ * @param compressedFilePaths Paths to the file paths within the archive
+ * @param archivePath Path to the archive
+ * @param m Any messages generated during the operation
+ * @return true if successful, false otherwise
+ */
 bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m) {
     try {
         using namespace bit7z;
@@ -1978,6 +2001,13 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
 /* ------------------------------------------------------------ */
 /* ----- RemoveFilesFromArchive ------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Remove a list of files from an existing archive
+ * @param compressedFilePaths The list of file paths to delete within the archive
+ * @param archivePath Path to the archive
+ * @param m Any messages generated during he operation
+ * @return true if successful, false otherwise
+ */
 bool squirrel::RemoveFilesFromArchive(QStringList compressedFilePaths, QString archivePath, QString &m) {
     try {
         using namespace bit7z;
@@ -2016,6 +2046,14 @@ bool squirrel::RemoveFilesFromArchive(QStringList compressedFilePaths, QString a
 /* ------------------------------------------------------------ */
 /* ----- UpdateMemoryFileToArchive ---------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Update a single file, from memory, into an existing archive
+ * @param file File contents as a QString
+ * @param compressedFilePath File path within the archive
+ * @param archivePath Path to the archive
+ * @param m Any messages generated during the operation
+ * @return true if successful, false otherwise
+ */
 bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m) {
     try {
         using namespace bit7z;

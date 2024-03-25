@@ -61,7 +61,7 @@ public:
     void Print();
     void SetPackagePath(QString p) { packagePath = p; }
     QString GetPackagePath();
-    void SetFileMode(FileMode m) { fileMode = m; }
+    void SetFileMode(FileMode m) { fileMode = m; } /*!< Set the file mode to either NewPackage or ExistingPackage */
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
