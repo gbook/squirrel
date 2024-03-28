@@ -1881,24 +1881,16 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
             return false;
     }
 
-    /* get list of drugs associated with this subject, and delete them */
-    q.prepare("select DrugRowID from Drug where SubjectRowID = :subjectRowID");
+    /* remove drugs associated with this subject */
+    q.prepare("delete from Drug where SubjectRowID = :subjectRowID");
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    while (q.next()) {
-        if (!RemoveDrug(q.value("DrugRowID").toLongLong()))
-            return false;
-    }
 
-    /* get list of measures associated with this subject, and delete them */
-    q.prepare("select MeasureRowID from Measure where SubjectRowID = :subjectRowID");
+    /* remove all measures associated with this subject */
+    q.prepare("delete from Measure where SubjectRowID = :subjectRowID");
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    while (q.next()) {
-        if (!RemoveMeasure(q.value("MeasureRowID").toLongLong()))
-            return false;
-    }
-
+\
     /* remove the files, if any from the archive */
     if (fileMode == FileMode::ExistingPackage) {
         squirrelSubject sqrlSubject;
@@ -1924,6 +1916,41 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveStudy(qint64 studyRowID) {
 
+    /* get list of studies associated with this subject, and delete them */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select SeriesRowID from Series where StudyRowID = :studyRowID");
+    q.bindValue(":studyRowID", studyRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        if (!RemoveSeries(q.value("SeriesRowID").toLongLong()))
+            return false;
+    }
+
+    /* remove analyses associated with this subject */
+    q.prepare("select AnalysisRowID from Analysis where StudyRowID = :studyRowID");
+    q.bindValue(":studyRowID", studyRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        if (!RemoveAnalysis(q.value("AnalysisRowID").toLongLong()))
+            return false;
+    }
+
+    /* remove files from the archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelSubject sqrlStudy;
+        sqrlStudy.SetObjectID(studyRowID);
+        sqrlStudy.Get();
+        QString studyArchivePath = sqrlStudy.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(studyArchivePath, packagePath, m))
+        //    return false;
+    }
+
+    /* remove the study */
+    q.prepare("delete from Study where StudyRowID = :studyRowID");
+    q.bindValue(":studyRowID", studyRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
     return true;
 }
 
@@ -1932,6 +1959,24 @@ bool squirrel::RemoveStudy(qint64 studyRowID) {
 /* ----- RemoveSeries ----------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveSeries(qint64 seriesRowID) {
+
+    /* delete from database */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from Series where SeriesRowID = :seriesRowID");
+    q.bindValue(":seriesRowID", seriesRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* remove files from archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelSeries sqrlSeries;
+        sqrlSeries.SetObjectID(seriesRowID);
+        sqrlSeries.Get();
+        QString seriesArchivePath = sqrlSeries.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(seriesArchivePath, packagePath, m))
+        //    return false;
+    }
+
     return true;
 }
 
@@ -1940,6 +1985,24 @@ bool squirrel::RemoveSeries(qint64 seriesRowID) {
 /* ----- RemoveAnalysis --------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
+
+    /* delete from database */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from Analysis where AnalysisRowID = :analysisRowID");
+    q.bindValue(":analysisRowID", analysisRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* remove files from archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelAnalysis sqrlAnalysis;
+        sqrlAnalysis.SetObjectID(analysisRowID);
+        sqrlAnalysis.Get();
+        QString analysisArchivePath = sqrlAnalysis.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(analysisArchivePath, packagePath, m))
+        //    return false;
+    }
+
     return true;
 }
 
@@ -1948,6 +2011,24 @@ bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
 /* ----- RemoveExperiment ------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveExperiment(qint64 experimentRowID) {
+
+    /* delete from database */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from Experiment where ExperimentRowID = :experimentRowID");
+    q.bindValue(":experimentRowID", experimentRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* remove files from archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelExperiment sqrlExperiment;
+        sqrlExperiment.SetObjectID(experimentRowID);
+        sqrlExperiment.Get();
+        QString experimentArchivePath = sqrlExperiment.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(experimentArchivePath, packagePath, m))
+        //    return false;
+    }
+
     return true;
 }
 
@@ -1956,6 +2037,28 @@ bool squirrel::RemoveExperiment(qint64 experimentRowID) {
 /* ----- RemovePipeline --------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemovePipeline(qint64 pipelineRowID) {
+
+    /* delete from database */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from Pipeline where PipelineRowID = :pipelineRowID");
+    q.bindValue(":pipelineRowID", pipelineRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    q.prepare("delete from PipelineDataStep where PipelineRowID = :pipelineRowID");
+    q.bindValue(":pipelineRowID", pipelineRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* remove files from archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelPipeline sqrlPipeline;
+        sqrlPipeline.SetObjectID(pipelineRowID);
+        sqrlPipeline.Get();
+        QString pipelineArchivePath = sqrlPipeline.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(pipelineArchivePath, packagePath, m))
+        //    return false;
+    }
+
     return true;
 }
 
@@ -1964,6 +2067,24 @@ bool squirrel::RemovePipeline(qint64 pipelineRowID) {
 /* ----- RemoveGroupAnalysis ---------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
+
+    /* delete from database */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from GroupAnalysis where GroupAnalysisRowID = :groupAnalysisRowID");
+    q.bindValue(":groupAnalysisRowID", groupAnalysisRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* remove files from archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelGroupAnalysis sqrlGroupAnalysis;
+        sqrlGroupAnalysis.SetObjectID(groupAnalysisRowID);
+        sqrlGroupAnalysis.Get();
+        QString groupAnalysisArchivePath = sqrlGroupAnalysis.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(groupAnalysisArchivePath, packagePath, m))
+        //    return false;
+    }
+
     return true;
 }
 
@@ -1972,6 +2093,24 @@ bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
 /* ----- RemoveDataDictionary --------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
+
+    /* delete from database */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from DataDictionary where DataDictionaryRowID = :dataDictionaryRowID");
+    q.bindValue(":dataDictionaryRowID", dataDictionaryRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    /* remove files from archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelDataDictionary sqrlDataDictionary;
+        sqrlDataDictionary.SetObjectID(dataDictionaryRowID);
+        sqrlDataDictionary.Get();
+        QString dataDictionaryArchivePath = sqrlDataDictionary.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(dataDictionaryArchivePath, packagePath, m))
+        //    return false;
+    }
+
     return true;
 }
 
@@ -1979,7 +2118,13 @@ bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
 /* ------------------------------------------------------------ */
 /* ----- RemoveDrug ------------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveDrug(qint64 seriesRowID) {
+bool squirrel::RemoveDrug(qint64 drugRowID) {
+
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from Drug where DrugRowID = :drugRowID");
+    q.bindValue(":drugRowID", drugRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
     return true;
 }
 
@@ -1987,7 +2132,13 @@ bool squirrel::RemoveDrug(qint64 seriesRowID) {
 /* ------------------------------------------------------------ */
 /* ----- RemoveMeasure ---------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveMeasure(qint64 seriesRowID) {
+bool squirrel::RemoveMeasure(qint64 measureRowID) {
+
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("delete from Measure where MeasureRowID = :measureRowID");
+    q.bindValue(":measureRowID", measureRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
     return true;
 }
 
@@ -2134,7 +2285,7 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
  * @param m Any messages generated during he operation
  * @return true if successful, false otherwise
  */
-bool squirrel::RemoveFilesFromArchive(QStringList compressedFilePaths, QString archivePath, QString &m) {
+bool squirrel::RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m) {
     try {
         using namespace bit7z;
 #ifdef Q_OS_WINDOWS
@@ -2142,19 +2293,42 @@ bool squirrel::RemoveFilesFromArchive(QStringList compressedFilePaths, QString a
 #else
         Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
 #endif
+
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            /* first, get the index of the directory to remove */
+            std::vector<uint32_t> indexes;
+            BitArchiveReader reader(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
+            for (const auto& item : reader) {
+                QString archivedPath = QString::fromStdString(item.path());
+                if (archivedPath.startsWith(compressedDirPath)) {
+                    indexes.push_back(item.index());
+                }
+            }
+
+            /* next, remove the item from the archive and apply changes */
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
             editor.setUpdateMode(UpdateMode::Update);
-            for (int i=0; i<compressedFilePaths.size(); i++) {
-                editor.deleteItem(compressedFilePaths.at(i).toStdString());
+            for (uint32_t index : indexes) {
+                editor.deleteItem(index);
             }
             editor.applyChanges();
         }
         else {
+            /* first, get the index of the directory to remove */
+            std::vector<uint32_t> indexes;
+            BitArchiveReader reader(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
+            for (const auto& item : reader) {
+                QString archivedPath = QString::fromStdString(item.path());
+                if (archivedPath.startsWith(compressedDirPath)) {
+                    indexes.push_back(item.index());
+                }
+            }
+
+            /* next, remove the item from the archive and apply changes */
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
-            for (int i=0; i<compressedFilePaths.size(); i++) {
-                editor.addFile(compressedFilePaths.at(i).toStdString());
+            for (uint32_t index : indexes) {
+                editor.deleteItem(index);
             }
             editor.applyChanges();
         }

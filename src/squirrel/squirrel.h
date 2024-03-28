@@ -164,7 +164,7 @@ private:
     bool ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents);
     bool CompressDirectoryToArchive(QString dir, QString archivePath, QString &m);
     bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
-    bool RemoveFilesFromArchive(QStringList compressedFilePaths, QString archivePath, QString &m);
+    bool RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m);
     bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
 
     QString workingDir;

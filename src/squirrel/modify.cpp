@@ -378,32 +378,90 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         sqrl->SetFileMode(FileMode::ExistingPackage);
         sqrl->SetPackagePath(packagePath);
         if (!sqrl->Read()) {
-            m = QString("Package unreadable").arg(vars["SubjectID"]);
+            m = QString("Package unreadable");
             delete sqrl;
             return false;
         }
 
         /* ----- subject ----- */
-        if (addObject == "subject") {
-            qint64 subjectRowID;
-            subjectRowID = sqrl->FindSubject(vars["PatientID"]);
+        if (removeObject == "subject") {
+            qint64 subjectRowID = sqrl->FindSubject(objectID);
             if (subjectRowID < 0) {
-                squirrelSubject subject;
-                sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["PatientID"]), __FUNCTION__);
-                subject.ID = vars["SubjectID"];
-                subject.AlternateIDs = vars["AlternateIDs"].split(",");
-                subject.GUID = vars["GUID"];
-                subject.DateOfBirth = QDate::fromString(vars["DateOfBirth"], "yyyy-MM-dd");
-                subject.Sex = vars["Gender"];
-                subject.Gender = vars["Gender"];
-                subject.Ethnicity1 = vars["Ethnicity1"];
-                subject.Ethnicity2 = vars["Ethnicity2"];
-                subject.Store();
-                /* resequence the newly added subject */
+                sqrl->RemoveSubject(subjectRowID);
                 sqrl->ResequenceSubjects();
             }
             else {
-                m = QString("Subject with ID [%1] already exists in package").arg(vars["SubjectID"]);
+                m = QString("Subject with ID [%1] not found in package").arg(objectID);
+                delete sqrl;
+                return false;
+            }
+        }
+        else if (removeObject == "study") {
+            qint64 studyRowID = sqrl->FindStudy(subjectID, objectID.toInt());
+            qint64 subjectRowID = sqrl->FindSubject(objectID);
+            if (studyRowID < 0) {
+                sqrl->RemoveStudy(studyRowID);
+                sqrl->ResequenceStudies(subjectRowID);
+            }
+            else {
+                m = QString("Study with SubjectID [%1], StudyNum [%2] not found in package").arg(subjectID).arg(objectID);
+                delete sqrl;
+                return false;
+            }
+        }
+        else if (removeObject == "series") {
+            qint64 seriesRowID = sqrl->FindSeries(subjectID, studyNum, objectID.toInt());
+            qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
+            if (seriesRowID < 0) {
+                sqrl->RemoveSeries(seriesRowID);
+                sqrl->ResequenceSeries(studyRowID);
+            }
+            else {
+                m = QString("Series with SubjectID [%1], StudyNum [%2], SeriesNum [%3] not found in package").arg(subjectID).arg(studyNum).arg(objectID);
+                delete sqrl;
+                return false;
+            }
+        }
+        else if (removeObject == "experiment") {
+            qint64 experimentRowID = sqrl->FindExperiment(objectID);
+            if (experimentRowID < 0) {
+                sqrl->RemoveExperiment(experimentRowID);
+            }
+            else {
+                m = QString("Experiment with ExperimentName [%1] not found in package").arg(objectID);
+                delete sqrl;
+                return false;
+            }
+        }
+        else if (removeObject == "pipeline") {
+            qint64 pipelineRowID = sqrl->FindPipeline(objectID);
+            if (pipelineRowID < 0) {
+                sqrl->RemovePipeline(pipelineRowID);
+            }
+            else {
+                m = QString("Pipeline with PipelineName [%1] not found in package").arg(objectID);
+                delete sqrl;
+                return false;
+            }
+        }
+        else if (removeObject == "groupanalysis") {
+            qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(objectID);
+            if (groupAnalysisRowID < 0) {
+                sqrl->RemoveGroupAnalysis(groupAnalysisRowID);
+            }
+            else {
+                m = QString("GroupAnalysis with GroupAnalysisName [%1] not found in package").arg(objectID);
+                delete sqrl;
+                return false;
+            }
+        }
+        else if (removeObject == "datadictionary") {
+            qint64 dataDictionaryRowID = sqrl->FindDataDictionary(objectID);
+            if (dataDictionaryRowID < 0) {
+                sqrl->RemoveDataDictionary(dataDictionaryRowID);
+            }
+            else {
+                m = QString("DataDictionary with DataDictionaryName [%1] not found in package").arg(objectID);
                 delete sqrl;
                 return false;
             }
