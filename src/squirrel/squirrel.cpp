@@ -1877,9 +1877,7 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        qint64 studyRowID = q.value("StudyRowID").toLongLong();
-
-        if (!RemoveStudy(studyRowID))
+        if (!RemoveStudy(q.value("StudyRowID").toLongLong()))
             return false;
     }
 
@@ -1888,9 +1886,7 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        qint64 drugRowID = q.value("DrugRowID").toLongLong();
-
-        if (!RemoveDrug(drugRowID))
+        if (!RemoveDrug(q.value("DrugRowID").toLongLong()))
             return false;
     }
 
@@ -1899,9 +1895,7 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        qint64 measureRowID = q.value("MeasureRowID").toLongLong();
-
-        if (!RemoveMeasure(measureRowID))
+        if (!RemoveMeasure(q.value("MeasureRowID").toLongLong()))
             return false;
     }
 
@@ -1917,6 +1911,9 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
     }
 
     /* remove the subject */
+    q.prepare("delete from Subject where SubjectRowID = :subjectRowID");
+    q.bindValue(":subjectRowID", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     return true;
 }
