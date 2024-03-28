@@ -1867,6 +1867,135 @@ void squirrel::ResequenceSeries(qint64 studyRowID) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- RemoveSubject ---------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveSubject(qint64 subjectRowID) {
+
+    /* get list of studies associated with this subject, and delete them */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select StudyRowID from Study where SubjectRowID = :subjectRowID");
+    q.bindValue(":subjectRowID", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        qint64 studyRowID = q.value("StudyRowID").toLongLong();
+
+        if (!RemoveStudy(studyRowID))
+            return false;
+    }
+
+    /* get list of drugs associated with this subject, and delete them */
+    q.prepare("select DrugRowID from Drug where SubjectRowID = :subjectRowID");
+    q.bindValue(":subjectRowID", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        qint64 drugRowID = q.value("DrugRowID").toLongLong();
+
+        if (!RemoveDrug(drugRowID))
+            return false;
+    }
+
+    /* get list of measures associated with this subject, and delete them */
+    q.prepare("select MeasureRowID from Measure where SubjectRowID = :subjectRowID");
+    q.bindValue(":subjectRowID", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        qint64 measureRowID = q.value("MeasureRowID").toLongLong();
+
+        if (!RemoveMeasure(measureRowID))
+            return false;
+    }
+
+    /* remove the files, if any from the archive */
+    if (fileMode == FileMode::ExistingPackage) {
+        squirrelSubject sqrlSubject;
+        sqrlSubject.SetObjectID(subjectRowID);
+        sqrlSubject.Get();
+        QString subjectArchivePath = sqrlSubject.VirtualPath();
+        QString m;
+        //if (!RemovePathFromArchive(subjectArchivePath, packagePath, m))
+        //    return false;
+    }
+
+    /* remove the subject */
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveStudy ------------------------------------------ */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveStudy(qint64 studyRowID) {
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveSeries ----------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveSeries(qint64 seriesRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveAnalysis --------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveExperiment ------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveExperiment(qint64 experimentRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemovePipeline --------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemovePipeline(qint64 pipelineRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveGroupAnalysis ---------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveDataDictionary --------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveDrug ------------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveDrug(qint64 seriesRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- RemoveMeasure ---------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::RemoveMeasure(qint64 seriesRowID) {
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ExtractFileFromArchive ------------------------------- */
 /* ------------------------------------------------------------ */
 /**

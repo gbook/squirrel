@@ -242,7 +242,8 @@ int main(int argc, char *argv[])
             squirrel *sqrl = new squirrel(debug, quiet);
             sqrl->quiet = quiet;
             sqrl->SetPackagePath(inputPath);
-            sqrl->Read(true);
+            sqrl->SetFileMode(FileMode::ExistingPackage);
+            sqrl->Read();
 
             if (object == "package") {
                 sqrl->PrintPackage();
@@ -346,7 +347,8 @@ int main(int argc, char *argv[])
         /* create squirrel object and validate */
         squirrel *sqrl = new squirrel(debug);
         sqrl->SetPackagePath(inputPath);
-        if (sqrl->Read(true)) {
+        sqrl->SetFileMode(FileMode::ExistingPackage);
+        if (sqrl->Read()) {
             sqrl->Log("Valid squirrel file", __FUNCTION__);
         }
         else {

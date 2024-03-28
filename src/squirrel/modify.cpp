@@ -80,7 +80,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         squirrel *sqrl = new squirrel();
         sqrl->SetFileMode(FileMode::ExistingPackage);
         sqrl->SetPackagePath(packagePath);
-        if (!sqrl->Read(true)) {
+        if (!sqrl->Read()) {
             m = QString("Package unreadable [%1] already exists in package").arg(vars["SubjectID"]);
             delete sqrl;
             return false;

@@ -108,6 +108,18 @@ public:
     qint64 FindGroupAnalysis(QString groupAnalysisName);
     qint64 FindDataDictionary(QString dataDictionaryName);
 
+    /* remove objects */
+    bool RemoveSubject(qint64 subjectRowID);
+    bool RemoveStudy(qint64 studyRowID);
+    bool RemoveSeries(qint64 seriesRowID);
+    bool RemoveMeasure(qint64 measureRowID);
+    bool RemoveDrug(qint64 drugRowID);
+    bool RemoveAnalysis(qint64 analysisRowID);
+    bool RemoveExperiment(qint64 experimentRowID);
+    bool RemovePipeline(qint64 pipelineRowID);
+    bool RemoveGroupAnalysis(qint64 groupAnalysisRowID);
+    bool RemoveDataDictionary(qint64 dataDictionaryRowID);
+
     bool AddStagedFiles(QString objectType, qint64 rowid, QStringList files);
 
     /* requence the subject data */
