@@ -369,7 +369,45 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         sqrl->Write(true);
 
         delete sqrl;
-    }
+    } /* end add objects */
 
+    /* perform the REMOVE object */
+    if (removeObject != "") {
+        /* load the package */
+        squirrel *sqrl = new squirrel();
+        sqrl->SetFileMode(FileMode::ExistingPackage);
+        sqrl->SetPackagePath(packagePath);
+        if (!sqrl->Read()) {
+            m = QString("Package unreadable").arg(vars["SubjectID"]);
+            delete sqrl;
+            return false;
+        }
+
+        /* ----- subject ----- */
+        if (addObject == "subject") {
+            qint64 subjectRowID;
+            subjectRowID = sqrl->FindSubject(vars["PatientID"]);
+            if (subjectRowID < 0) {
+                squirrelSubject subject;
+                sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["PatientID"]), __FUNCTION__);
+                subject.ID = vars["SubjectID"];
+                subject.AlternateIDs = vars["AlternateIDs"].split(",");
+                subject.GUID = vars["GUID"];
+                subject.DateOfBirth = QDate::fromString(vars["DateOfBirth"], "yyyy-MM-dd");
+                subject.Sex = vars["Gender"];
+                subject.Gender = vars["Gender"];
+                subject.Ethnicity1 = vars["Ethnicity1"];
+                subject.Ethnicity2 = vars["Ethnicity2"];
+                subject.Store();
+                /* resequence the newly added subject */
+                sqrl->ResequenceSubjects();
+            }
+            else {
+                m = QString("Subject with ID [%1] already exists in package").arg(vars["SubjectID"]);
+                delete sqrl;
+                return false;
+            }
+        }
+    }
     return true;
 }
