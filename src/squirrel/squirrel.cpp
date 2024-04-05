@@ -1898,8 +1898,8 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
         sqrlSubject.Get();
         QString subjectArchivePath = sqrlSubject.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(subjectArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(subjectArchivePath, packagePath, m))
+            return false;
     }
 
     /* remove the subject */
@@ -1942,8 +1942,8 @@ bool squirrel::RemoveStudy(qint64 studyRowID) {
         sqrlStudy.Get();
         QString studyArchivePath = sqrlStudy.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(studyArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(studyArchivePath, packagePath, m))
+            return false;
     }
 
     /* remove the study */
@@ -1973,8 +1973,8 @@ bool squirrel::RemoveSeries(qint64 seriesRowID) {
         sqrlSeries.Get();
         QString seriesArchivePath = sqrlSeries.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(seriesArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(seriesArchivePath, packagePath, m))
+            return false;
     }
 
     return true;
@@ -1999,8 +1999,8 @@ bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
         sqrlAnalysis.Get();
         QString analysisArchivePath = sqrlAnalysis.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(analysisArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(analysisArchivePath, packagePath, m))
+            return false;
     }
 
     return true;
@@ -2025,8 +2025,8 @@ bool squirrel::RemoveExperiment(qint64 experimentRowID) {
         sqrlExperiment.Get();
         QString experimentArchivePath = sqrlExperiment.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(experimentArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(experimentArchivePath, packagePath, m))
+            return false;
     }
 
     return true;
@@ -2055,8 +2055,8 @@ bool squirrel::RemovePipeline(qint64 pipelineRowID) {
         sqrlPipeline.Get();
         QString pipelineArchivePath = sqrlPipeline.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(pipelineArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(pipelineArchivePath, packagePath, m))
+            return false;
     }
 
     return true;
@@ -2081,8 +2081,8 @@ bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
         sqrlGroupAnalysis.Get();
         QString groupAnalysisArchivePath = sqrlGroupAnalysis.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(groupAnalysisArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(groupAnalysisArchivePath, packagePath, m))
+            return false;
     }
 
     return true;
@@ -2107,8 +2107,8 @@ bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
         sqrlDataDictionary.Get();
         QString dataDictionaryArchivePath = sqrlDataDictionary.VirtualPath();
         QString m;
-        //if (!RemovePathFromArchive(dataDictionaryArchivePath, packagePath, m))
-        //    return false;
+        if (!RemoveDirectoryFromArchive(dataDictionaryArchivePath, packagePath, m))
+            return false;
     }
 
     return true;
@@ -2276,11 +2276,11 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
 
 
 /* ------------------------------------------------------------ */
-/* ----- RemoveFilesFromArchive ------------------------------- */
+/* ----- RemoveDirectoryFromArchive --------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Remove a list of files from an existing archive
- * @param compressedFilePaths The list of file paths to delete within the archive
+ * @brief Recursively remove a directory from an archive
+ * @param compressedDirPath The path to delete
  * @param archivePath Path to the archive
  * @param m Any messages generated during he operation
  * @return true if successful, false otherwise
