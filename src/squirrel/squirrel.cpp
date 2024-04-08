@@ -86,7 +86,8 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE", "squirrel");
-    db.setDatabaseName(":memory:");
+    //db.setDatabaseName(":memory:");
+    db.setDatabaseName("/tmp/sqlite.db");
 
     if (db.open()) {
         Log("Successfuly opened SQLite memory database", __FUNCTION__);
@@ -1621,7 +1622,7 @@ qint64 squirrel::FindSubject(QString id) {
 qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select SubjectRowID from Study a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.StudyNumber = :studynum and b.ID = :id");
+    q.prepare("select a.SubjectRowID from Study a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.StudyNumber = :studynum and b.ID = :id");
     q.bindValue(":studynum", studyNum);
     q.bindValue(":id", subjectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
