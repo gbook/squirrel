@@ -49,8 +49,9 @@ squirrel::squirrel(bool dbg, bool q)
     SquirrelVersion = QString("%1.%2").arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN);
     StudyDirFormat = "orig";
     SubjectDirFormat = "orig";
-    isOkToDelete = true;
     debug = dbg;
+    fileMode = FileMode::NewPackage;
+    isOkToDelete = true;
     quiet = q;
 
     DatabaseConnect();
@@ -86,8 +87,8 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE", "squirrel");
-    //db.setDatabaseName(":memory:");
-    db.setDatabaseName("/tmp/sqlite.db");
+    db.setDatabaseName(":memory:");
+    //db.setDatabaseName("/tmp/sqlite.db");
 
     if (db.open()) {
         Log("Successfuly opened SQLite memory database", __FUNCTION__);
@@ -498,12 +499,14 @@ bool squirrel::Write(bool writeLog) {
     QFileInfo finfo(GetPackagePath());
     logfile = QString(finfo.absolutePath() + "/squirrel-" + utils::CreateLogDate() + ".log");
 
+    PrintPackage();
+
     if (fileMode == NewPackage) {
         MakeTempDir(workingDir);
         Log(QString("Writing NEW squirrel package: workingdir [%1]  packagePath [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
     }
     else {
-        Log(QString("Updating existing squirrel package [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
+        Log(QString("Updating existing squirrel package [%1]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
     }
 
     pairList stagedFiles;
@@ -725,7 +728,9 @@ bool squirrel::Write(bool writeLog) {
         for (int i=0; i<stagedFiles.size(); i++) {
             QStringPair file = stagedFiles.at(i);
             QString source = file.first;
-            QString dest = workingDir + "/" + file.first;
+            QFileInfo fi(file.first);
+            QString fname = fi.fileName();
+            QString dest = workingDir + "/" + fname;
             if (!QFile::copy(source, dest))
                 Log(QString("Error copying [%1] to [%2]").arg(source).arg(dest), __FUNCTION__);
         }
@@ -1010,11 +1015,16 @@ void squirrel::PrintPackage() {
     qint64 numDataDictionaries = GetObjectCount("datadictionary");
     //qint64 numDataDictionaryItems = GetObjectCount("datadictionaryitem");
 
+    QString fileModeStr = "UnknownFileMode";
+    if (fileMode == FileMode::NewPackage) fileModeStr = "NewPackage";
+    if (fileMode == FileMode::ExistingPackage) fileModeStr = "ExistingPackage";
+
     utils::Print("Squirrel Package: " + GetPackagePath());
     utils::Print(QString("  DataFormat: %1").arg(DataFormat));
     utils::Print(QString("  Date: %1").arg(Datetime.toString()));
     utils::Print(QString("  Description: %1").arg(Description));
     utils::Print(QString("  DirectoryFormat (subject, study, series): %1, %2, %3").arg(SubjectDirFormat).arg(StudyDirFormat).arg(SeriesDirFormat));
+    utils::Print(QString("  FileMode: %1").arg(fileModeStr));
     utils::Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetFileCount()).arg(GetUnzipSize()));
     utils::Print(QString("  PackageName: %1").arg(PackageName));
     utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
@@ -2199,7 +2209,7 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
 #ifdef Q_OS_WINDOWS
         Bit7zLibrary lib("C:/Program Files/7-Zip/7z.dll");
 #else
-        Bit7zLibrary lib("/usr/lib/p7zip/7z.so");
+        Bit7zLibrary lib("/usr/libexec/p7zip/7z.so");
 #endif
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitArchiveWriter archive(lib, BitFormat::Zip);
