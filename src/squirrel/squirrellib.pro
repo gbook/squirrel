@@ -74,8 +74,7 @@ HEADERS += \
 
 # bit7z library (provides LZMA)
 LZMABIN = ../../bit7z/lib/x64
-#LZMAINCLUDE = ../../bit7z/include/bit7z
-LZMAINCLUDE = ../bit7z/src
+LZMAINCLUDE = ../../bit7z/include/bit7z
 *msvc*:CONFIG(release, debug|release): LIBS += -L$$LZMABIN/Release
 else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$LZMABIN/Debug
 linux: LIBS += -L$$LZMABIN -lbit7z64 -ldl
