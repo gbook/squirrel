@@ -49,6 +49,8 @@ make -j 16
 echo -e "\nCopying bit7z library to $BUILDDIR\n"
 mkdir -pv $BUILDDIR/../bit7z/lib/x64
 cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/../bit7z/lib/x64
+mkdir -pv $BUILDDIR/bit7z
+cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/bit7z/
 
 # ----- build squirrel library -----
 echo -e "\n ----- Building squirrel library -----\n"
