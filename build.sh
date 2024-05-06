@@ -19,6 +19,7 @@ else
 	BUILDDIR=$3
 fi
 
+BIT7ZDIR=$PWD/bit7z
 ORIGDIR=$PWD
 
 # this script requires make, cmake (3), and qmake
@@ -41,16 +42,17 @@ make -j 16
 
 # ----- build bit7z library -----
 echo -e "\n ----- Building bit7z -----\n"
-mkdir -p $BUILDDIR/bit7z
-cd $BUILDDIR/bit7z
-cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC $SRCDIR/bit7z
+mkdir -p $BIT7ZDIR/bbuild
+cd $BIT7ZDIR/build
+cmake .. -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC
+cmake --build . --config Release
 #cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC $SRCDIR/bit7z
-make -j 16
-echo -e "\nCopying bit7z library to $BUILDDIR\n"
-mkdir -pv $BUILDDIR/../bit7z/lib/x64
-cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/../bit7z/lib/x64
-mkdir -pv $BUILDDIR/bit7z
-cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/bit7z/
+#make -j 16
+#echo -e "\nCopying bit7z library to $BUILDDIR\n"
+#mkdir -pv $BUILDDIR/../bit7z/lib/x64
+#cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/../bit7z/lib/x64
+#mkdir -pv $BUILDDIR/bit7z
+#cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/bit7z/
 
 # ----- build squirrel library -----
 echo -e "\n ----- Building squirrel library -----\n"
