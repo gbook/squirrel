@@ -2,7 +2,7 @@
 
 # global build variables
 if [ -z "$1" ]; then
-	QMAKEBIN=~/Qt/6.6.1/gcc_64/bin/qmake
+	QMAKEBIN=~/Qt/6.6.3/gcc_64/bin/qmake
 else
 	QMAKEBIN=$1
 fi
@@ -43,7 +43,8 @@ make -j 16
 echo -e "\n ----- Building bit7z -----\n"
 mkdir -p $BUILDDIR/bit7z
 cd $BUILDDIR/bit7z
-cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC $SRCDIR/bit7z
+cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC $SRCDIR/bit7z
+#cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC $SRCDIR/bit7z
 make -j 16
 echo -e "\nCopying bit7z library to $BUILDDIR\n"
 mkdir -pv $BUILDDIR/../bit7z/lib/x64
