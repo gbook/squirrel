@@ -2204,6 +2204,7 @@ bool squirrel::RemoveMeasure(qint64 measureRowID) {
  * @return true if successful, false otherwise
  */
 bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents) {
+    Log(QString("Reading file [%1] from archive [%2]").arg(filePath).arg(archivePath), __FUNCTION__);
     try {
         using namespace bit7z;
         std::vector<unsigned char> buffer;
