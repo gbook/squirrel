@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
         p.process(a);
 
         bool debug = false;
-        bool quiet = true;
+        bool quiet = false;
         QString object = p.value("object").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
@@ -245,6 +245,8 @@ int main(int argc, char *argv[])
             sqrl->SetFileMode(FileMode::ExistingPackage);
             sqrl->Read();
 
+            sqrl->Log("Reading package...", __FUNCTION__);
+            utils::Print("Reading package...");
             if (object == "package") {
                 sqrl->PrintPackage();
             }
