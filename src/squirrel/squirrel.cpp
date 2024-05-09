@@ -2247,9 +2247,6 @@ bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QSt
 bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QString &m) {
     Log(QString("Compressing directory [%1] to archive [%2]...").arg(dir).arg(archivePath), __FUNCTION__);
 
-    //if (archivePath.last(1) != "/")
-    //    archivePath += "/";
-
     try {
         using namespace bit7z;
 #ifdef Q_OS_WINDOWS
@@ -2260,13 +2257,15 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitArchiveWriter archive(lib, BitFormat::Zip);
             archive.setUpdateMode(UpdateMode::Update);
-            archive.addDirectory(dir.toStdString());
+            archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
+            //archive.addDirectory(dir.toStdString());
             archive.compressTo(archivePath.toStdString());
         }
         else {
             BitArchiveWriter archive(lib, BitFormat::SevenZip);
             archive.setUpdateMode(UpdateMode::Update);
-            archive.addDirectory(dir.toStdString());
+            archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
+            //archive.addDirectory(dir.toStdString());
             archive.compressTo(archivePath.toStdString());
         }
         m = "Successfully compressed directory [" + dir + "] to archive [" + archivePath + "]";
