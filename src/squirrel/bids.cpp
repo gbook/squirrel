@@ -993,7 +993,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
     QString m;
 
     if (utils::ParseTSV(file, tsv, cols, m)) {
-        //sqrl->Log(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+        sqrl->Debug(QString("Successful read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
         for (int i=0; i<tsv.size(); i++) {
             QString id = tsv[i]["participant_id"];
             QString age = tsv[i]["age"];
@@ -1039,7 +1039,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
             sqrlMeas4.subjectRowID = subjectRowID;
             sqrlMeas4.Store();
 
-            //sqrl->addSubject(sqrlSubj);
+            sqrl->Debug(QString("Read subject ID [%1]  age [%2]  sex [%3]. Stored in squirrel with SubjectRowID [%4]").arg(id).arg(age).arg(sex).arg(subjectRowID), __FUNCTION__);
         }
     }
     else {
