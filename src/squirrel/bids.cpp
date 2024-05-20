@@ -324,7 +324,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
+                    qint64 subjectRowID = sqrl->FindSubject(ID);
                     squirrelSubject subject;
                     if (subjectRowID < 0) {
                         subject.ID = ID;
@@ -337,7 +337,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a studyRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         subject.GetNextStudyNumber();
                         squirrelStudy study;
@@ -355,7 +355,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -381,13 +381,12 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     QString run = filename.section("_", -1);
                     QString visit = filename.section("_", 1, 1);
                     protocol += run;
-                    //int subjectIndex = sqrl->GetSubjectIndex(ID);
                     if (studyNum < 0)
                         studyNum = 1;
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
+                    qint64 subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
                         squirrelSubject subject;
                         subject.ID = ID;
@@ -396,7 +395,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         squirrelStudy study;
                         study.StudyNumber = studyNum;
@@ -413,7 +412,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -449,7 +448,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
+                    qint64 subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
                         squirrelSubject subject;
                         subject.ID = ID;
@@ -458,7 +457,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         squirrelStudy study;
                         study.StudyNumber = studyNum;
@@ -475,7 +474,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -514,7 +513,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
+                    qint64 subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
                         squirrelSubject subject;
                         subject.ID = ID;
@@ -523,7 +522,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a studyRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         squirrelStudy study;
                         study.StudyNumber = studyNum;
@@ -540,7 +539,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -581,7 +580,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
+                    qint64 subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
                         squirrelSubject subject;
                         subject.ID = ID;
@@ -590,7 +589,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         squirrelStudy study;
                         study.StudyNumber = studyNum;
@@ -607,7 +606,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -647,7 +646,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
+                    qint64 subjectRowID = sqrl->FindSubject(ID);
                     if (subjectRowID < 0) {
                         squirrelSubject subject;
                         subject.ID = ID;
@@ -656,7 +655,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     }
 
                     /* create a subjectRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
+                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         squirrelStudy study;
                         study.StudyNumber = studyNum;
@@ -673,7 +672,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;

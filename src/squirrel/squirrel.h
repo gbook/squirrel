@@ -62,6 +62,7 @@ public:
     void SetPackagePath(QString p) { packagePath = p; }
     QString GetPackagePath();
     void SetFileMode(FileMode m) { fileMode = m; } /*!< Set the file mode to either NewPackage or ExistingPackage */
+    void SetDebugSQL(bool d) { debugSQL = d; }
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
@@ -143,6 +144,7 @@ public:
     void Debug(QString s, QString func="");
     QString GetLog() { return log; }
     bool GetDebug() { return debug; }
+    bool GetDebugSQL() { return debugSQL; }
     bool quiet=false;
 
     /* printing of information to console */
@@ -177,6 +179,7 @@ private:
     FileMode fileMode;
 
     bool debug;
+    bool debugSQL;
     bool isValid;
     bool isOkToDelete;
 };

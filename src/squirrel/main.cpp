@@ -154,10 +154,12 @@ int main(int argc, char *argv[])
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Dont print headers and checks"));
+        p.addOption(QCommandLineOption(QStringList() << "debugsql", "Enable debugging of SQL statements"));
 
         p.process(a);
 
         bool debug = p.isSet("d");
+        bool debugsql = p.isSet("debugsql");
         bool quiet = p.isSet("q");
 
         if (inputPath == "") {
@@ -193,6 +195,8 @@ int main(int argc, char *argv[])
 
             /* create a squirrel object */
             squirrel *sqrl = new squirrel(debug);
+            sqrl->SetDebugSQL(debugsql);
+            sqrl->DataFormat = "orig";
 
             /* create a BIDS object, and start reading the directory */
             bids *bds = new bids();

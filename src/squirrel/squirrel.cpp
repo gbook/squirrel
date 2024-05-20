@@ -1015,7 +1015,7 @@ qint64 squirrel::GetObjectCount(QString object) {
     else { return -1; }
 
     q.prepare("select count(*) 'count' from " + table);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, debugSQL);
     if (q.first())
         count = q.value("count").toInt();
 
@@ -1125,6 +1125,8 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
 
     if (rowid < 0) return false;
     if (files.size() <= 0) return false;
+
+    Debug(QString("Adding [%1] files of type [%2] to rowID [%3]").arg(files.size()).arg(objectType).arg(rowid), __FUNCTION__);
 
     if (objectType == "series") {
         squirrelSeries s;
