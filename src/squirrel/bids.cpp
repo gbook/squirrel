@@ -71,11 +71,20 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
         QString subjpath = QString("%1/%2").arg(dir).arg(subjdir);
 
+        QString ID = subjdir;
+        /* load the subject */
+        squirrelSubject sqrlSubject;
+        int subjectRowID = sqrl->FindSubject(ID);
+        if (subjectRowID < 0) {
+            sqrlSubject.ID = ID;
+            sqrlSubject.Store();
+            subjectRowID = sqrlSubject.GetObjectID();
+        }
+
         /* get all the FILES inside of the subject directory */
         QStringList subjfiles = utils::FindAllFiles(subjpath, "*", false);
         sqrl->Debug(QString("Found [%1] subject root files matching '%2/*'").arg(subjfiles.size()).arg(subjdir), __FUNCTION__);
 
-        QString ID = subjdir;
         LoadSubjectFiles(subjfiles, subjdir, sqrl);
 
         /* get a list of ses-* DIRS, if there are any */
@@ -311,7 +320,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
             if ((dir == "anat") || (dir == "fmap") || (dir == "perf")) {
                 foreach (QString f, files) {
 
-                    sqrl->Log(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
+                    sqrl->Debug(QString("Found file [%1] of type [%2]").arg(f).arg(dir), __FUNCTION__);
 
                     QString filename = QFileInfo(f).fileName();
                     filename.replace(".nii.gz", "");
@@ -323,22 +332,31 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         studyNum = 1;
                     qint64 seriesNum = 1;
 
+                    sqrl->Debug(QString("Checkpoint 1 - ID [%1]  protocol [%2]  visit [%3]").arg(ID).arg(protocol).arg(visit), __FUNCTION__);
+
                     /* create a subjectRowID if it doesn't exist */
                     qint64 subjectRowID = sqrl->FindSubject(ID);
                     squirrelSubject subject;
                     if (subjectRowID < 0) {
+                        sqrl->Debug("Checkpoint 2");
                         subject.ID = ID;
                         subject.Store();
                         subjectRowID = subject.GetObjectID();
+                        sqrl->Debug("Checkpoint 3");
                     }
                     else {
+                        sqrl->Debug("Checkpoint 4");
                         subject.SetObjectID(subjectRowID);
                         subject.Get();
+                        sqrl->Debug("Checkpoint 5");
                     }
+                    sqrl->Debug("Checkpoint 6");
 
                     /* create a studyRowID if it doesn't exist */
                     qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
+                    squirrelStudy study;
                     if (studyRowID < 0) {
+                        sqrl->Debug("Checkpoint 7");
                         subject.GetNextStudyNumber();
                         squirrelStudy study;
                         study.StudyNumber = studyNum;
@@ -347,7 +365,14 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         study.VisitType = visit;
                         study.Store();
                         studyRowID = study.GetObjectID();
+                        sqrl->Debug("Checkpoint 8");
                     }
+                    else {
+                        study.SetObjectID(studyRowID);
+                        study.Get();
+                        seriesNum = study.GetNextSeriesNumber();
+                    }
+                    //sqrl->Debug("Checkpoint 9");
 
                     /* create a subjectRowID if it doesn't exist */
                     squirrelSeries series;
@@ -356,12 +381,12 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Debug(QString("Checkpoint 10) Added new seriesNum [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
                     sqrl->AddStagedFiles("series", seriesRowID, files2);
-                    //sqrl->AddSeriesFiles(ID, studyNum, seriesNum, files2);
                 }
             }
             else if (dir == "func") {

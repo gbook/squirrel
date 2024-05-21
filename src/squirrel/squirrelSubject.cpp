@@ -340,9 +340,9 @@ QList<QPair<QString,QString>> squirrelSubject::GetStagedFileList() {
 int squirrelSubject::GetNextStudyNumber() {
     int nextStudyNum = 1;
 
-    /* get the next study number */
+    /* get the next study number for this subject */
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("select max(StudyNumber) 'Max' from Study where StudyRowID = :id");
+    q.prepare("select max(StudyNumber) 'Max' from Study where SubjectRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next())

@@ -359,3 +359,21 @@ QList<QPair<QString,QString>> squirrelStudy::GetStagedFileList() {
 
     return stagedList;
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetNextSeriesNumber ---------------------------------- */
+/* ------------------------------------------------------------ */
+int squirrelStudy::GetNextSeriesNumber() {
+    int nextSeriesNum = 1;
+
+    /* get the next series number for this study */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select max(SeriesNumber) 'Max' from Series where StudyRowID = :id");
+    q.bindValue(":id", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next())
+        nextSeriesNum = q.value("Max").toInt() + 1;
+
+    return nextSeriesNum;
+}

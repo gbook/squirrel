@@ -547,7 +547,7 @@ bool squirrel::Write(bool writeLog) {
 
                 /* orig vs other formats */
                 if (DataFormat == "orig") {
-                    Log("Export data format is 'orig'. Copying files...", __FUNCTION__);
+                    Log(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
                     /* copy all of the series files to the temp directory */
                     foreach (QString f, series.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
@@ -1132,10 +1132,15 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
         squirrelSeries s;
         s.SetObjectID(rowid);
         if (s.Get()) {
-            foreach (QString f, files)
+            foreach (QString f, files) {
                 s.stagedFiles.append(f);
+                Debug(QString("Appended file [%1] of type [%2] to rowID [%3]. Size is now [%4]").arg(files.size()).arg(objectType).arg(rowid).arg(s.stagedFiles.size()), __FUNCTION__);
+            }
             if (s.Store())
                 return true;
+        }
+        else {
+            Debug("Unable to get load series object. Error [" + s.Error() + "]");
         }
     }
 
@@ -1671,7 +1676,7 @@ qint64 squirrel::FindSubject(QString id) {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("SubjectRowID").toLongLong();
-        Log(QString("Searched for SubjectID [%1] and found SubjectRowID [%2]").arg(id).arg(rowid), __FUNCTION__);
+        Debug(QString("Searched for SubjectID [%1] and found SubjectRowID [%2]").arg(id).arg(rowid), __FUNCTION__);
     }
     else {
         Log(QString("Could not find SubjectID [%1]").arg(id), __FUNCTION__);
@@ -1698,7 +1703,7 @@ qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("StudyRowID").toLongLong();
-        Log(QString("Searched for SubjectID, StudyNumber [%1], [%2] and found StudyRowID [%3]").arg(subjectID).arg(studyNum).arg(rowid), __FUNCTION__);
+        Debug(QString("Searched for SubjectID, StudyNumber [%1], [%2] and found StudyRowID [%3]").arg(subjectID).arg(studyNum).arg(rowid), __FUNCTION__);
     }
     else {
         Log(QString("Could not find SubjectID, StudyNumber [%1], [%2]").arg(subjectID).arg(studyNum), __FUNCTION__);
