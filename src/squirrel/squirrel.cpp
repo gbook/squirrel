@@ -89,13 +89,15 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE", "squirrel");
-    if (debug)
+    if (debug) {
+        QFile::remove("/tmp/sqlite.db");
         db.setDatabaseName("/tmp/sqlite.db");
+    }
     else
         db.setDatabaseName(":memory:");
 
     if (db.open()) {
-        Log(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
+        Debug(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
         return true;
     }
     else {
@@ -547,7 +549,7 @@ bool squirrel::Write(bool writeLog) {
 
                 /* orig vs other formats */
                 if (DataFormat == "orig") {
-                    Log(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
+                    Debug(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
                     /* copy all of the series files to the temp directory */
                     foreach (QString f, series.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
@@ -555,7 +557,7 @@ bool squirrel::Write(bool writeLog) {
                     }
                 }
                 else if (study.Modality.toUpper() != "MR") {
-                    Log(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
+                    Debug(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
                     /* copy all of the series files to the temp directory */
                     foreach (QString f, series.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
@@ -1140,7 +1142,7 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
                 return true;
         }
         else {
-            Debug("Unable to get load series object. Error [" + s.Error() + "]");
+            Debug("Unable to get series object. Error [" + s.Error() + "]", __FUNCTION__);
         }
     }
 
@@ -1527,13 +1529,13 @@ QList<squirrelSeries> squirrel::GetSeries(qint64 studyRowID) {
         if (s.Get()) {
             s.SetDirFormat(SubjectDirFormat, StudyDirFormat, SeriesDirFormat);
             list.append(s);
-            Log(QString("Found SeriesNumber [%1]").arg(s.SeriesNumber), __FUNCTION__);
+            Debug(QString("Found SeriesNumber [%1]").arg(s.SeriesNumber), __FUNCTION__);
         }
         else {
             Log(QString("Unable to load SeriesRowID [%1]").arg(s.GetObjectID()), __FUNCTION__);
         }
     }
-    Log(QString("Found [%1] series for StudyRowID [%2]").arg(list.size()).arg(studyRowID), __FUNCTION__);
+    Debug(QString("Found [%1] series for StudyRowID [%2]").arg(list.size()).arg(studyRowID), __FUNCTION__);
     return list;
 }
 
@@ -2284,18 +2286,24 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
 #else
         Bit7zLibrary lib("/usr/libexec/p7zip/7z.so");
 #endif
+
+        if (overwritePackage) {
+            if (QFile::exists(archivePath) && (archivePath != "")) {
+                Debug("Overwrite option specified. Deleting existing package [" + archivePath + "]", __FUNCTION__);
+                QFile::remove(archivePath);
+            }
+        }
+
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitArchiveWriter archive(lib, BitFormat::Zip);
             archive.setUpdateMode(UpdateMode::Update);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
-            //archive.addDirectory(dir.toStdString());
             archive.compressTo(archivePath.toStdString());
         }
         else {
             BitArchiveWriter archive(lib, BitFormat::SevenZip);
             archive.setUpdateMode(UpdateMode::Update);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
-            //archive.addDirectory(dir.toStdString());
             archive.compressTo(archivePath.toStdString());
         }
         m = "Successfully compressed directory [" + dir + "] to archive [" + archivePath + "]";

@@ -63,6 +63,7 @@ public:
     QString GetPackagePath();
     void SetFileMode(FileMode m) { fileMode = m; } /*!< Set the file mode to either NewPackage or ExistingPackage */
     void SetDebugSQL(bool d) { debugSQL = d; }
+    void SetOverwritePackage(bool o) { overwritePackage = o; }
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
@@ -180,6 +181,7 @@ private:
 
     bool debug;
     bool debugSQL;
+    bool overwritePackage;
     bool isValid;
     bool isOkToDelete;
 };

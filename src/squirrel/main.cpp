@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
 
         bool debug = p.isSet("d");
         bool debugsql = p.isSet("debugsql");
+        bool overwrite = p.isSet("overwrite");
         bool quiet = p.isSet("q");
 
         if (inputPath == "") {
@@ -190,13 +191,14 @@ int main(int argc, char *argv[])
             QString outputfile = outputPath;
 
             if (outputPath == "") {
-                outputfile = QString(inputPath + "/squirrel.zip");
-                utils::Print(QString("Output file not specified. Creating squirrel file in input directory [%1]").arg(outputfile));
+                outputfile = QString(inputPath + "/squirrel.sqrl");
+                utils::Print(QString("Output package path not specified. Creating squirrel package in input directory [%1]").arg(outputfile));
             }
 
             /* create a squirrel object */
             squirrel *sqrl = new squirrel(debug);
             sqrl->SetDebugSQL(debugsql);
+            sqrl->SetOverwritePackage(overwrite);
             sqrl->DataFormat = "orig";
 
             /* create a BIDS object, and start reading the directory */

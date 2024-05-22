@@ -74,12 +74,13 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         QString ID = subjdir;
         /* load the subject */
         squirrelSubject sqrlSubject;
-        int subjectRowID = sqrl->FindSubject(ID);
+        qint64 subjectRowID = sqrl->FindSubject(ID);
         if (subjectRowID < 0) {
             sqrlSubject.ID = ID;
             sqrlSubject.Store();
             subjectRowID = sqrlSubject.GetObjectID();
         }
+        sqrl->Log(QString("Reading BIDS subject [%1] into squirrel subject [%2] with rowID [%3]").arg(ID).arg(sqrlSubject.ID).arg(subjectRowID), __FUNCTION__);
 
         /* get all the FILES inside of the subject directory */
         QStringList subjfiles = utils::FindAllFiles(subjpath, "*", false);
@@ -105,14 +106,14 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
                 sqrl->Debug(QString("Loading session path [%1] into study [%2]").arg(sespath).arg(studyNum), __FUNCTION__);
 
-                LoadSessionDir(sespath, studyNum, sqrl);
+                LoadSessionDir(sespath, subjectRowID, studyNum, sqrl);
                 studyNum++;
             }
         }
         else {
             /* if there are no ses-* directories, then the session must be in the root subject directory */
             QString sespath = QString("%1/%2").arg(dir).arg(subjdir);
-            LoadSessionDir(sespath, -1, sqrl);
+            LoadSessionDir(sespath, subjectRowID, -1, sqrl);
         }
 
     }
@@ -284,13 +285,36 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 /* ----- LoadSessionDir ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
- * @brief Load the files in a session directory
+ * @brief Load the files from a BIDS session directory into a squirrel study
  * @param sesdir the session directory
  * @param sqrl squirrel object
  * @return true
  */
-bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
+bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squirrel *sqrl) {
     sqrl->Log(QString("Reading BIDS session directory [%1] --> into squirrel study [%2]").arg(sesdir).arg(studyNum), __FUNCTION__);
+
+    /* load the subject */
+    squirrelSubject subject;
+    subject.SetObjectID(subjectRowID);
+    subject.Get();
+
+    /* create a new study... */
+    qint64 studyRowID = sqrl->FindStudy(subject.ID, studyNum);
+    squirrelStudy study;
+    if (studyRowID < 0) {
+        studyNum = subject.GetNextStudyNumber();
+        study.StudyNumber = studyNum;
+        study.subjectRowID = subjectRowID;
+        study.Modality = "MR";
+        study.Store();
+        studyRowID = study.GetObjectID();
+        sqrl->Debug(QString("Created new study [%1] for subject [%2] ").arg(studyNum).arg(subject.ID), __FUNCTION__);
+    }
+    /* ... or load an existing study */
+    else {
+        study.SetObjectID(studyRowID);
+        study.Get();
+    }
 
     /* possible directories:
         anat
@@ -325,56 +349,12 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     QString filename = QFileInfo(f).fileName();
                     filename.replace(".nii.gz", "");
                     filename.replace(".nii", "");
-                    QString ID = filename.section("_", 0,0);
                     QString protocol = filename.section("_", -1);
-                    QString visit = filename.section("_", 1,1);
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
+                    study.VisitType = filename.section("_", 1,1);
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
-                    sqrl->Debug(QString("Checkpoint 1 - ID [%1]  protocol [%2]  visit [%3]").arg(ID).arg(protocol).arg(visit), __FUNCTION__);
+                    sqrl->Debug(QString("Checkpoint 1 - SubjectID [%1]  protocol [%2]  seriesNum [%3]").arg(subject.ID).arg(protocol).arg(seriesNum), __FUNCTION__);
 
-                    /* create a subjectRowID if it doesn't exist */
-                    qint64 subjectRowID = sqrl->FindSubject(ID);
-                    squirrelSubject subject;
-                    if (subjectRowID < 0) {
-                        sqrl->Debug("Checkpoint 2");
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                        sqrl->Debug("Checkpoint 3");
-                    }
-                    else {
-                        sqrl->Debug("Checkpoint 4");
-                        subject.SetObjectID(subjectRowID);
-                        subject.Get();
-                        sqrl->Debug("Checkpoint 5");
-                    }
-                    sqrl->Debug("Checkpoint 6");
-
-                    /* create a studyRowID if it doesn't exist */
-                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    squirrelStudy study;
-                    if (studyRowID < 0) {
-                        sqrl->Debug("Checkpoint 7");
-                        subject.GetNextStudyNumber();
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "MR";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                        sqrl->Debug("Checkpoint 8");
-                    }
-                    else {
-                        study.SetObjectID(studyRowID);
-                        study.Get();
-                        seriesNum = study.GetNextSeriesNumber();
-                    }
-                    //sqrl->Debug("Checkpoint 9");
-
-                    /* create a subjectRowID if it doesn't exist */
                     squirrelSeries series;
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
@@ -406,32 +386,31 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     QString run = filename.section("_", -1);
                     QString visit = filename.section("_", 1, 1);
                     protocol += run;
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
+                    //if (studyNum < 0)
+                    //    studyNum = 1;
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
-                    qint64 subjectRowID = sqrl->FindSubject(ID);
-                    if (subjectRowID < 0) {
-                        squirrelSubject subject;
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                    }
+                    //qint64 subjectRowID = sqrl->FindSubject(ID);
+                    //if (subjectRowID < 0) {
+                    //    squirrelSubject subject;
+                    //    subject.ID = ID;
+                    //    subject.Store();
+                    //    subjectRowID = subject.GetObjectID();
+                    //}
 
-                    /* create a subjectRowID if it doesn't exist */
-                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    if (studyRowID < 0) {
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "MR";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                    }
+                    /* create a studyRowID if it doesn't exist */
+                    //qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
+                    //if (studyRowID < 0) {
+                    //    squirrelStudy study;
+                    //    study.StudyNumber = studyNum;
+                    //    study.subjectRowID = subjectRowID;
+                    //    study.Modality = "MR";
+                    //    study.VisitType = visit;
+                    //    study.Store();
+                    //    studyRowID = study.GetObjectID();
+                    //}
 
-                    /* create a subjectRowID if it doesn't exist */
                     squirrelSeries series;
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
@@ -473,15 +452,15 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    qint64 subjectRowID = sqrl->FindSubject(ID);
-                    if (subjectRowID < 0) {
-                        squirrelSubject subject;
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                    }
+                    //qint64 subjectRowID = sqrl->FindSubject(ID);
+                    //if (subjectRowID < 0) {
+                    //    squirrelSubject subject;
+                    //    subject.ID = ID;
+                    //    subject.Store();
+                    //    subjectRowID = subject.GetObjectID();
+                    //}
 
-                    /* create a subjectRowID if it doesn't exist */
+                    /* create a studyRowID if it doesn't exist */
                     qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
                     if (studyRowID < 0) {
                         squirrelStudy study;
@@ -493,7 +472,7 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                         studyRowID = study.GetObjectID();
                     }
 
-                    /* create a subjectRowID if it doesn't exist */
+                    /* create a seriesRowID */
                     squirrelSeries series;
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
@@ -538,13 +517,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    qint64 subjectRowID = sqrl->FindSubject(ID);
-                    if (subjectRowID < 0) {
-                        squirrelSubject subject;
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                    }
+                    //qint64 subjectRowID = sqrl->FindSubject(ID);
+                    //if (subjectRowID < 0) {
+                    //    squirrelSubject subject;
+                    //    subject.ID = ID;
+                    //    subject.Store();
+                    //    subjectRowID = subject.GetObjectID();
+                    //}
 
                     /* create a studyRowID if it doesn't exist */
                     qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
@@ -605,13 +584,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    qint64 subjectRowID = sqrl->FindSubject(ID);
-                    if (subjectRowID < 0) {
-                        squirrelSubject subject;
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                    }
+                    //qint64 subjectRowID = sqrl->FindSubject(ID);
+                    //if (subjectRowID < 0) {
+                    //    squirrelSubject subject;
+                    //    subject.ID = ID;
+                    //    subject.Store();
+                    //    subjectRowID = subject.GetObjectID();
+                    //}
 
                     /* create a subjectRowID if it doesn't exist */
                     qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
@@ -671,13 +650,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    qint64 subjectRowID = sqrl->FindSubject(ID);
-                    if (subjectRowID < 0) {
-                        squirrelSubject subject;
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                    }
+                    //qint64 subjectRowID = sqrl->FindSubject(ID);
+                    //if (subjectRowID < 0) {
+                    //    squirrelSubject subject;
+                    //    subject.ID = ID;
+                    //    subject.Store();
+                    //    subjectRowID = subject.GetObjectID();
+                    //}
 
                     /* create a subjectRowID if it doesn't exist */
                     qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
@@ -730,13 +709,13 @@ bool bids::LoadSessionDir(QString sesdir, int studyNum, squirrel *sqrl) {
                     qint64 seriesNum = 1;
 
                     /* create a subjectRowID if it doesn't exist */
-                    int subjectRowID = sqrl->FindSubject(ID);
-                    if (subjectRowID < 0) {
-                        squirrelSubject subject;
-                        subject.ID = ID;
-                        subject.Store();
-                        subjectRowID = subject.GetObjectID();
-                    }
+                    //int subjectRowID = sqrl->FindSubject(ID);
+                    //if (subjectRowID < 0) {
+                    //    squirrelSubject subject;
+                    //    subject.ID = ID;
+                    //    subject.Store();
+                    //    subjectRowID = subject.GetObjectID();
+                    //}
 
                     /* create a subjectRowID if it doesn't exist */
                     int studyRowID = sqrl->FindStudy(ID, studyNum);
