@@ -853,7 +853,7 @@ void squirrel::Print() {
     QList<squirrelSubject> subjects = GetAllSubjects();
     foreach (squirrelSubject sub, subjects) {
         qint64 subjectRowID = sub.GetObjectID();
-        sub.PrintSubject();
+        sub.PrintSubjectDetails();
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudies(subjectRowID);
@@ -1257,19 +1257,19 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
  * @brief squirrel::PrintSubjects print list of subjects to stdout
  * @param details true to print details, false to print list of subject IDs
  */
-void squirrel::PrintSubjects(bool details) {
+void squirrel::PrintSubjects(PrintingType printType) {
 
     QList <squirrelSubject> subjects = GetAllSubjects();
     QStringList subjectIDs;
     foreach (squirrelSubject s, subjects) {
         if (s.Get()) {
-            if (details)
-                s.PrintSubject();
+            if (printType == PrintingType::Details)
+                s.PrintSubjectDetails();
             else
                 subjectIDs.append(s.ID);
         }
     }
-    if (!details)
+    if (printType == PrintingType::IDList)
         utils::Print("Subjects: " + subjectIDs.join(" "));
 }
 

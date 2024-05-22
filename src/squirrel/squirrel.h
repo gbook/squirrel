@@ -41,6 +41,7 @@
 #include "squirrelVersion.h"
 
 enum FileMode { NewPackage, ExistingPackage };
+enum PrintingType { IDList, Details, CSV, Tree };
 typedef QPair<QString, QString> QStringPair;
 typedef QList<QStringPair> pairList;
 
@@ -150,7 +151,7 @@ public:
 
     /* printing of information to console */
     void PrintPackage();
-    void PrintSubjects(bool details=false);
+    void PrintSubjects(PrintingType printType=PrintingType::IDList);
     void PrintStudies(qint64 subjectRowID, bool details=false);
     void PrintSeries(qint64 studyRowID, bool details=false);
     void PrintExperiments(bool details=false);

@@ -139,12 +139,12 @@ bool squirrelSubject::Store() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- PrintSubject ----------------------------------------- */
+/* ----- PrintSubjectDetails ---------------------------------- */
 /* ------------------------------------------------------------ */
 /**
  * @brief Print subject details
  */
-void squirrelSubject::PrintSubject() {
+void squirrelSubject::PrintSubjectDetails() {
 
     utils::Print("\t\t----- SUBJECT -----");
     utils::Print(QString("\t\tAlternateIDs: %1").arg(AlternateIDs.join(",")));

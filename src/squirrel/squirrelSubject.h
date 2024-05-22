@@ -42,7 +42,7 @@ public:
     squirrelSubject();
 
     /* functions */
-	void PrintSubject();
+    void PrintSubjectDetails();
 	QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */

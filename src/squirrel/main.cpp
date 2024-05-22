@@ -227,6 +227,8 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  -subject-id must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "details", "Include details when printing lists."));
+        p.addOption(QCommandLineOption(QStringList() << "tree", "Display tree view of data."));
+        p.addOption(QCommandLineOption(QStringList() << "csv", "Display csv output of data"));
         p.process(a);
 
         bool debug = p.isSet("d");
@@ -237,6 +239,18 @@ int main(int argc, char *argv[])
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
         bool details = p.isSet("details");
+        bool tree = p.isSet("tree");
+        bool csv = p.isSet("csv");
+
+        PrintingType printType;
+        if (details)
+            printType = PrintingType::Details;
+        else if (csv)
+            printType = PrintingType::CSV;
+        else if (tree)
+            printType = PrintingType::Tree;
+        else
+            printType = PrintingType::IDList;
 
         if (object == "")
             object = "package";
@@ -260,7 +274,7 @@ int main(int argc, char *argv[])
                 sqrl->PrintPackage();
             }
             else if (object == "subject") {
-                sqrl->PrintSubjects(details);
+                sqrl->PrintSubjects(printType);
             }
             else if (object == "study") {
                 qint64 subjectRowID = sqrl->FindSubject(subjectID);
