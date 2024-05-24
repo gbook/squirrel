@@ -161,6 +161,27 @@ void squirrelSubject::PrintSubjectDetails() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- CSVLine ---------------------------------------------- */
+/* ------------------------------------------------------------ */
+QString squirrelSubject::CSVLine() {
+    QStringList data;
+
+    data.append(ID);
+    data.append(AlternateIDs.join(","));
+    data.append(DateOfBirth.toString());
+    data.append(Ethnicity1);
+    data.append(Ethnicity2);
+    data.append(GUID);
+    data.append(Gender);
+    data.append(Sex);
+
+    QString line = "\"" + data.join("\",\"") + "\"";
+
+    return line;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- Remove ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrelSubject::Remove() {

@@ -381,35 +381,12 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     filename.replace(".nii.gz", "");
                     filename.replace(".nii", "");
                     filename.replace(".tsv.gz", "");
-                    QString ID = filename.section("_", 0,0);
+                    //QString ID = filename.section("_", 0,0);
                     QString protocol = filename.section("_", 2, 2);
                     QString run = filename.section("_", -1);
-                    QString visit = filename.section("_", 1, 1);
+                    study.VisitType = filename.section("_", 1, 1);
                     protocol += run;
-                    //if (studyNum < 0)
-                    //    studyNum = 1;
                     qint64 seriesNum = study.GetNextSeriesNumber();
-
-                    /* create a subjectRowID if it doesn't exist */
-                    //qint64 subjectRowID = sqrl->FindSubject(ID);
-                    //if (subjectRowID < 0) {
-                    //    squirrelSubject subject;
-                    //    subject.ID = ID;
-                    //    subject.Store();
-                    //    subjectRowID = subject.GetObjectID();
-                    //}
-
-                    /* create a studyRowID if it doesn't exist */
-                    //qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    //if (studyRowID < 0) {
-                    //    squirrelStudy study;
-                    //    study.StudyNumber = studyNum;
-                    //    study.subjectRowID = subjectRowID;
-                    //    study.Modality = "MR";
-                    //    study.VisitType = visit;
-                    //    study.Store();
-                    //    studyRowID = study.GetObjectID();
-                    //}
 
                     squirrelSeries series;
                     series.SeriesNumber = seriesNum;
@@ -421,7 +398,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
-                    if (f.endsWith("bold.nii.gz")) {
+                    if (f.endsWith("bold.nii.gz", Qt::CaseInsensitive)) {
                         QString tf = f;
                         tf.replace("bold.nii.gz", "events.tsv");
                         files2.append(tf);
@@ -441,36 +418,11 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     }
 
                     QString filename = QFileInfo(f).fileName();
-                    filename.replace(".nii.gz", "");
-                    filename.replace(".nii", "");
-                    QString ID = filename.section("_", 0,0);
+                    filename.replace(".nii.gz", "", Qt::CaseInsensitive);
+                    filename.replace(".nii", "", Qt::CaseInsensitive);
                     QString protocol = filename.section("_", -1);
-                    QString run = filename.section("_", -2);
-                    QString visit = filename.section("_", 1, 1);
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
-
-                    /* create a subjectRowID if it doesn't exist */
-                    //qint64 subjectRowID = sqrl->FindSubject(ID);
-                    //if (subjectRowID < 0) {
-                    //    squirrelSubject subject;
-                    //    subject.ID = ID;
-                    //    subject.Store();
-                    //    subjectRowID = subject.GetObjectID();
-                    //}
-
-                    /* create a studyRowID if it doesn't exist */
-                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    if (studyRowID < 0) {
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "PET";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                    }
+                    study.VisitType = filename.section("_", 1, 1);
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a seriesRowID */
                     squirrelSeries series;
@@ -483,14 +435,14 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
-                    if (f.endsWith("pet.nii.gz")) {
+                    if (f.endsWith("pet.nii.gz", Qt::CaseInsensitive)) {
                         /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
                         QString tf = f;
-                        tf.replace("pet.nii.gz", "pet.json");
+                        tf.replace("pet.nii.gz", "pet.json", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("pet.json", "events.json");
+                        tf.replace("pet.json", "events.json", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("events.json", "events.tsv");
+                        tf.replace("events.json", "events.tsv", Qt::CaseInsensitive);
                         files2.append(tf);
                     }
                     sqrl->AddStagedFiles("series", seriesRowID, files2);
@@ -499,7 +451,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
             else if (dir == "micr") {
                 foreach (QString f, files) {
 
-                    if (f.endsWith("SEM.json"))
+                    if (f.endsWith("SEM.json", Qt::CaseInsensitive))
                         params = sqrl->ReadParamsFile(f);
 
                     /* ignore the *.json and event.tsv files, they'll be handled with the .nii.gz later */
@@ -508,34 +460,9 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     }
 
                     QString filename = QFileInfo(f).fileName();
-                    QString ID = filename.section("_", 0,0);
                     QString protocol = filename.section("_", -1);
-                    QString run = filename.section("_", -2);
-                    QString visit = filename.section("_", 1, 1);
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
-
-                    /* create a subjectRowID if it doesn't exist */
-                    //qint64 subjectRowID = sqrl->FindSubject(ID);
-                    //if (subjectRowID < 0) {
-                    //    squirrelSubject subject;
-                    //    subject.ID = ID;
-                    //    subject.Store();
-                    //    subjectRowID = subject.GetObjectID();
-                    //}
-
-                    /* create a studyRowID if it doesn't exist */
-                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    if (studyRowID < 0) {
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "MR";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                    }
+                    study.VisitType = filename.section("_", 1, 1);
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a seriesRowID */
                     squirrelSeries series;
@@ -548,14 +475,14 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
                     files2.append(f);
-                    if (f.endsWith("pet.nii.gz")) {
+                    if (f.endsWith("pet.nii.gz"), Qt::CaseInsensitive) {
                         /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
                         QString tf = f;
-                        tf.replace("pet.nii.gz", "pet.json");
+                        tf.replace("pet.nii.gz", "pet.json", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("pet.json", "events.json");
+                        tf.replace("pet.json", "events.json", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("events.json", "events.tsv");
+                        tf.replace("events.json", "events.tsv", Qt::CaseInsensitive);
                         files2.append(tf);
                     }
                     sqrl->AddStagedFiles("series", seriesRowID, files2);
@@ -575,34 +502,9 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
 
                     QString filename = QFileInfo(f).fileName();
                     filename.replace("_motion.tsv", "");
-                    QString ID = filename.section("_", 0,0); /* first part after splitting by _ */
                     QString protocol = filename.section("_", 2, 2); /* second part after splitting by _ */
-                    QString run = filename.section("_", -2);
-                    QString visit = filename.section("_", 1, 1);
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
-
-                    /* create a subjectRowID if it doesn't exist */
-                    //qint64 subjectRowID = sqrl->FindSubject(ID);
-                    //if (subjectRowID < 0) {
-                    //    squirrelSubject subject;
-                    //    subject.ID = ID;
-                    //    subject.Store();
-                    //    subjectRowID = subject.GetObjectID();
-                    //}
-
-                    /* create a subjectRowID if it doesn't exist */
-                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    if (studyRowID < 0) {
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "MOTION";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                    }
+                    study.VisitType = filename.section("_", 1, 1);
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
                     squirrelSeries series;
@@ -614,12 +516,12 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
-                    if (f.endsWith("motion.tsv")) {
+                    if (f.endsWith("motion.tsv", Qt::CaseInsensitive)) {
                         /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
                         QString tf = f;
-                        tf.replace("motion.tsv", "channels.tsv");
+                        tf.replace("motion.tsv", "channels.tsv", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("channels.tsv", "motion.json");
+                        tf.replace("channels.tsv", "motion.json", Qt::CaseInsensitive);
                         files2.append(tf);
                     }
                     files2.append(f);
@@ -640,35 +542,9 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
 
                     QString filename = QFileInfo(f).fileName();
                     filename.replace("_eeg.edf", "");
-                    QString ID = filename.section("_", 0,0); /* first part after splitting by _ */
                     QString protocol = filename.section("_", 2, 2); /* second part after splitting by _ */
-                    QString run = filename.section("_", -2);
-                    QString visit = filename.section("_", 1, 1);
-                    //int subjectIndex = sqrl->GetSubjectIndex(ID);
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
-
-                    /* create a subjectRowID if it doesn't exist */
-                    //qint64 subjectRowID = sqrl->FindSubject(ID);
-                    //if (subjectRowID < 0) {
-                    //    squirrelSubject subject;
-                    //    subject.ID = ID;
-                    //    subject.Store();
-                    //    subjectRowID = subject.GetObjectID();
-                    //}
-
-                    /* create a subjectRowID if it doesn't exist */
-                    qint64 studyRowID = sqrl->FindStudy(ID, studyNum);
-                    if (studyRowID < 0) {
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "EEG";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                    }
+                    study.VisitType = filename.section("_", 1, 1);
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
                     squirrelSeries series;
@@ -680,14 +556,14 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
-                    if (f.endsWith("eeg.edf")) {
+                    if (f.endsWith("eeg.edf", Qt::CaseInsensitive)) {
                         /* there could be several files that are associated with the .nii.gz file, so lets add all of those */
                         QString tf = f;
-                        tf.replace("eeg.edf", "channels.tsv");
+                        tf.replace("eeg.edf", "channels.tsv", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("channels.tsv", "eeg.json");
+                        tf.replace("channels.tsv", "eeg.json", Qt::CaseInsensitive);
                         files2.append(tf);
-                        tf.replace("eeg.json", "events.tsv");
+                        tf.replace("eeg.json", "events.tsv", Qt::CaseInsensitive);
                         files2.append(tf);
                     }
                     files2.append(f);
@@ -700,34 +576,9 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
 
                     QString filename = QFileInfo(f).fileName();
                     filename.replace("_eeg.edf", "");
-                    QString ID = filename.section("_", 0,0); /* first part after splitting by _ */
                     QString protocol = filename.section("_", 2, 2); /* second part after splitting by _ */
-                    QString run = filename.section("_", -2);
-                    QString visit = filename.section("_", 1, 1);
-                    if (studyNum < 0)
-                        studyNum = 1;
-                    qint64 seriesNum = 1;
-
-                    /* create a subjectRowID if it doesn't exist */
-                    //int subjectRowID = sqrl->FindSubject(ID);
-                    //if (subjectRowID < 0) {
-                    //    squirrelSubject subject;
-                    //    subject.ID = ID;
-                    //    subject.Store();
-                    //    subjectRowID = subject.GetObjectID();
-                    //}
-
-                    /* create a subjectRowID if it doesn't exist */
-                    int studyRowID = sqrl->FindStudy(ID, studyNum);
-                    if (studyRowID < 0) {
-                        squirrelStudy study;
-                        study.StudyNumber = studyNum;
-                        study.subjectRowID = subjectRowID;
-                        study.Modality = "TASK";
-                        study.VisitType = visit;
-                        study.Store();
-                        studyRowID = study.GetObjectID();
-                    }
+                    study.VisitType = filename.section("_", 1, 1);
+                    qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
                     squirrelSeries series;
@@ -735,7 +586,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
                     series.Store();
-                    int seriesRowID = series.GetObjectID();
+                    qint64 seriesRowID = series.GetObjectID();
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;

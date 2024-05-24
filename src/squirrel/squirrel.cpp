@@ -1260,17 +1260,32 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
 void squirrel::PrintSubjects(PrintingType printType) {
 
     QList <squirrelSubject> subjects = GetAllSubjects();
-    QStringList subjectIDs;
-    foreach (squirrelSubject s, subjects) {
-        if (s.Get()) {
-            if (printType == PrintingType::Details)
+
+    if (printType == PrintingType::Details) {
+        foreach (squirrelSubject s, subjects) {
+            if (s.Get())
                 s.PrintSubjectDetails();
-            else
-                subjectIDs.append(s.ID);
         }
     }
-    if (printType == PrintingType::IDList)
+    else if (printType == PrintingType::CSV) {
+        QStringList csvLines;
+        foreach (squirrelSubject s, subjects) {
+            if (s.Get())
+                csvLines.append(s.CSVLine());
+        }
+        utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
+        utils::Print(csvLines.join("\n"));
+    }
+    else if (printType == PrintingType::Tree) {
+    }
+    else {
+        QStringList subjectIDs;
+        foreach (squirrelSubject s, subjects) {
+            if (s.Get())
+                subjectIDs.append(s.ID);
+        }
         utils::Print("Subjects: " + subjectIDs.join(" "));
+    }
 }
 
 

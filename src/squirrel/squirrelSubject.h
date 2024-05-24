@@ -43,7 +43,8 @@ public:
 
     /* functions */
     void PrintSubjectDetails();
-	QJsonObject ToJSON();
+    QString CSVLine();
+    QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */
     bool Remove();          /* remove the subject (and all child studies and series) from the database */
