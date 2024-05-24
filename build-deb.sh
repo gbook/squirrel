@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PACKAGE=nidb_2024.5.226
+PACKAGE=squirrel_2024.5.226
 LIBDIR=$PACKAGE/lib/x86_64-linux-gnu/
 BINDIR=$PACKAGE/usr/local/bin/
 DEBDIR=$PACKAGE/DEBIAN
@@ -16,7 +16,7 @@ cp -uv ~/Qt/6.6.3/gcc_64/lib/libQt6Sql.so* ~/Qt/6.6.3/gcc_64/lib/libQt6Network.s
 
 cp -uv bin/squirrel/squirrel $BINDIR
 
-echo "Package: nidb
+echo "Package: squirrel
 Version: 2024.5.226
 Section: base
 Priority: optional
