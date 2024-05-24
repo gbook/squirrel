@@ -54,11 +54,11 @@ cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/
 cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/
 
 # ----- build squirrel library -----
-#echo -e "\nBuilding squirrel library\n"
-#echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
-#$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
-#cd $BUILDDIR/squirrel
-#make -j 16
+echo -e "\nBuilding squirrel library\n"
+echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
+$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
+cd $BUILDDIR/squirrel
+make -j 16
 
 # ----- build squirrel command line utilities -----
 echo -e "\nBuilding squirrel utilities\n"
