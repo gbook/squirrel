@@ -13,6 +13,7 @@ mkdir -p $DEBDIR
 cp -uv bin/squirrel/libsquirrel* $LIBDIR
 cp -uv bin/gdcm/bin/libgdcm* $LIBDIR
 cp -uv ~/Qt/6.6.3/gcc_64/lib/libQt6Sql.so* ~/Qt/6.6.3/gcc_64/lib/libQt6Network.so* ~/Qt/6.6.3/gcc_64/lib/libQt6Core.so* $LIBDIR
+cp -uv ~/Qt/6.6.3/gcc_64/lib/libicui18n.so.56 ~/Qt/6.6.3/gcc_64/lib/libicuuc.so.56 ~/Qt/6.6.3/gcc_64/lib/libicudata.so.56 $LIBDIR
 
 cp -uv bin/squirrel/squirrel $BINDIR
 
