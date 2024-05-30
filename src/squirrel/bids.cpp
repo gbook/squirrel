@@ -79,6 +79,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
             sqrlSubject.ID = ID;
             sqrlSubject.Store();
             subjectRowID = sqrlSubject.GetObjectID();
+            sqrl->Log(QString("Added subject [%1]").arg(ID), __FUNCTION__);
         }
         sqrl->Log(QString("Reading BIDS subject [%1] into squirrel subject [%2] with rowID [%3]").arg(ID).arg(sqrlSubject.ID).arg(subjectRowID), __FUNCTION__);
 
@@ -96,13 +97,6 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
             foreach (QString sesdir, sesdirs) {
                 /* each session will become its own study */
                 QString sespath = QString("%1/%2/%3").arg(dir).arg(subjdir).arg(sesdir);
-                //int subjectIndex = sqrl->GetSubjectIndex(subjdir);
-                //int subjectRowID = sqrl->FindSubject(subjdir);
-                //squirrelSubject subj;
-                //subj.SetObjectID(subjectRowID);
-                //subj.Get();
-                //int studyNum;
-                //studyNum = sqrl->subjectList[subjectIndex].GetNextStudyNumber();
 
                 sqrl->Debug(QString("Loading session path [%1] into study [%2]").arg(sespath).arg(studyNum), __FUNCTION__);
 
@@ -308,7 +302,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
         study.Modality = "MR";
         study.Store();
         studyRowID = study.GetObjectID();
-        sqrl->Debug(QString("Created new study [%1] for subject [%2] ").arg(studyNum).arg(subject.ID), __FUNCTION__);
+        sqrl->Log(QString(" Added study [%1]").arg(studyNum), __FUNCTION__);
     }
     /* ... or load an existing study */
     else {
@@ -361,7 +355,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
-                    sqrl->Debug(QString("Checkpoint 10) Added new seriesNum [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -394,6 +388,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -431,6 +426,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -471,6 +467,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -513,6 +510,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -553,6 +551,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;
@@ -587,6 +586,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     series.Protocol = protocol;
                     series.Store();
                     qint64 seriesRowID = series.GetObjectID();
+                    sqrl->Log(QString("  Added series [%1] with seriesRowID [%2]").arg(seriesNum).arg(seriesRowID), __FUNCTION__);
 
                     /* now that the subject/study/series exist, add the file(s) */
                     QStringList files2;

@@ -545,7 +545,7 @@ bool squirrel::Write(bool writeLog) {
                 QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
                 utils::MakePath(seriesPath,m);
 
-                Log(QString("Writing series [%1] to [%2]. Data format [%3]").arg(series.SeriesNumber).arg(seriesPath).arg(DataFormat), __FUNCTION__);
+                Log(QString("Writing Subject-Study-Series [%1-%2-%3] to tmpdir [%4]. Data format [%3]").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber).arg(seriesPath).arg(DataFormat), __FUNCTION__);
 
                 /* orig vs other formats */
                 if (DataFormat == "orig") {
@@ -553,6 +553,7 @@ bool squirrel::Write(bool writeLog) {
                     /* copy all of the series files to the temp directory */
                     foreach (QString f, series.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
+                        Log(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
                         Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                     }
                 }
@@ -561,6 +562,7 @@ bool squirrel::Write(bool writeLog) {
                     /* copy all of the series files to the temp directory */
                     foreach (QString f, series.stagedFiles) {
                         QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
+                        Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
                         Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                     }
                 }
@@ -585,6 +587,7 @@ bool squirrel::Write(bool writeLog) {
 
                         /* move the anonymized files to the staging area */
                         systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);
+                        Log(QString("  ... anonymizing DICOM files from %1 to %2").arg(td).arg(seriesPath), __FUNCTION__);
                         Debug(utils::SystemCommand(systemstring), __FUNCTION__);
 
                         /* delete temp directory */
@@ -603,7 +606,7 @@ bool squirrel::Write(bool writeLog) {
 
                     /* get path of first file to be converted */
                     if (series.stagedFiles.size() > 0) {
-                        Log(QString("Converting %1 files to nifti").arg(series.stagedFiles.size()), __FUNCTION__);
+                        Log(QString(" ... converting %1 files to nifti").arg(series.stagedFiles.size()), __FUNCTION__);
 
                         QFileInfo f(series.stagedFiles[0]);
                         QString origSeriesPath = f.absoluteDir().absolutePath();
@@ -1017,7 +1020,7 @@ qint64 squirrel::GetObjectCount(QString object) {
     else { return -1; }
 
     q.prepare("select count(*) 'count' from " + table);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, debugSQL);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.first())
         count = q.value("count").toInt();
 
@@ -1696,7 +1699,7 @@ qint64 squirrel::FindSubject(QString id) {
         Debug(QString("Searched for SubjectID [%1] and found SubjectRowID [%2]").arg(id).arg(rowid), __FUNCTION__);
     }
     else {
-        Log(QString("Could not find SubjectID [%1]").arg(id), __FUNCTION__);
+        Debug(QString("Could not find SubjectID [%1]").arg(id), __FUNCTION__);
     }
     return rowid;
 }
@@ -1723,7 +1726,7 @@ qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
         Debug(QString("Searched for SubjectID, StudyNumber [%1], [%2] and found StudyRowID [%3]").arg(subjectID).arg(studyNum).arg(rowid), __FUNCTION__);
     }
     else {
-        Log(QString("Could not find SubjectID, StudyNumber [%1], [%2]").arg(subjectID).arg(studyNum), __FUNCTION__);
+        Debug(QString("Could not find SubjectID, StudyNumber [%1], [%2]").arg(subjectID).arg(studyNum), __FUNCTION__);
     }
     return rowid;
 }
