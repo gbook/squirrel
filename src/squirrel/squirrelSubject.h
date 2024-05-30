@@ -42,7 +42,8 @@ public:
     squirrelSubject();
 
     /* functions */
-    void PrintSubjectDetails();
+    void PrintDetails();
+    void PrintTree();
     QString CSVLine();
     QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */

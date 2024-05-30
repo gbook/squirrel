@@ -856,7 +856,7 @@ void squirrel::Print() {
     QList<squirrelSubject> subjects = GetAllSubjects();
     foreach (squirrelSubject sub, subjects) {
         qint64 subjectRowID = sub.GetObjectID();
-        sub.PrintSubjectDetails();
+        sub.PrintDetails();
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudies(subjectRowID);
@@ -1267,7 +1267,7 @@ void squirrel::PrintSubjects(PrintingType printType) {
     if (printType == PrintingType::Details) {
         foreach (squirrelSubject s, subjects) {
             if (s.Get())
-                s.PrintSubjectDetails();
+                s.PrintDetails();
         }
     }
     else if (printType == PrintingType::CSV) {
@@ -1280,6 +1280,11 @@ void squirrel::PrintSubjects(PrintingType printType) {
         utils::Print(csvLines.join("\n"));
     }
     else if (printType == PrintingType::Tree) {
+        utils::Print("Subjects");
+        foreach (squirrelSubject s, subjects) {
+            if (s.Get())
+                s.PrintTree();
+        }
     }
     else {
         QStringList subjectIDs;

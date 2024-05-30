@@ -230,6 +230,32 @@ void squirrelStudy::PrintStudy() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- PrintTree -------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Print study tree items
+ */
+void squirrelStudy::PrintTree() {
+
+    utils::Print(QString("  ├── Study %1 - Datetime %2  Modality %3").arg(StudyNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Modality));
+
+    /* print all series for this study */
+    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    q.prepare("select SeriesRowID from Series where StudyRowID = :studyid");
+    q.bindValue(":studyid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next()) {
+        qint64 seriesRowID = q.value("SeriesRowID").toLongLong();
+        squirrelSeries ser;
+        ser.SetObjectID(seriesRowID);
+        if (ser.Get()) {
+            ser.PrintTree();
+        }
+    }
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
