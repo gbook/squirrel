@@ -215,10 +215,11 @@ void squirrelSeries::PrintSeries() {
 /**
  * @brief Print series tree
  */
-void squirrelSeries::PrintTree() {
-
-    utils::Print(QString("    ├── Series %1 - Datetime %2  Protocol %3").arg(SeriesNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Protocol));
-
+void squirrelSeries::PrintTree(bool isLast) {
+    if (isLast)
+        utils::Print(QString("           └─── Series %1 - Datetime %2  Protocol %3").arg(SeriesNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Protocol));
+    else
+        utils::Print(QString("   │   │   ├─── Series %1 - Datetime %2  Protocol %3").arg(SeriesNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Protocol));
 }
 
 

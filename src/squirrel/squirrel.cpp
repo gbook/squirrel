@@ -1263,37 +1263,47 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
 void squirrel::PrintSubjects(PrintingType printType) {
 
     QList <squirrelSubject> subjects = GetAllSubjects();
-
-    if (printType == PrintingType::Details) {
-        foreach (squirrelSubject s, subjects) {
-            if (s.Get())
-                s.PrintDetails();
+    int count = subjects.size();
+    if (count > 0) {
+        if (printType == PrintingType::Details) {
+            foreach (squirrelSubject s, subjects) {
+                if (s.Get())
+                    s.PrintDetails();
+            }
+        }
+        else if (printType == PrintingType::CSV) {
+            QStringList csvLines;
+            foreach (squirrelSubject s, subjects) {
+                if (s.Get())
+                    csvLines.append(s.CSVLine());
+            }
+            utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
+            utils::Print(csvLines.join("\n"));
+        }
+        else if (printType == PrintingType::Tree) {
+            utils::Print("Subjects");
+            int i = 0;
+            foreach (squirrelSubject s, subjects) {
+                if (s.Get()) {
+                    i++;
+                    if (count == i)
+                        s.PrintTree(true);
+                    else
+                        s.PrintTree(false);
+                }
+            }
+        }
+        else {
+            QStringList subjectIDs;
+            foreach (squirrelSubject s, subjects) {
+                if (s.Get())
+                    subjectIDs.append(s.ID);
+            }
+            utils::Print("Subjects: " + subjectIDs.join(" "));
         }
     }
-    else if (printType == PrintingType::CSV) {
-        QStringList csvLines;
-        foreach (squirrelSubject s, subjects) {
-            if (s.Get())
-                csvLines.append(s.CSVLine());
-        }
-        utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
-        utils::Print(csvLines.join("\n"));
-    }
-    else if (printType == PrintingType::Tree) {
-        utils::Print("Subjects");
-        foreach (squirrelSubject s, subjects) {
-            if (s.Get())
-                s.PrintTree();
-        }
-    }
-    else {
-        QStringList subjectIDs;
-        foreach (squirrelSubject s, subjects) {
-            if (s.Get())
-                subjectIDs.append(s.ID);
-        }
-        utils::Print("Subjects: " + subjectIDs.join(" "));
-    }
+    else
+        utils::Print("No subjects in this package");
 }
 
 

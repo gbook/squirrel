@@ -235,9 +235,12 @@ void squirrelStudy::PrintStudy() {
 /**
  * @brief Print study tree items
  */
-void squirrelStudy::PrintTree() {
+void squirrelStudy::PrintTree(bool isLast) {
 
-    utils::Print(QString("  ├── Study %1 - Datetime %2  Modality %3").arg(StudyNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Modality));
+    if (isLast)
+        utils::Print(QString("       └─── Study %1 - Datetime %2  Modality %3").arg(StudyNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Modality));
+    else
+        utils::Print(QString("   │   ├─── Study %1 - Datetime %2  Modality %3").arg(StudyNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Modality));
 
     /* print all series for this study */
     QSqlQuery q(QSqlDatabase::database("squirrel"));
@@ -249,7 +252,7 @@ void squirrelStudy::PrintTree() {
         squirrelSeries ser;
         ser.SetObjectID(seriesRowID);
         if (ser.Get()) {
-            ser.PrintTree();
+            ser.PrintTree(false);
         }
     }
 }

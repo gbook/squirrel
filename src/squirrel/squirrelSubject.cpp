@@ -166,21 +166,37 @@ void squirrelSubject::PrintDetails() {
 /**
  * @brief Print subject tree
  */
-void squirrelSubject::PrintTree() {
+void squirrelSubject::PrintTree(bool isLast) {
 
-    utils::Print(QString("├── ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString()).arg(Sex));
+    if (isLast)
+        utils::Print(QString("   └─── ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString()).arg(Sex));
+    else
+        utils::Print(QString("   ├─── ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString()).arg(Sex));
 
     /* find all studies associated with this subject ... */
     QSqlQuery q(QSqlDatabase::database("squirrel"));
+
+    int count(0);
+    q.prepare("select count(*) 'count' from Study where SubjectRowID = :subjectid");
+    q.bindValue(":subjectid", objectID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.first())
+        count = q.value("count").toInt();
+
     q.prepare("select StudyRowID from Study where SubjectRowID = :subjectid");
     q.bindValue(":subjectid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    int i(0);
     while (q.next()) {
-        int studyRowID = q.value("StudyRowID").toInt();
+        qint64 studyRowID = q.value("StudyRowID").toLongLong();
         squirrelStudy stud;
-        stud.SetObjectID(q.value("StudyRowID").toLongLong());
+        stud.SetObjectID(studyRowID);
         if (stud.Get()) {
-            stud.PrintTree();
+            i++;
+            if (count == i)
+                stud.PrintTree(true);
+            else
+                stud.PrintTree(false);
         }
     }
 }
