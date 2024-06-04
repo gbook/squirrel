@@ -144,8 +144,8 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- series ----- */
         else if (addObject == "series") {
-            int studyRowID = sqrl->FindStudy(subjectID, studyNum);
-            int seriesRowID = sqrl->FindSeries(subjectID, studyNum, vars["SeriesNumber"].toInt());
+            qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
+            qint64 seriesRowID = sqrl->FindSeries(subjectID, studyNum, vars["SeriesNumber"].toInt());
             if (seriesRowID < 0) {
                 squirrelSeries series;
                 sqrl->Log(QString("Creating squirrel Series [%1]").arg(vars["SeriesNumber"]), __FUNCTION__);
@@ -169,7 +169,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- measure ----- */
         else if (addObject == "measure") {
-            int subjectRowID = sqrl->FindSubject(subjectID);
+            qint64 subjectRowID = sqrl->FindSubject(subjectID);
             if (subjectRowID < 0) {
                 m = QString("Subject [%3] not found in package").arg(subjectID);
                 delete sqrl;
@@ -239,7 +239,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- drug ----- */
         else if (addObject == "drug") {
-            int subjectRowID = sqrl->FindSubject(subjectID);
+            qint64 subjectRowID = sqrl->FindSubject(subjectID);
             if (subjectRowID < 0) {
                 m = QString("Subject [%3] not found in package").arg(subjectID);
                 delete sqrl;
@@ -270,7 +270,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         /* ----- analysis ----- */
         else if (addObject == "analysis") {
             qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
-            int analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
+            qint64 analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
             if (analysisRowID < 0) {
                 squirrelAnalysis analysis;
                 sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(vars["AnalysisName"]), __FUNCTION__);
@@ -301,7 +301,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- experiment ----- */
         else if (addObject == "experiment") {
-            int experimentRowID = sqrl->FindExperiment(vars["ExperimentName"]);
+            qint64 experimentRowID = sqrl->FindExperiment(vars["ExperimentName"]);
             if (experimentRowID < 0) {
                 squirrelExperiment experiment;
                 sqrl->Log(QString("Creating squirrel Experiment [%1]").arg(vars["ExperimentName"]), __FUNCTION__);
@@ -364,7 +364,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- groupanalysis ----- */
         else if (addObject == "groupanalysis") {
-            int groupAnalysisRowID = sqrl->FindGroupAnalysis(vars["GroupAnalysisName"]);
+            qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(vars["GroupAnalysisName"]);
             if (groupAnalysisRowID < 0) {
                 squirrelGroupAnalysis groupAnalysis;
                 sqrl->Log(QString("Creating squirrel GroupAnalysis [%1]").arg(vars["GroupAnalysisName"]), __FUNCTION__);
@@ -385,7 +385,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         }
         /* ----- datadictionary ----- */
         else if (addObject == "datadictionary") {
-            int dataDictionaryRowID = sqrl->FindDataDictionary(vars["DataDictionaryName"]);
+            qint64 dataDictionaryRowID = sqrl->FindDataDictionary(vars["DataDictionaryName"]);
             if (dataDictionaryRowID < 0) {
                 squirrelDataDictionary dataDictionary;
                 sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(vars["DataDictionaryName"]), __FUNCTION__);
