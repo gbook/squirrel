@@ -89,10 +89,10 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
         /* ----- subject ----- */
         if (addObject == "subject") {
             qint64 subjectRowID;
-            subjectRowID = sqrl->FindSubject(vars["PatientID"]);
+            subjectRowID = sqrl->FindSubject(vars["SubjectID"]);
             if (subjectRowID < 0) {
                 squirrelSubject subject;
-                sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["PatientID"]), __FUNCTION__);
+                sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["SubjectID"]), __FUNCTION__);
                 subject.ID = vars["SubjectID"];
                 subject.AlternateIDs = vars["AlternateIDs"].split(",");
                 subject.GUID = vars["GUID"];
@@ -117,7 +117,7 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
             qint64 studyRowID = sqrl->FindStudy(subjectID, vars["StudyNumber"].toInt());
             if (studyRowID < 0) {
                 squirrelStudy study;
-                sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["PatientID"]), __FUNCTION__);
+                sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["SubjectID"]), __FUNCTION__);
                 study.StudyNumber = vars["StudyNumber"].toInt();
                 study.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
                 study.AgeAtStudy = vars["AgeAtStudy"].toDouble();

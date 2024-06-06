@@ -519,7 +519,7 @@ bool squirrel::Write(bool writeLog) {
         Log(QString("Writing NEW squirrel package: workingdir [%1]  packagePath [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
     }
     else {
-        Log(QString("Updating existing squirrel package [%1]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
+        Log(QString("Updating existing squirrel package [%1]").arg(GetPackagePath()), __FUNCTION__);
     }
 
     pairList stagedFiles;
@@ -543,99 +543,101 @@ bool squirrel::Write(bool writeLog) {
             foreach (squirrelSeries series, serieses) {
                 QString m;
                 QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
-                utils::MakePath(seriesPath,m);
 
-                Log(QString("Writing Subject-Study-Series [%1-%2-%3] to tmpdir [%4]. Data format [%5]").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber).arg(seriesPath).arg(DataFormat), __FUNCTION__);
+                if (fileMode == FileMode::NewPackage) {
+                    utils::MakePath(seriesPath,m);
+                    Log(QString("Writing Subject-Study-Series [%1-%2-%3] to tmpdir [%4]. Data format [%5]").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber).arg(seriesPath).arg(DataFormat), __FUNCTION__);
 
-                /* orig vs other formats */
-                if (DataFormat == "orig") {
-                    Debug(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
-                    /* copy all of the series files to the temp directory */
-                    foreach (QString f, series.stagedFiles) {
-                        QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                        Log(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
-                        Debug(utils::SystemCommand(systemstring), __FUNCTION__);
-                    }
-                }
-                else if (study.Modality.toUpper() != "MR") {
-                    Debug(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
-                    /* copy all of the series files to the temp directory */
-                    foreach (QString f, series.stagedFiles) {
-                        QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                        Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
-                        Debug(utils::SystemCommand(systemstring), __FUNCTION__);
-                    }
-                }
-                else if ((DataFormat == "anon") || (DataFormat == "anonfull")) {
-                    /* create temp directory for the anonymization */
-                    QString td;
-                    if (MakeTempDir(td)) {
-                        /* copy all files to temp directory */
-                        QString systemstring;
+                    /* orig vs other formats */
+                    if (DataFormat == "orig") {
+                        Debug(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
+                        /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
-                            systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
+                            QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
+                            Log(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
                             Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
+                    }
+                    else if (study.Modality.toUpper() != "MR") {
+                        Debug(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
+                        /* copy all of the series files to the temp directory */
+                        foreach (QString f, series.stagedFiles) {
+                            QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
+                            Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
+                            Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+                        }
+                    }
+                    else if ((DataFormat == "anon") || (DataFormat == "anonfull")) {
+                        /* create temp directory for the anonymization */
+                        QString td;
+                        if (MakeTempDir(td)) {
+                            /* copy all files to temp directory */
+                            QString systemstring;
+                            foreach (QString f, series.stagedFiles) {
+                                systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
+                                Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+                            }
 
-                        /* anonymize the directory */
-                        squirrelImageIO io;
-                        QString m;
-                        if (DataFormat == "anon")
-                            io.AnonymizeDir(td,1,"Anonymized","Anonymized",m);
+                            /* anonymize the directory */
+                            squirrelImageIO io;
+                            QString m;
+                            if (DataFormat == "anon")
+                                io.AnonymizeDir(td,1,"Anonymized","Anonymized",m);
+                            else
+                                io.AnonymizeDir(td,2,"Anonymized","Anonymized",m);
+
+                            /* move the anonymized files to the staging area */
+                            systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);
+                            Log(QString("  ... anonymizing DICOM files from %1 to %2").arg(td).arg(seriesPath), __FUNCTION__);
+                            Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+
+                            /* delete temp directory */
+                            DeleteTempDir(td);
+                        }
                         else
-                            io.AnonymizeDir(td,2,"Anonymized","Anonymized",m);
+                            Log("Error creating temp directory for DICOM anonymization", __FUNCTION__);
+                    }
+                    else if (DataFormat.contains("nifti")) {
+                        int numConv(0), numRename(0);
+                        bool gzip;
+                        if (DataFormat.contains("gz"))
+                            gzip = true;
+                        else
+                            gzip = false;
 
-                        /* move the anonymized files to the staging area */
-                        systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);
-                        Log(QString("  ... anonymizing DICOM files from %1 to %2").arg(td).arg(seriesPath), __FUNCTION__);
-                        Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+                        /* get path of first file to be converted */
+                        if (series.stagedFiles.size() > 0) {
+                            Log(QString(" ... converting %1 files to nifti").arg(series.stagedFiles.size()), __FUNCTION__);
 
-                        /* delete temp directory */
-                        DeleteTempDir(td);
+                            QFileInfo f(series.stagedFiles[0]);
+                            QString origSeriesPath = f.absoluteDir().absolutePath();
+                            squirrelImageIO io;
+                            QString m3;
+                            if (io.ConvertDicom(DataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.StudyNumber), QString("%1").arg(series.SeriesNumber), "dicom", numConv, numRename, m3))
+                                Debug(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
+                            else
+                                Log(QString("ConvertDicom() failed. Returned [%1]").arg(m3), __FUNCTION__);
+                        }
+                        else {
+                            Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__);
+                        }
                     }
                     else
-                        Log("Error creating temp directory for DICOM anonymization", __FUNCTION__);
+                        Log(QString("DataFormat [%1] not recognized").arg(DataFormat), __FUNCTION__);
+
+                    /* get the number of files and size of the series */
+                    qint64 c(0), b(0);
+                    utils::GetDirSizeAndFileCount(seriesPath, c, b, false);
+                    series.FileCount = c;
+                    series.Size = b;
+                    series.Store();
+
+                    /* write the series .json file, containing the dicom header params */
+                    QString paramFilePath = QString("%1/params.json").arg(seriesPath);
+                    QByteArray j = QJsonDocument(series.ParamsToJSON()).toJson();
+                    if (!utils::WriteTextFile(paramFilePath, j))
+                        Log("Error writing [" + paramFilePath + "]", __FUNCTION__);
                 }
-                else if (DataFormat.contains("nifti")) {
-                    int numConv(0), numRename(0);
-                    bool gzip;
-                    if (DataFormat.contains("gz"))
-                        gzip = true;
-                    else
-                        gzip = false;
-
-                    /* get path of first file to be converted */
-                    if (series.stagedFiles.size() > 0) {
-                        Log(QString(" ... converting %1 files to nifti").arg(series.stagedFiles.size()), __FUNCTION__);
-
-                        QFileInfo f(series.stagedFiles[0]);
-                        QString origSeriesPath = f.absoluteDir().absolutePath();
-                        squirrelImageIO io;
-                        QString m3;
-                        if (io.ConvertDicom(DataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.StudyNumber), QString("%1").arg(series.SeriesNumber), "dicom", numConv, numRename, m3))
-                            Debug(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
-                        else
-                            Log(QString("ConvertDicom() failed. Returned [%1]").arg(m3), __FUNCTION__);
-                    }
-                    else {
-                        Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__);
-                    }
-                }
-                else
-                    Log(QString("DataFormat [%1] not recognized").arg(DataFormat), __FUNCTION__);
-
-                /* get the number of files and size of the series */
-                qint64 c(0), b(0);
-                utils::GetDirSizeAndFileCount(seriesPath, c, b, false);
-                series.FileCount = c;
-                series.Size = b;
-                series.Store();
-
-                /* write the series .json file, containing the dicom header params */
-                QString paramFilePath = QString("%1/params.json").arg(seriesPath);
-                QByteArray j = QJsonDocument(series.ParamsToJSON()).toJson();
-                if (!utils::WriteTextFile(paramFilePath, j))
-                    Log("Error writing [" + paramFilePath + "]", __FUNCTION__);
             }
         }
     }
@@ -2269,7 +2271,7 @@ bool squirrel::RemoveMeasure(qint64 measureRowID) {
  * @return true if successful, false otherwise
  */
 bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents) {
-    Log(QString("Reading file [%1] from archive [%2]...").arg(filePath).arg(archivePath), __FUNCTION__);
+    //Log(QString("Reading file [%1] from archive [%2]...").arg(filePath).arg(archivePath), __FUNCTION__);
     try {
         using namespace bit7z;
         std::vector<unsigned char> buffer;
@@ -2288,7 +2290,7 @@ bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QSt
         }
         std::string str{buffer.begin(), buffer.end()};
         fileContents = QString::fromStdString(str);
-        Log(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
+        //Log(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
         return true;
     }
     catch ( const bit7z::BitException& ex ) {
@@ -2489,16 +2491,29 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
 #endif
         /* convert the QString to a istream */
         std::istringstream i(file.toStdString());
+        Log("Checkpoint A", __FUNCTION__);
 
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            //Log("Checkpoint B", __FUNCTION__);
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
+            //Log("Checkpoint C", __FUNCTION__);
+            editor.setUpdateMode(UpdateMode::Update);
+            //Log("Checkpoint D", __FUNCTION__);
             editor.updateItem(compressedFilePath.toStdString(), i);
+            //Log("Checkpoint E", __FUNCTION__);
             editor.applyChanges();
+            Log("Checkpoint F", __FUNCTION__);
         }
         else {
+            //Log("Checkpoint G", __FUNCTION__);
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
+            //Log("Checkpoint H", __FUNCTION__);
+            editor.setUpdateMode(UpdateMode::Update);
+            //Log("Checkpoint I", __FUNCTION__);
             editor.updateItem(compressedFilePath.toStdString(), i);
+            //Log("Checkpoint J", __FUNCTION__);
             editor.applyChanges();
+            Log("Checkpoint K", __FUNCTION__);
         }
         m = "Successfully compressed memory file to archive [" + archivePath + "]";
         return true;
