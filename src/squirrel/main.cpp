@@ -331,7 +331,8 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to remove.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when adding a study, series, measure, drug, or analysis object.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when adding a series or analysis object (subjectid is also needed).", "num"));
-        p.addOption(QCommandLineOption(QStringList() << "objectdata", "String specifying the new object meta-data.", "string"));
+        p.addOption(QCommandLineOption(QStringList() << "objectdata", "URL-style string specifying the new object meta-data.", "string"));
+        p.addOption(QCommandLineOption(QStringList() << "variablelist", "List the possible variables for the specified object (subject, study, series, analysis ...)", "object"));
 
         p.process(a);
 
@@ -341,12 +342,16 @@ int main(int argc, char *argv[])
         QString objectData = p.value("objectdata").trimmed();
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
+        QString variablelist = p.value("variablelist").trimmed();
         int studyNum = p.value("studynum").toInt();
         bool recursive = p.isSet("recursive");
 
         QString m;
         modify mod;
-        if (!mod.DoModify(inputPath, addObject, removeObject, dataPath, recursive, objectData, objectID, subjectID, studyNum, m)) {
+        if (variablelist != "") {
+            mod.PrintVariables(variablelist);
+        }
+        else if (!mod.DoModify(inputPath, addObject, removeObject, dataPath, recursive, objectData, objectID, subjectID, studyNum, m)) {
             CommandLineError(p,m);
         }
     }
