@@ -122,8 +122,8 @@ bool squirrel::InitializeDatabase() {
     q.prepare(tableAnalysis);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Analysis]", __FUNCTION__); return false; }
 
-    q.prepare(tableDrug);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Drug]", __FUNCTION__); return false; }
+    q.prepare(tableIntervention);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Intervention]", __FUNCTION__); return false; }
 
     q.prepare(tableDataDictionary);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionary]", __FUNCTION__); return false; }
@@ -137,8 +137,8 @@ bool squirrel::InitializeDatabase() {
     q.prepare(tableGroupAnalysis);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [GroupAnalysis]", __FUNCTION__); return false; }
 
-    q.prepare(tableMeasure);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Measure]", __FUNCTION__); return false; }
+    q.prepare(tableObservation);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Observation]", __FUNCTION__); return false; }
 
     q.prepare(tablePackage);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Package]", __FUNCTION__); return false; }
@@ -355,51 +355,51 @@ bool squirrel::Read() {
             }
         }
 
-        /* read all measures */
-        QJsonArray jsonMeasures = jsonSubject["measures"].toArray();
-        Debug(QString("Reading [%1] measures").arg(jsonMeasures.size()), __FUNCTION__);
-        for (auto e : jsonMeasures) {
-            QJsonObject jsonMeasure = e.toObject();
-            squirrelMeasure sqrlMeasure;
-            sqrlMeasure.DateEnd.fromString(jsonMeasure["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.DateStart.fromString(jsonMeasure["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.DateRecordCreate.fromString(jsonMeasure["DateRecordCreate"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.DateRecordEntry.fromString(jsonMeasure["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.DateRecordModify.fromString(jsonMeasure["DateRecordModify"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlMeasure.Description = jsonMeasure["Description"].toString();
-            sqrlMeasure.Duration = jsonMeasure["Duration"].toDouble();
-            sqrlMeasure.InstrumentName = jsonMeasure["InstrumentName"].toString();
-            sqrlMeasure.MeasureName = jsonMeasure["MeasureName"].toString();
-            sqrlMeasure.Notes = jsonMeasure["Notes"].toString();
-            sqrlMeasure.Rater = jsonMeasure["Rater"].toString();
-            sqrlMeasure.Value = jsonMeasure["Value"].toString();
-            sqrlMeasure.subjectRowID = subjectRowID;
-            sqrlMeasure.Store();
+        /* read all observations */
+        QJsonArray jsonObservations = jsonSubject["observations"].toArray();
+        Debug(QString("Reading [%1] observations").arg(jsonObservations.size()), __FUNCTION__);
+        for (auto e : jsonObservations) {
+            QJsonObject jsonObservation = e.toObject();
+            squirrelObservation sqrlObservation;
+            sqrlObservation.DateEnd.fromString(jsonObservation["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateStart.fromString(jsonObservation["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateRecordCreate.fromString(jsonObservation["DateRecordCreate"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateRecordEntry.fromString(jsonObservation["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateRecordModify.fromString(jsonObservation["DateRecordModify"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.Description = jsonObservation["Description"].toString();
+            sqrlObservation.Duration = jsonObservation["Duration"].toDouble();
+            sqrlObservation.InstrumentName = jsonObservation["InstrumentName"].toString();
+            sqrlObservation.ObservationName = jsonObservation["ObservationName"].toString();
+            sqrlObservation.Notes = jsonObservation["Notes"].toString();
+            sqrlObservation.Rater = jsonObservation["Rater"].toString();
+            sqrlObservation.Value = jsonObservation["Value"].toString();
+            sqrlObservation.subjectRowID = subjectRowID;
+            sqrlObservation.Store();
         }
 
-        /* read all drugs */
-        QJsonArray jsonDrugs = jsonSubject["drugs"].toArray();
-        Debug(QString("Reading [%1] drugs").arg(jsonDrugs.size()), __FUNCTION__);
-        for (auto f : jsonDrugs) {
-            QJsonObject jsonDrug = f.toObject();
-            squirrelDrug sqrlDrug;
+        /* read all Interventions */
+        QJsonArray jsonInterventions = jsonSubject["Interventions"].toArray();
+        Debug(QString("Reading [%1] Interventions").arg(jsonInterventions.size()), __FUNCTION__);
+        for (auto f : jsonInterventions) {
+            QJsonObject jsonIntervention = f.toObject();
+            squirrelIntervention sqrlIntervention;
 
-            sqrlDrug.DateEnd.fromString(jsonDrug["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlDrug.DateRecordEntry.fromString(jsonDrug["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlDrug.DateStart.fromString(jsonDrug["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlDrug.Description = jsonDrug["Description"].toString();
-            sqrlDrug.DoseAmount = jsonDrug["DoseAmount"].toDouble();
-            sqrlDrug.DoseFrequency = jsonDrug["DoseFrequency"].toString();
-            sqrlDrug.DoseKey = jsonDrug["DoseKey"].toString();
-            sqrlDrug.DoseString = jsonDrug["DoseString"].toString();
-            sqrlDrug.DoseUnit = jsonDrug["DoseUnit"].toString();
-            sqrlDrug.DrugClass = jsonDrug["DrugClass"].toString();
-            sqrlDrug.DrugName = jsonDrug["DrugName"].toString();
-            sqrlDrug.Notes = jsonDrug["Notes"].toString();
-            sqrlDrug.Rater = jsonDrug["Rater"].toString();
-            sqrlDrug.AdministrationRoute = jsonDrug["AdministrationRoute"].toString();
-            sqrlDrug.subjectRowID = subjectRowID;
-            sqrlDrug.Store();
+            sqrlIntervention.DateEnd.fromString(jsonIntervention["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlIntervention.DateRecordEntry.fromString(jsonIntervention["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlIntervention.DateStart.fromString(jsonIntervention["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlIntervention.Description = jsonIntervention["Description"].toString();
+            sqrlIntervention.DoseAmount = jsonIntervention["DoseAmount"].toDouble();
+            sqrlIntervention.DoseFrequency = jsonIntervention["DoseFrequency"].toString();
+            sqrlIntervention.DoseKey = jsonIntervention["DoseKey"].toString();
+            sqrlIntervention.DoseString = jsonIntervention["DoseString"].toString();
+            sqrlIntervention.DoseUnit = jsonIntervention["DoseUnit"].toString();
+            sqrlIntervention.InterventionClass = jsonIntervention["InterventionClass"].toString();
+            sqrlIntervention.InterventionName = jsonIntervention["InterventionName"].toString();
+            sqrlIntervention.Notes = jsonIntervention["Notes"].toString();
+            sqrlIntervention.Rater = jsonIntervention["Rater"].toString();
+            sqrlIntervention.AdministrationRoute = jsonIntervention["AdministrationRoute"].toString();
+            sqrlIntervention.subjectRowID = subjectRowID;
+            sqrlIntervention.Store();
         }
     }
 
@@ -879,16 +879,16 @@ void squirrel::Print() {
             }
         }
 
-        /* iterate through measures */
-        QList<squirrelMeasure> measures = GetMeasures(subjectRowID);
-        foreach (squirrelMeasure measure, measures) {
-            measure.PrintMeasure();
+        /* iterate through observations */
+        QList<squirrelObservation> observations = GetObservations(subjectRowID);
+        foreach (squirrelObservation observation, observations) {
+            observation.PrintObservation();
         }
 
-        /* iterate through drugs */
-        QList<squirrelDrug> drugs = GetDrugs(subjectRowID);
-        foreach (squirrelDrug drug, drugs) {
-            drug.PrintDrug();
+        /* iterate through Interventions */
+        QList<squirrelIntervention> Interventions = GetInterventions(subjectRowID);
+        foreach (squirrelIntervention Intervention, Interventions) {
+            Intervention.PrintIntervention();
         }
     }
 
@@ -1014,8 +1014,8 @@ qint64 squirrel::GetObjectCount(QString object) {
     else if (object == "analysis") table = "Analysis";
     else if (object == "datadictionary") table = "DataDictionary";
     else if (object == "datadictionaryitem") table = "DataDictionaryItems";
-    else if (object == "drug") table = "Drug";
-    else if (object == "measure") table = "Measure";
+    else if (object == "Intervention") table = "Intervention";
+    else if (object == "observation") table = "Observation";
     else if (object == "pipeline") table = "Pipeline";
     else if (object == "groupanalysis") table = "GroupAnalysis";
     else if (object == "experiment") table = "Experiment";
@@ -1041,8 +1041,8 @@ void squirrel::PrintPackage() {
     qint64 numSubjects = GetObjectCount("subject");
     qint64 numStudies = GetObjectCount("study");
     qint64 numSeries = GetObjectCount("series");
-    qint64 numMeasures = GetObjectCount("measure");
-    qint64 numDrugs = GetObjectCount("drug");
+    qint64 numObservations = GetObjectCount("observation");
+    qint64 numInterventions = GetObjectCount("Intervention");
     qint64 numAnalyses = GetObjectCount("analysis");
     qint64 numExperiments = GetObjectCount("experiment");
     qint64 numPipelines = GetObjectCount("pipeline");
@@ -1064,7 +1064,7 @@ void squirrel::PrintPackage() {
     utils::Print(QString("  PackageName: %1").arg(PackageName));
     utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
     utils::Print(QString("  SquirrelVersion: %1").arg(SquirrelVersion));
-    utils::Print(QString("  Objects:\n    ├── %1 subjects\n    │  ├── %4 measures\n    │  ├── %5 drugs\n    │  ├── %2 studies\n    │  ├──── %3 series\n    │  └──── %6 analyses\n    ├── %7 experiments\n    ├── %8 pipelines\n    ├── %9 group analyses\n    └── %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numMeasures).arg(numDrugs).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+    utils::Print(QString("  Objects:\n    ├── %1 subjects\n    │  ├── %4 observations\n    │  ├── %5 Interventions\n    │  ├── %2 studies\n    │  ├──── %3 series\n    │  └──── %6 analyses\n    ├── %7 experiments\n    ├── %8 pipelines\n    ├── %9 group analyses\n    └── %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numObservations).arg(numInterventions).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
 }
 
 
@@ -1602,22 +1602,22 @@ QList<squirrelAnalysis> squirrel::GetAnalyses(qint64 studyRowID) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetMeasures ------------------------------------------ */
+/* ----- GetObservations ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief Get a list of all Measure objects for a subject
+ * @brief Get a list of all Observation objects for a subject
  * @param subjectRowID of the parent subject
- * @return QList of squirrelMeasure objects
+ * @return QList of squirrelObservation objects
  */
-QList<squirrelMeasure> squirrel::GetMeasures(qint64 subjectRowID) {
+QList<squirrelObservation> squirrel::GetObservations(qint64 subjectRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    QList<squirrelMeasure> list;
-    q.prepare("select MeasureRowID from Measure where SubjectRowID = :id");
+    QList<squirrelObservation> list;
+    q.prepare("select ObservationRowID from Observation where SubjectRowID = :id");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelMeasure m;
-        m.SetObjectID(q.value("MeasureRowID").toLongLong());
+        squirrelObservation m;
+        m.SetObjectID(q.value("ObservationRowID").toLongLong());
         if (m.Get()) {
             list.append(m);
         }
@@ -1627,22 +1627,22 @@ QList<squirrelMeasure> squirrel::GetMeasures(qint64 subjectRowID) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- GetDrugs --------------------------------------------- */
+/* ----- GetInterventions --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Get a list of all Drug objects
+ * @brief Get a list of all Intervention objects
  * @param subjectRowID
- * @return list of all squirrelDrug objects
+ * @return list of all squirrelIntervention objects
  */
-QList<squirrelDrug> squirrel::GetDrugs(qint64 subjectRowID) {
+QList<squirrelIntervention> squirrel::GetInterventions(qint64 subjectRowID) {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    QList<squirrelDrug> list;
-    q.prepare("select DrugRowID from Drug where SubjectRowID = :id");
+    QList<squirrelIntervention> list;
+    q.prepare("select InterventionRowID from Intervention where SubjectRowID = :id");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelDrug d;
-        d.SetObjectID(q.value("DrugRowID").toLongLong());
+        squirrelIntervention d;
+        d.SetObjectID(q.value("InterventionRowID").toLongLong());
         if (d.Get()) {
             list.append(d);
         }
@@ -1998,13 +1998,13 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
             return false;
     }
 
-    /* remove drugs associated with this subject */
-    q.prepare("delete from Drug where SubjectRowID = :subjectRowID");
+    /* remove Interventions associated with this subject */
+    q.prepare("delete from Intervention where SubjectRowID = :subjectRowID");
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    /* remove all measures associated with this subject */
-    q.prepare("delete from Measure where SubjectRowID = :subjectRowID");
+    /* remove all observations associated with this subject */
+    q.prepare("delete from Observation where SubjectRowID = :subjectRowID");
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 \
@@ -2233,13 +2233,13 @@ bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- RemoveDrug ------------------------------------------- */
+/* ----- RemoveIntervention ------------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveDrug(qint64 drugRowID) {
+bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
 
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("delete from Drug where DrugRowID = :drugRowID");
-    q.bindValue(":drugRowID", drugRowID);
+    q.prepare("delete from Intervention where InterventionRowID = :InterventionRowID");
+    q.bindValue(":InterventionRowID", InterventionRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     return true;
@@ -2247,13 +2247,13 @@ bool squirrel::RemoveDrug(qint64 drugRowID) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- RemoveMeasure ---------------------------------------- */
+/* ----- RemoveObservation ---------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveMeasure(qint64 measureRowID) {
+bool squirrel::RemoveObservation(qint64 observationRowID) {
 
     QSqlQuery q(QSqlDatabase::database("squirrel"));
-    q.prepare("delete from Measure where MeasureRowID = :measureRowID");
-    q.bindValue(":measureRowID", measureRowID);
+    q.prepare("delete from Observation where ObservationRowID = :observationRowID");
+    q.bindValue(":observationRowID", observationRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     return true;
@@ -2491,29 +2491,18 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
 #endif
         /* convert the QString to a istream */
         std::istringstream i(file.toStdString());
-        Log("Checkpoint A", __FUNCTION__);
 
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
-            //Log("Checkpoint B", __FUNCTION__);
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
-            //Log("Checkpoint C", __FUNCTION__);
             editor.setUpdateMode(UpdateMode::Update);
-            //Log("Checkpoint D", __FUNCTION__);
             editor.updateItem(compressedFilePath.toStdString(), i);
-            //Log("Checkpoint E", __FUNCTION__);
             editor.applyChanges();
-            Log("Checkpoint F", __FUNCTION__);
         }
         else {
-            //Log("Checkpoint G", __FUNCTION__);
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
-            //Log("Checkpoint H", __FUNCTION__);
             editor.setUpdateMode(UpdateMode::Update);
-            //Log("Checkpoint I", __FUNCTION__);
             editor.updateItem(compressedFilePath.toStdString(), i);
-            //Log("Checkpoint J", __FUNCTION__);
             editor.applyChanges();
-            Log("Checkpoint K", __FUNCTION__);
         }
         m = "Successfully compressed memory file to archive [" + archivePath + "]";
         return true;

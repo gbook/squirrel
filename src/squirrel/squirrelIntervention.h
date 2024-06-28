@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------
-  Squirrel drug.h
+  Squirrel Intervention.h
   Copyright (C) 2004 - 2024
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
@@ -20,8 +20,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ------------------------------------------------------------------------------ */
 
-#ifndef SQUIRRELDRUG_H
-#define SQUIRRELDRUG_H
+#ifndef SQUIRRELINTERVENTION_H
+#define SQUIRRELINTERVENTION_H
 #include <QtSql>
 #include <QDateTime>
 #include <QString>
@@ -29,16 +29,16 @@
 #include <QJsonArray>
 
 /**
- * @brief The drug class
+ * @brief The Intervention class
  *
  * Most string fields are freeform, and not all are required
  */
-class squirrelDrug
+class squirrelIntervention
 {
 public:
-    squirrelDrug();
+    squirrelIntervention();
     QJsonObject ToJSON();
-	void PrintDrug();
+    void PrintIntervention();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */
     bool isValid() { return valid; }
@@ -50,19 +50,19 @@ public:
     qint64 subjectRowID;        /*!< database row ID of the parent object */
 
     /* JSON elements */
-    QDateTime DateEnd;           /*!< drug end date */
+    QDateTime DateEnd;           /*!< Intervention end date */
     QDateTime DateRecordCreate;  /*!< date the record was created */
     QDateTime DateRecordEntry;   /*!< date the record was entered */
     QDateTime DateRecordModify;  /*!< date the record was modified */
-    QDateTime DateStart;         /*!< drug start date (required) */
-    QString AdministrationRoute; /*!< drug delivery route (oral, IV, IM, etc) */
-    QString Description;         /*!< longer description of the drug and dosing */
+    QDateTime DateStart;         /*!< Intervention start date (required) */
+    QString AdministrationRoute; /*!< Intervention delivery route (oral, IV, IM, etc) */
+    QString Description;         /*!< longer description of the Intervention and dosing */
     QString DoseFrequency;       /*!< string representation of dose frequency, ie '2 tablets daily' */
     QString DoseKey;             /*!< for clinical trials, the dose key */
     QString DoseString;          /*!< full dose string (example "tylenol 325mg twice daily by mouth") */
     QString DoseUnit;            /*!< mg, g, ml, tablets, etc */
-    QString DrugClass;           /*!< drug class */
-    QString DrugName;            /*!< drug name (required) */
+    QString InterventionClass;           /*!< Intervention class */
+    QString InterventionName;            /*!< Intervention name (required) */
     QString Notes;               /*!< freeform field for notes */
     QString Rater;               /*!< rater/experimenter/prescriber */
     double DoseAmount;           /*!< dose amount (required) */
@@ -76,4 +76,4 @@ private:
     qint64 objectID = -1;
 };
 
-#endif // SQUIRRELDRUG_H
+#endif // SQUIRRELINTERVENTION_H
