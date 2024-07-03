@@ -849,54 +849,57 @@ bool squirrel::Validate() {
 /**
  * @brief Print the details of a package, including all objects
  */
-void squirrel::Print() {
+QString squirrel::Print() {
+    QString str;
 
     /* print package info */
-    PrintPackage();
+    str += PrintPackage();
 
     /* iterate through subjects */
     QList<squirrelSubject> subjects = GetAllSubjects();
     foreach (squirrelSubject sub, subjects) {
         qint64 subjectRowID = sub.GetObjectID();
-        sub.PrintDetails();
+        str += sub.PrintDetails();
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudies(subjectRowID);
         foreach (squirrelStudy study, studies) {
             qint64 studyRowID = study.GetObjectID();
-            study.PrintStudy();
+            str += study.PrintStudy();
 
             /* iterate through series */
             QList<squirrelSeries> serieses = GetSeries(studyRowID);
             foreach (squirrelSeries series, serieses) {
-                series.PrintSeries();
+                str += series.PrintSeries();
             }
 
             /* iterate through analyses */
             QList<squirrelAnalysis> analyses = GetAnalyses(studyRowID);
             foreach (squirrelAnalysis analysis, analyses) {
-                analysis.PrintAnalysis();
+                str += analysis.PrintAnalysis();
             }
         }
 
         /* iterate through observations */
         QList<squirrelObservation> observations = GetObservations(subjectRowID);
         foreach (squirrelObservation observation, observations) {
-            observation.PrintObservation();
+            str += observation.PrintObservation();
         }
 
         /* iterate through Interventions */
         QList<squirrelIntervention> Interventions = GetInterventions(subjectRowID);
         foreach (squirrelIntervention Intervention, Interventions) {
-            Intervention.PrintIntervention();
+            str += Intervention.PrintIntervention();
         }
     }
 
     /* iterate through pipelines */
-    PrintPipelines();
+    str += PrintPipelines();
 
     /* iterate through experiments */
-    PrintExperiments();
+    str += PrintExperiments();
+
+    return str;
 }
 
 
@@ -1036,7 +1039,8 @@ qint64 squirrel::GetObjectCount(QString object) {
 /**
  * @brief Print package details
  */
-void squirrel::PrintPackage() {
+QString squirrel::PrintPackage() {
+    QString str;
 
     qint64 numSubjects = GetObjectCount("subject");
     qint64 numStudies = GetObjectCount("study");
@@ -1054,17 +1058,19 @@ void squirrel::PrintPackage() {
     if (fileMode == FileMode::NewPackage) fileModeStr = "NewPackage";
     if (fileMode == FileMode::ExistingPackage) fileModeStr = "ExistingPackage";
 
-    utils::Print("Squirrel Package: " + GetPackagePath());
-    utils::Print(QString("  DataFormat: %1").arg(DataFormat));
-    utils::Print(QString("  Date: %1").arg(Datetime.toString()));
-    utils::Print(QString("  Description: %1").arg(Description));
-    utils::Print(QString("  DirectoryFormat (subject, study, series): %1, %2, %3").arg(SubjectDirFormat).arg(StudyDirFormat).arg(SeriesDirFormat));
-    utils::Print(QString("  FileMode: %1").arg(fileModeStr));
-    utils::Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetFileCount()).arg(GetUnzipSize()));
-    utils::Print(QString("  PackageName: %1").arg(PackageName));
-    utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
-    utils::Print(QString("  SquirrelVersion: %1").arg(SquirrelVersion));
-    utils::Print(QString("  Objects:\n    ├── %1 subjects\n    │  ├── %4 observations\n    │  ├── %5 Interventions\n    │  ├── %2 studies\n    │  ├──── %3 series\n    │  └──── %6 analyses\n    ├── %7 experiments\n    ├── %8 pipelines\n    ├── %9 group analyses\n    └── %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numObservations).arg(numInterventions).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+    str += utils::Print("Squirrel Package: " + GetPackagePath());
+    str += utils::Print(QString("  DataFormat: %1").arg(DataFormat));
+    str += utils::Print(QString("  Date: %1").arg(Datetime.toString()));
+    str += utils::Print(QString("  Description: %1").arg(Description));
+    str += utils::Print(QString("  DirectoryFormat (subject, study, series): %1, %2, %3").arg(SubjectDirFormat).arg(StudyDirFormat).arg(SeriesDirFormat));
+    str += utils::Print(QString("  FileMode: %1").arg(fileModeStr));
+    str += utils::Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetFileCount()).arg(GetUnzipSize()));
+    str += utils::Print(QString("  PackageName: %1").arg(PackageName));
+    str += utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
+    str += utils::Print(QString("  SquirrelVersion: %1").arg(SquirrelVersion));
+    str += utils::Print(QString("  Objects:\n    ├── %1 subjects\n    │  ├── %4 observations\n    │  ├── %5 Interventions\n    │  ├── %2 studies\n    │  ├──── %3 series\n    │  └──── %6 analyses\n    ├── %7 experiments\n    ├── %8 pipelines\n    ├── %9 group analyses\n    └── %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numObservations).arg(numInterventions).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+
+    return str;
 }
 
 
@@ -1430,19 +1436,23 @@ void squirrel::PrintGroupAnalyses(bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintDataDictionary ---------------------------------- */
 /* ------------------------------------------------------------ */
-void squirrel::PrintDataDictionary(bool details) {
+QString squirrel::PrintDataDictionary(bool details) {
+    QString str;
+
     QList <squirrelDataDictionary> dataDictionaries = GetAllDataDictionaries();
     QStringList dataDictionaryNames;
     foreach (squirrelDataDictionary d, dataDictionaries) {
         if (d.Get()) {
             if (details)
-                d.PrintDataDictionary();
+                str += d.PrintDataDictionary();
             else
                 dataDictionaryNames.append(d.DataDictionaryName);
         }
     }
     if (!details)
-        utils::Print("DataDictionary: " + dataDictionaryNames.join(" "));
+        str += utils::Print("DataDictionary: " + dataDictionaryNames.join(" "));
+
+    return str;
 }
 
 

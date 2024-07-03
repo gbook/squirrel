@@ -42,7 +42,7 @@ public:
     squirrelSubject();
 
     /* functions */
-    void PrintDetails();
+    QString PrintDetails();
     void PrintTree(bool isLast);
     QString CSVLine();
     QJsonObject ToJSON();
