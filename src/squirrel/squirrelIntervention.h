@@ -61,8 +61,8 @@ public:
     QString DoseKey;             /*!< for clinical trials, the dose key */
     QString DoseString;          /*!< full dose string (example "tylenol 325mg twice daily by mouth") */
     QString DoseUnit;            /*!< mg, g, ml, tablets, etc */
-    QString InterventionClass;           /*!< Intervention class */
-    QString InterventionName;            /*!< Intervention name (required) */
+    QString InterventionClass;   /*!< Intervention class (drug class) */
+    QString InterventionName;    /*!< Intervention name (required) */
     QString Notes;               /*!< freeform field for notes */
     QString Rater;               /*!< rater/experimenter/prescriber */
     double DoseAmount;           /*!< dose amount (required) */
