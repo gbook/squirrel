@@ -1268,7 +1268,8 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
  * @brief squirrel::PrintSubjects print list of subjects to stdout
  * @param details true to print details, false to print list of subject IDs
  */
-void squirrel::PrintSubjects(PrintingType printType) {
+QString squirrel::PrintSubjects(PrintingType printType) {
+    QString str;
 
     QList <squirrelSubject> subjects = GetAllSubjects();
     int count = subjects.size();
@@ -1276,7 +1277,7 @@ void squirrel::PrintSubjects(PrintingType printType) {
         if (printType == PrintingType::Details) {
             foreach (squirrelSubject s, subjects) {
                 if (s.Get())
-                    s.PrintDetails();
+                    str += s.PrintDetails();
             }
         }
         else if (printType == PrintingType::CSV) {
@@ -1285,19 +1286,19 @@ void squirrel::PrintSubjects(PrintingType printType) {
                 if (s.Get())
                     csvLines.append(s.CSVLine());
             }
-            utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
-            utils::Print(csvLines.join("\n"));
+            str += utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
+            str += utils::Print(csvLines.join("\n"));
         }
         else if (printType == PrintingType::Tree) {
-            utils::Print("Subjects");
+            str += utils::Print("Subjects");
             int i = 0;
             foreach (squirrelSubject s, subjects) {
                 if (s.Get()) {
                     i++;
                     if (count == i)
-                        s.PrintTree(true);
+                        str += s.PrintTree(true);
                     else
-                        s.PrintTree(false);
+                        str += s.PrintTree(false);
                 }
             }
         }
@@ -1307,11 +1308,13 @@ void squirrel::PrintSubjects(PrintingType printType) {
                 if (s.Get())
                     subjectIDs.append(s.ID);
             }
-            utils::Print("Subjects: " + subjectIDs.join(" "));
+            str += utils::Print("Subjects: " + subjectIDs.join(" "));
         }
     }
     else
-        utils::Print("No subjects in this package");
+        str += utils::Print("No subjects in this package");
+
+    return str;
 }
 
 
@@ -1323,19 +1326,23 @@ void squirrel::PrintSubjects(PrintingType printType) {
  * @param subjectID the subject ID to print studies for
  * @param details true to print details, false to print list of study numbers
  */
-void squirrel::PrintStudies(qint64 subjectRowID, bool details) {
+QString squirrel::PrintStudies(qint64 subjectRowID, bool details) {
+    QString str;
+
     QList <squirrelStudy> studies = GetStudies(subjectRowID);
     QStringList studyNumbers;
     foreach (squirrelStudy s, studies) {
         if (s.Get()) {
             if (details)
-                s.PrintStudy();
+                str += s.PrintStudy();
             else
                 studyNumbers.append(QString("%1").arg(s.StudyNumber));
         }
     }
     if (!details)
-        utils::Print("Studies: " + studyNumbers.join(" "));
+        str += utils::Print("Studies: " + studyNumbers.join(" "));
+
+    return str;
 }
 
 
@@ -1348,19 +1355,23 @@ void squirrel::PrintStudies(qint64 subjectRowID, bool details) {
  * @param studyNum the study number
  * @param details true to print details, false to print list of series numbers
  */
-void squirrel::PrintSeries(qint64 studyRowID, bool details) {
+QString squirrel::PrintSeries(qint64 studyRowID, bool details) {
+    QString str;
+
     QList <squirrelSeries> series = GetSeries(studyRowID);
     QStringList seriesNumbers;
     foreach (squirrelSeries s, series) {
         if (s.Get()) {
             if (details)
-                s.PrintSeries();
+                str += s.PrintSeries();
             else
                 seriesNumbers.append(QString("%1").arg(s.SeriesNumber));
         }
     }
     if (!details)
-        utils::Print("Series: " + seriesNumbers.join(" "));
+        str += utils::Print("Series: " + seriesNumbers.join(" "));
+
+    return str;
 }
 
 
@@ -1371,19 +1382,23 @@ void squirrel::PrintSeries(qint64 studyRowID, bool details) {
  * @brief squirrel::PrintExperiments
  * @param details true to print details, false to print list of pipeline names
  */
-void squirrel::PrintExperiments(bool details) {
+QString squirrel::PrintExperiments(bool details) {
+    QString str;
+
     QList <squirrelExperiment> exps = GetAllExperiments();
     QStringList experimentNames;
     foreach (squirrelExperiment e, exps) {
         if (e.Get()) {
             if (details)
-                e.PrintExperiment();
+                str += e.PrintExperiment();
             else
                 experimentNames.append(e.ExperimentName);
         }
     }
     if (!details)
-        utils::Print("Experiments: " + experimentNames.join(" "));
+        str += utils::Print("Experiments: " + experimentNames.join(" "));
+
+    return str;
 }
 
 
@@ -1394,19 +1409,23 @@ void squirrel::PrintExperiments(bool details) {
  * @brief squirrel::PrintPipelines
  * @param details true to print details, false to print list of pipeline names
  */
-void squirrel::PrintPipelines(bool details) {
+QString squirrel::PrintPipelines(bool details) {
+    QString str;
+
     QList <squirrelPipeline> pipelines = GetAllPipelines();
     QStringList pipelineNames;
     foreach (squirrelPipeline p, pipelines) {
         if (p.Get()) {
             if (details)
-                p.PrintPipeline();
+                str += p.PrintPipeline();
             else
                 pipelineNames.append(p.PipelineName);
         }
     }
     if (!details)
-        utils::Print("Pipelines: " + pipelineNames.join(" "));
+        str += utils::Print("Pipelines: " + pipelineNames.join(" "));
+
+    return str;
 }
 
 
@@ -1417,19 +1436,23 @@ void squirrel::PrintPipelines(bool details) {
  * @brief squirrel::PrintGroupAnalyses
  * @param details true to print details, false to print list of group analysis names
  */
-void squirrel::PrintGroupAnalyses(bool details) {
+QString squirrel::PrintGroupAnalyses(bool details) {
+    QString str;
+
     QList <squirrelGroupAnalysis> groupAnalyses = GetAllGroupAnalyses();
     QStringList groupAnalysisNames;
     foreach (squirrelGroupAnalysis g, groupAnalyses) {
         if (g.Get()) {
             if (details)
-                g.PrintGroupAnalysis();
+                str += g.PrintGroupAnalysis();
             else
                 groupAnalysisNames.append(g.GroupAnalysisName);
         }
     }
     if (!details)
-        utils::Print("GroupAnalysis: " + groupAnalysisNames.join(" "));
+        str += utils::Print("GroupAnalysis: " + groupAnalysisNames.join(" "));
+
+    return str;
 }
 
 

@@ -77,7 +77,7 @@ class squirrelPipeline
 public:
     squirrelPipeline();
     QJsonObject ToJSON(QString path);
-    void PrintPipeline();
+    QString PrintPipeline();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */
     bool isValid() { return valid; }

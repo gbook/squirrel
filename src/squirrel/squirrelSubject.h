@@ -43,7 +43,7 @@ public:
 
     /* functions */
     QString PrintDetails();
-    void PrintTree(bool isLast);
+    QString PrintTree(bool isLast);
     QString CSVLine();
     QJsonObject ToJSON();
     bool Get();             /* gets the object data from the database */

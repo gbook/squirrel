@@ -64,21 +64,21 @@ namespace utils {
         if (n) {
             if (pad) {
                 printf("%-80s\n", s.toStdString().c_str());
-                str = sprintf("%-80s\n", s.toStdString().c_str());
+                str = s + "\n";
             }
             else {
                 printf("%s\n", s.toStdString().c_str());
-                str = sprintf("%s\n", s.toStdString().c_str());
+                str = s + "\n";
             }
         }
         else {
             if (pad) {
                 printf("%-80s", s.toStdString().c_str());
-                str = sprintf("%-80s", s.toStdString().c_str());
+                str = s;
             }
             else {
                 printf("%s", s.toStdString().c_str());
-                str = sprintf("%s", s.toStdString().c_str());
+                str = s;
             }
         }
         return str;
