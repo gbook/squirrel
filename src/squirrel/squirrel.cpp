@@ -90,7 +90,7 @@ bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE", "squirrel");
     if (!db.isValid()) {
-        Log(QString("Error opening SQLite memory database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
+        Log(QString("Error initializing SQLite database (likely driver related) [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
         return false;
     }
 
@@ -106,7 +106,7 @@ bool squirrel::DatabaseConnect() {
         return true;
     }
     else {
-        Log(QString("Error opening SQLite memory database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
+        Log(QString("Error opening SQLite database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
         return false;
     }
 }
@@ -849,6 +849,18 @@ bool squirrel::Validate() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetLogBuffer ----------------------------------------- */
+/* ------------------------------------------------------------ */
+QString squirrel::GetLogBuffer() {
+
+    QString ret = logBuffer;
+    logBuffer = "";
+
+    return ret;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- Print ------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
@@ -1223,6 +1235,7 @@ void squirrel::Log(QString s, QString func) {
     if (!quiet) {
         if (s.trimmed() != "") {
             log.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+            logBuffer.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
             utils::Print(QString("squirrel::%1() %2").arg(func).arg(s));
         }
     }
@@ -1236,6 +1249,7 @@ void squirrel::Debug(QString s, QString func) {
     if (debug) {
         if (s.trimmed() != "") {
             log.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
+            logBuffer.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
             utils::Print(QString("Debug squirrel::%1() %2").arg(func).arg(s));
         }
     }
