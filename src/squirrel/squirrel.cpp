@@ -89,6 +89,11 @@ squirrel::~squirrel()
 bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE", "squirrel");
+    if (!db.isValid()) {
+        Log(QString("Error opening SQLite memory database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
+        return false;
+    }
+
     if (debug) {
         QFile::remove("/tmp/sqlite.db");
         db.setDatabaseName("/tmp/sqlite.db");
