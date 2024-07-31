@@ -243,12 +243,14 @@ bool squirrel::Read() {
     /* check if file exists */
     if (!utils::FileExists(GetPackagePath())) {
         Log(QString("File %1 does not exist").arg(GetPackagePath()), __FUNCTION__);
+        utils::Print(QString("File %1 does not exist").arg(GetPackagePath()), __FUNCTION__);
         return false;
     }
 
     QString jsonstr;
     if (!ExtractFileFromArchive(GetPackagePath(), "squirrel.json", jsonstr)) {
         Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
+        utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
         return false;
     }
 
