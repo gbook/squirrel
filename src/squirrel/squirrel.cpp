@@ -66,6 +66,7 @@ squirrel::squirrel(bool dbg, bool q)
     debug = dbg;
     fileMode = FileMode::NewPackage;
     isOkToDelete = true;
+    isValid = true;
     quiet = q;
 
     if (!DatabaseConnect()) {
