@@ -78,7 +78,7 @@ squirrel::squirrel(bool dbg, bool q)
     }
 
     if (!Get7zipLibPath()) {
-        Log(QString("Error connecting to database. Unable to initilize squirrel library"), __FUNCTION__);
+        Log(QString("7-zip library not found. Unable to initilize squirrel library"), __FUNCTION__);
         isValid = false;
     }
 
