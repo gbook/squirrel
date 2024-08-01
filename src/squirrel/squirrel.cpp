@@ -33,12 +33,13 @@ qint64 totalbytes(0);
 
 bool totalArchiveSizeCallback(qint64 val) {
     std::cout << "Total package size is [" << val << "]" << std::endl;
+    totalbytes = val;
     return true;
 }
 
 bool progressCallback(qint64 val) {
     double percent = ((double)val/(double)totalbytes)*100.0;
-    printf("%f.2%% %d of %d bytes", percent, val, totalbytes);
+    printf("%.2f%% %d of %d bytes\n", percent, val, totalbytes);
     return true;
 }
 
