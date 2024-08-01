@@ -29,6 +29,8 @@
 #include "bitarchiveeditor.hpp"
 #include "bitfileextractor.hpp"
 
+qint64 totalbytes(0);
+
 bool progress(uint64_t val)
 {
     std::cout << val << std::endl;
@@ -2420,6 +2422,8 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitArchiveWriter archive(lib, BitFormat::Zip);
             archive.setUpdateMode(UpdateMode::Update);
+            archive.setCompressionLevel(BitCompressionLevel::Fastest);
+            archive.setRetainDirectories(true);
             archive.setProgressCallback(progress);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
@@ -2427,6 +2431,8 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
         else {
             BitArchiveWriter archive(lib, BitFormat::SevenZip);
             archive.setUpdateMode(UpdateMode::Update);
+            archive.setCompressionLevel(BitCompressionLevel::Fastest);
+            archive.setRetainDirectories(true);
             archive.setProgressCallback(progress);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
