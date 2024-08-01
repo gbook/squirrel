@@ -31,10 +31,13 @@
 
 qint64 totalbytes(0);
 
-bool progress(uint64_t val)
-{
-    std::cout << val << std::endl;
-    return true;
+void totalArchiveSizeCallback(qint64 val) {
+    std::cout << "Total package size is [" << val << "]" << std::endl;
+}
+
+void progressCallback(qint64 val) {
+    double percent = ((double)val/(double)totalbytes)*100.0;
+    printf("%f.2%% %d of %d bytes", percent, val, totalbytes);
 }
 
 /* ------------------------------------------------------------ */
@@ -2424,7 +2427,8 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
             archive.setUpdateMode(UpdateMode::Update);
             archive.setCompressionLevel(BitCompressionLevel::Fastest);
             archive.setRetainDirectories(true);
-            archive.setProgressCallback(progress);
+            archive.setProgressCallback(progressCallback);
+            archive.setTotalCallback(totalArchiveSizeCallback);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
         }
@@ -2433,7 +2437,8 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
             archive.setUpdateMode(UpdateMode::Update);
             archive.setCompressionLevel(BitCompressionLevel::Fastest);
             archive.setRetainDirectories(true);
-            archive.setProgressCallback(progress);
+            archive.setProgressCallback(progressCallback);
+            archive.setTotalCallback(totalArchiveSizeCallback);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
         }
@@ -2466,7 +2471,8 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
             editor.setUpdateMode(UpdateMode::Update);
-            editor.setProgressCallback(progress);
+            editor.setProgressCallback(progressCallback);
+            editor.setTotalCallback(totalArchiveSizeCallback);
             for (int i=0; i<filePaths.size(); i++) {
                 std::string filePath = filePaths.at(i).toStdString();
                 std::string compressedPath = compressedFilePaths.at(i).toStdString();
@@ -2477,7 +2483,8 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
         else {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
-            editor.setProgressCallback(progress);
+            editor.setProgressCallback(progressCallback);
+            editor.setTotalCallback(totalArchiveSizeCallback);
             for (int i=0; i<filePaths.size(); i++) {
                 std::string filePath = filePaths.at(i).toStdString();
                 std::string compressedPath = compressedFilePaths.at(i).toStdString();
@@ -2581,14 +2588,16 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
             editor.setUpdateMode(UpdateMode::Update);
-            editor.setProgressCallback(progress);
+            editor.setProgressCallback(progressCallback);
+            editor.setTotalCallback(totalArchiveSizeCallback);
             editor.updateItem(compressedFilePath.toStdString(), i);
             editor.applyChanges();
         }
         else {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
-            editor.setProgressCallback(progress);
+            editor.setProgressCallback(progressCallback);
+            editor.setTotalCallback(totalArchiveSizeCallback);
             editor.updateItem(compressedFilePath.toStdString(), i);
             editor.applyChanges();
         }
