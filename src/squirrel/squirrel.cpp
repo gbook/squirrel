@@ -29,6 +29,12 @@
 #include "bitarchiveeditor.hpp"
 #include "bitfileextractor.hpp"
 
+bool progress(uint64_t val)
+{
+    std::cout << val << std::endl;
+    return true;
+}
+
 /* ------------------------------------------------------------ */
 /* ----- squirrel --------------------------------------------- */
 /* ------------------------------------------------------------ */
@@ -243,14 +249,14 @@ bool squirrel::Read() {
     /* check if file exists */
     if (!utils::FileExists(GetPackagePath())) {
         Log(QString("File %1 does not exist").arg(GetPackagePath()), __FUNCTION__);
-        utils::Print(QString("File %1 does not exist").arg(GetPackagePath()), __FUNCTION__);
+        utils::Print(QString("File %1 does not exist").arg(GetPackagePath()));
         return false;
     }
 
     QString jsonstr;
     if (!ExtractFileFromArchive(GetPackagePath(), "squirrel.json", jsonstr)) {
         Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
-        utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
+        utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"));
         return false;
     }
 
@@ -2414,12 +2420,14 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitArchiveWriter archive(lib, BitFormat::Zip);
             archive.setUpdateMode(UpdateMode::Update);
+            archive.setProgressCallback(progress);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
         }
         else {
             BitArchiveWriter archive(lib, BitFormat::SevenZip);
             archive.setUpdateMode(UpdateMode::Update);
+            archive.setProgressCallback(progress);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
         }
@@ -2452,6 +2460,7 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
             editor.setUpdateMode(UpdateMode::Update);
+            editor.setProgressCallback(progress);
             for (int i=0; i<filePaths.size(); i++) {
                 std::string filePath = filePaths.at(i).toStdString();
                 std::string compressedPath = compressedFilePaths.at(i).toStdString();
@@ -2462,6 +2471,7 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
         else {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
+            editor.setProgressCallback(progress);
             for (int i=0; i<filePaths.size(); i++) {
                 std::string filePath = filePaths.at(i).toStdString();
                 std::string compressedPath = compressedFilePaths.at(i).toStdString();
@@ -2565,12 +2575,14 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
             editor.setUpdateMode(UpdateMode::Update);
+            editor.setProgressCallback(progress);
             editor.updateItem(compressedFilePath.toStdString(), i);
             editor.applyChanges();
         }
         else {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
+            editor.setProgressCallback(progress);
             editor.updateItem(compressedFilePath.toStdString(), i);
             editor.applyChanges();
         }
