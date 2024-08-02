@@ -38,11 +38,8 @@ bool totalArchiveSizeCallback(qint64 val) {
 }
 
 bool progressCallback(qint64 val) {
-    val /= 100000;
-    if (val%100 == 0) {
-        double percent = ((double)val/(double)totalbytes)*100.0;
-        printf("%.2f%% %d of %d bytes\n", percent, val, totalbytes);
-    }
+    double percent = ((double)val/(double)totalbytes)*100.0;
+    printf("%.2f%% (%d of %d bytes)\n", percent, val, totalbytes);
     return true;
 }
 
@@ -117,15 +114,18 @@ bool squirrel::Get7zipLibPath() {
 #ifdef Q_OS_WINDOWS
     if (QFile::exists("/usr/libexec/p7zip/7z.so")) {
         p7zipLibPath = "C:/Program Files/7-Zip/7z.dll";
+        Log("Found 7zip path C:/Program Files/7-Zip/7z.dll", __FUNCTION__);
         return true;
     }
 #else
     if (QFile::exists("/usr/libexec/p7zip/7z.so")) {
         p7zipLibPath = "/usr/libexec/p7zip/7z.so";
+        Log("Found 7zip path /usr/libexec/p7zip/7z.so", __FUNCTION__);
         return true;
     }
     else if (QFile::exists("/usr/libexec/p7zip/7za.so")) {
         p7zipLibPath = "/usr/libexec/p7zip/7za.so";
+        Log("Found 7zip path /usr/libexec/p7zip/7za.so", __FUNCTION__);
         return true;
     }
 #endif
@@ -226,7 +226,7 @@ bool squirrel::InitializeDatabase() {
     q.prepare(tableStagedFiles);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [StagedFiles]", __FUNCTION__); utils::Print("Error creating table [StagedFiles]"); return false; }
 
-    Log("Successfully initialized database", __FUNCTION__);
+    Log("Successfully initialized database tables", __FUNCTION__);
     return true;
 }
 
