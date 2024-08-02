@@ -38,7 +38,8 @@ bool totalArchiveSizeCallback(qint64 val) {
 }
 
 bool progressCallback(qint64 val) {
-    if (val%1000000 == 0) {
+    val /= 100000;
+    if (val%100 == 0) {
         double percent = ((double)val/(double)totalbytes)*100.0;
         printf("%.2f%% %d of %d bytes\n", percent, val, totalbytes);
     }
