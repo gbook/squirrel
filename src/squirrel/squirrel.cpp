@@ -1291,10 +1291,10 @@ QString squirrel::GetTempDir() {
  * @param func The function that called this function
  */
 void squirrel::Log(QString s, QString func) {
-    if (!quiet) {
-        if (s.trimmed() != "") {
-            log.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
-            logBuffer.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+    if (s.trimmed() != "") {
+        log.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+        logBuffer.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+        if (!quiet) {
             utils::Print(QString("squirrel::%1() %2").arg(func).arg(s));
         }
     }
