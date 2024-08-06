@@ -34,7 +34,7 @@ double blocksize(0.0);
 double lastupdate(0.0);
 
 bool totalArchiveSizeCallback(qint64 val) {
-    std::cout << "Total package size is [" << val << "]" << std::endl;
+    utils::Print("Total package size is [" + utils::HumanReadableSize(val) + "]");
     totalbytes = val;
     blocksize = totalbytes/100.0;
     return true;
@@ -43,7 +43,7 @@ bool totalArchiveSizeCallback(qint64 val) {
 bool progressCallback(qint64 val) {
     if (val > (lastupdate+blocksize)) {
         double percent = ((double)val/(double)totalbytes)*100.0;
-        printf("%.2f%% (%lld of %lld bytes)\n", percent, val, totalbytes);
+        printf("%.0f%% (%lld of %lld bytes)\n", percent, val, totalbytes);
         lastupdate = val;
     }
     return true;

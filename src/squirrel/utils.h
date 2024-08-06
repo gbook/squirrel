@@ -55,6 +55,7 @@ namespace utils {
     QString CleanJSON(QString s);
     double GetPatientAge(QString PatientAgeStr, QString StudyDate, QString PatientBirthDate);
     QString CleanString(QString s);
+    QString HumanReadableSize(qint64 bytes);
 
     /* file and directory operations */
     bool CopyFile(QString f, QString dir);
