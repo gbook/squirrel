@@ -38,7 +38,7 @@
 #include <QRegularExpression>
 #include <QCoreApplication>
 
-#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBSTR "------------------------------------------------------------"
 #define PBWIDTH 60
 
 namespace utils {
