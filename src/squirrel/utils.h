@@ -38,6 +38,9 @@
 #include <QRegularExpression>
 #include <QCoreApplication>
 
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
+
 namespace utils {
     typedef QHash <int, QHash<QString, QString>> indexedHash;
 
@@ -56,6 +59,7 @@ namespace utils {
     double GetPatientAge(QString PatientAgeStr, QString StudyDate, QString PatientBirthDate);
     QString CleanString(QString s);
     QString HumanReadableSize(qint64 bytes);
+    void PrintProgress(double percentage);
 
     /* file and directory operations */
     bool CopyFile(QString f, QString dir);

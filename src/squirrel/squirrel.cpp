@@ -44,6 +44,7 @@ bool progressCallback(qint64 val) {
     if (val > (lastupdate+blocksize)) {
         double percent = ((double)val/(double)totalbytes)*100.0;
         printf("%.0f%% (%lld of %lld bytes)\n", percent, val, totalbytes);
+        utils::PrintProgress(percent/100.0);
         lastupdate = val;
     }
     return true;

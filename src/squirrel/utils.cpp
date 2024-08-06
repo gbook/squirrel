@@ -938,8 +938,20 @@ namespace utils {
                 dblBytes = bytes / 1024.0;
         }
 
-        QString output = QString("%.02lf %s").arg(dblBytes).arg(suffix[i]);
+        QString output = QString("%1 %2").arg(dblBytes, 0, 'g', 2).arg(suffix[i]);
 
         return output;
+    }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- PrintProgress ---------------------------------- */
+    /* ---------------------------------------------------------- */
+    void PrintProgress(double percentage) {
+        int val = (int) (percentage * 100);
+        int lpad = (int) (percentage * PBWIDTH);
+        int rpad = PBWIDTH - lpad;
+        printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+        fflush(stdout);
     }
 }
