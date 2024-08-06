@@ -306,15 +306,17 @@ bool squirrel::Read() {
 
     /* get the data object, and check for any subjects */
     QJsonArray jsonSubjects;
+    qint64 numSubjects;
     if (root.contains("data")) {
         QJsonValue dataVal = root.value("data");
         QJsonObject dataObj = dataVal.toObject();
         jsonSubjects = dataObj["subjects"].toArray();
-        Log(QString("Found [%1] subjects").arg(jsonSubjects.size()), __FUNCTION__);
+        numSubjects = jsonSubjects.size();
+        Log(QString("Found [%1] subjects").arg(numSubjects), __FUNCTION__);
     }
     else if (root.contains("subjects")) {
         jsonSubjects = root["subjects"].toArray();
-        Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(jsonSubjects.size()), __FUNCTION__);
+        Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(numSubjects), __FUNCTION__);
     }
     else {
         Log("root does not contain 'data' or 'subjects'", __FUNCTION__);
@@ -327,8 +329,8 @@ bool squirrel::Read() {
     qint64 i(0);
     for (auto a : jsonSubjects) {
         i++;
-        Log(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size), __FUNCTION__);
-        utils::Print(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size), __FUNCTION__);
+        Log(QString("Reading subject %1 of %2").arg(i).arg(numSubjects), __FUNCTION__);
+        utils::Print(QString("Reading subject %1 of %2").arg(i).arg(numSubjects), __FUNCTION__);
 
         QJsonObject jsonSubject = a.toObject();
 
