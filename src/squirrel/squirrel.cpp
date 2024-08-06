@@ -67,6 +67,7 @@ squirrel::squirrel(bool dbg, bool q)
     fileMode = FileMode::NewPackage;
     isOkToDelete = true;
     isValid = true;
+    quickRead = true;
     quiet = q;
 
     if (!DatabaseConnect()) {
@@ -379,14 +380,16 @@ bool squirrel::Read() {
 
                 Debug(QString("Reading series [%1][%2][%3]").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber), __FUNCTION__);
 
-                /* read any params from the data/Subject/Study/Series/params.json file */
-                QString parms;
-                QString paramsfilepath = QString("data/%2/%3/%4/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
-                if (ExtractFileFromArchive(GetPackagePath(), paramsfilepath, parms)) {
-                    sqrlSeries.params = ReadParamsFile(parms);
-                }
-                else {
-                    Log("Unable to read params file [" + paramsfilepath + "]", __FUNCTION__);
+                if (!quickRead) {
+                    /* read any params from the data/Subject/Study/Series/params.json file */
+                    QString parms;
+                    QString paramsfilepath = QString("data/%2/%3/%4/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    if (ExtractFileFromArchive(GetPackagePath(), paramsfilepath, parms)) {
+                        sqrlSeries.params = ReadParamsFile(parms);
+                    }
+                    else {
+                        Log("Unable to read params file [" + paramsfilepath + "]", __FUNCTION__);
+                    }
                 }
 
                 sqrlSeries.Store();
