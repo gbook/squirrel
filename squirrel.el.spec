@@ -42,6 +42,7 @@ cp -f ~/Qt/6.6.3/gcc_64/lib/libQt6Core.so.6 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.6.3/gcc_64/lib/libicudata.so.56 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.6.3/gcc_64/lib/libicui18n.so.56 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.6.3/gcc_64/lib/libicuuc.so.56 %{buildroot}/usr/lib/ # copy Qt libs
+cp -f ~/Qt/6.6.3/gcc_64/plugins/sqldrivers/libqsqlite.so %{buildroot}/usr/bin/sqldrivers/ # copy SQLite driver
 
 # This section LISTS the files that are available once everything is installed, but this is NOT the specification for what files will be installed...
 %files

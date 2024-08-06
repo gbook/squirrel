@@ -2382,22 +2382,26 @@ bool squirrel::RemoveObservation(qint64 observationRowID) {
  * @return true if successful, false otherwise
  */
 bool squirrel::ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents) {
-    //Log(QString("Reading file [%1] from archive [%2]...").arg(filePath).arg(archivePath), __FUNCTION__);
+    Debug(QString("Reading file [%1] from archive [%2]...").arg(filePath).arg(archivePath), __FUNCTION__);
     try {
         using namespace bit7z;
         std::vector<unsigned char> buffer;
         Bit7zLibrary lib(p7zipLibPath.toStdString());
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitFileExtractor extractor(lib, BitFormat::Zip);
+            extractor.setProgressCallback(progressCallback);
+            extractor.setTotalCallback(totalArchiveSizeCallback);
             extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
         }
         else {
             BitFileExtractor extractor(lib, BitFormat::SevenZip);
+            extractor.setProgressCallback(progressCallback);
+            extractor.setTotalCallback(totalArchiveSizeCallback);
             extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
         }
         std::string str{buffer.begin(), buffer.end()};
         fileContents = QString::fromStdString(str);
-        //Log(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
+        Debug(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
         return true;
     }
     catch ( const bit7z::BitException& ex ) {
