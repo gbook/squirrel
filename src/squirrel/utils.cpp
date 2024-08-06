@@ -938,7 +938,7 @@ namespace utils {
                 dblBytes = bytes / 1024.0;
         }
 
-        QString output = QString("%1 %2").arg(dblBytes, 0, 'g', 2).arg(suffix[i]);
+        QString output = QString("%1 %2").arg(dblBytes, 0, 'g', 2).arg(suffix.at(i));
 
         return output;
     }

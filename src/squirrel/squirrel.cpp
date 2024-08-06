@@ -282,6 +282,9 @@ bool squirrel::Read() {
         utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"));
         return false;
     }
+    else {
+        utils::Print(QString("Extracted package header [%1 bytes]").arg(jsonstr.size()));
+    }
 
     /* get the JSON document and root object */
     QJsonDocument d = QJsonDocument::fromJson(jsonstr.toUtf8());
@@ -327,6 +330,7 @@ bool squirrel::Read() {
     Debug(QString("TotalSize: [%1]").arg(root["TotalSize"].toInt()), __FUNCTION__);
 
     /* loop through and read any subjects */
+    utils::Print("\n");
     qint64 i(0);
     for (auto a : jsonSubjects) {
         i++;
