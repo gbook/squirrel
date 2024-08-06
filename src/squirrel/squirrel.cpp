@@ -30,16 +30,22 @@
 #include "bitfileextractor.hpp"
 
 qint64 totalbytes(0);
+double blocksize(0.0);
+double lastupdate(0.0);
 
 bool totalArchiveSizeCallback(qint64 val) {
     std::cout << "Total package size is [" << val << "]" << std::endl;
     totalbytes = val;
+    blocksize = totalbytes/100.0;
     return true;
 }
 
 bool progressCallback(qint64 val) {
-    double percent = ((double)val/(double)totalbytes)*100.0;
-    printf("%.2f%% (%lld of %lld bytes)\n", percent, val, totalbytes);
+    if (val > (lastupdate+blocksize)) {
+        double percent = ((double)val/(double)totalbytes)*100.0;
+        printf("%.2f%% (%lld of %lld bytes)\n", percent, val, totalbytes);
+        lastupdate = val;
+    }
     return true;
 }
 
@@ -318,7 +324,12 @@ bool squirrel::Read() {
     Debug(QString("TotalSize: [%1]").arg(root["TotalSize"].toInt()), __FUNCTION__);
 
     /* loop through and read any subjects */
+    qint64 i(0);
     for (auto a : jsonSubjects) {
+        i++;
+        Log(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size), __FUNCTION__);
+        utils::Print(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size), __FUNCTION__);
+
         QJsonObject jsonSubject = a.toObject();
 
         squirrelSubject sqrlSubject;
