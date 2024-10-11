@@ -62,6 +62,9 @@ public:
     QHash<QString, QString> params; /*!< Hash containing experimental parameters. eg MR params */
     QString BIDSEntity;             /*!< BIDS entity (anat, func, etc) */
     QString BIDSSuffix;             /*!< BIDS suffix (T1w, T2w, etc) */
+    QString BIDSTask;               /*!< BIDS task */
+    QString BIDSRun;                /*!< BIDS run number */
+    QString BIDSPhaseEncodingDirection; /*!< BIDS phase encoding direction */
     QString Description;            /*!< Description of the series */
     QString Protocol;               /*!< Protocol (may differ from description) */
     QString SeriesUID;              /*!< SeriesInstanceUID */

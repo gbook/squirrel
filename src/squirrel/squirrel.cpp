@@ -294,7 +294,7 @@ bool squirrel::Read() {
     QJsonObject pkgObj = root["package"].toObject();
     Changes = pkgObj["Changes"].toString();
     DataFormat = pkgObj["DataFormat"].toString();
-    Datetime.fromString(pkgObj["Datetime"].toString());
+    Datetime = QDateTime::fromString(pkgObj["Datetime"].toString(), "yyyy-MM-dd hh:mm:ss");
     Description = pkgObj["Description"].toString();
     License = pkgObj["License"].toString();
     Notes = pkgObj["Notes"].toString();
@@ -344,7 +344,7 @@ bool squirrel::Read() {
         sqrlSubject.ID = jsonSubject["SubjectID"].toString();
         sqrlSubject.AlternateIDs = jsonSubject["AlternateIDs"].toVariant().toStringList();
         sqrlSubject.GUID = jsonSubject["GUID"].toString();
-        sqrlSubject.DateOfBirth.fromString(jsonSubject["DateOfBirth"].toString(), "yyyy-MM-dd");
+        sqrlSubject.DateOfBirth = QDate::fromString(jsonSubject["DateOfBirth"].toString(), "yyyy-MM-dd");
         sqrlSubject.Sex = jsonSubject["Sex"].toString();
         sqrlSubject.Gender = jsonSubject["Gender"].toString();
         sqrlSubject.Ethnicity1 = jsonSubject["Ethnicity1"].toString();
@@ -360,18 +360,18 @@ bool squirrel::Read() {
             QJsonObject jsonStudy = b.toObject();
             squirrelStudy sqrlStudy;
 
-            sqrlStudy.StudyNumber = jsonStudy["StudyNumber"].toInt();
-            sqrlStudy.DateTime.fromString(jsonStudy["StudyDatetime"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlStudy.AgeAtStudy = jsonStudy["AgeAtStudy"].toDouble();
-            sqrlStudy.Height = jsonStudy["Height"].toDouble();
-            sqrlStudy.Weight = jsonStudy["Weight"].toDouble();
-            sqrlStudy.Modality = jsonStudy["Modality"].toString();
-            sqrlStudy.Description = jsonStudy["Description"].toString();
-            sqrlStudy.StudyUID = jsonStudy["StudyUID"].toString();
-            sqrlStudy.VisitType = jsonStudy["VisitType"].toString();
+            sqrlStudy.DateTime = QDateTime::fromString(jsonStudy["StudyDatetime"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlStudy.DayNumber = jsonStudy["DayNumber"].toInt();
-            sqrlStudy.TimePoint = jsonStudy["TimePoint"].toInt();
+            sqrlStudy.Description = jsonStudy["Description"].toString();
             sqrlStudy.Equipment = jsonStudy["Equipment"].toString();
+            sqrlStudy.Height = jsonStudy["Height"].toDouble();
+            sqrlStudy.Modality = jsonStudy["Modality"].toString();
+            sqrlStudy.StudyNumber = jsonStudy["StudyNumber"].toInt();
+            sqrlStudy.StudyUID = jsonStudy["StudyUID"].toString();
+            sqrlStudy.TimePoint = jsonStudy["TimePoint"].toInt();
+            sqrlStudy.VisitType = jsonStudy["VisitType"].toString();
+            sqrlStudy.Weight = jsonStudy["Weight"].toDouble();
             sqrlStudy.subjectRowID = subjectRowID;
             sqrlStudy.Store();
             qint64 studyRowID = sqrlStudy.GetObjectID();
@@ -384,18 +384,25 @@ bool squirrel::Read() {
                 QJsonObject jsonSeries = c.toObject();
                 squirrelSeries sqrlSeries;
 
-                sqrlSeries.SeriesNumber = jsonSeries["SeriesNumber"].toInteger();
-                sqrlSeries.DateTime.fromString(jsonSeries["SeriesDatetime"].toString(), "yyyy-MM-dd hh:mm:ss");
-                sqrlSeries.SeriesUID = jsonSeries["SeriesUID"].toString();
-                sqrlSeries.Description = jsonSeries["Description"].toString();
-                sqrlSeries.Protocol = jsonSeries["Protocol"].toString();
-                //sqrlSeries.experimentNames = jsonSeries["ExperimentNames"].toString().split(",");
-                sqrlSeries.Size = jsonSeries["Size"].toInteger();
-                sqrlSeries.FileCount = jsonSeries["FileCount"].toInteger();
-                sqrlSeries.BehavioralSize = jsonSeries["BehavioralSize"].toInteger();
+                Log("jsonSeries[SeriesDatetime].toString: " + jsonSeries["SeriesDatetime"].toString(), __FUNCTION__);
+
+                sqrlSeries.BIDSEntity = jsonSeries["BIDSEntity"].toString();
+                sqrlSeries.BIDSPhaseEncodingDirection = jsonSeries["BIDSPhaseEncodingDirection"].toString();
+                sqrlSeries.BIDSRun = jsonSeries["BIDSRun"].toString();
+                sqrlSeries.BIDSSuffix = jsonSeries["BIDSSuffix"].toString();
+                sqrlSeries.BIDSTask = jsonSeries["BIDSTask"].toString();
                 sqrlSeries.BehavioralFileCount = jsonSeries["BehavioralFileCount"].toInteger();
+                sqrlSeries.BehavioralSize = jsonSeries["BehavioralSize"].toInteger();
+                sqrlSeries.DateTime = QDateTime::fromString(jsonSeries["SeriesDatetime"].toString(), "yyyy-MM-dd HH:mm:ss");
+                sqrlSeries.Description = jsonSeries["Description"].toString();
+                sqrlSeries.FileCount = jsonSeries["FileCount"].toInteger();
+                sqrlSeries.Protocol = jsonSeries["Protocol"].toString();
+                sqrlSeries.SeriesNumber = jsonSeries["SeriesNumber"].toInteger();
+                sqrlSeries.SeriesUID = jsonSeries["SeriesUID"].toString();
+                sqrlSeries.Size = jsonSeries["Size"].toInteger();
                 sqrlSeries.studyRowID = studyRowID;
 
+                Log("Series.Datetime: " + sqrlSeries.DateTime.toString("yyyy-MM-dd hh:mm:ss"), __FUNCTION__);
                 Debug(QString("Reading series [%1][%2][%3]").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber), __FUNCTION__);
 
                 if (!quickRead) {
@@ -419,10 +426,10 @@ bool squirrel::Read() {
                 QJsonObject jsonAnalysis = d.toObject();
                 squirrelAnalysis sqrlAnalysis;
 
-                sqrlAnalysis.DateClusterEnd.fromString(jsonAnalysis["DateClusterEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-                sqrlAnalysis.DateClusterStart.fromString(jsonAnalysis["DateClusterStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-                sqrlAnalysis.DateStart.fromString(jsonAnalysis["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-                sqrlAnalysis.DateStart.fromString(jsonAnalysis["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.DateClusterEnd = QDateTime::fromString(jsonAnalysis["DateClusterEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.DateClusterStart = QDateTime::fromString(jsonAnalysis["DateClusterStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.DateStart = QDateTime::fromString(jsonAnalysis["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+                sqrlAnalysis.DateStart = QDateTime::fromString(jsonAnalysis["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
                 sqrlAnalysis.Hostname = jsonAnalysis["Hostname"].toString();
                 sqrlAnalysis.LastMessage = jsonAnalysis["StatusMessage"].toString();
                 sqrlAnalysis.PipelineName = jsonAnalysis["PipelineName"].toString();
@@ -446,11 +453,11 @@ bool squirrel::Read() {
         for (auto e : jsonObservations) {
             QJsonObject jsonObservation = e.toObject();
             squirrelObservation sqrlObservation;
-            sqrlObservation.DateEnd.fromString(jsonObservation["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlObservation.DateStart.fromString(jsonObservation["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlObservation.DateRecordCreate.fromString(jsonObservation["DateRecordCreate"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlObservation.DateRecordEntry.fromString(jsonObservation["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlObservation.DateRecordModify.fromString(jsonObservation["DateRecordModify"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateEnd = QDateTime::fromString(jsonObservation["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateStart = QDateTime::fromString(jsonObservation["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateRecordCreate = QDateTime::fromString(jsonObservation["DateRecordCreate"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateRecordEntry = QDateTime::fromString(jsonObservation["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlObservation.DateRecordModify = QDateTime::fromString(jsonObservation["DateRecordModify"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlObservation.Description = jsonObservation["Description"].toString();
             sqrlObservation.Duration = jsonObservation["Duration"].toDouble();
             sqrlObservation.InstrumentName = jsonObservation["InstrumentName"].toString();
@@ -469,9 +476,9 @@ bool squirrel::Read() {
             QJsonObject jsonIntervention = f.toObject();
             squirrelIntervention sqrlIntervention;
 
-            sqrlIntervention.DateEnd.fromString(jsonIntervention["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlIntervention.DateRecordEntry.fromString(jsonIntervention["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
-            sqrlIntervention.DateStart.fromString(jsonIntervention["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlIntervention.DateEnd = QDateTime::fromString(jsonIntervention["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlIntervention.DateRecordEntry = QDateTime::fromString(jsonIntervention["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
+            sqrlIntervention.DateStart = QDateTime::fromString(jsonIntervention["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlIntervention.Description = jsonIntervention["Description"].toString();
             sqrlIntervention.DoseAmount = jsonIntervention["DoseAmount"].toDouble();
             sqrlIntervention.DoseFrequency = jsonIntervention["DoseFrequency"].toString();
@@ -517,7 +524,7 @@ bool squirrel::Read() {
         sqrlPipeline.ClusterSubmitHost = jsonPipeline["ClusterSubmitHost"].toString();
         sqrlPipeline.ClusterType = jsonPipeline["ClusterType"].toString();
         sqrlPipeline.ClusterUser = jsonPipeline["ClusterUser"].toString();
-        sqrlPipeline.CreateDate.fromString(jsonPipeline["CreateDate"].toString(), "yyyy-MM-dd hh:mm:ss");
+        sqrlPipeline.CreateDate = QDateTime::fromString(jsonPipeline["CreateDate"].toString(), "yyyy-MM-dd hh:mm:ss");
         sqrlPipeline.DataCopyMethod = jsonPipeline["DataCopyMethod"].toString();
         sqrlPipeline.DependencyDirectory = jsonPipeline["DependencyDirectory"].toString();
         sqrlPipeline.DependencyLevel = jsonPipeline["DependencyLevel"].toString();
