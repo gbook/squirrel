@@ -66,7 +66,7 @@ public:
     void SetDebugSQL(bool d) { debugSQL = d; }
     void SetOverwritePackage(bool o) { overwritePackage = o; }
     void SetQuickRead(bool q) { quickRead = q; }
-    bool Extract(QString destinationDir);
+    bool Extract(QString destinationDir, QString &m);
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */

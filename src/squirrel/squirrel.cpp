@@ -922,8 +922,7 @@ bool squirrel::Write(bool writeLog) {
 /* ------------------------------------------------------------ */
 /* ----- Extract ---------------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::Extract(QString destinationDir) {
-    QString m;
+bool squirrel::Extract(QString destinationDir, QString &m) {
     if (ExtractArchiveToDirectory(packagePath, destinationDir, m))
         return true;
     else
