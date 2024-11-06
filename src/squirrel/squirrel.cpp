@@ -31,12 +31,12 @@
 
 qint64 totalbytes(0);
 double blocksize(0.0);
-double lastupdate(0.0);
+qint64 lastupdate(0);
 
 bool totalArchiveSizeCallback(qint64 val) {
     utils::Print("Total package size is [" + utils::HumanReadableSize(val) + "]");
     totalbytes = val;
-    blocksize = totalbytes/100.0;
+    blocksize = (double)totalbytes/100.0;
     return true;
 }
 
@@ -2868,4 +2868,55 @@ bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinatio
         m = "Unable to extract archive to directory using bit7z library [" + QString(ex.what()) + "]";
         return false;
     }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- SetDebugSQL ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Set the option to print SQL debugging statements
+ * @param d `true` to print debug statements, `false` otherwise
+ */
+void squirrel::SetDebugSQL(bool d) {
+    debugSQL = d;
+
+    if (debugSQL)
+        Log("DebugSQL set to ON", __FUNCTION__);
+    else
+        Log("DebugSQL set to OFF", __FUNCTION__);
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- SetOverwritePackage ---------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Set the option to overwrite an existing package
+ * @param o `true` to overwrite an existing package, `false` otherwise
+ */
+void squirrel::SetOverwritePackage(bool o) {
+    overwritePackage = o;
+
+    if (overwritePackage)
+        Log("OverwritePackage set to ON", __FUNCTION__);
+    else
+        Log("OverwritePackage set to OFF", __FUNCTION__);
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- SetQuickRead ----------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Set the option to do a quick read (*not* reading the params.json files) or not
+ * @param q `true` to perform a quick read, `false` otherwise
+ */
+void squirrel::SetQuickRead(bool q) {
+    quickRead = q;
+
+    if (quickRead)
+        Log("QuickRead set to ON (params.json files will be read)", __FUNCTION__);
+    else
+        Log("QuickRead set to OFF (params.json files will NOT be read)", __FUNCTION__);
 }
