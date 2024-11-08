@@ -20,6 +20,7 @@ squirrel library and utilities is a data format to allow aggregation and dissemi
 %install # This section installs the files to the BUILDROOT dir, which is basically a copy of what the user's computer will look like after the RPM installs
 mkdir -p %{buildroot}/usr/local/bin
 mkdir -p %{buildroot}/usr/lib
+mkdir -p %{buildroot}/usr/bin/sqldrivers
 
 cp -f %{_builddir}/bin/squirrel/squirrel %{buildroot}/usr/local/bin/ # copy squirrel util binary
 cp -f %{_builddir}/bin/squirrel/libsquirrel.so.1 %{buildroot}/usr/lib/ # copy squirrel lib
