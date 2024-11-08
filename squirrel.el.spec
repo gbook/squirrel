@@ -20,7 +20,7 @@ squirrel library and utilities is a data format to allow aggregation and dissemi
 %install # This section installs the files to the BUILDROOT dir, which is basically a copy of what the user's computer will look like after the RPM installs
 mkdir -p %{buildroot}/usr/local/bin
 mkdir -p %{buildroot}/usr/lib
-mkdir -p %{buildroot}/usr/bin/sqldrivers
+mkdir -p %{buildroot}/usr/local/bin/sqldrivers
 
 cp -f %{_builddir}/bin/squirrel/squirrel %{buildroot}/usr/local/bin/ # copy squirrel util binary
 cp -f %{_builddir}/bin/squirrel/libsquirrel.so.1 %{buildroot}/usr/lib/ # copy squirrel lib
@@ -43,10 +43,10 @@ cp -f ~/Qt/6.6.3/gcc_64/lib/libQt6Core.so.6 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.6.3/gcc_64/lib/libicudata.so.56 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.6.3/gcc_64/lib/libicui18n.so.56 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.6.3/gcc_64/lib/libicuuc.so.56 %{buildroot}/usr/lib/ # copy Qt libs
-cp -f ~/Qt/6.6.3/gcc_64/plugins/sqldrivers/libqsqlite.so %{buildroot}/usr/bin/sqldrivers/ # copy SQLite driver
+cp -f ~/Qt/6.6.3/gcc_64/plugins/sqldrivers/libqsqlite.so %{buildroot}/usr/local/bin/sqldrivers/ # copy SQLite driver
 
 # This section LISTS the files that are available once everything is installed, but this is NOT the specification for what files will be installed...
 %files
 /usr/lib/*
 /usr/local/bin/*
-/usr/bin/sqldrivers/*
+/usr/local/bin/sqldrivers/*
