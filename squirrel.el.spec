@@ -49,3 +49,4 @@ cp -f ~/Qt/6.6.3/gcc_64/plugins/sqldrivers/libqsqlite.so %{buildroot}/usr/bin/sq
 %files
 /usr/lib/*
 /usr/local/bin/*
+/usr/bin/sqldrivers/*
