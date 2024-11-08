@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
 
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
-        p.addOption(QCommandLineOption(QStringList() << "object", "List an object [package  subject  study  series  experiment  pipeline  groupanalysis  datadictionary].", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [package  subject  study  series  experiment  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  -subject-id must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "details", "Include details when printing lists."));
