@@ -34,8 +34,8 @@ double blocksize(0.0);
 qint64 lastupdate(0);
 
 bool totalArchiveSizeCallback(qint64 val) {
-    utils::Print(QString("Total package size in bytes [%1]").arg(val));
-    utils::Print("Total package size is [" + utils::HumanReadableSize(val) + "]");
+    //utils::Print(QString("Total package size in bytes [%1]").arg(val));
+    //utils::Print("Total package size is [" + utils::HumanReadableSize(val) + "]");
     totalbytes = val;
     blocksize = (double)totalbytes/100.0;
     return true;
