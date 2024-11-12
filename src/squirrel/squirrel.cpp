@@ -34,6 +34,7 @@ double blocksize(0.0);
 qint64 lastupdate(0);
 
 bool totalArchiveSizeCallback(qint64 val) {
+    utils::Print(QString("Total package size in bytes [%1]").arg(val));
     utils::Print("Total package size is [" + utils::HumanReadableSize(val) + "]");
     totalbytes = val;
     blocksize = (double)totalbytes/100.0;
@@ -964,7 +965,7 @@ QString squirrel::GetLogBuffer() {
 /**
  * @brief Print the details of a package, including all objects
  */
-QString squirrel::Print() {
+QString squirrel::Print(bool detail) {
     QString str;
 
     /* print package info */
@@ -997,15 +998,20 @@ QString squirrel::Print() {
 
         /* iterate through observations */
         QList<squirrelObservation> observations = GetObservationList(subjectRowID);
-        foreach (squirrelObservation observation, observations) {
-            str += observation.PrintObservation();
-        }
+        if (detail)
+            foreach (squirrelObservation observation, observations)
+                str += observation.PrintObservation();
+        else
+            str += QString("[%1 observations]").arg(observations.size());
 
         /* iterate through Interventions */
         QList<squirrelIntervention> Interventions = GetInterventionList(subjectRowID);
-        foreach (squirrelIntervention Intervention, Interventions) {
-            str += Intervention.PrintIntervention();
-        }
+        if (detail)
+            foreach (squirrelIntervention Intervention, Interventions)
+                str += Intervention.PrintIntervention();
+        else
+            str += QString("[%1 interventions]").arg(observations.size());
+
     }
 
     /* iterate through pipelines */
@@ -2553,7 +2559,7 @@ bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- RemoveIntervention ------------------------------------------- */
+/* ----- RemoveIntervention ----------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
 
@@ -2567,7 +2573,7 @@ bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- RemoveObservation ---------------------------------------- */
+/* ----- RemoveObservation ------------------------------------ */
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveObservation(qint64 observationRowID) {
 

@@ -59,7 +59,7 @@ public:
     bool Read();
     bool Write(bool writeLog);
     bool Validate();
-    QString Print();
+    QString Print(bool detail=false);
     void SetPackagePath(QString p) { packagePath = p; }
     QString GetPackagePath();
     void SetFileMode(FileMode m) { fileMode = m; } /*!< Set the file mode to either NewPackage or ExistingPackage */
