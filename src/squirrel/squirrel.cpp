@@ -190,6 +190,7 @@ bool squirrel::InitializeDatabase() {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
 
     /* NOTE - SQLite does not support multiple statements, so each table needs to be created individualy */
+
     q.prepare(tableAnalysis);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Analysis]", __FUNCTION__); utils::Print("Error creating table [Analysis]"); return false; }
 
@@ -321,7 +322,7 @@ bool squirrel::Read() {
     }
     else if (root.contains("subjects")) {
         jsonSubjects = root["subjects"].toArray();
-        Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(numSubjects), __FUNCTION__);
+        Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(jsonSubjects.size()), __FUNCTION__);
     }
     else {
         Log("root does not contain 'data' or 'subjects'", __FUNCTION__);
@@ -335,8 +336,8 @@ bool squirrel::Read() {
     qint64 i(0);
     for (auto a : jsonSubjects) {
         i++;
-        Log(QString("Reading subject %1 of %2").arg(i).arg(numSubjects), __FUNCTION__);
-        utils::Print(QString("Reading subject %1 of %2").arg(i).arg(numSubjects), __FUNCTION__);
+        Log(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size()), __FUNCTION__);
+        utils::Print(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size()), __FUNCTION__);
 
         QJsonObject jsonSubject = a.toObject();
 
@@ -1493,6 +1494,62 @@ QString squirrel::PrintSeries(qint64 studyRowID, bool details) {
     }
     if (!details)
         str += utils::Print("Series: " + seriesNumbers.join(" "));
+
+    return str;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintObservations ------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Print all of the observations for a given subjectRowID
+ * @param subjectRowID The subjectRowID
+ * @param printType One of the PrintingType enumerations
+ */
+QString squirrel::PrintObservations(qint64 subjectRowID, PrintingType printType) {
+    QString str;
+
+    QList <squirrelObservation> observations = GetObservationList(subjectRowID);
+    QStringList observationNames;
+    foreach (squirrelObservation o, observations) {
+        if (o.Get()) {
+            if (printType == PrintingType::Details)
+                str += o.PrintObservation();
+            else
+                observationNames.append(o.ObservationName);
+        }
+    }
+    if (printType == PrintingType::Details)
+        str += utils::Print("Observations: " + observationNames.join(" "));
+
+    return str;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintInterventions ----------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Print all of the interventions for a given subjectRowID
+ * @param subjectRowID The subjectRowID
+ * @param printType One of the PrintingType enumerations
+ */
+QString squirrel::PrintInterventions(qint64 subjectRowID, PrintingType printType) {
+    QString str;
+
+    QList <squirrelIntervention> interventions = GetInterventionList(subjectRowID);
+    QStringList interventionNames;
+    foreach (squirrelIntervention o, interventions) {
+        if (o.Get()) {
+            if (printType == PrintingType::Details)
+                str += o.PrintIntervention();
+            else
+                interventionNames.append(o.InterventionName);
+        }
+    }
+    if (printType == PrintingType::Details)
+        str += utils::Print("Interventions: " + interventionNames.join(" "));
 
     return str;
 }
