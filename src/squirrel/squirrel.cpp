@@ -121,7 +121,7 @@ squirrel::~squirrel()
 /* ---------------------------------------------------------- */
 bool squirrel::Get7zipLibPath() {
 #ifdef Q_OS_WINDOWS
-    if (QFile::exists("/usr/libexec/p7zip/7z.so")) {
+    if (QFile::exists("C:/Program Files/7-Zip/7z.dll")) {
         p7zipLibPath = "C:/Program Files/7-Zip/7z.dll";
         Log("Found 7zip path C:/Program Files/7-Zip/7z.dll", __FUNCTION__);
         return true;
@@ -236,6 +236,12 @@ bool squirrel::InitializeDatabase() {
     q.prepare(tableStagedFiles);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [StagedFiles]", __FUNCTION__); utils::Print("Error creating table [StagedFiles]"); return false; }
 
+    q.prepare("PRAGMA journal_mode=WAL");
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting journal_mode=WAL", __FUNCTION__); utils::Print("Error setting journal_mode=WAL"); return false; }
+
+    q.prepare("PRAGMA synchronous=NORMAL");
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting synchronous=NORMAL", __FUNCTION__); utils::Print("Error setting synchronous=NORMAL"); return false; }
+
     Log("Successfully initialized database tables", __FUNCTION__);
     return true;
 }
@@ -339,10 +345,12 @@ bool squirrel::Read() {
     qint64 i(0);
     for (auto a : jsonSubjects) {
         i++;
-        Log(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size()), __FUNCTION__);
-        utils::Print(QString("Reading subject %1 of %2").arg(i).arg(jsonSubjects.size()), __FUNCTION__);
+        Log(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
+        utils::Print(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
 
         QJsonObject jsonSubject = a.toObject();
+
+        //utils::Print("Time A - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
 
         squirrelSubject sqrlSubject;
 
@@ -357,7 +365,9 @@ bool squirrel::Read() {
         sqrlSubject.Store();
         qint64 subjectRowID = sqrlSubject.GetObjectID();
 
-        Debug(QString("Reading subject [%1]").arg(sqrlSubject.ID), __FUNCTION__);
+        //utils::Print("Time B - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
+
+        //Log(QString("Reading subject [%1]").arg(sqrlSubject.ID), __FUNCTION__);
 
         /* loop through and read all studies */
         QJsonArray jsonStudies = jsonSubject["studies"].toArray();
@@ -380,6 +390,8 @@ bool squirrel::Read() {
             sqrlStudy.subjectRowID = subjectRowID;
             sqrlStudy.Store();
             qint64 studyRowID = sqrlStudy.GetObjectID();
+
+            //utils::Print("Time C - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
 
             Debug(QString("Reading study [%1][%2]").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber), __FUNCTION__);
 
@@ -409,6 +421,8 @@ bool squirrel::Read() {
 
                 //Log("Series.Datetime: " + sqrlSeries.DateTime.toString("yyyy-MM-dd hh:mm:ss"), __FUNCTION__);
                 Debug(QString("Reading series [%1][%2][%3]").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber), __FUNCTION__);
+
+                //utils::Print("Time D - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
 
                 if (!quickRead) {
                     /* read any params from the data/Subject/Study/Series/params.json file */
@@ -450,12 +464,18 @@ bool squirrel::Read() {
 
                 Debug(QString("Added analysis [%1]").arg(sqrlAnalysis.PipelineName), __FUNCTION__);
             }
+            utils::Print("Time E - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
         }
 
         /* read all observations */
+        QSqlQuery q1(QSqlDatabase::database("squirrel"));
+        q1.prepare("begin transaction");
+        utils::SQLQuery(q1, __FUNCTION__, __FILE__, __LINE__);
+
         QJsonArray jsonObservations = jsonSubject["observations"].toArray();
         Debug(QString("Reading [%1] observations").arg(jsonObservations.size()), __FUNCTION__);
         for (auto e : jsonObservations) {
+            //utils::Print("Time E1 - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
             QJsonObject jsonObservation = e.toObject();
             squirrelObservation sqrlObservation;
             sqrlObservation.DateEnd = QDateTime::fromString(jsonObservation["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
@@ -472,7 +492,13 @@ bool squirrel::Read() {
             sqrlObservation.Value = jsonObservation["Value"].toString();
             sqrlObservation.subjectRowID = subjectRowID;
             sqrlObservation.Store();
+            //utils::Print("Time E2 - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
         }
+
+        q1.prepare("commit");
+        utils::SQLQuery(q1, __FUNCTION__, __FILE__, __LINE__);
+
+        utils::Print("Time F - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
 
         /* read all Interventions */
         QJsonArray jsonInterventions = jsonSubject["Interventions"].toArray();
@@ -498,6 +524,7 @@ bool squirrel::Read() {
             sqrlIntervention.subjectRowID = subjectRowID;
             sqrlIntervention.Store();
         }
+        utils::Print("Time G - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
     }
 
     /* read all experiments */
@@ -513,6 +540,8 @@ bool squirrel::Read() {
         sqrlExperiment.Size = jsonExperiment["Size"].toInt();
         sqrlExperiment.Store();
     }
+
+    utils::Print("Time H - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
 
     /* read all pipelines */
     QJsonArray jsonPipelines;
