@@ -22,6 +22,9 @@
 
 #include "modify.h"
 #include "utils.h"
+#include <iostream>
+#include <vector>
+#include <iomanip>
 
 modify::modify() {
 }
@@ -30,7 +33,7 @@ modify::modify() {
 /* ---------------------------------------------------------------------------- */
 /* ----- DoModify ------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::DoModify(QString packagePath, QString addObject, QString removeObject, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::DoModify(QString packagePath, QString addObject, QString removeObject, QString updateObject, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     /* check if any operation was specified */
     if ((addObject == "") && (removeObject == "")) {
@@ -518,11 +521,43 @@ bool modify::DoModify(QString packagePath, QString addObject, QString removeObje
 /* ----- PrintVariables ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 void modify::PrintVariables(QString object) {
+    using namespace std;
+    vector<vector<string>> data;
 
-    if (object == "subject")
-        utils::Print("ID\nAltIDs\nGUID\nDateOfBirth\nSex\nGender\nEthnicity1\nEthnicity2");
+    if (object == "subject") {
+        data = {
+            {"Variable", "Datatype", "Description", "Required"},
+            {"AlternateIDs", "array", "Comma separated list of Alternate IDs", ""},
+            {"DateOfBirth", "date", "Can be YYYY-MM-DD, YYYY-MM-00, or YYYY-00-00", "*"},
+            {"Gender", "char", "Gender", ""},
+            {"GUID", "string", "Globally unique ID, from the NDA", ""},
+            {"Ethnicity1", "string", "NIH defined ethnicity", ""},
+            {"Ethnicity2", "string", "NIH defined race", ""},
+            {"Sex", "char", "Sex at birth (F,M,O,U)", "*"},
+            {"SubjectID", "string", "Unique subject ID", "*"}
+        };
+    }
+
+    // Find the maximum width of each column
+    vector<int> columnWidths(data[0].size());
+    for (const auto &row : data) {
+        for (size_t i = 0; i < row.size(); ++i) {
+            columnWidths[i] = max(columnWidths[i], (int)row[i].size());
+        }
+    }
+
+    // Print the table
+    for (const auto &row : data) {
+        for (size_t i = 0; i < row.size(); ++i) {
+            cout << setw(columnWidths[i] + 2) << left << row[i] << " ";
+        }
+        cout << endl;
+    }
 
     if (object == "study")
+        utils::Print("StudyNumber\nDatetime\nAge\nHeight\nWeight\nModality\nDescription\nStudyUID\nVisitType\nDayNumber\nTimepoint\nEquipment");
+
+    if (object == "series")
         utils::Print("StudyNumber\nDatetime\nAge\nHeight\nWeight\nModality\nDescription\nStudyUID\nVisitType\nDayNumber\nTimepoint\nEquipment");
 
 }
