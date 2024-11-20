@@ -285,7 +285,7 @@ bool squirrel::Read() {
         return false;
     }
 
-    utils::Print(QString("Before extracting squirrel.json [%1]").arg(QTime::currentTime().toString()));
+    //utils::Print(QString("Before extracting squirrel.json [%1]").arg(QTime::currentTime().toString()));
     QString jsonstr;
     if (!ExtractFileFromArchive(GetPackagePath(), "squirrel.json", jsonstr)) {
         Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
@@ -293,9 +293,9 @@ bool squirrel::Read() {
         return false;
     }
     else {
-        utils::Print(QString("Extracted package header [%1 bytes]").arg(jsonstr.size()));
+        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())));
     }
-    utils::Print(QString("After extracting squirrel.json [%1]").arg(QTime::currentTime().toString()));
+    //utils::Print(QString("After extracting squirrel.json [%1]").arg(QTime::currentTime().toString()));
 
     /* get the JSON document and root object */
     QJsonDocument d = QJsonDocument::fromJson(jsonstr.toUtf8());
@@ -334,19 +334,19 @@ bool squirrel::Read() {
         Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(jsonSubjects.size()), __FUNCTION__);
     }
     else {
-        Log("root does not contain 'data' or 'subjects'", __FUNCTION__);
+        Log("root JSON object does not contain 'data' or 'subjects'", __FUNCTION__);
     }
 
     Debug(QString("TotalFileCount: [%1]").arg(root["TotalFileCount"].toInt()), __FUNCTION__);
     Debug(QString("TotalSize: [%1]").arg(root["TotalSize"].toInt()), __FUNCTION__);
 
     /* loop through and read any subjects */
-    utils::Print("\n");
     qint64 i(0);
     for (auto a : jsonSubjects) {
         i++;
         Log(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
-        utils::Print(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
+        //utils::Print(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
+        utils::PrintProgress((double)i/(double)jsonSubjects.size());
 
         QJsonObject jsonSubject = a.toObject();
 
@@ -444,7 +444,6 @@ bool squirrel::Read() {
             for (auto d : jsonAnalyses) {
                 QJsonObject jsonAnalysis = d.toObject();
                 squirrelAnalysis sqrlAnalysis;
-
                 sqrlAnalysis.DateClusterEnd = QDateTime::fromString(jsonAnalysis["DateClusterEnd"].toString().replace(' ', '-') + "Z", Qt::ISODate);
                 sqrlAnalysis.DateClusterStart = QDateTime::fromString(jsonAnalysis["DateClusterStart"].toString().replace(' ', '-') + "Z", Qt::ISODate);
                 sqrlAnalysis.DateStart = QDateTime::fromString(jsonAnalysis["DateEnd"].toString().replace(' ', '-') + "Z", Qt::ISODate);
@@ -478,23 +477,11 @@ bool squirrel::Read() {
             //utils::Print("Time E1 - " + QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz"));
             QJsonObject jsonObservation = e.toObject();
             squirrelObservation sqrlObservation;
-            //QString Date1 = jsonObservation["DateEnd"].toString().replace(' ', '-') + "Z";
-            //QString Date2 = jsonObservation["DateStart"].toString().replace(' ', '-') + "Z";
-            //QString Date3 = jsonObservation["DateRecordCreate"].toString().replace(' ', '-') + "Z";
-            //QString Date4 = jsonObservation["DateRecordEntry"].toString().replace(' ', '-') + "Z";
-            //QString Date5 = jsonObservation["DateRecordModify"].toString().replace(' ', '-') + "Z";
-
             sqrlObservation.DateEnd.fromString(jsonObservation["DateEnd"].toString().replace(' ', '-') + "Z", Qt::ISODate);
             sqrlObservation.DateStart.fromString(jsonObservation["DateStart"].toString().replace(' ', '-') + "Z", Qt::ISODate);
             sqrlObservation.DateRecordCreate.fromString(jsonObservation["DateRecordCreate"].toString().replace(' ', '-') + "Z", Qt::ISODate);
             sqrlObservation.DateRecordEntry.fromString(jsonObservation["DateRecordEntry"].toString().replace(' ', '-') + "Z", Qt::ISODate);
             sqrlObservation.DateRecordModify.fromString(jsonObservation["DateRecordModify"].toString().replace(' ', '-') + "Z", Qt::ISODate);
-
-            //sqrlObservation.DateEnd = QDateTime::fromString(jsonObservation["DateEnd"].toString(), "yyyy-MM-dd hh:mm:ss");
-            //sqrlObservation.DateStart = QDateTime::fromString(jsonObservation["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            //sqrlObservation.DateRecordCreate = QDateTime::fromString(jsonObservation["DateRecordCreate"].toString(), "yyyy-MM-dd hh:mm:ss");
-            //sqrlObservation.DateRecordEntry = QDateTime::fromString(jsonObservation["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
-            //sqrlObservation.DateRecordModify = QDateTime::fromString(jsonObservation["DateRecordModify"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlObservation.Description = jsonObservation["Description"].toString();
             sqrlObservation.Duration = jsonObservation["Duration"].toDouble();
             sqrlObservation.InstrumentName = jsonObservation["InstrumentName"].toString();
@@ -518,16 +505,9 @@ bool squirrel::Read() {
         for (auto f : jsonInterventions) {
             QJsonObject jsonIntervention = f.toObject();
             squirrelIntervention sqrlIntervention;
-
-            //sqrlIntervention.DateEnd.fromString(jsonObservation["DateEnd"].toString().replace(' ', '-') + "Z", Qt::ISODate);
-
             sqrlIntervention.DateEnd = QDateTime::fromString(jsonIntervention["DateEnd"].toString().replace(' ', '-') + "Z", Qt::ISODate);
             sqrlIntervention.DateRecordEntry = QDateTime::fromString(jsonIntervention["DateRecordEntry"].toString().replace(' ', '-') + "Z", Qt::ISODate);
             sqrlIntervention.DateStart = QDateTime::fromString(jsonIntervention["DateStart"].toString().replace(' ', '-') + "Z", Qt::ISODate);
-
-            //sqrlIntervention.DateRecordEntry = QDateTime::fromString(jsonIntervention["DateRecordEntry"].toString(), "yyyy-MM-dd hh:mm:ss");
-            //sqrlIntervention.DateStart = QDateTime::fromString(jsonIntervention["DateStart"].toString(), "yyyy-MM-dd hh:mm:ss");
-            //sqrlIntervention.Description = jsonIntervention["Description"].toString();
             sqrlIntervention.DoseAmount = jsonIntervention["DoseAmount"].toDouble();
             sqrlIntervention.DoseFrequency = jsonIntervention["DoseFrequency"].toString();
             sqrlIntervention.DoseKey = jsonIntervention["DoseKey"].toString();
