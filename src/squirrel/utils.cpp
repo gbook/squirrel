@@ -961,7 +961,7 @@ namespace utils {
         datetime = datetime.replace(' ', 'T') + "Z";
 
         QDateTime qdt = QDateTime::fromString(datetime, Qt::ISODate);
-        qdt.setTimeZone(QTimeZone::systemTimeZone());
+        qdt = qdt.toLocalTime();
 
         return qdt;
     }
