@@ -2923,7 +2923,7 @@ bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinatio
     QString systemstring = QString("7za e -y %1 -o%2").arg(archivePath).arg(destinationPath);
     Log(QString("Extracting %1 to %2").arg(archivePath).arg(destinationPath), __FUNCTION__);
     Debug(utils::SystemCommand(systemstring), __FUNCTION__);
-    if (QDir::exists(destinationPath))
+    if (utils::FileExists(destinationPath))
         return true;
     else
         return false;
