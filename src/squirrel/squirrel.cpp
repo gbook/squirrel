@@ -2919,40 +2919,49 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
  * @return true if successful, false otherwise
  */
 bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinationPath, QString &m) {
-    try {
-        using namespace bit7z;
-        Bit7zLibrary lib(p7zipLibPath.toStdString());
 
-        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
-            //bit7z::BitArchiveReader archive(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
-            //archive.setProgressCallback(progressCallback);
-            //archive.setTotalCallback(totalArchiveSizeCallback);
-            //archive.extractTo(destinationPath.toStdString());
-
-            bit7z::BitFileExtractor extractor(lib, bit7z::BitFormat::Zip);
-            extractor.setProgressCallback(progressCallback);
-            extractor.setTotalCallback(totalArchiveSizeCallback);
-            extractor.extract(archivePath.toStdString(), destinationPath.toStdString());
-        }
-        else {
-            //bit7z::BitArchiveReader archive(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
-            //archive.setProgressCallback(progressCallback);
-            //archive.setTotalCallback(totalArchiveSizeCallback);
-            //archive.extractTo(destinationPath.toStdString());
-
-            bit7z::BitFileExtractor extractor(lib, bit7z::BitFormat::SevenZip);
-            extractor.setProgressCallback(progressCallback);
-            extractor.setTotalCallback(totalArchiveSizeCallback);
-            extractor.extract(archivePath.toStdString(), destinationPath.toStdString());
-        }
-        m = "Successfully extracted archive [" + archivePath + "] to directory [" + destinationPath + "]";
+    QString systemstring = QString("7za e -y %1 -o%2").arg(f).arg(destinationPath);
+    Log(QString("Extracting %1 to %2").arg(archivePath).arg(destinationPath), __FUNCTION__);
+    Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+    if (QDir::exists(destinationPath))
         return true;
-    }
-    catch ( const bit7z::BitException& ex ) {
-        /* Do something with ex.what()...*/
-        m = "Unable to extract archive to directory using bit7z library [" + QString(ex.what()) + "]";
+    else
         return false;
-    }
+
+    // try {
+    //     using namespace bit7z;
+    //     Bit7zLibrary lib(p7zipLibPath.toStdString());
+
+    //     if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+    //         //bit7z::BitArchiveReader archive(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
+    //         //archive.setProgressCallback(progressCallback);
+    //         //archive.setTotalCallback(totalArchiveSizeCallback);
+    //         //archive.extractTo(destinationPath.toStdString());
+
+    //         bit7z::BitFileExtractor extractor(lib, bit7z::BitFormat::Zip);
+    //         extractor.setProgressCallback(progressCallback);
+    //         extractor.setTotalCallback(totalArchiveSizeCallback);
+    //         extractor.extract(archivePath.toStdString(), destinationPath.toStdString());
+    //     }
+    //     else {
+    //         //bit7z::BitArchiveReader archive(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
+    //         //archive.setProgressCallback(progressCallback);
+    //         //archive.setTotalCallback(totalArchiveSizeCallback);
+    //         //archive.extractTo(destinationPath.toStdString());
+
+    //         bit7z::BitFileExtractor extractor(lib, bit7z::BitFormat::SevenZip);
+    //         extractor.setProgressCallback(progressCallback);
+    //         extractor.setTotalCallback(totalArchiveSizeCallback);
+    //         extractor.extract(archivePath.toStdString(), destinationPath.toStdString());
+    //    }
+    //    m = "Successfully extracted archive [" + archivePath + "] to directory [" + destinationPath + "]";
+    //    return true;
+    //}
+    //catch ( const bit7z::BitException& ex ) {
+    //    /* Do something with ex.what()...*/
+    //    m = "Unable to extract archive to directory using bit7z library [" + QString(ex.what()) + "]";
+    //    return false;
+    //}
 }
 
 
