@@ -937,6 +937,7 @@ bool squirrel::Write(bool writeLog) {
 /* ----- Extract ---------------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::Extract(QString destinationDir, QString &m) {
+    m = "Extracting [" + packagePath + "] to [" + destinationDir + "]";
     if (ExtractArchiveToDirectory(packagePath, destinationDir, m))
         return true;
     else
@@ -2921,12 +2922,17 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
 bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinationPath, QString &m) {
 
     QString systemstring = QString("7za x -y %1 -o%2").arg(archivePath).arg(destinationPath);
+    m += systemstring + "\n";
     Log(QString("Extracting %1 to %2").arg(archivePath).arg(destinationPath), __FUNCTION__);
     Log(utils::SystemCommand(systemstring), __FUNCTION__);
-    if (utils::FileExists(destinationPath))
+    if (utils::FileExists(destinationPath)) {
+        m += destinationPath + " exists\n";
         return true;
-    else
+    }
+    else {
+        m += destinationPath + " does not exist\n";
         return false;
+    }
 
     // try {
     //     using namespace bit7z;
