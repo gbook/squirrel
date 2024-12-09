@@ -110,7 +110,7 @@ bool squirrelSeries::Store() {
     QSqlQuery q(QSqlDatabase::database("squirrel"));
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, BIDSEntity, BIDSSuffix, BIDSTask, BIDSRun, BIDSPhaseEncodingDirection, Run, ExperimentRowID, Size, FileCount, BehavioralSize, BehavioralFileCount, SequenceNumber, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :BIDSEntity, :BIDSSuffix, :BIDSTask, :BIDSRun, :BIDSPhaseEncodingDirection, :Run, :ExperimentRowID, :Size, :FileCount, :BehavioralSize, :BehavioralFileCount, :SequenceNumber, :VirtualPath)");
+        q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, BIDSEntity, BIDSSuffix, BIDSTask, BIDSRun, BIDSPhaseEncodingDirection, Run, ExperimentRowID, Size, Files, FileCount, BehavioralSize, BehavioralFileCount, SequenceNumber, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :BIDSEntity, :BIDSSuffix, :BIDSTask, :BIDSRun, :BIDSPhaseEncodingDirection, :Run, :ExperimentRowID, :Size, :Files, :FileCount, :BehavioralSize, :BehavioralFileCount, :SequenceNumber, :VirtualPath)");
         q.bindValue(":StudyRowID", studyRowID);
         q.bindValue(":SeriesNumber", SeriesNumber);
         q.bindValue(":Datetime", DateTime);
@@ -125,6 +125,7 @@ bool squirrelSeries::Store() {
         q.bindValue(":Run", Run);
         q.bindValue(":ExperimentRowID", experimentRowID);
         q.bindValue(":Size", Size);
+        q.bindValue(":Files", files.join(","));
         q.bindValue(":FileCount", FileCount);
         q.bindValue(":BehavioralSize", BehavioralSize);
         q.bindValue(":BehavioralFileCount", BehavioralFileCount);
