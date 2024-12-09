@@ -2971,6 +2971,41 @@ bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinatio
 }
 
 
+bool squirrel::GetFileListingFromArchive(QString archivePath, QString subDir, QStringList &files, QString &m) {
+
+    try {
+        using namespace bit7z;
+        Bit7zLibrary lib(p7zipLibPath.toStdString());
+
+        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
+            BitArchiveReader reader(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
+            for (const auto& item : reader) {
+                QString archivedPath = QString::fromStdString(item.path());
+                if (archivedPath.startsWith(subDir)) {
+                    files.append(QString::fromStdString(item.path()));
+                }
+            }
+        }
+        else {
+            /* first, get the index of the directory to remove */
+            BitArchiveReader reader(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
+            for (const auto& item : reader) {
+                QString archivedPath = QString::fromStdString(item.path());
+                if (archivedPath.startsWith(subDir)) {
+                    files.append(QString::fromStdString(item.path()));
+                }
+            }
+        }
+        return true;
+    }
+    catch ( const bit7z::BitException& ex ) {
+        /* Do something with ex.what()...*/
+        m = "Unable to get subdirectory listing using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+}
+
+
 /* ------------------------------------------------------------ */
 /* ----- SetDebugSQL ------------------------------------------ */
 /* ------------------------------------------------------------ */
