@@ -61,6 +61,7 @@ bool squirrelSeries::Get() {
         BehavioralSize = q.value("BehavioralSize").toLongLong();
         DateTime = q.value("Datetime").toDateTime();
         Description = q.value("Description").toString();
+        files = q.value("Files").toString().split(",");
         FileCount = q.value("FileCount").toLongLong();
         Protocol = q.value("Protocol").toString();
         Run = q.value("Run").toInt();
@@ -135,7 +136,7 @@ bool squirrelSeries::Store() {
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNumber = :SeriesNumber, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, BIDSEntity = :BIDSEntity, BIDSSuffix = :BIDSSuffix, BIDSTask = :BIDSTask, BIDSRun = :BIDSRun, BIDSPhaseEncodingDirection = :BIDSPhaseEncodingDirection, Run = :Run, ExperimentRowID = :ExperimentRowID, Size = :Size, FileCount = :FileCount, BehavioralSize = :BehavioralSize, BehavioralFileCount = :BehavioralFileCount, SequenceNumber = :SequenceNumber, VirtualPath = :VirtualPath where SeriesRowID = :id");
+        q.prepare("update Series set StudyRowID = :StudyRowID, SeriesNumber = :SeriesNumber, Datetime = :Datetime, SeriesUID = :SeriesUID, Description = :Description, Protocol = :Protocol, BIDSEntity = :BIDSEntity, BIDSSuffix = :BIDSSuffix, BIDSTask = :BIDSTask, BIDSRun = :BIDSRun, BIDSPhaseEncodingDirection = :BIDSPhaseEncodingDirection, Run = :Run, ExperimentRowID = :ExperimentRowID, Size = :Size, Files = :Files, FileCount = :FileCount, BehavioralSize = :BehavioralSize, BehavioralFileCount = :BehavioralFileCount, SequenceNumber = :SequenceNumber, VirtualPath = :VirtualPath where SeriesRowID = :id");
         q.bindValue(":StudyRowID", studyRowID);
         q.bindValue(":SeriesNumber", SeriesNumber);
         q.bindValue(":Datetime", DateTime);
@@ -150,6 +151,7 @@ bool squirrelSeries::Store() {
         q.bindValue(":Run", Run);
         q.bindValue(":ExperimentRowID", experimentRowID);
         q.bindValue(":Size", Size);
+        q.bindValue(":Files", files.join(","));
         q.bindValue(":FileCount", FileCount);
         q.bindValue(":BehavioralSize", BehavioralSize);
         q.bindValue(":BehavioralFileCount", BehavioralFileCount);

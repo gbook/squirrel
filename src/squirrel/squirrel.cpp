@@ -404,7 +404,7 @@ bool squirrel::Read() {
                 //sqrlSeries.DateTime = utils::StringToDatetime(jsonSeries["SeriesDatetime"].toString());
                 sqrlSeries.DateTime = QDateTime::fromString(jsonSeries["SeriesDatetime"].toString(), "yyyy-MM-dd hh:mm:ss");
                 sqrlSeries.Description = jsonSeries["Description"].toString();
-                sqrlSeries.FileCount = jsonSeries["FileCount"].toInteger();
+                //sqrlSeries.FileCount = jsonSeries["FileCount"].toInteger();
                 sqrlSeries.Protocol = jsonSeries["Protocol"].toString();
                 sqrlSeries.SeriesNumber = jsonSeries["SeriesNumber"].toInteger();
                 sqrlSeries.SeriesUID = jsonSeries["SeriesUID"].toString();
