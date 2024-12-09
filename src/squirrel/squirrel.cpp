@@ -416,7 +416,7 @@ bool squirrel::Read() {
                 if (!quickRead) {
                     /* read any params from the data/Subject/Study/Series/params.json file */
                     QString parms;
-                    QString paramsfilepath = QString("data/%2/%3/%4/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    QString paramsfilepath = QString("data/%1/%2/%3/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
                     if (ExtractFileFromArchive(GetPackagePath(), paramsfilepath, parms)) {
                         sqrlSeries.params = ReadParamsFile(parms);
                         //Log(QString("Read params file [%1]. series.params contains [%2] items").arg(paramsfilepath).arg(sqrlSeries.params.size()), __FUNCTION__);
@@ -424,6 +424,13 @@ bool squirrel::Read() {
                     else {
                         Log("Unable to read params file [" + paramsfilepath + "]", __FUNCTION__);
                     }
+
+                    /* get file listing */
+                    QString seriesPath = QString("data/%1/%2/%3").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    QStringList files;
+                    QString m;
+                    GetFileListingFromArchive(GetPackagePath(), seriesPath, files, m);
+                    sqrlSeries.files = files;
                 }
 
                 sqrlSeries.Store();
