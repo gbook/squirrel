@@ -432,6 +432,7 @@ bool squirrel::Read() {
                     GetFileListingFromArchive(GetPackagePath(), seriesPath, files, m);
                     Log(QString("archiveSeriesPath [%1] found [%2] files [%3]").arg(seriesPath).arg(files.size()).arg(files.join(",")), __FUNCTION__);
                     sqrlSeries.files = files;
+                    sqrlSeries.FileCount = files.size();
                 }
 
                 sqrlSeries.Store();
