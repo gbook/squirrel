@@ -217,6 +217,7 @@ QString squirrelSeries::PrintSeries() {
     str += utils::Print(QString("\t\t\t\tDescription: %1").arg(Description));
     str += utils::Print(QString("\t\t\t\tExperimentName: %1").arg(experimentRowID));
     str += utils::Print(QString("\t\t\t\tFileCount: %1").arg(FileCount));
+    str += utils::Print(QString("\t\t\t\tFiles: %1").arg(files.join(", ")));
     str += utils::Print(QString("\t\t\t\tProtocol: %1").arg(Protocol));
     str += utils::Print(QString("\t\t\t\tRun: %1").arg(Run));
     str += utils::Print(QString("\t\t\t\tSequenceNumber: %1").arg(SequenceNumber));
