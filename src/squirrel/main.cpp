@@ -272,7 +272,10 @@ int main(int argc, char *argv[])
             if (sqrl->IsValid()) {
                 sqrl->Debug("Reading package...", __FUNCTION__);
                 if (object == "package") {
-                    sqrl->PrintPackage();
+                    if (details)
+                        sqrl->PrintSubjects(PrintingType::Tree);
+                    else
+                        sqrl->PrintPackage();
                 }
                 else if (object == "subject") {
                     sqrl->PrintSubjects(printType);
@@ -343,7 +346,7 @@ int main(int argc, char *argv[])
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Quiet mode. No printing of headers and checks"));
-        p.addOption(QCommandLineOption(QStringList() << "operation", "Operation to perform on the package [add  remove  update].", "operation"));
+        p.addOption(QCommandLineOption(QStringList() << "operation", "Operation to perform on the package [add  remove  update  splitbymodality].", "operation"));
         p.addOption(QCommandLineOption(QStringList() << "object", "Object type to perform operation on [package  subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
         //p.addOption(QCommandLineOption(QStringList() << "add", "Add object to the package.", "object"));
         //p.addOption(QCommandLineOption(QStringList() << "remove", "Remove object (and all dependent objects) from the package.", "object"));

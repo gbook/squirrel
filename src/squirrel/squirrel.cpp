@@ -988,6 +988,35 @@ QString squirrel::GetLogBuffer() {
 /**
  * @brief Print the details of a package, including all objects
  */
+QString squirrel::PrintTree() {
+    QString str;
+
+    /* print package info */
+    str += PrintPackage();
+
+    /* iterate through subjects */
+    QList<squirrelSubject> subjects = GetSubjectList();
+    foreach (squirrelSubject sub, subjects) {
+        //qint64 subjectRowID = sub.GetObjectID();
+        str += sub.PrintTree(false);
+    }
+
+    /* iterate through pipelines */
+    str += PrintPipelines();
+
+    /* iterate through experiments */
+    str += PrintExperiments();
+
+    return str;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- Print ------------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Print the details of a package, including all objects
+ */
 QString squirrel::Print(bool detail) {
     QString str;
 
@@ -3060,7 +3089,36 @@ void squirrel::SetQuickRead(bool q) {
     quickRead = q;
 
     if (quickRead)
-        Log("QuickRead set to ON (params.json files will be read)", __FUNCTION__);
+        Log("QuickRead set to ON (params.json files will NOT be read)", __FUNCTION__);
     else
-        Log("QuickRead set to OFF (params.json files will NOT be read)", __FUNCTION__);
+        Log("QuickRead set to OFF (params.json files will be read)", __FUNCTION__);
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- SetSystemTempDir ------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Allow a different temp directory to be used. Sometimes /tmp
+ * is on a small partition, and creating a squirrel file of several hundred
+ * GB may fill up the root partition
+ * @param tmpdir The system temp directory to use
+ */
+void squirrel::SetSystemTempDir(QString tmpdir) {
+    tmpdir = tmpdir.trimmed();
+
+    if (tmpdir == "") {
+        systemTempDir = "/tmp";
+        Log("Specified systemTempDir is blank, using default of /tmp", __FUNCTION__);
+    }
+    else {
+        if (QFile::exists(tmpdir)) {
+            systemTempDir = tmpdir;
+            Log("Using systemTempDir [" + tmpdir + "]", __FUNCTION__);
+        }
+        else {
+            systemTempDir = "/tmp";
+            Log("Specified systemTempDir [" + tmpdir + "] does not exist, using default of /tmp", __FUNCTION__);
+        }
+    }
 }

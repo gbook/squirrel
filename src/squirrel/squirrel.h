@@ -66,6 +66,7 @@ public:
     void SetDebugSQL(bool d);
     void SetOverwritePackage(bool o);
     void SetQuickRead(bool q);
+    void SetSystemTempDir(QString tmpdir);
     bool Extract(QString destinationDir, QString &m);
 
     /* package JSON elements */
@@ -175,6 +176,7 @@ public:
     QString PrintSeries(qint64 studyRowID, bool details=false);
     QString PrintStudies(qint64 subjectRowID, bool details=false);
     QString PrintSubjects(PrintingType printType=PrintingType::List);
+    QString PrintTree();
 
     QSqlDatabase db;
 
@@ -199,6 +201,7 @@ private:
     QString logBuffer;
     QString packagePath;
     QString p7zipLibPath;
+    QString systemTempDir;
 
     FileMode fileMode;
 

@@ -543,7 +543,34 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
 /* ----- UpdateObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 bool modify::UpdateObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
-    return true;
+
+    if (objectType != "") {
+        /* load the package */
+        squirrel *sqrl = new squirrel();
+        sqrl->SetFileMode(FileMode::ExistingPackage);
+        sqrl->SetPackagePath(packagePath);
+        if (!sqrl->Read()) {
+            m = QString("Package unreadable");
+            delete sqrl;
+            return false;
+        }
+
+        /* ----- subject ----- */
+        if (objectType == "package") {
+            /* read the JSON file from the package --"QJsonObject squirrel::ReadSquirrelHeader()" */
+            /* modify the JSON file */
+            /* overwrite the existing JSON file */
+        }
+
+        /* delete the object when done */
+        delete sqrl;
+
+        return true;
+    }
+    else {
+        m = "object type not specified";
+        return false;
+    }
 }
 
 
