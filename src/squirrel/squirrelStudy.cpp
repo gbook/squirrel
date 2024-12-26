@@ -241,10 +241,14 @@ QString squirrelStudy::PrintStudy() {
 QString squirrelStudy::PrintTree(bool isLast) {
     QString str;
 
+    QString dateTime = DateTime.toString("yyyy-MM-dd HH:mm:ss");
+    if (dateTime == "")
+        dateTime = "(blankDateTime)";
+
     if (isLast)
-        str += utils::Print(QString("       └─── Study %1 - Datetime %2  Modality %3").arg(StudyNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Modality));
+        str += utils::Print(QString("        +--- Study %1 (%2)  %3").arg(StudyNumber).arg(Modality).arg(dateTime));
     else
-        str += utils::Print(QString("   │   ├─── Study %1 - Datetime %2  Modality %3").arg(StudyNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Modality));
+        str += utils::Print(QString("   |    |--- Study %1 (%2)  %3").arg(StudyNumber).arg(Modality).arg(dateTime));
 
     /* print all series for this study */
     QSqlQuery q(QSqlDatabase::database("squirrel"));

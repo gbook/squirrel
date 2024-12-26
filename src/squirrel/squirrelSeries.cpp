@@ -250,10 +250,20 @@ QString squirrelSeries::PrintSeries() {
 QString squirrelSeries::PrintTree(bool isLast) {
     QString str;
 
+    QString dateTime = DateTime.toString("yyyy-MM-dd HH:mm:ss");
+    QString protocol = Protocol.trimmed();
+    QString seriesDesc = seriesDesc.trimmed();
+    if (dateTime == "")
+        dateTime = "(blankDateTime)";
+    if (protocol == "")
+        protocol = "(blankProtocol)";
+    if (seriesDesc == "")
+        seriesDesc = "(blankSeriesDesc)";
+
     if (isLast)
-        str += utils::Print(QString("           └─── Series %1 - Datetime %2  Protocol %3").arg(SeriesNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Protocol));
+        str += utils::Print(QString("             +--- Series %1 - %2  %3  %4").arg(SeriesNumber).arg(dateTime).arg(protocol).arg(seriesDesc));
     else
-        str += utils::Print(QString("   │   │   ├─── Series %1 - Datetime %2  Protocol %3").arg(SeriesNumber).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(Protocol));
+        str += utils::Print(QString("   |    |    |--- Series %1 - %2  %3  %4").arg(SeriesNumber).arg(dateTime).arg(protocol).arg(seriesDesc));
 
     return str;
 }

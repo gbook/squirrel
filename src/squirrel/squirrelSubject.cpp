@@ -173,9 +173,9 @@ QString squirrelSubject::PrintTree(bool isLast) {
     QString str;
 
     if (isLast)
-        str += utils::Print(QString("   └─── ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString("yyyy-MM-dd")).arg(Sex));
+        str += utils::Print(QString("   +--- ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString("yyyy-MM-dd")).arg(Sex));
     else
-        str += utils::Print(QString("   ├─── ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString("yyyy-MM-dd")).arg(Sex));
+        str += utils::Print(QString("   |--- ID %1  AltIDs %2  DOB %3  Sex %4").arg(ID).arg(AlternateIDs.join(",")).arg(DateOfBirth.toString("yyyy-MM-dd")).arg(Sex));
 
     /* find all studies associated with this subject ... */
     QSqlQuery q(QSqlDatabase::database("squirrel"));

@@ -983,7 +983,7 @@ QString squirrel::GetLogBuffer() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- Print ------------------------------------------------ */
+/* ----- PrintTree -------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
  * @brief Print the details of a package, including all objects
@@ -999,6 +999,11 @@ QString squirrel::PrintTree() {
     foreach (squirrelSubject sub, subjects) {
         //qint64 subjectRowID = sub.GetObjectID();
         str += sub.PrintTree(false);
+
+        /* get intervention/observation list */
+        QList<squirrelObservation> observations = GetObservationList(sub.GetObjectID());
+        QList<squirrelIntervention> interventions = GetInterventionList(sub.GetObjectID());
+        str += utils::Print(QString("        %1 interventions   %2 observations").arg(observations.size()).arg(interventions.size()));
     }
 
     /* iterate through pipelines */
@@ -1057,10 +1062,10 @@ QString squirrel::Print(bool detail) {
             str += QString("[%1 observations]").arg(observations.size());
 
         /* iterate through Interventions */
-        QList<squirrelIntervention> Interventions = GetInterventionList(subjectRowID);
+        QList<squirrelIntervention> interventions = GetInterventionList(subjectRowID);
         if (detail)
-            foreach (squirrelIntervention Intervention, Interventions)
-                str += Intervention.PrintIntervention();
+            foreach (squirrelIntervention intervention, interventions)
+                str += intervention.PrintIntervention();
         else
             str += QString("[%1 interventions]").arg(observations.size());
 
@@ -1474,6 +1479,11 @@ QString squirrel::PrintSubjects(PrintingType printType) {
                         str += s.PrintTree(true);
                     else
                         str += s.PrintTree(false);
+
+                    /* get intervention/observation list */
+                    QList<squirrelObservation> observations = GetObservationList(s.GetObjectID());
+                    QList<squirrelIntervention> interventions = GetInterventionList(s.GetObjectID());
+                    str += utils::Print(QString("        +--- %1 observations   %2 interventions").arg(observations.size()).arg(interventions.size()));
                 }
             }
         }
