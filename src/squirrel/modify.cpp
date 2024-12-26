@@ -556,7 +556,7 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
         sqrl->SetFileMode(FileMode::ExistingPackage);
         sqrl->SetPackagePath(packagePath);
         if (sqrl->Read()) {
-            utils::Print("Checkpoint A - read package");
+            utils::Print("Read package");
         }
         else {
             m = QString("Package unreadable");
@@ -564,15 +564,13 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
             return false;
         }
 
-        utils::Print("objectData [" + objectData + "]");
-        //QUrl url;
-        //url.setUrl(objectData);
+        //utils::Print("objectData [" + objectData + "]");
         QUrlQuery queryObject(objectData);
-        utils::Print(QString("queryObject [%1]").arg(queryObject.toString()));
+        //utils::Print(QString("queryObject [%1]").arg(queryObject.toString()));
 
         /* ----- package ----- */
         if (objectType == "package") {
-            utils::Print("Checkpoint B - objectType is package");
+            //utils::Print("Checkpoint B - objectType is package");
 
             /* read the JSON file from the package --"QJsonObject squirrel::ReadSquirrelHeader()" */
             QJsonDocument d;
@@ -617,7 +615,33 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
 /* ---------------------------------------------------------------------------- */
 /* ----- SplitByModality ------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Split a package by modality. This will create new packages with only the imaging data (and associated analyses/experiments/pipelines) and a separate package with only interventions/observations
+ * @param packagePath
+ * @param objectType
+ * @param dataPath
+ * @param recursive
+ * @param objectData
+ * @param objectID
+ * @param subjectID
+ * @param studyNum
+ * @param m
+ * @return
+ */
 bool modify::SplitByModality(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+    /* Note: the data is COPIED, not moved, from the original package to the new packages.
+     * So an example package of 100MB with 2 modalities will write out 2 packages, with each being 50MB
+     * and the original package will remain on disk. After the split operation there will be three image packages
+     * with a total of 200MB on disk, plus one package with only interventions/observations. */
+
+    /* read squirrel package */
+
+    /* get list of unique modalities */
+
+    /* create N packages, one for each modality */
+
+    /*
+
     return true;
 }
 
