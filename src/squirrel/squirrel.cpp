@@ -3132,3 +3132,35 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
         }
     }
 }
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetJsonHeader ---------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::GetJsonHeader(QJsonDocument &jdoc) {
+
+    QString jsonstr;
+    if (!ExtractFileFromArchive(GetPackagePath(), "squirrel.json", jsonstr)) {
+        Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
+        utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"));
+        return false;
+    }
+    else {
+        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())), __FUNCTION__);
+    }
+
+    jdoc = QJsonDocument::fromJson(jsonstr.toUtf8());
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- UpdateJsonHeader ------------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrel::UpdateJsonHeader(QString json) {
+    QString m;
+    if (!UpdateMemoryFileToArchive(json, "squirrel.json", GetPackagePath(), m))
+        Log("Error [" + m + "] compressing memory file to archive", __FUNCTION__);
+
+    return true;
+}

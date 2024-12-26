@@ -53,6 +53,12 @@ bool modify::DoModify(QString packagePath, QString operation, QString objectType
         else
             return false;
     }
+    else if (operation == "splitbymodality") {
+        if (UpdateObject(packagePath, objectType, dataPath, recursive, objectData, objectID, subjectID, studyNum, m))
+            return true;
+        else
+            return false;
+    }
     else {
         m = "Invalid operation [" + operation + "] specified";
         return false;
@@ -549,17 +555,51 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
         squirrel *sqrl = new squirrel();
         sqrl->SetFileMode(FileMode::ExistingPackage);
         sqrl->SetPackagePath(packagePath);
-        if (!sqrl->Read()) {
+        if (sqrl->Read()) {
+            utils::Print("Checkpoint A - read package");
+        }
+        else {
             m = QString("Package unreadable");
             delete sqrl;
             return false;
         }
 
-        /* ----- subject ----- */
+        utils::Print("objectData [" + objectData + "]");
+        //QUrl url;
+        //url.setUrl(objectData);
+        QUrlQuery queryObject(objectData);
+        utils::Print(QString("queryObject [%1]").arg(queryObject.toString()));
+
+        /* ----- package ----- */
         if (objectType == "package") {
+            utils::Print("Checkpoint B - objectType is package");
+
             /* read the JSON file from the package --"QJsonObject squirrel::ReadSquirrelHeader()" */
+            QJsonDocument d;
+            sqrl->GetJsonHeader(d);
+
             /* modify the JSON file */
-            /* overwrite the existing JSON file */
+            QJsonObject root = d.object();
+            QJsonObject packageInfo = root["package"].toObject();
+
+            /* update any package values */
+            if (queryObject.queryItemValue("Changes").trimmed() != "") packageInfo["Changes"] = queryObject.queryItemValue("Changes").trimmed();
+            if (queryObject.queryItemValue("Datetime").trimmed() != "") packageInfo["Datetime"] = queryObject.queryItemValue("Datetime").trimmed();
+            if (queryObject.queryItemValue("Description").trimmed() != "") packageInfo["Description"] = queryObject.queryItemValue("Description").trimmed();
+            if (queryObject.queryItemValue("License").trimmed() != "") packageInfo["License"] = queryObject.queryItemValue("License").trimmed();
+            if (queryObject.queryItemValue("Notes").trimmed() != "") packageInfo["Notes"] = queryObject.queryItemValue("Notes").trimmed();
+            if (queryObject.queryItemValue("PackageName").trimmed() != "") packageInfo["PackageName"] = queryObject.queryItemValue("PackageName").trimmed();
+            if (queryObject.queryItemValue("Readme").trimmed() != "") packageInfo["Readme"] = queryObject.queryItemValue("Readme").trimmed();
+
+            /* overwrite the existing JSON file in the package */
+            root["package"] = packageInfo;
+            QString j = QJsonDocument(root).toJson();
+            if (sqrl->UpdateJsonHeader(j)) {
+                utils::Print("Updated json header in package");
+            }
+            else {
+                utils::Print("Error updating json header in package");
+            }
         }
 
         /* delete the object when done */
@@ -571,6 +611,14 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
         m = "object type not specified";
         return false;
     }
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- SplitByModality ------------------------------------------------------ */
+/* ---------------------------------------------------------------------------- */
+bool modify::SplitByModality(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+    return true;
 }
 
 

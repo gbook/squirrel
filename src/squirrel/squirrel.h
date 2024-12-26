@@ -68,6 +68,8 @@ public:
     void SetQuickRead(bool q);
     void SetSystemTempDir(QString tmpdir);
     bool Extract(QString destinationDir, QString &m);
+    bool GetJsonHeader(QJsonDocument &jdoc);
+    bool UpdateJsonHeader(QString json);
 
     /* package JSON elements */
     QDateTime Datetime;         /*!< datetime the package was created */
