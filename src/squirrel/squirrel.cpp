@@ -78,6 +78,7 @@ squirrel::squirrel(bool dbg, bool q)
     isValid = true;
     quickRead = true;
     quiet = q;
+    databaseUUID = QUuid::createUuid().toString();
 
     if (!DatabaseConnect()) {
         Log(QString("Error connecting to database. Unable to initilize squirrel library"), __FUNCTION__);
@@ -153,7 +154,7 @@ bool squirrel::Get7zipLibPath() {
  */
 bool squirrel::DatabaseConnect() {
 
-    db = QSqlDatabase::addDatabase("QSQLITE", "squirrel");
+    db = QSqlDatabase::addDatabase("QSQLITE", databaseUUID);
     if (!db.isValid()) {
         Log(QString("Error initializing SQLite database (likely driver related) [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
         utils::Print(QString("Error initializing SQLite database (likely driver related) [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()));
@@ -188,7 +189,7 @@ bool squirrel::DatabaseConnect() {
  */
 bool squirrel::InitializeDatabase() {
 
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
 
     /* NOTE - SQLite does not support multiple statements, so each table needs to be created individualy */
 
@@ -350,7 +351,7 @@ bool squirrel::Read() {
 
         QJsonObject jsonSubject = a.toObject();
 
-        squirrelSubject sqrlSubject;
+        squirrelSubject sqrlSubject(databaseUUID);
         sqrlSubject.ID = jsonSubject["SubjectID"].toString();
         sqrlSubject.AlternateIDs = jsonSubject["AlternateIDs"].toVariant().toStringList();
         sqrlSubject.GUID = jsonSubject["GUID"].toString();
@@ -368,7 +369,7 @@ bool squirrel::Read() {
         QJsonArray jsonStudies = jsonSubject["studies"].toArray();
         for (auto b : jsonStudies) {
             QJsonObject jsonStudy = b.toObject();
-            squirrelStudy sqrlStudy;
+            squirrelStudy sqrlStudy(databaseUUID);
 
             sqrlStudy.AgeAtStudy = jsonStudy["AgeAtStudy"].toDouble();
             sqrlStudy.DateTime = utils::StringToDatetime(jsonStudy["StudyDatetime"].toString());
@@ -392,7 +393,7 @@ bool squirrel::Read() {
             QJsonArray jsonSeries = jsonStudy["series"].toArray();
             for (auto c : jsonSeries) {
                 QJsonObject jsonSeries = c.toObject();
-                squirrelSeries sqrlSeries;
+                squirrelSeries sqrlSeries(databaseUUID);
 
                 sqrlSeries.BIDSEntity = jsonSeries["BIDSEntity"].toString();
                 sqrlSeries.BIDSPhaseEncodingDirection = jsonSeries["BIDSPhaseEncodingDirection"].toString();
@@ -442,7 +443,7 @@ bool squirrel::Read() {
             QJsonArray jsonAnalyses = jsonStudy["analyses"].toArray();
             for (auto d : jsonAnalyses) {
                 QJsonObject jsonAnalysis = d.toObject();
-                squirrelAnalysis sqrlAnalysis;
+                squirrelAnalysis sqrlAnalysis(databaseUUID);
                 sqrlAnalysis.DateClusterEnd = utils::StringToDatetime(jsonAnalysis["DateClusterEnd"].toString());
                 sqrlAnalysis.DateClusterStart = utils::StringToDatetime(jsonAnalysis["DateClusterStart"].toString());
                 sqrlAnalysis.DateStart = utils::StringToDatetime(jsonAnalysis["DateEnd"].toString());
@@ -465,7 +466,7 @@ bool squirrel::Read() {
         }
 
         /* read all observations */
-        QSqlQuery q1(QSqlDatabase::database("squirrel")); /* start a transaction to slightly improve SQL insert performance */
+        QSqlQuery q1(QSqlDatabase::database(databaseUUID)); /* start a transaction to slightly improve SQL insert performance */
         q1.prepare("begin transaction");
         utils::SQLQuery(q1, __FUNCTION__, __FILE__, __LINE__);
 
@@ -474,7 +475,7 @@ bool squirrel::Read() {
         for (auto e : jsonObservations) {
 
             QJsonObject jsonObservation = e.toObject();
-            squirrelObservation sqrlObservation;
+            squirrelObservation sqrlObservation(databaseUUID);
             sqrlObservation.DateEnd = utils::StringToDatetime(jsonObservation["DateEnd"].toString());
             sqrlObservation.DateStart = utils::StringToDatetime(jsonObservation["DateStart"].toString());
             sqrlObservation.DateRecordCreate = utils::StringToDatetime(jsonObservation["DateRecordCreate"].toString());
@@ -499,7 +500,7 @@ bool squirrel::Read() {
         Debug(QString("Reading [%1] Interventions").arg(jsonInterventions.size()), __FUNCTION__);
         for (auto f : jsonInterventions) {
             QJsonObject jsonIntervention = f.toObject();
-            squirrelIntervention sqrlIntervention;
+            squirrelIntervention sqrlIntervention(databaseUUID);
             sqrlIntervention.DateEnd = utils::StringToDatetime(jsonIntervention["DateEnd"].toString());
             sqrlIntervention.DateRecordEntry = utils::StringToDatetime(jsonIntervention["DateRecordEntry"].toString());
             sqrlIntervention.DateStart = utils::StringToDatetime(jsonIntervention["DateStart"].toString());
@@ -524,7 +525,7 @@ bool squirrel::Read() {
     Debug(QString("Reading [%1] experiments").arg(jsonExperiments.size()), __FUNCTION__);
     for (auto g : jsonExperiments) {
         QJsonObject jsonExperiment = g.toObject();
-        squirrelExperiment sqrlExperiment;
+        squirrelExperiment sqrlExperiment(databaseUUID);
 
         sqrlExperiment.ExperimentName = jsonExperiment["ExperimentName"].toString();
         sqrlExperiment.FileCount = jsonExperiment["FileCount"].toInt();
@@ -538,7 +539,7 @@ bool squirrel::Read() {
     Debug(QString("Reading [%1] pipelines").arg(jsonPipelines.size()), __FUNCTION__);
     for (auto v : jsonPipelines) {
         QJsonObject jsonPipeline = v.toObject();
-        squirrelPipeline sqrlPipeline;
+        squirrelPipeline sqrlPipeline(databaseUUID);
 
         sqrlPipeline.ClusterMaxWallTime = jsonPipeline["ClusterMaxWallTime"].toInt();
         sqrlPipeline.ClusterMemory = jsonPipeline["ClusterMemory"].toInt();
@@ -1092,7 +1093,7 @@ qint64 squirrel::GetUnzipSize() {
 
     qint64 unzipSize(0);
 
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
 
     /* Analysis */
     q.prepare("select sum(Size) 'Size' from Analysis");
@@ -1139,7 +1140,7 @@ qint64 squirrel::GetUnzipSize() {
 qint64 squirrel::GetFileCount() {
     qint64 total(0);
 
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
 
     /* Analysis */
     q.prepare("select sum(FileCount) 'FileCount' from Analysis");
@@ -1188,7 +1189,7 @@ qint64 squirrel::GetObjectCount(QString object) {
     qint64 count(0);
     QString table;
 
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     if (object == "subject") table = "Subject";
     else if (object == "study") table = "Study";
     else if (object == "series") table = "Series";
@@ -1320,7 +1321,7 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
     Debug(QString("Adding [%1] files of type [%2] to rowID [%3]").arg(files.size()).arg(objectType).arg(rowid), __FUNCTION__);
 
     if (objectType == "series") {
-        squirrelSeries s;
+        squirrelSeries s(databaseUUID);
         s.SetObjectID(rowid);
         if (s.Get()) {
             foreach (QString f, files) {
@@ -1336,7 +1337,7 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
     }
 
     if (objectType == "experiment") {
-        squirrelExperiment e;
+        squirrelExperiment e(databaseUUID);
         e.SetObjectID(rowid);
         if (e.Get()) {
             foreach (QString f, files)
@@ -1347,7 +1348,7 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
     }
 
     if (objectType == "pipeline") {
-        squirrelPipeline p;
+        squirrelPipeline p(databaseUUID);
         p.SetObjectID(rowid);
         if (p.Get()) {
             foreach (QString f, files)
@@ -1358,7 +1359,7 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
     }
 
     if (objectType == "analysis") {
-        squirrelAnalysis a;
+        squirrelAnalysis a(databaseUUID);
         a.SetObjectID(rowid);
         if (a.Get()) {
             foreach (QString f, files)
@@ -1728,12 +1729,12 @@ QString squirrel::PrintDataDictionary(bool details) {
  * @return list of all experiments
  */
 QList<squirrelExperiment> squirrel::GetExperimentList() {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelExperiment> list;
     q.prepare("select ExperimentRowID from Experiment");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelExperiment e;
+        squirrelExperiment e(databaseUUID);
         e.SetObjectID(q.value("ExperimentRowID").toLongLong());
         if (e.Get()) {
             list.append(e);
@@ -1752,12 +1753,12 @@ QList<squirrelExperiment> squirrel::GetExperimentList() {
  * @return list of all pipelines
  */
 QList<squirrelPipeline> squirrel::GetPipelineList() {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelPipeline> list;
     q.prepare("select PipelineRowID from Pipeline");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelPipeline p;
+        squirrelPipeline p(databaseUUID);
         p.SetObjectID(q.value("PipelineRowID").toLongLong());
         if (p.Get()) {
             list.append(p);
@@ -1775,12 +1776,12 @@ QList<squirrelPipeline> squirrel::GetPipelineList() {
  * @return list of all subjects
  */
 QList<squirrelSubject> squirrel::GetSubjectList() {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelSubject> list;
     q.prepare("select SubjectRowID from Subject order by ID asc, SequenceNumber asc");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelSubject s;
+        squirrelSubject s(databaseUUID);
         s.SetObjectID(q.value("SubjectRowID").toLongLong());
         if (s.Get()) {
             s.SetDirFormat(SubjectDirFormat);
@@ -1801,13 +1802,13 @@ QList<squirrelSubject> squirrel::GetSubjectList() {
  * @return list of studies
  */
 QList<squirrelStudy> squirrel::GetStudyList(qint64 subjectRowID) {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelStudy> list;
     q.prepare("select StudyRowID from Study where SubjectRowID = :id order by StudyNumber asc, SequenceNumber asc");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelStudy s;
+        squirrelStudy s(databaseUUID);
         s.SetObjectID(q.value("StudyRowID").toLongLong());
         if (s.Get()) {
             s.SetDirFormat(SubjectDirFormat, StudyDirFormat);
@@ -1827,13 +1828,13 @@ QList<squirrelStudy> squirrel::GetStudyList(qint64 subjectRowID) {
  * @return list of series
  */
 QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelSeries> list;
     q.prepare("select SeriesRowID from Series where StudyRowID = :id order by SeriesNumber asc, SequenceNumber");
     q.bindValue(":id", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelSeries s;
+        squirrelSeries s(databaseUUID);
         s.SetObjectID(q.value("SeriesRowID").toLongLong());
         if (s.Get()) {
             s.SetDirFormat(SubjectDirFormat, StudyDirFormat, SeriesDirFormat);
@@ -1858,13 +1859,13 @@ QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
  * @return QList of squirrelAnalysis objects
  */
 QList<squirrelAnalysis> squirrel::GetAnalysisList(qint64 studyRowID) {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelAnalysis> list;
     q.prepare("select AnalysisRowID from Analysis where StudyRowID = :id");
     q.bindValue(":id", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelAnalysis a;
+        squirrelAnalysis a(databaseUUID);
         a.SetObjectID(q.value("AnalysisRowID").toLongLong());
         if (a.Get()) {
             list.append(a);
@@ -1884,13 +1885,13 @@ QList<squirrelAnalysis> squirrel::GetAnalysisList(qint64 studyRowID) {
  * @return QList of squirrelObservation objects
  */
 QList<squirrelObservation> squirrel::GetObservationList(qint64 subjectRowID) {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelObservation> list;
     q.prepare("select ObservationRowID from Observation where SubjectRowID = :id");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelObservation m;
+        squirrelObservation m(databaseUUID);
         m.SetObjectID(q.value("ObservationRowID").toLongLong());
         if (m.Get()) {
             list.append(m);
@@ -1909,13 +1910,13 @@ QList<squirrelObservation> squirrel::GetObservationList(qint64 subjectRowID) {
  * @return list of all squirrelIntervention objects
  */
 QList<squirrelIntervention> squirrel::GetInterventionList(qint64 subjectRowID) {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelIntervention> list;
     q.prepare("select InterventionRowID from Intervention where SubjectRowID = :id");
     q.bindValue(":id", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelIntervention d;
+        squirrelIntervention d(databaseUUID);
         d.SetObjectID(q.value("InterventionRowID").toLongLong());
         if (d.Get()) {
             list.append(d);
@@ -1933,12 +1934,12 @@ QList<squirrelIntervention> squirrel::GetInterventionList(qint64 subjectRowID) {
  * @return list of all groupAnalysis objects
  */
 QList<squirrelGroupAnalysis> squirrel::GetGroupAnalysisList() {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelGroupAnalysis> list;
     q.prepare("select GroupAnalysisRowID from GroupAnalysis");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelGroupAnalysis g;
+        squirrelGroupAnalysis g(databaseUUID);
         g.SetObjectID(q.value("GroupAnalysisRowID").toLongLong());
         if (g.Get()) {
             list.append(g);
@@ -1956,12 +1957,12 @@ QList<squirrelGroupAnalysis> squirrel::GetGroupAnalysisList() {
  * @return list of all dataDictionary objects
  */
 QList<squirrelDataDictionary> squirrel::GetDataDictionaryList() {
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelDataDictionary> list;
     q.prepare("select DataDictionaryRowID from DataDictionary");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
-        squirrelDataDictionary s;
+        squirrelDataDictionary s(databaseUUID);
         s.SetObjectID(q.value("DataDictionaryRowID").toInt());
         if (s.Get()) {
             list.append(s);
@@ -1980,7 +1981,7 @@ QList<squirrelDataDictionary> squirrel::GetDataDictionaryList() {
  * @return
  */
 squirrelSubject squirrel::GetSubject(qint64 subjectRowID) {
-    squirrelSubject s;
+    squirrelSubject s(databaseUUID);
     s.SetObjectID(subjectRowID);
     s.Get();
 
@@ -1997,7 +1998,7 @@ squirrelSubject squirrel::GetSubject(qint64 subjectRowID) {
  * @return
  */
 squirrelStudy squirrel::GetStudy(qint64 studyRowID) {
-    squirrelStudy s;
+    squirrelStudy s(databaseUUID);
     s.SetObjectID(studyRowID);
     s.Get();
 
@@ -2014,7 +2015,7 @@ squirrelStudy squirrel::GetStudy(qint64 studyRowID) {
  * @return
  */
 squirrelSeries squirrel::GetSeries(qint64 seriesRowID) {
-    squirrelSeries s;
+    squirrelSeries s(databaseUUID);
     s.SetObjectID(seriesRowID);
     s.Get();
 
@@ -2031,11 +2032,11 @@ squirrelSeries squirrel::GetSeries(qint64 seriesRowID) {
  * @return
  */
 squirrelAnalysis squirrel::GetAnalysis(qint64 analysisRowID) {
-    squirrelAnalysis s;
-    s.SetObjectID(analysisRowID);
-    s.Get();
+    squirrelAnalysis a(databaseUUID);
+    a.SetObjectID(analysisRowID);
+    a.Get();
 
-    return s;
+    return a;
 }
 
 
@@ -2048,11 +2049,11 @@ squirrelAnalysis squirrel::GetAnalysis(qint64 analysisRowID) {
  * @return
  */
 squirrelIntervention squirrel::GetIntervention(qint64 interventionRowID) {
-    squirrelIntervention s;
-    s.SetObjectID(interventionRowID);
-    s.Get();
+    squirrelIntervention i(databaseUUID);
+    i.SetObjectID(interventionRowID);
+    i.Get();
 
-    return s;
+    return i;
 }
 
 
@@ -2065,11 +2066,11 @@ squirrelIntervention squirrel::GetIntervention(qint64 interventionRowID) {
  * @return
  */
 squirrelObservation squirrel::GetObservation(qint64 observationRowID) {
-    squirrelObservation s;
-    s.SetObjectID(observationRowID);
-    s.Get();
+    squirrelObservation o(databaseUUID);
+    o.SetObjectID(observationRowID);
+    o.Get();
 
-    return s;
+    return o;
 }
 
 
@@ -2082,11 +2083,11 @@ squirrelObservation squirrel::GetObservation(qint64 observationRowID) {
  * @return
  */
 squirrelGroupAnalysis squirrel::GetGroupAnalysis(qint64 groupAnalysisRowID) {
-    squirrelGroupAnalysis s;
-    s.SetObjectID(groupAnalysisRowID);
-    s.Get();
+    squirrelGroupAnalysis g(databaseUUID);
+    g.SetObjectID(groupAnalysisRowID);
+    g.Get();
 
-    return s;
+    return g;
 }
 
 
@@ -2099,11 +2100,11 @@ squirrelGroupAnalysis squirrel::GetGroupAnalysis(qint64 groupAnalysisRowID) {
  * @return
  */
 squirrelDataDictionary squirrel::GetDataDictionary(qint64 dataDictionaryRowID) {
-    squirrelDataDictionary s;
-    s.SetObjectID(dataDictionaryRowID);
-    s.Get();
+    squirrelDataDictionary d(databaseUUID);
+    d.SetObjectID(dataDictionaryRowID);
+    d.Get();
 
-    return s;
+    return d;
 }
 
 
@@ -2116,11 +2117,11 @@ squirrelDataDictionary squirrel::GetDataDictionary(qint64 dataDictionaryRowID) {
  * @return
  */
 squirrelExperiment squirrel::GetExperiment(qint64 experimentRowID) {
-    squirrelExperiment s;
-    s.SetObjectID(experimentRowID);
-    s.Get();
+    squirrelExperiment e(databaseUUID);
+    e.SetObjectID(experimentRowID);
+    e.Get();
 
-    return s;
+    return e;
 }
 
 
@@ -2133,11 +2134,11 @@ squirrelExperiment squirrel::GetExperiment(qint64 experimentRowID) {
  * @return
  */
 squirrelPipeline squirrel::GetPipeline(qint64 pipelineRowID) {
-    squirrelPipeline s;
-    s.SetObjectID(pipelineRowID);
-    s.Get();
+    squirrelPipeline p(databaseUUID);
+    p.SetObjectID(pipelineRowID);
+    p.Get();
 
-    return s;
+    return p;
 }
 
 
@@ -2151,7 +2152,7 @@ squirrelPipeline squirrel::GetPipeline(qint64 pipelineRowID) {
  */
 qint64 squirrel::FindSubject(QString id) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select SubjectRowID from Subject where ID = :id");
     q.bindValue(":id", id);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2177,7 +2178,7 @@ qint64 squirrel::FindSubject(QString id) {
  */
 qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select a.StudyRowID from Study a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.StudyNumber = :studynum and b.ID = :id");
     q.bindValue(":studynum", studyNum);
     q.bindValue(":id", subjectID);
@@ -2203,7 +2204,7 @@ qint64 squirrel::FindStudy(QString subjectID, int studyNum) {
  */
 qint64 squirrel::FindStudyByUID(QString studyUID) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select StudyRowID from Study where StudyUID = :studyuid");
     q.bindValue(":studyuid", studyUID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2227,7 +2228,7 @@ qint64 squirrel::FindStudyByUID(QString studyUID) {
  */
 qint64 squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select * from Series a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.SeriesNumber = :seriesnum and b.StudyNumber = :studynum and c.ID = :id");
     q.bindValue(":seriesnum", seriesNum);
     q.bindValue(":studynum", studyNum);
@@ -2250,7 +2251,7 @@ qint64 squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
  */
 qint64 squirrel::FindSeriesByUID(QString seriesUID) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select SeriesRowID from Series where SeriesUID = :seriesuid");
     q.bindValue(":seriesuid", seriesUID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2273,7 +2274,7 @@ qint64 squirrel::FindSeriesByUID(QString seriesUID) {
  */
 qint64 squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisName) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select AnalysisRowID from Analysis a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.AnalyisName = :analysisname and b.StudyNumber = :studynum and c.ID = :id");
     q.bindValue(":analysisname", analysisName);
     q.bindValue(":studynum", studyNum);
@@ -2296,7 +2297,7 @@ qint64 squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisN
  */
 qint64 squirrel::FindExperiment(QString experimentName) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select ExperimentRowID from Experiment where ExperimentName = :experimentName");
     q.bindValue(":experimentName", experimentName);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2317,7 +2318,7 @@ qint64 squirrel::FindExperiment(QString experimentName) {
  */
 qint64 squirrel::FindPipeline(QString pipelineName) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select PipelineRowID from Pipeline where PipelineName = :pipelineName");
     q.bindValue(":pipelineName", pipelineName);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2338,7 +2339,7 @@ qint64 squirrel::FindPipeline(QString pipelineName) {
  */
 qint64 squirrel::FindGroupAnalysis(QString groupAnalysisName) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select GroupAnalysisRowID from GroupAnalysis where GroupAnalysisName = :groupAnalysisName");
     q.bindValue(":groupAnalysisName", groupAnalysisName);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2359,7 +2360,7 @@ qint64 squirrel::FindGroupAnalysis(QString groupAnalysisName) {
  */
 qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
     qint64 rowid(-1);
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select DataDictionaryRowID from DataDictionary where DataDictionaryName = :dataDictionaryName");
     q.bindValue(":dataDictionaryName", dataDictionaryName);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2433,7 +2434,7 @@ void squirrel::ResequenceSeries(qint64 studyRowID) {
 bool squirrel::RemoveSubject(qint64 subjectRowID) {
 
     /* get list of studies associated with this subject, and delete them */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select StudyRowID from Study where SubjectRowID = :subjectRowID");
     q.bindValue(":subjectRowID", subjectRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2454,7 +2455,7 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
 \
     /* remove the files, if any from the archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelSubject sqrlSubject;
+        squirrelSubject sqrlSubject(databaseUUID);
         sqrlSubject.SetObjectID(subjectRowID);
         sqrlSubject.Get();
         QString subjectArchivePath = sqrlSubject.VirtualPath();
@@ -2478,7 +2479,7 @@ bool squirrel::RemoveSubject(qint64 subjectRowID) {
 bool squirrel::RemoveStudy(qint64 studyRowID) {
 
     /* get list of studies associated with this subject, and delete them */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("select SeriesRowID from Series where StudyRowID = :studyRowID");
     q.bindValue(":studyRowID", studyRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2498,7 +2499,7 @@ bool squirrel::RemoveStudy(qint64 studyRowID) {
 
     /* remove files from the archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelSubject sqrlStudy;
+        squirrelSubject sqrlStudy(databaseUUID);
         sqrlStudy.SetObjectID(studyRowID);
         sqrlStudy.Get();
         QString studyArchivePath = sqrlStudy.VirtualPath();
@@ -2522,14 +2523,14 @@ bool squirrel::RemoveStudy(qint64 studyRowID) {
 bool squirrel::RemoveSeries(qint64 seriesRowID) {
 
     /* delete from database */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from Series where SeriesRowID = :seriesRowID");
     q.bindValue(":seriesRowID", seriesRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     /* remove files from archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelSeries sqrlSeries;
+        squirrelSeries sqrlSeries(databaseUUID);
         sqrlSeries.SetObjectID(seriesRowID);
         sqrlSeries.Get();
         QString seriesArchivePath = sqrlSeries.VirtualPath();
@@ -2548,14 +2549,14 @@ bool squirrel::RemoveSeries(qint64 seriesRowID) {
 bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
 
     /* delete from database */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from Analysis where AnalysisRowID = :analysisRowID");
     q.bindValue(":analysisRowID", analysisRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     /* remove files from archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelAnalysis sqrlAnalysis;
+        squirrelAnalysis sqrlAnalysis(databaseUUID);
         sqrlAnalysis.SetObjectID(analysisRowID);
         sqrlAnalysis.Get();
         QString analysisArchivePath = sqrlAnalysis.VirtualPath();
@@ -2574,14 +2575,14 @@ bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
 bool squirrel::RemoveExperiment(qint64 experimentRowID) {
 
     /* delete from database */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from Experiment where ExperimentRowID = :experimentRowID");
     q.bindValue(":experimentRowID", experimentRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     /* remove files from archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelExperiment sqrlExperiment;
+        squirrelExperiment sqrlExperiment(databaseUUID);
         sqrlExperiment.SetObjectID(experimentRowID);
         sqrlExperiment.Get();
         QString experimentArchivePath = sqrlExperiment.VirtualPath();
@@ -2600,7 +2601,7 @@ bool squirrel::RemoveExperiment(qint64 experimentRowID) {
 bool squirrel::RemovePipeline(qint64 pipelineRowID) {
 
     /* delete from database */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from Pipeline where PipelineRowID = :pipelineRowID");
     q.bindValue(":pipelineRowID", pipelineRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2611,7 +2612,7 @@ bool squirrel::RemovePipeline(qint64 pipelineRowID) {
 
     /* remove files from archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelPipeline sqrlPipeline;
+        squirrelPipeline sqrlPipeline(databaseUUID);
         sqrlPipeline.SetObjectID(pipelineRowID);
         sqrlPipeline.Get();
         QString pipelineArchivePath = sqrlPipeline.VirtualPath();
@@ -2630,14 +2631,14 @@ bool squirrel::RemovePipeline(qint64 pipelineRowID) {
 bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
 
     /* delete from database */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from GroupAnalysis where GroupAnalysisRowID = :groupAnalysisRowID");
     q.bindValue(":groupAnalysisRowID", groupAnalysisRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     /* remove files from archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelGroupAnalysis sqrlGroupAnalysis;
+        squirrelGroupAnalysis sqrlGroupAnalysis(databaseUUID);
         sqrlGroupAnalysis.SetObjectID(groupAnalysisRowID);
         sqrlGroupAnalysis.Get();
         QString groupAnalysisArchivePath = sqrlGroupAnalysis.VirtualPath();
@@ -2656,14 +2657,14 @@ bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
 bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
 
     /* delete from database */
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from DataDictionary where DataDictionaryRowID = :dataDictionaryRowID");
     q.bindValue(":dataDictionaryRowID", dataDictionaryRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     /* remove files from archive */
     if (fileMode == FileMode::ExistingPackage) {
-        squirrelDataDictionary sqrlDataDictionary;
+        squirrelDataDictionary sqrlDataDictionary(databaseUUID);
         sqrlDataDictionary.SetObjectID(dataDictionaryRowID);
         sqrlDataDictionary.Get();
         QString dataDictionaryArchivePath = sqrlDataDictionary.VirtualPath();
@@ -2681,7 +2682,7 @@ bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
 
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from Intervention where InterventionRowID = :InterventionRowID");
     q.bindValue(":InterventionRowID", InterventionRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
@@ -2695,7 +2696,7 @@ bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
 /* ------------------------------------------------------------ */
 bool squirrel::RemoveObservation(qint64 observationRowID) {
 
-    QSqlQuery q(QSqlDatabase::database("squirrel"));
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
     q.prepare("delete from Observation where ObservationRowID = :observationRowID");
     q.bindValue(":observationRowID", observationRowID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);

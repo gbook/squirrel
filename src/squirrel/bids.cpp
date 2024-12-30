@@ -100,7 +100,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
         QString ID = subjdir;
         /* load the subject */
-        squirrelSubject sqrlSubject;
+        squirrelSubject sqrlSubject(sqrl->GetDatabaseUUID());
         qint64 subjectRowID = sqrl->FindSubject(ID);
         if (subjectRowID < 0) {
             sqrlSubject.ID = ID;
@@ -246,7 +246,7 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
         if (filename.endsWith("_scans.tsv")) {
 
             /* get the subject */
-            squirrelSubject sqrlSubject;
+            squirrelSubject sqrlSubject(sqrl->GetDatabaseUUID());
             qint64 subjectRowID = sqrl->FindSubject(ID);
             if (subjectRowID < 0) {
                 sqrlSubject.ID = ID;
@@ -256,13 +256,13 @@ bool bids::LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl) {
 
             /* create a session/study and add it to the subject */
             int studyRowID;
-            squirrelStudy sqrlStudy;
+            squirrelStudy sqrlStudy(sqrl->GetDatabaseUUID());
             sqrlStudy.subjectRowID = subjectRowID;
             sqrlStudy.Store();
             studyRowID = sqrlStudy.GetObjectID();
 
             /* create an analysis */
-            squirrelAnalysis sqrlAnalysis;
+            squirrelAnalysis sqrlAnalysis(sqrl->GetDatabaseUUID());
             sqrlAnalysis.PipelineName = "analysis";
             sqrlAnalysis.LastMessage = "BIDS imported analysis file";
             sqrlAnalysis.studyRowID = studyRowID;
@@ -315,13 +315,13 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
     sqrl->Log(QString("Reading BIDS session directory [%1] --> into squirrel study [%2]").arg(sesdir).arg(studyNum), __FUNCTION__);
 
     /* load the subject */
-    squirrelSubject subject;
+    squirrelSubject subject(sqrl->GetDatabaseUUID());
     subject.SetObjectID(subjectRowID);
     subject.Get();
 
     /* create a new study... */
     qint64 studyRowID = sqrl->FindStudy(subject.ID, studyNum);
-    squirrelStudy study;
+    squirrelStudy study(sqrl->GetDatabaseUUID());
     if (studyRowID < 0) {
         studyNum = subject.GetNextStudyNumber();
         study.StudyNumber = studyNum;
@@ -376,7 +376,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
 
                     sqrl->Debug(QString("Checkpoint 1 - SubjectID [%1]  protocol [%2]  seriesNum [%3]").arg(subject.ID).arg(protocol).arg(seriesNum), __FUNCTION__);
 
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -409,7 +409,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     protocol += run;
                     qint64 seriesNum = study.GetNextSeriesNumber();
 
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -447,7 +447,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a seriesRowID */
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -488,7 +488,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a seriesRowID */
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -531,7 +531,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -572,7 +572,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -607,7 +607,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
                     qint64 seriesNum = study.GetNextSeriesNumber();
 
                     /* create a subjectRowID if it doesn't exist */
-                    squirrelSeries series;
+                    squirrelSeries series(sqrl->GetDatabaseUUID());
                     series.SeriesNumber = seriesNum;
                     series.studyRowID = studyRowID;
                     series.Protocol = protocol;
@@ -662,7 +662,7 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
             QString strain = tsv[i]["strain"];
 
             /* add a subject */
-            squirrelSubject sqrlSubj;
+            squirrelSubject sqrlSubj(sqrl->GetDatabaseUUID());
             sqrlSubj.ID = id;
             sqrlSubj.Sex = sex;
             sqrlSubj.Gender = sex;
@@ -670,28 +670,28 @@ bool bids::LoadParticipantsFile(QString f, squirrel *sqrl) {
             qint64 subjectRowID = sqrlSubj.GetObjectID();
 
             /* add handedness as a observation */
-            squirrelObservation sqrlObs;
+            squirrelObservation sqrlObs(sqrl->GetDatabaseUUID());
             sqrlObs.Description = "Handedness";
             sqrlObs.ObservationName = "Handedness";
             sqrlObs.Value = hand;
             sqrlObs.subjectRowID = subjectRowID;
             sqrlObs.Store();
 
-            squirrelObservation sqrlObs2;
+            squirrelObservation sqrlObs2(sqrl->GetDatabaseUUID());
             sqrlObs2.Description = "Species";
             sqrlObs2.ObservationName = "Species";
             sqrlObs2.Value = species;
             sqrlObs2.subjectRowID = subjectRowID;
             sqrlObs2.Store();
 
-            squirrelObservation sqrlObs3;
+            squirrelObservation sqrlObs3(sqrl->GetDatabaseUUID());
             sqrlObs3.Description = "Strain";
             sqrlObs3.ObservationName = "Strain";
             sqrlObs3.Value = strain;
             sqrlObs3.subjectRowID = subjectRowID;
             sqrlObs3.Store();
 
-            squirrelObservation sqrlObs4;
+            squirrelObservation sqrlObs4(sqrl->GetDatabaseUUID());
             sqrlObs4.Description = "age";
             sqrlObs4.ObservationName = "age";
             sqrlObs4.Value = age;
@@ -739,7 +739,7 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
 
     //double tr = root.value("RepetitionTime").toDouble();
 
-    squirrelExperiment exp;
+    squirrelExperiment exp(sqrl->GetDatabaseUUID());
     exp.ExperimentName = experimentName;
     //exp.virtualPath = QString("experiments/%1").arg(experimentName);
     exp.Store();

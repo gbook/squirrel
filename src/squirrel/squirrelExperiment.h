@@ -33,7 +33,7 @@
 class squirrelExperiment
 {
 public:
-    squirrelExperiment();
+    squirrelExperiment(QString dbID);
     QJsonObject ToJSON();   /* returns a JSON object */
     QString PrintExperiment(); /* prints the object */
     bool Get();             /* gets the object data from the database */
@@ -44,6 +44,7 @@ public:
     void SetObjectID(qint64 id) { objectID = id; }
     QString VirtualPath();
     QList<QPair<QString,QString>> GetStagedFileList();
+    QString GetDatabaseUUID() { return databaseUUID; }
 
     /* JSON elements */
     QString ExperimentName;     /*!< experiment name (required) */
@@ -56,6 +57,7 @@ private:
     bool valid = false;
     QString err;
     qint64 objectID = -1;
+    QString databaseUUID;
 };
 
 #endif // SQUIRRELEXPERIMENT_H

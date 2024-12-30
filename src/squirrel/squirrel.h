@@ -29,6 +29,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QtSql>
+#include <QUuid>
 #include "squirrelSubject.h"
 #include "squirrelStudy.h"
 #include "squirrelSeries.h"
@@ -116,7 +117,7 @@ public:
     qint64 GetFileCount();
     qint64 GetObjectCount(QString object);
 
-    /* find objects, return rowID */
+    /* find objects, and return rowID */
     qint64 FindAnalysis(QString subjectID, int studyNum, QString analysisName);
     qint64 FindDataDictionary(QString dataDictionaryName);
     qint64 FindExperiment(QString experimentName);
@@ -181,6 +182,7 @@ public:
     QString PrintTree();
 
     QSqlDatabase db;
+    QString GetDatabaseUUID() { return databaseUUID; }
 
 private:
     bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
@@ -206,6 +208,8 @@ private:
     QString systemTempDir;
 
     FileMode fileMode;
+
+    QString databaseUUID; /* necessary to create unique DB connections if more than one squirrel package is opened at a time */
 
     bool debug;
     bool debugSQL;
