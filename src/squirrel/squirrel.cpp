@@ -125,18 +125,18 @@ bool squirrel::Get7zipLibPath() {
 #ifdef Q_OS_WINDOWS
     if (QFile::exists("C:/Program Files/7-Zip/7z.dll")) {
         p7zipLibPath = "C:/Program Files/7-Zip/7z.dll";
-        Log("Found 7zip path C:/Program Files/7-Zip/7z.dll", __FUNCTION__);
+        Debug("Found 7zip path C:/Program Files/7-Zip/7z.dll", __FUNCTION__);
         return true;
     }
 #else
     if (QFile::exists("/usr/libexec/p7zip/7z.so")) {
         p7zipLibPath = "/usr/libexec/p7zip/7z.so";
-        Log("Found 7zip path /usr/libexec/p7zip/7z.so", __FUNCTION__);
+        Debug("Found 7zip path /usr/libexec/p7zip/7z.so", __FUNCTION__);
         return true;
     }
     else if (QFile::exists("/usr/libexec/p7zip/7za.so")) {
         p7zipLibPath = "/usr/libexec/p7zip/7za.so";
-        Log("Found 7zip path /usr/libexec/p7zip/7za.so", __FUNCTION__);
+        Debug("Found 7zip path /usr/libexec/p7zip/7za.so", __FUNCTION__);
         return true;
     }
 #endif
@@ -244,7 +244,7 @@ bool squirrel::InitializeDatabase() {
     q.prepare("PRAGMA synchronous=NORMAL");
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting synchronous=NORMAL", __FUNCTION__); utils::Print("Error setting synchronous=NORMAL"); return false; }
 
-    Log("Successfully initialized database tables", __FUNCTION__);
+    Debug("Successfully initialized database tables", __FUNCTION__);
     return true;
 }
 
@@ -294,7 +294,7 @@ bool squirrel::Read() {
         return false;
     }
     else {
-        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())), __FUNCTION__);
+        Debug(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())), __FUNCTION__);
     }
 
     /* get the JSON document and root object */
@@ -327,7 +327,7 @@ bool squirrel::Read() {
         QJsonObject dataObj = dataVal.toObject();
         jsonSubjects = dataObj["subjects"].toArray();
         numSubjects = jsonSubjects.size();
-        Log(QString("Found [%1] subjects").arg(numSubjects), __FUNCTION__);
+        Debug(QString("Found [%1] subjects").arg(numSubjects), __FUNCTION__);
     }
     else if (root.contains("subjects")) {
         jsonSubjects = root["subjects"].toArray();
