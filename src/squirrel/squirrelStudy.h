@@ -54,6 +54,7 @@ public:
     QList<QPair<QString,QString>> GetStagedFileList();
     int GetNextSeriesNumber();
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     qint64 subjectRowID;
 

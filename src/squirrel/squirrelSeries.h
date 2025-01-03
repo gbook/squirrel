@@ -54,6 +54,7 @@ public:
     void AnonymizeParams();
     QList<QPair<QString,QString>> GetStagedFileList();
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     qint64 studyRowID;
     qint64 experimentRowID = -1;

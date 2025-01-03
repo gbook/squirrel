@@ -692,9 +692,9 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
 
     /* extract the original package to disk */
     QString tmpDir = sqrl->GetSystemTempDir() + "/squirrel-" + utils::GenerateRandomString(10);
-    QString m2, m3;
-    utils::MakePath(tmpDir,m2);
-    sqrl->Extract(tmpDir, m3);
+    QString m2;
+    utils::MakePath(tmpDir, m2);
+    //sqrl->Extract(tmpDir, m3);
 
     /* create N packages, one for each modality */
     foreach (QString modality, mods) {
@@ -705,7 +705,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
         squirrel *sqrl2 = new squirrel();
         sqrl2->SetFileMode(FileMode::NewPackage);
         sqrl2->SetPackagePath(newPackagePath);
-        sqrl2->SetSystemTempDir();
+        //sqrl2->SetSystemTempDir();
 
         QList <squirrelSubject> subjects = sqrl->GetSubjectList();
         if (subjects.size() > 0) {
@@ -717,8 +717,38 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                             if (study.Get()) {
                                 /* extract the files for the matching modality */
                                 if (study.Modality == modality) {
-                                    QString fileArchivePath = QString("data/%1/%2").arg(subject.ID).arg(study.StudyNumber);
 
+                                    /* copy original subject to new subject */
+                                    squirrelSubject newSubject = subject;
+                                    newSubject.SetDatabaseUUID(subject.GetDatabaseUUID());
+                                    newSubject.Store();
+                                    qint64 subjectRowID = newSubject.GetObjectID();
+
+                                    /* copy original study to new study */
+                                    squirrelStudy newStudy = study;
+                                    newStudy.SetDatabaseUUID(study.GetDatabaseUUID());
+                                    newStudy.Store();
+                                    qint64 studyRowID = newStudy.GetObjectID();
+
+                                    /* get series */
+                                    QList <squirrelSeries> serieses = sqrl->GetSeriesList(study.GetObjectID());
+                                    if (serieses.size() > 0) {
+                                        foreach (squirrelSeries series, serieses) {
+                                            if (series.Get()) {
+
+                                                /* copy original series to new series */
+                                                squirrelSeries newSeries = series;
+                                                newSeries.SetDatabaseUUID(series.GetDatabaseUUID());
+                                                newSeries.Store();
+                                                qint64 seriesRowID = newSeries.GetObjectID();
+
+                                                QString m4;
+                                                QString archiveSeriesPath = QString("data/%1/%2/%3").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber);
+                                                QString newSeriesPath = QString("data/%1/%2").arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newSeries.SeriesNumber);
+                                                sqrl->ExtractArchiveFilesToDirectory(sqrl->GetPackagePath(), archiveSeriesPath, newSeriesPath, m4);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else { utils::Print("Error getting study object..."); }

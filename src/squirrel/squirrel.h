@@ -185,6 +185,7 @@ public:
 
     QSqlDatabase db;
     QString GetDatabaseUUID() { return databaseUUID; }
+    bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
 private:
     bool DatabaseConnect();
@@ -201,7 +202,6 @@ private:
     bool GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m);
     bool RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m);
     bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
-    bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
     QString workingDir;
     QString logfile;

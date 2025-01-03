@@ -44,6 +44,7 @@ public:
     qint64 GetObjectID() { return objectID; }
     void SetObjectID(qint64 id) { objectID = id; }
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     qint64 subjectRowID;
 

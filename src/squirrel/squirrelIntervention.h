@@ -46,6 +46,7 @@ public:
     qint64 GetObjectID() { return objectID; }
     void SetObjectID(qint64 id) { objectID = id; }
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     /* squirrel database variables */
     qint64 subjectRowID;        /*!< database row ID of the parent object */

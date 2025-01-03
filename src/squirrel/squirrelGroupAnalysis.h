@@ -46,6 +46,7 @@ public:
     QString VirtualPath();
     QList<QPair<QString,QString>> GetStagedFileList();
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     /* JSON elements */
     QString GroupAnalysisName;  /*!< name of the group analysis */

@@ -87,6 +87,7 @@ public:
     QString VirtualPath();
     QList<QPair<QString,QString>> GetStagedFileList();
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     /* JSON elements */
     QDateTime CreateDate;           /*!< date the pipeline was created */

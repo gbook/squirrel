@@ -47,6 +47,7 @@ public:
     QString VirtualPath();
     QList<QPair<QString,QString>> GetStagedFileList();
     QString GetDatabaseUUID() { return databaseUUID; }
+    void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     /* squirrel database variables */
     qint64 studyRowID;          /*!< database row id of the parent study */
