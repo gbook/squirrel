@@ -3138,6 +3138,18 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetSystemTempDir ------------------------------------- */
+/* ------------------------------------------------------------ */
+QString squirrel::GetSystemTempDir() {
+
+    if (systemTempDir == "")
+        return "/tmp";
+    else
+        return systemTempDir;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- GetJsonHeader ---------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::GetJsonHeader(QJsonDocument &jdoc) {
@@ -3196,4 +3208,16 @@ bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString fileP
         m = "Unable to extract files from archive using bit7z library [" + QString(ex.what()) + "]";
         return false;
     }
+}
+
+
+qint64 squirrel::GetFreeDiskSpace() {
+
+    QStorageInfo storage = QStorageInfo::root();
+    storage.setPath(systemTempDir);
+
+    if (storage.isReadOnly())
+        return 0;
+    else
+        return storage.bytesAvailable();
 }

@@ -639,6 +639,13 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
     squirrel *sqrl = new squirrel();
     sqrl->SetFileMode(FileMode::ExistingPackage);
     sqrl->SetPackagePath(packagePath);
+    qint64 unzippedSize = sqrl->GetUnzipSize();
+    qint64 totalSpaceRequired = unzippedSize * 3; /* 3x the unzipped size needed */
+    if (totalSpaceRequired > sqrl->GetFreeDiskSpace()) {
+        m = QString("Not enough free space on disk to perform this operation. %1 bytes free space needed, but only %1 bytes free").arg(totalSpaceRequired).arg(sqrl->GetFreeDiskSpace());
+        return false;
+    }
+
     if (sqrl->Read()) {
         utils::Print("Read package [" + packagePath + "] successfully");
     }
@@ -681,6 +688,12 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
     /* get unique list of modalities */
     QStringList mods(modalities.begin(), modalities.end());
     utils::Print(mods.join(", "));
+
+    /* extract the original package to disk */
+    QString tmpDir = sqrl->GetSystemTempDir() + "/squirrel-" + utils::GenerateRandomString(10);
+    QString m2, m3;
+    utils::MakePath(tmpDir,m2);
+    sqrl->Extract(tmpDir, m3);
 
     /* create N packages, one for each modality */
     foreach (QString modality, mods) {

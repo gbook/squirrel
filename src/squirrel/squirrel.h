@@ -68,6 +68,7 @@ public:
     void SetOverwritePackage(bool o);
     void SetQuickRead(bool q);
     void SetSystemTempDir(QString tmpdir);
+    QString GetSystemTempDir();
     bool Extract(QString destinationDir, QString &m);
     bool GetJsonHeader(QJsonDocument &jdoc);
     bool UpdateJsonHeader(QString json);
@@ -150,6 +151,7 @@ public:
 
     /* package information */
     qint64 GetUnzipSize();
+    qint64 GetFreeDiskSpace(); /* this is not named GetDiskFreeSpace() because of collision with Windows API */
 
     /* validation functions */
     QString GetTempDir();
