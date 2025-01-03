@@ -683,6 +683,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
     }
     else {
         utils::Print("Package contains no subjects. Nothing to split by modality...");
+        return true;
     }
 
     /* get unique list of modalities */
@@ -704,6 +705,30 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
         squirrel *sqrl2 = new squirrel();
         sqrl2->SetFileMode(FileMode::NewPackage);
         sqrl2->SetPackagePath(newPackagePath);
+        sqrl2->SetSystemTempDir();
+
+        QList <squirrelSubject> subjects = sqrl->GetSubjectList();
+        if (subjects.size() > 0) {
+            foreach (squirrelSubject subject, subjects) {
+                if (subject.Get()) {
+                    QList <squirrelStudy> studies = sqrl->GetStudyList(subject.GetObjectID());
+                    if (studies.size() > 0) {
+                        foreach (squirrelStudy study, studies) {
+                            if (study.Get()) {
+                                /* extract the files for the matching modality */
+                                if (study.Modality == modality) {
+                                    QString fileArchivePath = QString("data/%1/%2").arg(subject.ID).arg(study.StudyNumber);
+
+                                }
+                            }
+                            else { utils::Print("Error getting study object..."); }
+                        }
+                    }
+                }
+                else { utils::Print("Error getting subject object..."); }
+            }
+        }
+
         delete sqrl2;
     }
 
