@@ -185,18 +185,21 @@ public:
     QString GetDatabaseUUID() { return databaseUUID; }
 
 private:
-    bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
-    bool CompressDirectoryToArchive(QString dir, QString archivePath, QString &m);
     bool DatabaseConnect();
     bool DeleteTempDir(QString dir);
-    bool ExtractArchiveToDirectory(QString archivePath, QString destinationPath, QString &m);
-    bool ExtractFileFromArchive(QString archivePath, QString filePath, QString &fileContents);
-    bool Get7zipLibPath();
     bool InitializeDatabase();
     bool MakeTempDir(QString &dir);
+
+    /* 7zip archive functions */
+    bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
+    bool CompressDirectoryToArchive(QString dir, QString archivePath, QString &m);
+    bool ExtractArchiveToDirectory(QString archivePath, QString destinationPath, QString &m);
+    bool ExtractArchiveFileToMemory(QString archivePath, QString filePath, QString &fileContents);
+    bool Get7zipLibPath();
+    bool GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m);
     bool RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m);
     bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
-    bool GetFileListingFromArchive(QString archivePath, QString subDir, QStringList &files, QString &m);
+    bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
     QString workingDir;
     QString logfile;
