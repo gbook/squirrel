@@ -79,6 +79,7 @@ squirrel::squirrel(bool dbg, bool q)
     quickRead = true;
     quiet = q;
     databaseUUID = QUuid::createUuid().toString();
+    Log(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
 
     if (!DatabaseConnect()) {
         Log(QString("Error connecting to database. Unable to initilize squirrel library"), __FUNCTION__);
@@ -162,8 +163,8 @@ bool squirrel::DatabaseConnect() {
     }
 
     if (debug) {
-        QFile::remove("/tmp/sqlite.db");
-        db.setDatabaseName("/tmp/sqlite.db");
+        QFile::remove(QDir::tempPath() + "/sqlite.db");
+        db.setDatabaseName(QDir::tempPath() + "sqlite.db");
     }
     else
         db.setDatabaseName(":memory:");
@@ -1263,11 +1264,11 @@ QString squirrel::PrintPackage() {
 bool squirrel::MakeTempDir(QString &dir) {
 
     QString d;
-    #ifdef Q_OS_WINDOWS
-        d = QString("C:/tmp/%1").arg(utils::GenerateRandomString(20));
-    #else
-    d = QString("/tmp/%1").arg(utils::GenerateRandomString(20));
-    #endif
+    //#ifdef Q_OS_WINDOWS
+    //    d = QString("C:/tmp/%1").arg(utils::GenerateRandomString(20));
+    //#else
+    d = QString(QDir::tempPath() + "%1").arg(utils::GenerateRandomString(20));
+    //#endif
 
     QString m;
     if (utils::MakePath(d, m)) {
@@ -1395,10 +1396,10 @@ QString squirrel::GetTempDir() {
  */
 void squirrel::Log(QString s, QString func) {
     if (s.trimmed() != "") {
-        log.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
-        logBuffer.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+        log.append(QString("%1::squirrel::%2() %3\n").arg(databaseUUID).arg(func).arg(s));
+        logBuffer.append(QString("%1::squirrel::%2()[%2] %3\n").arg(databaseUUID).arg(func).arg(s));
         if (!quiet) {
-            utils::Print(QString("squirrel::%1() %2").arg(func).arg(s));
+            utils::Print(QString("%1::squirrel::%2()[%2] %3").arg(databaseUUID).arg(func).arg(s));
         }
     }
 }
@@ -1410,9 +1411,9 @@ void squirrel::Log(QString s, QString func) {
 void squirrel::Debug(QString s, QString func) {
     if (debug) {
         if (s.trimmed() != "") {
-            log.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
-            logBuffer.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
-            utils::Print(QString("Debug squirrel::%1() %2").arg(func).arg(s));
+            log.append(QString("Debug squirrel::%1()[%2] %3\n").arg(func).arg(databaseUUID).arg(s));
+            logBuffer.append(QString("Debug squirrel::%1()[%2] %3\n").arg(func).arg(databaseUUID).arg(s));
+            utils::Print(QString("Debug squirrel::%1()[%2] %3").arg(func).arg(databaseUUID).arg(s));
         }
     }
 }
@@ -3121,8 +3122,8 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
     tmpdir = tmpdir.trimmed();
 
     if (tmpdir == "") {
-        systemTempDir = "/tmp";
-        Log("Specified systemTempDir is blank, using default of /tmp", __FUNCTION__);
+        systemTempDir = QDir::tempPath();
+        Log("Specified systemTempDir is blank, using default of " + QDir::tempPath(), __FUNCTION__);
     }
     else {
         if (QFile::exists(tmpdir)) {
@@ -3130,8 +3131,8 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
             Log("Using systemTempDir [" + tmpdir + "]", __FUNCTION__);
         }
         else {
-            systemTempDir = "/tmp";
-            Log("Specified systemTempDir [" + tmpdir + "] does not exist, using default of /tmp", __FUNCTION__);
+            systemTempDir = QDir::tempPath();
+            Log("Specified systemTempDir [" + tmpdir + "] does not exist, using default of " + QDir::tempPath(), __FUNCTION__);
         }
     }
 }
@@ -3143,7 +3144,7 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
 QString squirrel::GetSystemTempDir() {
 
     if (systemTempDir == "")
-        return "/tmp";
+        return QDir::tempPath();
     else
         return systemTempDir;
 }
