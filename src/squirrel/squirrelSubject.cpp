@@ -116,7 +116,7 @@ bool squirrelSubject::Store() {
         q.bindValue(":Ethnicity2", Ethnicity2);
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
-        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
         objectID = q.lastInsertId().toInt();
     }
     /* ... otherwise update */
@@ -133,7 +133,7 @@ bool squirrelSubject::Store() {
         q.bindValue(":Ethnicity2", Ethnicity2);
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
-        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__, true);
     }
 
     return true;
@@ -160,6 +160,7 @@ QString squirrelSubject::PrintDetails() {
     str += utils::Print(QString("\t\tSubjectID: %1").arg(ID));
     str += utils::Print(QString("\t\tSubjectRowID: %1").arg(objectID));
     str += utils::Print(QString("\t\tVirtualPath: %1").arg(VirtualPath()));
+    str += utils::Print(QString("\t\tDatabaseUUID: %1").arg(databaseUUID));
 
     return str;
 }

@@ -702,7 +702,9 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
         QString newPackagePath = finfo.absolutePath() + "/" + finfo.baseName() + "-" + modality + "." + finfo.completeSuffix();
         utils::Print("Creating new package [" + newPackagePath + "]");
 
-        squirrel *sqrl2 = new squirrel();
+        squirrel *sqrl2 = new squirrel(true);
+        //sqrl2->SetDebugSQL(true);
+        sqrl2->SetDebug(true);
         sqrl2->SetFileMode(FileMode::NewPackage);
         sqrl2->SetPackagePath(newPackagePath);
         QString newDbID = sqrl2->GetDatabaseUUID();
@@ -727,7 +729,9 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                         /* create this subject if they don't already exist, and copy original subject to new subject */
                                         //newSubject = subject;
                                         newSubject.SetDatabaseUUID(newDbID);
+                                        newSubject.SetObjectID(-1);
                                         newSubject.Store();
+                                        newSubject.PrintDetails();
                                         newSubjectRowID = newSubject.GetObjectID();
                                         sqrl2->Log(QString("Did not find subject [%1] in sqrl2. Created new subjectRowID [%2]").arg(subject.ID).arg(newSubjectRowID), __FUNCTION__);
                                     }
@@ -735,11 +739,13 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                         /* get the sqrl2 subject that already exists */
                                         sqrl2->Log(QString("Using existing sqrl2 subjectRowID [%1]").arg(newSubjectRowID), __FUNCTION__);
                                         newSubject = sqrl2->GetSubject(newSubjectRowID);
+                                        //newSubject.Get();
                                     }
 
                                     /* copy original study to new study */
                                     squirrelStudy newStudy = study;
                                     newStudy.SetDatabaseUUID(newDbID);
+                                    newStudy.SetObjectID(-1); /* reset the rowID */
                                     newStudy.subjectRowID = newSubjectRowID;
                                     newStudy.Store();
                                     qint64 newStudyRowID = newStudy.GetObjectID();
@@ -754,6 +760,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                                 /* copy original series to new series */
                                                 squirrelSeries newSeries = series;
                                                 newSeries.SetDatabaseUUID(newDbID);
+                                                newSeries.SetObjectID(-1); /* reset the rowID */
                                                 newSeries.studyRowID = newStudyRowID;
                                                 newSeries.Store();
                                                 qint64 newSeriesRowID = newSeries.GetObjectID();
@@ -761,7 +768,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
 
                                                 /* extract files from original package and add them to the new package */
                                                 QString m3;
-                                                QString archiveSeriesPath = QString("data/%1/%2/%3").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber);
+                                                QString archiveSeriesPath = QString("data/%1/%2/%3/").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber);
                                                 QString newSeriesPath = QString("%1/data/%2/%3").arg(tmpDir).arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newSeries.SeriesNumber);
                                                 utils::MakePath(newSeriesPath, m3);
 
@@ -784,6 +791,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                 else { utils::Print("Error getting subject object..."); }
             }
         }
+        sqrl2->Print();
         sqrl2->Write(true);
         delete sqrl2;
     }

@@ -78,7 +78,7 @@ squirrel::squirrel(bool dbg, bool q)
     isValid = true;
     quickRead = true;
     quiet = q;
-    databaseUUID = QUuid::createUuid().toString();
+    databaseUUID = QUuid::createUuid().toString(QUuid::WithoutBraces);
     Log(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
 
     if (!DatabaseConnect()) {
@@ -98,8 +98,7 @@ squirrel::squirrel(bool dbg, bool q)
     }
 
     Log(QString("Created squirrel object."), __FUNCTION__);
-    if (debug)
-        Debug("Squirrel is running in debug mode", __FUNCTION__);
+    Debug("Squirrel is running in debug mode", __FUNCTION__);
 }
 
 
@@ -163,14 +162,14 @@ bool squirrel::DatabaseConnect() {
     }
 
     if (debug) {
-        QFile::remove(QDir::tempPath() + "/sqlite.db");
-        db.setDatabaseName(QDir::tempPath() + "sqlite.db");
+        QFile::remove(QDir::tempPath() + "/" + databaseUUID + "-sqlite.db");
+        db.setDatabaseName(QDir::tempPath() + "/" + databaseUUID + "-sqlite.db");
     }
     else
         db.setDatabaseName(":memory:");
 
     if (db.open()) {
-        Debug(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
+        Log(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
         return true;
     }
     else {
@@ -1396,10 +1395,10 @@ QString squirrel::GetTempDir() {
  */
 void squirrel::Log(QString s, QString func) {
     if (s.trimmed() != "") {
-        log.append(QString("%1::squirrel::%2() %3\n").arg(databaseUUID).arg(func).arg(s));
-        logBuffer.append(QString("%1::squirrel::%2()[%2] %3\n").arg(databaseUUID).arg(func).arg(s));
+        log.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+        logBuffer.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
         if (!quiet) {
-            utils::Print(QString("%1::squirrel::%2()[%2] %3").arg(databaseUUID).arg(func).arg(s));
+            utils::Print(QString("squirrel::%1() %2").arg(func).arg(s));
         }
     }
 }
@@ -1411,9 +1410,9 @@ void squirrel::Log(QString s, QString func) {
 void squirrel::Debug(QString s, QString func) {
     if (debug) {
         if (s.trimmed() != "") {
-            log.append(QString("Debug squirrel::%1()[%2] %3\n").arg(func).arg(databaseUUID).arg(s));
-            logBuffer.append(QString("Debug squirrel::%1()[%2] %3\n").arg(func).arg(databaseUUID).arg(s));
-            utils::Print(QString("Debug squirrel::%1()[%2] %3").arg(func).arg(databaseUUID).arg(s));
+            log.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
+            logBuffer.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
+            utils::Print(QString("Debug squirrel::%1() %2").arg(func).arg(s));
         }
     }
 }
@@ -3076,6 +3075,23 @@ void squirrel::SetDebugSQL(bool d) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- SetDebug --------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Set the option to print debugging information
+ * @param d `true` to print debug information, `false` otherwise
+ */
+void squirrel::SetDebug(bool d) {
+    debug = d;
+
+    if (debug)
+        Log("Debug set to ON", __FUNCTION__);
+    else
+        Log("Debug set to OFF", __FUNCTION__);
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- SetOverwritePackage ---------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -3193,12 +3209,14 @@ bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString fileP
             BitFileExtractor extractor(lib, BitFormat::Zip);
             //extractor.setProgressCallback(progressCallback);
             //extractor.setTotalCallback(totalArchiveSizeCallback);
+            Log(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir), __FUNCTION__);
             extractor.extractMatching(archivePath.toStdString(), filePattern.toStdString(), outDir.toStdString());
         }
         else {
             BitFileExtractor extractor(lib, BitFormat::SevenZip);
             //extractor.setProgressCallback(progressCallback);
             //extractor.setTotalCallback(totalArchiveSizeCallback);
+            Log(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir), __FUNCTION__);
             extractor.extractMatching(archivePath.toStdString(), filePattern.toStdString(), outDir.toStdString());
         }
         m = QString("Extracted files [%1] from archive [%2] to directory [%3]...").arg(filePattern).arg(archivePath).arg(outDir);
