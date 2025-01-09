@@ -768,7 +768,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
 
                                                 /* extract files from original package and add them to the new package */
                                                 QString m3;
-                                                QString archiveSeriesPath = QString("data/%1/%2/%3/").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber);
+                                                QString archiveSeriesPath = QString("data/%1/%2/%3/*").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber);
                                                 QString newSeriesPath = QString("%1/data/%2/%3").arg(tmpDir).arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newSeries.SeriesNumber);
                                                 utils::MakePath(newSeriesPath, m3);
 
