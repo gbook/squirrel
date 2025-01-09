@@ -700,11 +700,11 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
     foreach (QString modality, mods) {
         QFileInfo finfo(packagePath);
         QString newPackagePath = finfo.absolutePath() + "/" + finfo.baseName() + "-" + modality + "." + finfo.completeSuffix();
-        utils::Print("Creating new package [" + newPackagePath + "]");
+        sqrl->Log("Creating new package [" + newPackagePath + "]", __FUNCTION__);
 
-        squirrel *sqrl2 = new squirrel(true);
+        squirrel *sqrl2 = new squirrel();
         //sqrl2->SetDebugSQL(true);
-        sqrl2->SetDebug(true);
+        //sqrl2->SetDebug(true);
         sqrl2->SetFileMode(FileMode::NewPackage);
         sqrl2->SetPackagePath(newPackagePath);
         QString newDbID = sqrl2->GetDatabaseUUID();
@@ -722,7 +722,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                 if (study.Modality == modality) {
 
                                     /* find existing subject in sqrl2 */
-                                    sqrl2->Log(QString("Searching sqrl2 for subject [%1]").arg(subject.ID), __FUNCTION__);
+                                    //sqrl2->Log(QString("Searching sqrl2 for subject [%1]").arg(subject.ID), __FUNCTION__);
                                     qint64 newSubjectRowID = sqrl2->FindSubject(subject.ID);
                                     squirrelSubject newSubject = subject;
                                     if (newSubjectRowID < 0) {
@@ -733,11 +733,11 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                         newSubject.Store();
                                         newSubject.PrintDetails();
                                         newSubjectRowID = newSubject.GetObjectID();
-                                        sqrl2->Log(QString("Did not find subject [%1] in sqrl2. Created new subjectRowID [%2]").arg(subject.ID).arg(newSubjectRowID), __FUNCTION__);
+                                        //sqrl2->Log(QString("Did not find subject [%1] in sqrl2. Created new subjectRowID [%2]").arg(subject.ID).arg(newSubjectRowID), __FUNCTION__);
                                     }
                                     else {
                                         /* get the sqrl2 subject that already exists */
-                                        sqrl2->Log(QString("Using existing sqrl2 subjectRowID [%1]").arg(newSubjectRowID), __FUNCTION__);
+                                        //sqrl2->Log(QString("Using existing sqrl2 subjectRowID [%1]").arg(newSubjectRowID), __FUNCTION__);
                                         newSubject = sqrl2->GetSubject(newSubjectRowID);
                                         //newSubject.Get();
                                     }
@@ -749,7 +749,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                     newStudy.subjectRowID = newSubjectRowID;
                                     newStudy.Store();
                                     qint64 newStudyRowID = newStudy.GetObjectID();
-                                    sqrl2->Log(QString("Copying original studyRowID [%1] to new sqrl2 studyRowID [%2]").arg(study.GetObjectID()).arg(newStudyRowID), __FUNCTION__);
+                                    //sqrl2->Log(QString("Copying original studyRowID [%1] to new sqrl2 studyRowID [%2]").arg(study.GetObjectID()).arg(newStudyRowID), __FUNCTION__);
 
                                     /* get series */
                                     QList <squirrelSeries> serieses = sqrl->GetSeriesList(study.GetObjectID());
