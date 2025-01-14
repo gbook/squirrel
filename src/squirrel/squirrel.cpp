@@ -29,13 +29,12 @@
 #include "bitarchiveeditor.hpp"
 #include "bitfileextractor.hpp"
 
+/* ----- bit7z progress callbacks ----- */
 qint64 totalbytes(0);
 double blocksize(0.0);
 qint64 lastupdate(0);
 
 bool totalArchiveSizeCallback(qint64 val) {
-    //utils::Print(QString("Total package size in bytes [%1]").arg(val));
-    //utils::Print("Total package size is [" + utils::HumanReadableSize(val) + "]");
     totalbytes = val;
     blocksize = (double)totalbytes/100.0;
     return true;
@@ -44,12 +43,12 @@ bool totalArchiveSizeCallback(qint64 val) {
 bool progressCallback(qint64 val) {
     if (val > (lastupdate+blocksize)) {
         double percent = ((double)val/(double)totalbytes)*100.0;
-        //printf("%.0f%% (%lld of %lld bytes)\n", percent, val, totalbytes);
         utils::PrintProgress(percent/100.0);
         lastupdate = val;
     }
     return true;
 }
+
 
 /* ------------------------------------------------------------ */
 /* ----- squirrel --------------------------------------------- */
@@ -82,17 +81,17 @@ squirrel::squirrel(bool dbg, bool q)
     Debug(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
 
     if (!DatabaseConnect()) {
-        Log(QString("Error connecting to database. Unable to initilize squirrel library"), __FUNCTION__);
+        Log("Error connecting to database. Unable to initilize squirrel library");
         isValid = false;
     }
 
     if (!InitializeDatabase()) {
-        Log(QString("Error connecting to database. Unable to initilize squirrel library"), __FUNCTION__);
+        Log("Error connecting to database. Unable to initilize squirrel library");
         isValid = false;
     }
 
     if (!Get7zipLibPath()) {
-        Log(QString("7-zip library not found. Unable to initilize squirrel library"), __FUNCTION__);
+        Log("7-zip library not found. Unable to initilize squirrel library");
         utils::Print(QString("7-zip library not found. Unable to initilize squirrel library"));
         isValid = false;
     }
@@ -113,7 +112,7 @@ squirrel::~squirrel()
     if ((fileMode == NewPackage) && isValid && (workingDir.size() > 22)) {
         QString m;
         if (!utils::RemoveDir(workingDir, m))
-            Log(QString("Error removing working directory [%1]. Message [%2]").arg(workingDir).arg(m), __FUNCTION__);
+            Log(QString("Error removing working directory [%1]. Message [%2]").arg(workingDir).arg(m));
     }
 }
 
@@ -156,7 +155,7 @@ bool squirrel::DatabaseConnect() {
 
     db = QSqlDatabase::addDatabase("QSQLITE", databaseUUID);
     if (!db.isValid()) {
-        Log(QString("Error initializing SQLite database (likely driver related) [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
+        Log(QString("Error initializing SQLite database (likely driver related) [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()));
         utils::Print(QString("Error initializing SQLite database (likely driver related) [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()));
         return false;
     }
@@ -173,7 +172,7 @@ bool squirrel::DatabaseConnect() {
         return true;
     }
     else {
-        Log(QString("Error opening SQLite database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()), __FUNCTION__);
+        Log(QString("Error opening SQLite database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()));
         utils::Print(QString("Error opening SQLite database [%1]. Error [%2]").arg(db.databaseName()).arg(db.lastError().text()));
         return false;
     }
@@ -194,55 +193,55 @@ bool squirrel::InitializeDatabase() {
     /* NOTE - SQLite does not support multiple statements, so each table needs to be created individualy */
 
     q.prepare(tableAnalysis);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Analysis]", __FUNCTION__); utils::Print("Error creating table [Analysis]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Analysis]"); utils::Print("Error creating table [Analysis]"); return false; }
 
     q.prepare(tableIntervention);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Intervention]", __FUNCTION__); utils::Print("Error creating table [Intervention]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Intervention]"); utils::Print("Error creating table [Intervention]"); return false; }
 
     q.prepare(tableDataDictionary);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionary]", __FUNCTION__); utils::Print("Error creating table [DataDictionary]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionary]"); utils::Print("Error creating table [DataDictionary]"); return false; }
 
     q.prepare(tableDataDictionaryItems);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionaryItems]", __FUNCTION__); utils::Print("Error creating table [DataDictionaryItems]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionaryItems]"); utils::Print("Error creating table [DataDictionaryItems]"); return false; }
 
     q.prepare(tableExperiment);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Experiment]", __FUNCTION__); utils::Print("Error creating table [Experiment]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Experiment]"); utils::Print("Error creating table [Experiment]"); return false; }
 
     q.prepare(tableGroupAnalysis);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [GroupAnalysis]", __FUNCTION__); utils::Print("Error creating table [GroupAnalysis]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [GroupAnalysis]"); utils::Print("Error creating table [GroupAnalysis]"); return false; }
 
     q.prepare(tableObservation);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Observation]", __FUNCTION__); utils::Print("Error creating table [Observation]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Observation]"); utils::Print("Error creating table [Observation]"); return false; }
 
     q.prepare(tablePackage);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Package]", __FUNCTION__); utils::Print("Error creating table [Package]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Package]"); utils::Print("Error creating table [Package]"); return false; }
 
     q.prepare(tableParams);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Params]", __FUNCTION__); utils::Print("Error creating table [Params]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Params]"); utils::Print("Error creating table [Params]"); return false; }
 
     q.prepare(tablePipeline);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Pipeline]", __FUNCTION__); utils::Print("Error creating table [Pipeline]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Pipeline]"); utils::Print("Error creating table [Pipeline]"); return false; }
 
     q.prepare(tablePipelineDataStep);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [PipelineDataStep]", __FUNCTION__); utils::Print("Error creating table [PipelineDataStep]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [PipelineDataStep]"); utils::Print("Error creating table [PipelineDataStep]"); return false; }
 
     q.prepare(tableSeries);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Series]", __FUNCTION__); utils::Print("Error creating table [Series]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Series]"); utils::Print("Error creating table [Series]"); return false; }
 
     q.prepare(tableStudy);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Study]", __FUNCTION__); utils::Print("Error creating table [Study]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Study]"); utils::Print("Error creating table [Study]"); return false; }
 
     q.prepare(tableSubject);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Subject]", __FUNCTION__); utils::Print("Error creating table [Subject]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Subject]"); utils::Print("Error creating table [Subject]"); return false; }
 
     q.prepare(tableStagedFiles);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [StagedFiles]", __FUNCTION__); utils::Print("Error creating table [StagedFiles]"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [StagedFiles]"); utils::Print("Error creating table [StagedFiles]"); return false; }
 
     q.prepare("PRAGMA journal_mode=WAL");
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting journal_mode=WAL", __FUNCTION__); utils::Print("Error setting journal_mode=WAL"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting journal_mode=WAL"); utils::Print("Error setting journal_mode=WAL"); return false; }
 
     q.prepare("PRAGMA synchronous=NORMAL");
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting synchronous=NORMAL", __FUNCTION__); utils::Print("Error setting synchronous=NORMAL"); return false; }
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error setting synchronous=NORMAL"); utils::Print("Error setting synchronous=NORMAL"); return false; }
 
     Debug("Successfully initialized database tables", __FUNCTION__);
     return true;
@@ -277,19 +276,19 @@ QString squirrel::GetPackagePath() {
  */
 bool squirrel::Read() {
 
-    Log(QString("Reading squirrel file [%1]").arg(GetPackagePath()), __FUNCTION__);
-    utils::Print(QString("Reading squirrel file [%1]").arg(GetPackagePath()), __FUNCTION__);
+    Log(QString("Reading squirrel file [%1]").arg(GetPackagePath()));
+    //utils::Print(QString("Reading squirrel file [%1]").arg(GetPackagePath()), __FUNCTION__);
 
     /* check if file exists */
     if (!utils::FileExists(GetPackagePath())) {
-        Log(QString("File %1 does not exist").arg(GetPackagePath()), __FUNCTION__);
+        Log(QString("File %1 does not exist").arg(GetPackagePath()));
         utils::Print(QString("File %1 does not exist").arg(GetPackagePath()));
         return false;
     }
 
     QString jsonstr;
     if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonstr)) {
-        Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
+        Log(QString("Error reading squirrel package. Unable to find squirrel.json"));
         utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"));
         return false;
     }
@@ -331,10 +330,10 @@ bool squirrel::Read() {
     }
     else if (root.contains("subjects")) {
         jsonSubjects = root["subjects"].toArray();
-        Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(jsonSubjects.size()), __FUNCTION__);
+        Log(QString("NOTICE: Found [%1] subjects in the root of the JSON. (This is a slightly malformed squirrel file, but I'll accept it)").arg(jsonSubjects.size()));
     }
     else {
-        Log("root JSON object does not contain 'data' or 'subjects'", __FUNCTION__);
+        Log("root JSON object does not contain 'data' or 'subjects'");
     }
 
     Debug(QString("TotalFileCount: [%1]").arg(root["TotalFileCount"].toInt()), __FUNCTION__);
@@ -345,7 +344,7 @@ bool squirrel::Read() {
     qint64 i(0);
     for (auto a : jsonSubjects) {
         i++;
-        Log(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
+        Debug(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")));
         //utils::Print(QString("Reading subject %1 of %2 - %3").arg(i).arg(jsonSubjects.size()).arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz")), __FUNCTION__);
         utils::PrintProgress((double)i/(double)jsonSubjects.size());
 
@@ -420,10 +419,10 @@ bool squirrel::Read() {
                     QString paramsfilepath = QString("data/%1/%2/%3/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
                     if (ExtractArchiveFileToMemory(GetPackagePath(), paramsfilepath, parms)) {
                         sqrlSeries.params = ReadParamsFile(parms);
-                        Log(QString("Read params file [%1]. series.params contains [%2] items").arg(paramsfilepath).arg(sqrlSeries.params.size()), __FUNCTION__);
+                        Log(QString("Read params file [%1]. series.params contains [%2] items").arg(paramsfilepath).arg(sqrlSeries.params.size()));
                     }
                     else {
-                        Log("Unable to read params file [" + paramsfilepath + "]", __FUNCTION__);
+                        Log("Unable to read params file [" + paramsfilepath + "]");
                     }
 
                     /* get file listing */
@@ -431,7 +430,7 @@ bool squirrel::Read() {
                     QStringList files;
                     QString m;
                     GetArchiveFileListing(GetPackagePath(), seriesPath, files, m);
-                    Log(QString("archiveSeriesPath [%1] found [%2] files [%3]").arg(seriesPath).arg(files.size()).arg(files.join(",")), __FUNCTION__);
+                    Log(QString("archiveSeriesPath [%1] found [%2] files [%3]").arg(seriesPath).arg(files.size()).arg(files.join(",")));
                     sqrlSeries.files = files;
                     sqrlSeries.FileCount = files.size();
                 }
@@ -628,14 +627,15 @@ bool squirrel::Write(bool writeLog) {
     QFileInfo finfo(GetPackagePath());
     logfile = QString(finfo.absolutePath() + "/squirrel-" + utils::CreateLogDate() + ".log");
 
-    PrintPackage();
+    //PrintPackage();
 
     if (fileMode == NewPackage) {
         MakeTempDir(workingDir);
-        Log(QString("Writing NEW squirrel package. Working directory [%1]  packagePath [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
+        Log(QString("Writing NEW squirrel package [%1]").arg(GetPackagePath()));
+        Debug(QString("Writing NEW squirrel package. Working directory [%1]  packagePath [%2]").arg(workingDir).arg(GetPackagePath()));
     }
     else {
-        Log(QString("Updating existing squirrel package [%1]").arg(GetPackagePath()), __FUNCTION__);
+        Log(QString("Updating existing squirrel package [%1]").arg(GetPackagePath()));
     }
 
     pairList stagedFiles;
@@ -645,24 +645,25 @@ bool squirrel::Write(bool writeLog) {
     QList<squirrelSubject> subjects = GetSubjectList();
     foreach (squirrelSubject subject, subjects) {
         qint64 subjectRowID = subject.GetObjectID();
-        Log(QString("Writing subject [%1] to virtualPath [%2]").arg(subject.ID).arg(subject.VirtualPath()), __FUNCTION__);
+        Debug(QString("Writing subject [%1] to virtualPath [%2]").arg(subject.ID).arg(subject.VirtualPath()));
 
         /* iterate through studies */
         QList<squirrelStudy> studies = GetStudyList(subjectRowID);
         foreach (squirrelStudy study, studies) {
             qint64 studyRowID = study.GetObjectID();
-            Log(QString("Writing study [%1] to virtualPath [%2]").arg(study.StudyNumber).arg(study.VirtualPath()), __FUNCTION__);
+            Debug(QString("Writing study [%1] to virtualPath [%2]").arg(study.StudyNumber).arg(study.VirtualPath()));
 
             /* iterate through series */
             QList<squirrelSeries> serieses = GetSeriesList(studyRowID);
-            Log(QString("Writing [%1] series for [%2][%3]").arg(serieses.size()).arg(subject.ID).arg(study.StudyNumber), __FUNCTION__);
+            Debug(QString("Writing [%1] series for [%2][%3]").arg(serieses.size()).arg(subject.ID).arg(study.StudyNumber));
             foreach (squirrelSeries series, serieses) {
                 QString m;
                 QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
 
                 if (fileMode == FileMode::NewPackage) {
                     utils::MakePath(seriesPath,m);
-                    Log(QString("Writing Subject-Study-Series [%1-%2-%3] to tmpdir [%4]. Data format [%5]").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber).arg(seriesPath).arg(DataFormat), __FUNCTION__);
+                    Log(QString("Preparing series [%1-%2-%3]...").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber));
+                    Debug(QString("Staging [%1-%2-%3] to tmpdir [%4]. Data format [%5]").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber).arg(seriesPath).arg(DataFormat));
 
                     /* orig vs other formats */
                     if (DataFormat == "orig") {
@@ -670,7 +671,7 @@ bool squirrel::Write(bool writeLog) {
                         /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
                             QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                            Log(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
+                            Log(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
                             Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
                     }
@@ -679,7 +680,7 @@ bool squirrel::Write(bool writeLog) {
                         /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
                             QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                            Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath), __FUNCTION__);
+                            Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath));
                             Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
                     }
@@ -704,14 +705,14 @@ bool squirrel::Write(bool writeLog) {
 
                             /* move the anonymized files to the staging area */
                             systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);
-                            Log(QString("  ... anonymizing DICOM files from %1 to %2").arg(td).arg(seriesPath), __FUNCTION__);
+                            Log(QString("  ... anonymizing DICOM files from %1 to %2").arg(td).arg(seriesPath));
                             Debug(utils::SystemCommand(systemstring), __FUNCTION__);
 
                             /* delete temp directory */
                             DeleteTempDir(td);
                         }
                         else
-                            Log("Error creating temp directory for DICOM anonymization", __FUNCTION__);
+                            Log("Error creating temp directory for DICOM anonymization");
                     }
                     else if (DataFormat.contains("nifti")) {
                         int numConv(0), numRename(0);
@@ -723,7 +724,7 @@ bool squirrel::Write(bool writeLog) {
 
                         /* get path of first file to be converted */
                         if (series.stagedFiles.size() > 0) {
-                            Log(QString(" ... converting %1 files to nifti").arg(series.stagedFiles.size()), __FUNCTION__);
+                            Log(QString(" ... converting %1 files to nifti").arg(series.stagedFiles.size()));
 
                             QFileInfo f(series.stagedFiles[0]);
                             QString origSeriesPath = f.absoluteDir().absolutePath();
@@ -732,14 +733,14 @@ bool squirrel::Write(bool writeLog) {
                             if (io.ConvertDicom(DataFormat, origSeriesPath, seriesPath, QDir::currentPath(), gzip, utils::CleanString(subject.ID), QString("%1").arg(study.StudyNumber), QString("%1").arg(series.SeriesNumber), "dicom", numConv, numRename, m3))
                                 Debug(QString("ConvertDicom() returned [%1]").arg(m3), __FUNCTION__);
                             else
-                                Log(QString("ConvertDicom() failed. Returned [%1]").arg(m3), __FUNCTION__);
+                                Log(QString("ConvertDicom() failed. Returned [%1]").arg(m3));
                         }
                         else {
-                            Log(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"), __FUNCTION__);
+                            Debug(QString("Variable squirrelSeries.stagedFiles is empty. No files to convert to Nifti"));
                         }
                     }
                     else
-                        Log(QString("DataFormat [%1] not recognized").arg(DataFormat), __FUNCTION__);
+                        Log(QString("DataFormat [%1] not recognized").arg(DataFormat));
 
                     /* get the number of files and size of the series */
                     qint64 c(0), b(0);
@@ -752,14 +753,14 @@ bool squirrel::Write(bool writeLog) {
                     QString paramFilePath = QString("%1/params.json").arg(seriesPath);
                     QByteArray j = QJsonDocument(series.ParamsToJSON()).toJson();
                     if (!utils::WriteTextFile(paramFilePath, j))
-                        Log("Error writing [" + paramFilePath + "]", __FUNCTION__);
+                        Log("Error writing [" + paramFilePath + "]");
                 }
             }
         }
     }
 
     /* ----- 2) write .json file ----- */
-    Log("Creating header file...", __FUNCTION__);
+    Debug("Creating header file...");
     /* create JSON object */
     QJsonObject root;
 
@@ -786,7 +787,7 @@ bool squirrel::Write(bool writeLog) {
 
     /* add subjects to JSON */
     QList<squirrelSubject> subjectses = GetSubjectList();
-    Log(QString("Adding %1 subjects to header").arg(subjectses.size()), __FUNCTION__);
+    Log(QString("Adding %1 subjects").arg(subjectses.size()));
     foreach (squirrelSubject subject, subjectses) {
         JSONsubjects.append(subject.ToJSON());
     }
@@ -794,13 +795,13 @@ bool squirrel::Write(bool writeLog) {
     /* add group-analyses */
     QList <squirrelGroupAnalysis> groupAnalyses = GetGroupAnalysisList();
     if (groupAnalyses.size() > 0) {
-        Log(QString("Adding %1 group-analyses to header").arg(groupAnalyses.size()), __FUNCTION__);
+        Log(QString("Adding %1 group-analyses").arg(groupAnalyses.size()));
         QJsonArray JSONgroupanalyses;
         foreach (squirrelGroupAnalysis g, groupAnalyses) {
             if (g.Get()) {
                 JSONgroupanalyses.append(g.ToJSON());
                 stagedFiles += g.GetStagedFileList();
-                Log(QString("Added group-analysis [%1]").arg(g.GroupAnalysisName), __FUNCTION__);
+                Log(QString("Added group-analysis [%1]").arg(g.GroupAnalysisName));
             }
         }
         data["GroupAnalysisCount"] = JSONgroupanalyses.size();
@@ -814,13 +815,13 @@ bool squirrel::Write(bool writeLog) {
     /* add pipelines */
     QList <squirrelPipeline> pipelines = GetPipelineList();
     if (pipelines.size() > 0) {
-        Log(QString("Adding %1 pipelines to header").arg(pipelines.size()), __FUNCTION__);
+        Log(QString("Adding %1 pipelines").arg(pipelines.size()));
         QJsonArray JSONpipelines;
         foreach (squirrelPipeline p, pipelines) {
             if (p.Get()) {
                 JSONpipelines.append(p.ToJSON(workingDir));
                 stagedFiles += p.GetStagedFileList();
-                Log(QString("Added pipeline [%1]").arg(p.PipelineName), __FUNCTION__);
+                Log(QString("Added pipeline [%1]").arg(p.PipelineName));
             }
         }
         root["PipelineCount"] = JSONpipelines.size();
@@ -830,13 +831,13 @@ bool squirrel::Write(bool writeLog) {
     /* add experiments */
     QList <squirrelExperiment> exps = GetExperimentList();
     if (exps.size() > 0) {
-        Log(QString("Adding %1 experiments...").arg(exps.size()), __FUNCTION__);
+        Log(QString("Adding %1 experiments").arg(exps.size()));
         QJsonArray JSONexperiments;
         foreach (squirrelExperiment e, exps) {
             if (e.Get()) {
                 JSONexperiments.append(e.ToJSON());
                 stagedFiles += e.GetStagedFileList();
-                Log(QString("Added experiment [%1]").arg(e.ExperimentName), __FUNCTION__);
+                Log(QString("Added experiment [%1]").arg(e.ExperimentName));
             }
         }
         root["ExperimentCount"] = JSONexperiments.size();
@@ -846,13 +847,13 @@ bool squirrel::Write(bool writeLog) {
     /* add data-dictionary */
     QList <squirrelDataDictionary> dicts = GetDataDictionaryList();
     if (dicts.size() > 0) {
-        Log(QString("Adding %1 data-dictionaries to header").arg(dicts.size()), __FUNCTION__);
+        Log(QString("Adding %1 data-dictionaries").arg(dicts.size()));
         QJsonArray JSONdataDictionaries;
         foreach (squirrelDataDictionary d, dicts) {
             if (d.Get()) {
                 JSONdataDictionaries.append(d.ToJSON());
                 stagedFiles += d.GetStagedFileList();
-                Log("Added data-dictionary", __FUNCTION__);
+                Log("Added data-dictionary");
             }
         }
         root["DataDictionaryCount"] = JSONdataDictionaries.size();
@@ -867,7 +868,7 @@ bool squirrel::Write(bool writeLog) {
     if (fileMode == NewPackage) {
 
         /* copy in all files from the staged files list */
-        Debug(QString("stagedFiles size is [%1]").arg(stagedFiles.size()), __FUNCTION__);
+        Debug(QString("stagedFiles size is [%1]").arg(stagedFiles.size()));
         for (int i=0; i<stagedFiles.size(); i++) {
             Debug(QString("[%1] , [%2]").arg(stagedFiles.at(i).first).arg(stagedFiles.at(i).second), __FUNCTION__);
         }
@@ -883,33 +884,34 @@ bool squirrel::Write(bool writeLog) {
             QString destDir = workingDir + "/" + file.second;
             QString m;
             if (!utils::MakePath(destDir,m))
-                Log(QString("Error creating directory [%1] - message [%2]").arg(destDir).arg(m), __FUNCTION__);
+                Log(QString("Error creating directory [%1] - message [%2]").arg(destDir).arg(m));
             else
                 Debug(QString("Successfully created directory [%1] - message [%2]").arg(destDir).arg(m), __FUNCTION__);
 
             Debug(QString("Copying [%1] to [%2]").arg(sourcePath).arg(destPath), __FUNCTION__);
             if (!QFile::copy(sourcePath, destPath))
-                Log(QString("Error copying [%1] to [%2]").arg(sourcePath).arg(destPath), __FUNCTION__);
+                Log(QString("Error copying [%1] to [%2]").arg(sourcePath).arg(destPath));
         }
 
-        Log("Zipping the archive from a temp directory", __FUNCTION__);
+        //Log("Zipping the archive from a temp directory");
 
         /* write the .json file to the temp dir */
         QString jsonFilePath = workingDir + "/squirrel.json";
         if (!utils::WriteTextFile(jsonFilePath, j))
-            Log("Error writing [" + jsonFilePath + "]", __FUNCTION__);
+            Log("Error writing [" + jsonFilePath + "]");
 
         QString m;
+        Log("Writing package...");
         if (CompressDirectoryToArchive(workingDir, GetPackagePath(), m)) {
             QFileInfo fi(GetPackagePath());
             qint64 zipSize = fi.size();
-            Log(QString("Finished zipping package [%1]. Size is [%2] bytes").arg(GetPackagePath()).arg(zipSize), __FUNCTION__);
+            Log(QString("Finished writing package [%1]. Size is [%2] bytes").arg(GetPackagePath()).arg(zipSize));
 
             /* delete the squirrel temp dir */
             DeleteTempDir(workingDir);
         }
         else {
-            Log("Error creating zip file [" + GetPackagePath() + "]  message [" + m + "]", __FUNCTION__);
+            Log("Error creating zip file [" + GetPackagePath() + "]  message [" + m + "]");
             return false;
         }
     }
@@ -924,15 +926,15 @@ bool squirrel::Write(bool writeLog) {
             diskPaths.append(source);
             archivePaths.append(dest);
         }
-        Log("Adding/updating files in existing package", __FUNCTION__);
+        Log("Adding/updating files in existing package");
         QString m;
         if (!AddFilesToArchive(diskPaths, archivePaths, GetPackagePath(), m))
-            Log("Error [" + m + "] adding file(s) to archive", __FUNCTION__);
+            Log("Error [" + m + "] adding file(s) to archive");
 
         /* update the package in place with the new .json file */
-        Log("Updating existing package", __FUNCTION__);
+        Log("Updating existing package");
         if (!UpdateMemoryFileToArchive(j, "squirrel.json", GetPackagePath(), m)) {
-            Log("Error [" + m + "] compressing memory file to archive", __FUNCTION__);
+            Log("Error [" + m + "] compressing memory file to archive");
         }
     }
 
@@ -1295,7 +1297,7 @@ bool squirrel::DeleteTempDir(QString dir) {
         Debug("Temporary directory [" + dir + "] exists and will be deleted", __FUNCTION__);
         QString m;
         if (!utils::RemoveDir(dir, m)) {
-            Log("Error [" + m + "] removing directory [" + dir + "]", __FUNCTION__);
+            Log("Error [" + m + "] removing directory [" + dir + "]");
             return false;
         }
     }
@@ -1308,7 +1310,7 @@ bool squirrel::DeleteTempDir(QString dir) {
 /* ------------------------------------------------------------ */
 /**
  * @brief squirrel::AddStagedFiles - add staged files to the database.
- * These are files which will not be copied until the package is written
+ * These files will be copied when the package is written
  * @param objectType one of the object types
  * @param rowid the database row ID of the object
  * @param files the list of files to be staged
@@ -1319,7 +1321,7 @@ bool squirrel::AddStagedFiles(QString objectType, qint64 rowid, QStringList file
     if (rowid < 0) return false;
     if (files.size() <= 0) return false;
 
-    Debug(QString("Adding [%1] files of type [%2] to rowID [%3]").arg(files.size()).arg(objectType).arg(rowid), __FUNCTION__);
+    utils::Print(QString("Adding [%1] files of type [%2] to rowID [%3]").arg(files.size()).arg(objectType).arg(rowid));
 
     if (objectType == "series") {
         squirrelSeries s(databaseUUID);
@@ -1394,12 +1396,12 @@ QString squirrel::GetTempDir() {
  * @param s The log message
  * @param func The function that called this function
  */
-void squirrel::Log(QString s, QString func) {
+void squirrel::Log(QString s) {
     if (s.trimmed() != "") {
-        log.append(QString("%1() %2\n").arg(func).arg(s));
-        logBuffer.append(QString("%1() %2\n").arg(func).arg(s));
+        log.append(QString("%1\n").arg(s));
+        logBuffer.append(QString("%1\n").arg(s));
         if (!quiet) {
-            utils::Print(QString("%1() %2").arg(func).arg(s));
+            utils::Print(s);
         }
     }
 }
@@ -1843,7 +1845,7 @@ QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
             Debug(QString("Found SeriesNumber [%1]").arg(s.SeriesNumber), __FUNCTION__);
         }
         else {
-            Log(QString("Unable to load SeriesRowID [%1]").arg(s.GetObjectID()), __FUNCTION__);
+            Log(QString("Unable to load SeriesRowID [%1]").arg(s.GetObjectID()));
         }
     }
     Debug(QString("Found [%1] series for StudyRowID [%2]").arg(list.size()).arg(studyRowID), __FUNCTION__);
@@ -2758,7 +2760,7 @@ bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath,
  * @return true if successful, false otherwise
  */
 bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QString &m) {
-    Log(QString("Compressing directory [%1] to archive [%2]...").arg(dir).arg(archivePath), __FUNCTION__);
+    Debug(QString("Compressing directory [%1] to archive [%2]...").arg(dir).arg(archivePath));
 
     try {
         using namespace bit7z;
@@ -2973,8 +2975,8 @@ bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinatio
 
     QString systemstring = QString("7za x -y %1 -o%2").arg(archivePath).arg(destinationPath);
     m += systemstring + "\n";
-    Log(QString("Extracting %1 to %2").arg(archivePath).arg(destinationPath), __FUNCTION__);
-    Log(utils::SystemCommand(systemstring), __FUNCTION__);
+    Log(QString("Extracting %1 to %2").arg(archivePath).arg(destinationPath));
+    Log(utils::SystemCommand(systemstring));
     if (utils::FileExists(destinationPath)) {
         m += destinationPath + " exists\n";
         return true;
@@ -3069,9 +3071,9 @@ void squirrel::SetDebugSQL(bool d) {
     debugSQL = d;
 
     if (debugSQL)
-        Log("DebugSQL set to ON", __FUNCTION__);
+        Log("DebugSQL set to ON");
     else
-        Log("DebugSQL set to OFF", __FUNCTION__);
+        Log("DebugSQL set to OFF");
 }
 
 
@@ -3086,9 +3088,9 @@ void squirrel::SetDebug(bool d) {
     debug = d;
 
     if (debug)
-        Log("Debug set to ON", __FUNCTION__);
+        Log("Debug set to ON");
     else
-        Log("Debug set to OFF", __FUNCTION__);
+        Log("Debug set to OFF");
 }
 
 
@@ -3103,9 +3105,9 @@ void squirrel::SetOverwritePackage(bool o) {
     overwritePackage = o;
 
     if (overwritePackage)
-        Log("OverwritePackage set to ON", __FUNCTION__);
+        Log("OverwritePackage set to ON");
     else
-        Log("OverwritePackage set to OFF", __FUNCTION__);
+        Log("OverwritePackage set to OFF");
 }
 
 
@@ -3120,9 +3122,9 @@ void squirrel::SetQuickRead(bool q) {
     quickRead = q;
 
     if (quickRead)
-        Log("QuickRead set to ON (params.json files will NOT be read)", __FUNCTION__);
+        Log("QuickRead set to ON (params.json files will NOT be read)");
     else
-        Log("QuickRead set to OFF (params.json files will be read)", __FUNCTION__);
+        Log("QuickRead set to OFF (params.json files will be read)");
 }
 
 
@@ -3140,16 +3142,16 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
 
     if (tmpdir == "") {
         systemTempDir = QDir::tempPath();
-        Log("Specified systemTempDir is blank, using default of " + QDir::tempPath(), __FUNCTION__);
+        Log("Specified systemTempDir is blank, using default of " + QDir::tempPath());
     }
     else {
         if (QFile::exists(tmpdir)) {
             systemTempDir = tmpdir;
-            Log("Using systemTempDir [" + tmpdir + "]", __FUNCTION__);
+            Log("Using systemTempDir [" + tmpdir + "]");
         }
         else {
             systemTempDir = QDir::tempPath();
-            Log("Specified systemTempDir [" + tmpdir + "] does not exist, using default of " + QDir::tempPath(), __FUNCTION__);
+            Log("Specified systemTempDir [" + tmpdir + "] does not exist, using default of " + QDir::tempPath());
         }
     }
 }
@@ -3158,6 +3160,10 @@ void squirrel::SetSystemTempDir(QString tmpdir) {
 /* ------------------------------------------------------------ */
 /* ----- GetSystemTempDir ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get the previously specified system temp dir [using SetSystemTempDir()], or the default temp dir if blank
+ * @return the temp dir
+ */
 QString squirrel::GetSystemTempDir() {
 
     if (systemTempDir == "")
@@ -3170,16 +3176,21 @@ QString squirrel::GetSystemTempDir() {
 /* ------------------------------------------------------------ */
 /* ----- GetJsonHeader ---------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get the contents of the JSON header
+ * @param jdoc a QJsonDocument object containing the header
+ * @return `true` if successful, `false` otherwise
+ */
 bool squirrel::GetJsonHeader(QJsonDocument &jdoc) {
 
     QString jsonstr;
     if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonstr)) {
-        Log(QString("Error reading squirrel package. Unable to find squirrel.json"), __FUNCTION__);
-        utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"));
+        Log("Error reading squirrel package. Unable to find squirrel.json");
+        utils::Print("Error reading squirrel package. Unable to find squirrel.json");
         return false;
     }
     else {
-        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())), __FUNCTION__);
+        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())));
     }
 
     jdoc = QJsonDocument::fromJson(jsonstr.toUtf8());
@@ -3190,10 +3201,15 @@ bool squirrel::GetJsonHeader(QJsonDocument &jdoc) {
 /* ------------------------------------------------------------ */
 /* ----- UpdateJsonHeader ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Update the JSON package header
+ * @param json QString with the contents of the entire JSON formatted file to be written
+ * @return `true` if successful, `false` otherwise
+ */
 bool squirrel::UpdateJsonHeader(QString json) {
     QString m;
     if (!UpdateMemoryFileToArchive(json, "squirrel.json", GetPackagePath(), m))
-        Log("Error [" + m + "] compressing memory file to archive", __FUNCTION__);
+        Log("Error [" + m + "] compressing memory file to archive");
 
     return true;
 }
@@ -3210,14 +3226,14 @@ bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString fileP
             BitFileExtractor extractor(lib, BitFormat::Zip);
             //extractor.setProgressCallback(progressCallback);
             //extractor.setTotalCallback(totalArchiveSizeCallback);
-            Log(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir), __FUNCTION__);
+            Debug(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir));
             extractor.extractMatching(archivePath.toStdString(), filePattern.toStdString(), outDir.toStdString());
         }
         else {
             BitFileExtractor extractor(lib, BitFormat::SevenZip);
             //extractor.setProgressCallback(progressCallback);
             //extractor.setTotalCallback(totalArchiveSizeCallback);
-            Log(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir), __FUNCTION__);
+            Debug(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir));
             extractor.extractMatching(archivePath.toStdString(), filePattern.toStdString(), outDir.toStdString());
         }
         m = QString("Extracted files [%1] from archive [%2] to directory [%3]...").arg(filePattern).arg(archivePath).arg(outDir);
@@ -3231,8 +3247,14 @@ bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString fileP
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- GetFreeDiskSpace ------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Gets the free disk space where the current package lives on disk
+ * @return disk free space in bytes
+ */
 qint64 squirrel::GetFreeDiskSpace() {
-
     QStorageInfo storage = QStorageInfo::root();
     storage.setPath(systemTempDir);
 

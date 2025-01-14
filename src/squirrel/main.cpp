@@ -407,10 +407,10 @@ int main(int argc, char *argv[])
         sqrl->SetPackagePath(inputPath);
         sqrl->SetFileMode(FileMode::ExistingPackage);
         if (sqrl->Read()) {
-            sqrl->Log("Valid squirrel file", __FUNCTION__);
+            sqrl->Log("Valid squirrel file");
         }
         else {
-            sqrl->Log("*** Invalid squirrel file ***", __FUNCTION__);
+            sqrl->Log("*** Invalid squirrel file ***");
         }
         delete sqrl;
     }

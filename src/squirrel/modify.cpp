@@ -118,7 +118,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         subjectRowID = sqrl->FindSubject(vars["ID"]);
         if (subjectRowID < 0) {
             squirrelSubject subject(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["ID"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["ID"]));
             subject.ID = vars["ID"];
             subject.AlternateIDs = vars["AlternateIDs"].split(",");
             subject.GUID = vars["GUID"];
@@ -143,7 +143,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 studyRowID = sqrl->FindStudy(subjectID, vars["StudyNumber"].toInt());
         if (studyRowID < 0) {
             squirrelStudy study(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["ID"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["ID"]));
             study.StudyNumber = vars["StudyNumber"].toInt();
             study.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
             study.AgeAtStudy = vars["AgeAtStudy"].toDouble();
@@ -174,7 +174,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 seriesRowID = sqrl->FindSeries(subjectID, studyNum, vars["SeriesNumber"].toInt());
         if (seriesRowID < 0) {
             squirrelSeries series(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Series [%1]").arg(vars["SeriesNumber"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel Series [%1]").arg(vars["SeriesNumber"]));
             series.SeriesNumber = vars["StudyNumber"].toInt();
             series.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
             series.Description = vars["Description"];
@@ -197,14 +197,14 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
     else if (objectType == "observation") {
         qint64 subjectRowID = sqrl->FindSubject(subjectID);
         if (subjectRowID < 0) {
-            m = QString("Subject [%3] not found in package").arg(subjectID);
+            m = QString("Subject [%1] not found in package").arg(subjectID);
             delete sqrl;
             return false;
         }
         else {
             if (dataPath == "") {
                 squirrelObservation observation(sqrl->GetDatabaseUUID());
-                sqrl->Log(QString("Creating squirrel Observation [%1]").arg(vars["ObservationName"]), __FUNCTION__);
+                sqrl->Log(QString("Creating squirrel Observation [%1]").arg(vars["ObservationName"]));
                 observation.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
                 observation.DateRecordCreate = QDateTime::fromString(vars["DateRecordCreate"], "yyyy-MM-dd HH:mm:ss");
                 observation.DateRecordEntry = QDateTime::fromString(vars["DateRecordEntry"], "yyyy-MM-dd HH:mm:ss");
@@ -235,7 +235,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
                     }
                     else if (dataPath.endsWith(".tsv", Qt::CaseInsensitive)) {
                         if (utils::ParseTSV(dataPath, csv, cols, m)) {
-                            //sqrl->Log(QString("Successfuly read [%1] into [%2] rows").arg(f).arg(tsv.size()), __FUNCTION__);
+                            //sqrl->Log(QString("Successfuly read [%1] into [%2] rows").arg(f).arg(tsv.size()));
                         }
                         else {
                             m = QString("File containing observations [%1] not found").arg(dataPath);
@@ -267,13 +267,13 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
     else if (objectType == "intervention") {
         qint64 subjectRowID = sqrl->FindSubject(subjectID);
         if (subjectRowID < 0) {
-            m = QString("Subject [%3] not found in package").arg(subjectID);
+            m = QString("Subject [%1] not found in package").arg(subjectID);
             delete sqrl;
             return false;
         }
         else {
             squirrelIntervention intervention(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel intervention [%1]").arg(vars["InterventionName"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel intervention [%1]").arg(vars["InterventionName"]));
             intervention.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
             intervention.DateRecordCreate = QDateTime::fromString(vars["DateRecordCreate"], "yyyy-MM-dd HH:mm:ss");
             intervention.DateRecordEntry = QDateTime::fromString(vars["DateRecordEntry"], "yyyy-MM-dd HH:mm:ss");
@@ -299,7 +299,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
         if (analysisRowID < 0) {
             squirrelAnalysis analysis(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(vars["AnalysisName"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(vars["AnalysisName"]));
             analysis.AnalysisName = vars["AnalysisName"];
             analysis.DateClusterEnd = QDateTime::fromString(vars["DateClusterEnd"], "yyyy-MM-dd HH:mm:ss");
             analysis.DateClusterStart = QDateTime::fromString(vars["DateClusterStart"], "yyyy-MM-dd HH:mm:ss");
@@ -330,7 +330,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 experimentRowID = sqrl->FindExperiment(vars["ExperimentName"]);
         if (experimentRowID < 0) {
             squirrelExperiment experiment(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Experiment [%1]").arg(vars["ExperimentName"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel Experiment [%1]").arg(vars["ExperimentName"]));
             experiment.ExperimentName = vars["ExperimentName"];
             experiment.FileCount = vars["FileCount"].toLongLong();
             experiment.Size = vars["Size"].toLongLong();
@@ -348,7 +348,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 pipelineRowID = sqrl->FindPipeline(vars["PipelineName"]);
         if (pipelineRowID < 0) {
             squirrelPipeline pipeline(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Pipeline [%1]").arg(vars["PipelineName"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel Pipeline [%1]").arg(vars["PipelineName"]));
             pipeline.ClusterMaxWallTime = vars["ClusterMaxWallTime"].toInt();
             pipeline.ClusterMemory = vars["ClusterMemory"].toInt();
             pipeline.ClusterNumberCores = vars["ClusterNumberCores"].toInt();
@@ -393,7 +393,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(vars["GroupAnalysisName"]);
         if (groupAnalysisRowID < 0) {
             squirrelGroupAnalysis groupAnalysis(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel GroupAnalysis [%1]").arg(vars["GroupAnalysisName"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel GroupAnalysis [%1]").arg(vars["GroupAnalysisName"]));
             groupAnalysis.DateTime = QDateTime::fromString(vars["DateTime"], "yyyy-MM-dd HH:mm:ss");
             groupAnalysis.Description = vars["Description"];
             groupAnalysis.Notes = vars["Notes"];
@@ -414,7 +414,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         qint64 dataDictionaryRowID = sqrl->FindDataDictionary(vars["DataDictionaryName"]);
         if (dataDictionaryRowID < 0) {
             squirrelDataDictionary dataDictionary(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(vars["DataDictionaryName"]), __FUNCTION__);
+            sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(vars["DataDictionaryName"]));
             dataDictionary.DataDictionaryName = vars["DataDictionaryName"];
             dataDictionary.FileCount = vars["FileCount"].toLongLong();
             dataDictionary.Size = vars["Size"].toLongLong();
@@ -634,15 +634,16 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
      * and the original package will remain on disk. After the split operation there will be three image packages
      * with a total of 200MB on disk, plus one package with only interventions/observations. */
 
-    utils::Print("Attempting to split [" + packagePath + "] by modality...");
+    utils::Print("Splitting package [" + packagePath + "] by modality...");
     /* read squirrel package */
     squirrel *sqrl = new squirrel();
     sqrl->SetFileMode(FileMode::ExistingPackage);
     sqrl->SetPackagePath(packagePath);
+    sqrl->SetQuickRead(false);
     qint64 unzippedSize = sqrl->GetUnzipSize();
     qint64 totalSpaceRequired = unzippedSize * 3; /* 3x the unzipped size needed */
     if (totalSpaceRequired > sqrl->GetFreeDiskSpace()) {
-        m = QString("Not enough free space on disk to perform this operation. %1 bytes free space needed, but only %1 bytes free").arg(totalSpaceRequired).arg(sqrl->GetFreeDiskSpace());
+        m = QString("Not enough free space on disk to perform this operation. %1 bytes free space needed, but only %2 bytes free").arg(totalSpaceRequired).arg(sqrl->GetFreeDiskSpace());
         return false;
     }
 
@@ -688,25 +689,33 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
 
     /* get unique list of modalities */
     QStringList mods(modalities.begin(), modalities.end());
-    utils::Print(mods.join(", "));
+    if (mods.size() == 0) {
+        sqrl->Log("Package contains no modalities (no studies). Nothing to do.");
+        return true;
+    }
+    else if (mods.size() == 1) {
+        sqrl->Log("Package contains one modality. Nothing to do.");
+    }
+
+    sqrl->Log(QString("Package contains %1 modalities: ").arg(mods.size()) + mods.join(", "));
 
     /* extract the original package to disk */
     QString tmpDir = sqrl->GetSystemTempDir() + "/squirrel-" + utils::GenerateRandomString(10);
     QString m2;
     utils::MakePath(tmpDir, m2);
-    //sqrl->Extract(tmpDir, m3);
 
     /* create N packages, one for each modality */
     foreach (QString modality, mods) {
         QFileInfo finfo(packagePath);
         QString newPackagePath = finfo.absolutePath() + "/" + finfo.baseName() + "-" + modality + "." + finfo.completeSuffix();
-        sqrl->Log(QString("Creating new package %1 for %2 modality").arg(newPackagePath).arg(modality), __FUNCTION__);
+        sqrl->Log(QString("Creating new package %1 for %2 modality").arg(newPackagePath).arg(modality));
 
         squirrel *sqrl2 = new squirrel();
         //sqrl2->SetDebugSQL(true);
         //sqrl2->SetDebug(true);
         sqrl2->SetFileMode(FileMode::NewPackage);
         sqrl2->SetPackagePath(newPackagePath);
+        sqrl2->SetOverwritePackage(true);
         QString newDbID = sqrl2->GetDatabaseUUID();
         //sqrl2->SetSystemTempDir();
 
@@ -722,24 +731,18 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                 if (study.Modality == modality) {
 
                                     /* find existing subject in sqrl2 */
-                                    //sqrl2->Log(QString("Searching sqrl2 for subject [%1]").arg(subject.ID), __FUNCTION__);
                                     qint64 newSubjectRowID = sqrl2->FindSubject(subject.ID);
                                     squirrelSubject newSubject = subject;
                                     if (newSubjectRowID < 0) {
                                         /* create this subject if they don't already exist, and copy original subject to new subject */
-                                        //newSubject = subject;
                                         newSubject.SetDatabaseUUID(newDbID);
                                         newSubject.SetObjectID(-1);
                                         newSubject.Store();
-                                        //newSubject.PrintDetails();
                                         newSubjectRowID = newSubject.GetObjectID();
-                                        //sqrl2->Log(QString("Did not find subject [%1] in sqrl2. Created new subjectRowID [%2]").arg(subject.ID).arg(newSubjectRowID), __FUNCTION__);
                                     }
                                     else {
                                         /* get the sqrl2 subject that already exists */
-                                        //sqrl2->Log(QString("Using existing sqrl2 subjectRowID [%1]").arg(newSubjectRowID), __FUNCTION__);
                                         newSubject = sqrl2->GetSubject(newSubjectRowID);
-                                        //newSubject.Get();
                                     }
 
                                     /* copy original study to new study */
@@ -749,7 +752,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                     newStudy.subjectRowID = newSubjectRowID;
                                     newStudy.Store();
                                     qint64 newStudyRowID = newStudy.GetObjectID();
-                                    sqrl2->Log(QString("Subject %1 & study %2 contain %3 modality data... extracting the series to disk").arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newStudy.Modality), __FUNCTION__);
+                                    sqrl2->Debug(QString("Subject %1 & study %2 contain %3 modality data... extracting the series to disk").arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newStudy.Modality));
 
                                     /* get series */
                                     QList <squirrelSeries> serieses = sqrl->GetSeriesList(study.GetObjectID());
@@ -775,15 +778,17 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                                     archiveSeriesPath = QString("data/%1/%2/%3/*").arg(subject.ID).arg(study.StudyNumber).arg(series.SeriesNumber);
                                                 #endif
 
-                                                QString newSeriesPath = QString("%1/data/%2/%3").arg(tmpDir).arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newSeries.SeriesNumber);
+                                                QString newSeriesPath = QString("%1/data/%2/%3/%4").arg(tmpDir).arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newSeries.SeriesNumber);
                                                 utils::MakePath(newSeriesPath, m3);
 
                                                 sqrl->ExtractArchiveFilesToDirectory(sqrl->GetPackagePath(), archiveSeriesPath, newSeriesPath, m3);
                                                 qint64 c(0), b(0);
                                                 utils::GetDirSizeAndFileCount(newSeriesPath, c, b, true);
-                                                sqrl->Log(QString("Extracted files from original squirrel packge [%1 :: %2] to directory [%3]. Directory now contains [%4] files of size [%5] bytes").arg(sqrl->GetPackagePath()).arg(archiveSeriesPath).arg(newSeriesPath).arg(c).arg(b), __FUNCTION__);
+                                                sqrl->Log(QString("Extracted files from original squirrel packge [%1 :: %2] to directory [%3]. Directory now contains [%4] files of size [%5] bytes").arg(sqrl->GetPackagePath()).arg(archiveSeriesPath).arg(newSeriesPath).arg(c).arg(b));
 
-                                                sqrl2->AddStagedFiles("series", newSeriesRowID, utils::FindAllFiles(newSeriesPath, "*"));
+                                                QStringList allFiles = utils::FindAllFiles(newSeriesPath, "*");
+                                                utils::Print(QString("Found %1 files [%2] in path [%3]").arg(allFiles.size()).arg(allFiles.join(", ")).arg(newSeriesPath));
+                                                sqrl2->AddStagedFiles("series", newSeriesRowID, allFiles);
                                                 sqrl2->Debug(QString("Added staged series files from directory [%1] to seriesRowID [%2]").arg(newSeriesPath).arg(newSeriesRowID), __FUNCTION__);
                                             }
                                         }

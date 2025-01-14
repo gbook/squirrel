@@ -23,7 +23,6 @@
 #ifndef SQUIRREL_H
 #define SQUIRREL_H
 
-//#include <string>
 #include <QString>
 #include <QDate>
 #include <QDateTime>
@@ -58,14 +57,16 @@ public:
     squirrel(bool dbg=false, bool q=false);
     ~squirrel();
 
-    /* user-facing squirrel package operations */
+    /* user-facing package operations */
     QString Print(bool detail=false);
     bool Extract(QString destinationDir, QString &m);
     bool Read();
     bool Validate();
     bool Write(bool writeLog);
+    bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
     /* get/set options */
+    QString GetDatabaseUUID() { return databaseUUID; }
     QString GetPackagePath();
     QString GetSystemTempDir();
     bool GetDebug() { return debug; }
@@ -167,7 +168,7 @@ public:
     QHash<QString, QString> ReadParamsFile(QString f);
 
     /* logging */
-    void Log(QString s, QString func);
+    void Log(QString s);
     void Debug(QString s, QString func="");
     QString GetLog() { return log; }
     QString GetLogBuffer();
@@ -185,12 +186,6 @@ public:
     QString PrintStudies(qint64 subjectRowID, bool details=false);
     QString PrintSubjects(PrintingType printType=PrintingType::List);
     QString PrintTree();
-
-    /* database */
-    QSqlDatabase db;
-    QString GetDatabaseUUID() { return databaseUUID; }
-
-    bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
 private:
     bool DatabaseConnect();
@@ -219,14 +214,16 @@ private:
 
     FileMode fileMode;
 
+    /* database */
+    QSqlDatabase db;
     QString databaseUUID; /* necessary to create unique DB connections if more than one squirrel package is opened at a time */
 
     /* flags */
     bool debug;
     bool debugSQL;
-    bool overwritePackage;
-    bool isValid;
     bool isOkToDelete;
+    bool isValid;
+    bool overwritePackage;
     bool quickRead; /* set true to skip reading of the params.json files */
 };
 

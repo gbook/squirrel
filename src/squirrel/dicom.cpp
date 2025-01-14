@@ -48,7 +48,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
     /* check if the directory exists */
     QDir d(dir);
     if (!d.exists()) {
-        sqrl->Log(QString("Directory [%1] does not exist").arg(dir), __FUNCTION__);
+        sqrl->Log(QString("Directory [%1] does not exist").arg(dir));
         return false;
     }
 
@@ -66,7 +66,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
 
         if (processedFileCount%1000 == 0) {
             double percent = static_cast<double>(processedFileCount)/static_cast<double>(numFiles) * 100.0;
-            sqrl->Log(QString("Processed %1 of %2 files [%3%%]").arg(processedFileCount).arg(numFiles).arg(percent), __FUNCTION__);
+            sqrl->Log(QString("Processed %1 of %2 files [%3%%]").arg(processedFileCount).arg(numFiles).arg(percent));
         }
 
         QHash<QString, QString> tags;
@@ -77,7 +77,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
             }
         }
     }
-    sqrl->Log(QString("Found %1 subjects in %2 files").arg(dcms.size()).arg(foundFileCount), __FUNCTION__);
+    sqrl->Log(QString("Found %1 subjects in %2 files").arg(dcms.size()).arg(foundFileCount));
 
     if (foundFileCount > 0) {
         /* ---------- iterate through the subjects ---------- */
@@ -107,7 +107,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     int subjectRowID;
                     subjectRowID = sqrl->FindSubject(tags["PatientID"]);
                     if (subjectRowID < 0) {
-                        sqrl->Log(QString("Creating squirrel Subject [%1]").arg(tags["PatientID"]), __FUNCTION__);
+                        sqrl->Log(QString("Creating squirrel Subject [%1]").arg(tags["PatientID"]));
                         currSubject.DateOfBirth = QDate::fromString(tags["PatientBirthDate"], "yyyy-MM-dd");
                         currSubject.Gender = tags["PatientSex"][0];
                         currSubject.ID = tags["PatientID"];
@@ -122,7 +122,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     int studyRowID;
                     studyRowID = sqrl->FindStudyByUID(tags["StudyInstanceUID"]);
                     if (studyRowID < 0) {
-                        sqrl->Log(QString("Creating squirrel Study [%1]").arg(tags["StudyInstanceUID"]), __FUNCTION__);
+                        sqrl->Log(QString("Creating squirrel Study [%1]").arg(tags["StudyInstanceUID"]));
                         currStudy.DateTime = QDateTime::fromString(tags["StudyDateTime"], "yyyy-MM-dd HH:mm:ss");
                         currStudy.Description = tags["StudyDescription"];
                         currStudy.Modality = tags["Modality"];
@@ -160,7 +160,7 @@ bool dicom::LoadToSquirrel(QString dir, QString binpath, squirrel *sqrl) {
                     /* resequence the newly added series */
                     sqrl->ResequenceSeries(studyRowID);
 
-                    sqrl->Log(QString("Created squirrel Series [%1]").arg(currSeries.SeriesNumber), __FUNCTION__);
+                    sqrl->Log(QString("Created squirrel Series [%1]").arg(currSeries.SeriesNumber));
                 }
             }
         }

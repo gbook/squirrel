@@ -47,7 +47,7 @@ namespace utils {
             return true;
         else {
             /* if we get to this point, there is a SQL error */
-            QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%7]\n\nDriver error [%8]").arg(function).arg(file).arg(line).arg(sql).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
+            QString err = QString("SQL ERROR (Function: %1 File: %2 Line: %3)\n\nSQL (1) [%4]\n\nSQL (2) [%5]\n\nDatabase error [%6]\n\nDriver error [%7]").arg(function).arg(file).arg(line).arg(sql).arg(q.executedQuery()).arg(q.lastError().databaseText()).arg(q.lastError().driverText());
             qDebug() << err;
             qDebug() << q.lastError();
 
@@ -443,7 +443,7 @@ namespace utils {
             /* remove the last column if it was blank, because the file contained an extra trailing comma */
             if (cols.last() == "") {
                 cols.removeLast();
-                m << QString("Last column was blank, removing").arg(cols.size());
+                m << "Last column was blank, removing";
             }
 
             qint64 numcols = cols.size();
