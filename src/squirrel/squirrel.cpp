@@ -79,7 +79,7 @@ squirrel::squirrel(bool dbg, bool q)
     quickRead = true;
     quiet = q;
     databaseUUID = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    Log(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
+    Debug(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
 
     if (!DatabaseConnect()) {
         Log(QString("Error connecting to database. Unable to initilize squirrel library"), __FUNCTION__);
@@ -97,7 +97,7 @@ squirrel::squirrel(bool dbg, bool q)
         isValid = false;
     }
 
-    Log(QString("Created squirrel object."), __FUNCTION__);
+    Debug(QString("Created squirrel object."), __FUNCTION__);
     Debug("Squirrel is running in debug mode", __FUNCTION__);
 }
 
@@ -169,7 +169,7 @@ bool squirrel::DatabaseConnect() {
         db.setDatabaseName(":memory:");
 
     if (db.open()) {
-        Log(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
+        Debug(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
         return true;
     }
     else {
@@ -632,7 +632,7 @@ bool squirrel::Write(bool writeLog) {
 
     if (fileMode == NewPackage) {
         MakeTempDir(workingDir);
-        Log(QString("Writing NEW squirrel package: workingdir [%1]  packagePath [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
+        Log(QString("Writing NEW squirrel package. Working directory [%1]  packagePath [%2]").arg(workingDir).arg(GetPackagePath()), __FUNCTION__);
     }
     else {
         Log(QString("Updating existing squirrel package [%1]").arg(GetPackagePath()), __FUNCTION__);
@@ -759,7 +759,7 @@ bool squirrel::Write(bool writeLog) {
     }
 
     /* ----- 2) write .json file ----- */
-    Log("Creating JSON file...", __FUNCTION__);
+    Log("Creating header file...", __FUNCTION__);
     /* create JSON object */
     QJsonObject root;
 
@@ -786,6 +786,7 @@ bool squirrel::Write(bool writeLog) {
 
     /* add subjects to JSON */
     QList<squirrelSubject> subjectses = GetSubjectList();
+    Log(QString("Adding %1 subjects to header").arg(subjectses.size()), __FUNCTION__);
     foreach (squirrelSubject subject, subjectses) {
         JSONsubjects.append(subject.ToJSON());
     }
@@ -793,7 +794,7 @@ bool squirrel::Write(bool writeLog) {
     /* add group-analyses */
     QList <squirrelGroupAnalysis> groupAnalyses = GetGroupAnalysisList();
     if (groupAnalyses.size() > 0) {
-        Log(QString("Adding %1 group-analyses...").arg(groupAnalyses.size()), __FUNCTION__);
+        Log(QString("Adding %1 group-analyses to header").arg(groupAnalyses.size()), __FUNCTION__);
         QJsonArray JSONgroupanalyses;
         foreach (squirrelGroupAnalysis g, groupAnalyses) {
             if (g.Get()) {
@@ -813,7 +814,7 @@ bool squirrel::Write(bool writeLog) {
     /* add pipelines */
     QList <squirrelPipeline> pipelines = GetPipelineList();
     if (pipelines.size() > 0) {
-        Log(QString("Adding %1 pipelines...").arg(pipelines.size()), __FUNCTION__);
+        Log(QString("Adding %1 pipelines to header").arg(pipelines.size()), __FUNCTION__);
         QJsonArray JSONpipelines;
         foreach (squirrelPipeline p, pipelines) {
             if (p.Get()) {
@@ -845,7 +846,7 @@ bool squirrel::Write(bool writeLog) {
     /* add data-dictionary */
     QList <squirrelDataDictionary> dicts = GetDataDictionaryList();
     if (dicts.size() > 0) {
-        Log(QString("Adding %1 data-dictionaries...").arg(dicts.size()), __FUNCTION__);
+        Log(QString("Adding %1 data-dictionaries to header").arg(dicts.size()), __FUNCTION__);
         QJsonArray JSONdataDictionaries;
         foreach (squirrelDataDictionary d, dicts) {
             if (d.Get()) {
@@ -1247,7 +1248,7 @@ QString squirrel::PrintPackage() {
     str += utils::Print(QString("  PackageName: %1").arg(PackageName));
     str += utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
     str += utils::Print(QString("  SquirrelVersion: %1").arg(SquirrelVersion));
-    str += utils::Print(QString("  Objects:\n    ├── %1 subjects\n    │  ├── %4 observations\n    │  ├── %5 Interventions\n    │  ├── %2 studies\n    │  ├──── %3 series\n    │  └──── %6 analyses\n    ├── %7 experiments\n    ├── %8 pipelines\n    ├── %9 group analyses\n    └── %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numObservations).arg(numInterventions).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+    str += utils::Print(QString("  Objects:\n    +-- %1 subjects\n    |  +-- %4 observations\n    |  +-- %5 Interventions\n    |  +-- %2 studies\n    |  +---- %3 series\n    |  +---- %6 analyses\n    +-- %7 experiments\n    +-- %8 pipelines\n    +-- %9 group analyses\n    +-- %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numObservations).arg(numInterventions).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
 
     return str;
 }
@@ -1395,10 +1396,10 @@ QString squirrel::GetTempDir() {
  */
 void squirrel::Log(QString s, QString func) {
     if (s.trimmed() != "") {
-        log.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
-        logBuffer.append(QString("squirrel::%1() %2\n").arg(func).arg(s));
+        log.append(QString("%1() %2\n").arg(func).arg(s));
+        logBuffer.append(QString("%1() %2\n").arg(func).arg(s));
         if (!quiet) {
-            utils::Print(QString("squirrel::%1() %2").arg(func).arg(s));
+            utils::Print(QString("%1() %2").arg(func).arg(s));
         }
     }
 }
@@ -1410,9 +1411,9 @@ void squirrel::Log(QString s, QString func) {
 void squirrel::Debug(QString s, QString func) {
     if (debug) {
         if (s.trimmed() != "") {
-            log.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
-            logBuffer.append(QString("Debug squirrel::%1() %2\n").arg(func).arg(s));
-            utils::Print(QString("Debug squirrel::%1() %2").arg(func).arg(s));
+            log.append(QString("Debug %1() %2\n").arg(func).arg(s));
+            logBuffer.append(QString("Debug %1() %2\n").arg(func).arg(s));
+            utils::Print(QString("Debug %1() %2").arg(func).arg(s));
         }
     }
 }
