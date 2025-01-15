@@ -779,13 +779,15 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                                 #endif
 
                                                 QString newSeriesPath = QString("%1/data/%2/%3/%4").arg(tmpDir).arg(newSubject.ID).arg(newStudy.StudyNumber).arg(newSeries.SeriesNumber);
+                                                //QString newSeriesPath = tmpDir;
                                                 utils::MakePath(newSeriesPath, m3);
 
-                                                sqrl->ExtractArchiveFilesToDirectory(sqrl->GetPackagePath(), archiveSeriesPath, newSeriesPath, m3);
+                                                sqrl->ExtractArchiveFilesToDirectory(sqrl->GetPackagePath(), archiveSeriesPath, tmpDir, m3);
                                                 qint64 c(0), b(0);
                                                 utils::GetDirSizeAndFileCount(newSeriesPath, c, b, true);
                                                 sqrl->Log(QString("Extracted files from original squirrel packge [%1 :: %2] to directory [%3]. Directory now contains [%4] files of size [%5] bytes").arg(sqrl->GetPackagePath()).arg(archiveSeriesPath).arg(newSeriesPath).arg(c).arg(b));
 
+                                                utils::Print(QString("Searching %1 for files matching '*'").arg(newSeriesPath));
                                                 QStringList allFiles = utils::FindAllFiles(newSeriesPath, "*");
                                                 utils::Print(QString("Found %1 files [%2] in path [%3]").arg(allFiles.size()).arg(allFiles.join(", ")).arg(newSeriesPath));
                                                 sqrl2->AddStagedFiles("series", newSeriesRowID, allFiles);
