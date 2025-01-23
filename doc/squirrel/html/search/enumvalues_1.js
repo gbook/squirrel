@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['newpackage_0',['NewPackage',['../squirrel_8h.html#a031770da453a180e21dcbef5cf5aeab6ab117b55b876863d5c244093282b2d63d',1,'squirrel.h']]]
+  ['details_804',['Details',['../squirrel_8h.html#ae19430710fa50e88a25347582157ddd3aeb0091bd973e704a4c99539258d5ad0a',1,'squirrel.h']]]
 ];

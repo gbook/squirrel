@@ -1,95 +1,123 @@
 \doxysection{C\+:/squirrel/src/squirrel/utils.h File Reference}
 \label{utils_8h}\index{C:/squirrel/src/squirrel/utils.h@{C:/squirrel/src/squirrel/utils.h}}
-{\ttfamily \#include $<$QString$>$}\newline
-{\ttfamily \#include $<$QFile$>$}\newline
-{\ttfamily \#include $<$QDir$>$}\newline
-{\ttfamily \#include $<$QList$>$}\newline
-{\ttfamily \#include $<$QHash$>$}\newline
-{\ttfamily \#include $<$QDate$>$}\newline
+{\ttfamily \#include $<$Q\+String$>$}\newline
+{\ttfamily \#include $<$Q\+File$>$}\newline
+{\ttfamily \#include $<$Q\+Dir$>$}\newline
+{\ttfamily \#include $<$Q\+List$>$}\newline
+{\ttfamily \#include $<$Q\+Hash$>$}\newline
+{\ttfamily \#include $<$Q\+Date$>$}\newline
 {\ttfamily \#include $<$Qt\+Sql$>$}\newline
-{\ttfamily \#include $<$QProcess$>$}\newline
-{\ttfamily \#include $<$QDir\+Iterator$>$}\newline
-{\ttfamily \#include $<$QCryptographic\+Hash$>$}\newline
-{\ttfamily \#include $<$QRandom\+Generator$>$}\newline
-{\ttfamily \#include $<$QCollator$>$}\newline
-{\ttfamily \#include $<$QRegular\+Expression$>$}\newline
-{\ttfamily \#include $<$QCore\+Application$>$}\newline
-\doxysubsubsection*{Namespaces}
+{\ttfamily \#include $<$Q\+Process$>$}\newline
+{\ttfamily \#include $<$Q\+Dir\+Iterator$>$}\newline
+{\ttfamily \#include $<$Q\+Cryptographic\+Hash$>$}\newline
+{\ttfamily \#include $<$Q\+Random\+Generator$>$}\newline
+{\ttfamily \#include $<$Q\+Collator$>$}\newline
+{\ttfamily \#include $<$Q\+Regular\+Expression$>$}\newline
+{\ttfamily \#include $<$Q\+Core\+Application$>$}\newline
+\doxysubsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
-namespace \textbf{ utils}
+ \textbf{ utils}
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Typedefs}
+\doxysubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-typedef QHash$<$ int, QHash$<$ QString, QString $>$ $>$ \textbf{ utils\+::indexed\+Hash}
+\#define \textbf{ P\+B\+S\+TR}~\char`\"{}-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\char`\"{}
+\item 
+\#define \textbf{ P\+B\+W\+I\+D\+TH}~60
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Functions}
+\doxysubsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-void \textbf{ utils\+::\+Print} (QString s, bool n, bool pad)
+typedef Q\+Hash$<$ int, Q\+Hash$<$ Q\+String, Q\+String $>$ $>$ \textbf{ utils\+::indexed\+Hash}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Q\+String \textbf{ utils\+::\+Print} (Q\+String s, bool n, bool pad)
 \item 
 void \textbf{ utils\+::\+Print\+Header} ()
 \item 
-QString \textbf{ utils\+::\+Create\+Current\+Date\+Time} (int format)
+Q\+String \textbf{ utils\+::\+Create\+Current\+Date\+Time} (int format)
 \item 
-QString \textbf{ utils\+::\+Create\+Log\+Date} ()
+Q\+String \textbf{ utils\+::\+Create\+Log\+Date} ()
 \item 
-QString \textbf{ utils\+::\+System\+Command} (QString s, bool detail, bool truncate)
+Q\+String \textbf{ utils\+::\+System\+Command} (Q\+String s, bool detail, bool truncate)
 \item 
-QString \textbf{ utils\+::\+Generate\+Random\+String} (int n)
+Q\+String \textbf{ utils\+::\+Generate\+Random\+String} (int n)
 \item 
-QString \textbf{ utils\+::\+Parse\+Date} (QString s)
+Q\+String \textbf{ utils\+::\+Parse\+Date} (Q\+String s)
 \item 
-QString \textbf{ utils\+::\+Parse\+Time} (QString s)
+Q\+String \textbf{ utils\+::\+Parse\+Time} (Q\+String s)
 \item 
-bool \textbf{ utils\+::\+Parse\+CSV} (QString csv, \textbf{ indexed\+Hash} \&table, QString\+List \&columns, QString \&msg)
+bool \textbf{ utils\+::\+Parse\+C\+SV} (Q\+String csv, indexed\+Hash \&table, Q\+String\+List \&columns, Q\+String \&msg)
 \item 
-bool \textbf{ utils\+::\+Parse\+TSV} (QString tsv, \textbf{ indexed\+Hash} \&table, QString\+List \&columns, QString \&msg)
+bool \textbf{ utils\+::\+Parse\+T\+SV} (Q\+String tsv, indexed\+Hash \&table, Q\+String\+List \&columns, Q\+String \&msg)
 \item 
-QString \textbf{ utils\+::\+Clean\+JSON} (QString s)
+Q\+String \textbf{ utils\+::\+Clean\+J\+S\+ON} (Q\+String s)
 \item 
-double \textbf{ utils\+::\+Get\+Patient\+Age} (QString Patient\+Age\+Str, QString Study\+Date, QString Patient\+Birth\+Date)
+double \textbf{ utils\+::\+Get\+Patient\+Age} (Q\+String Patient\+Age\+Str, Q\+String Study\+Date, Q\+String Patient\+Birth\+Date)
 \item 
-QString \textbf{ utils\+::\+Clean\+String} (QString s)
+Q\+String \textbf{ utils\+::\+Clean\+String} (Q\+String s)
 \item 
-bool \textbf{ utils\+::\+Copy\+File} (QString f, QString dir)
+Q\+String \textbf{ utils\+::\+Human\+Readable\+Size} (qint64 bytes)
 \item 
-bool \textbf{ utils\+::\+Make\+Path} (QString p, QString \&msg, bool perm777)
+void \textbf{ utils\+::\+Print\+Progress} (double percentage)
 \item 
-bool \textbf{ utils\+::\+Remove\+Dir} (QString p, QString \&msg)
+Q\+Date\+Time \textbf{ utils\+::\+String\+To\+Datetime} (Q\+String datetime)
 \item 
-QString\+List \textbf{ utils\+::\+Find\+All\+Files} (QString dir, QString pattern, bool recursive)
+bool \textbf{ utils\+::\+Copy\+File} (Q\+String f, Q\+String dir)
 \item 
-QString\+List \textbf{ utils\+::\+Find\+All\+Dirs} (QString dir, QString pattern, bool recursive, bool includepath)
+bool \textbf{ utils\+::\+Make\+Path} (Q\+String p, Q\+String \&msg, bool perm777)
 \item 
-bool \textbf{ utils\+::\+Rename\+File} (QString filepathorig, QString filepathnew, bool force=true)
+bool \textbf{ utils\+::\+Remove\+Dir} (Q\+String p, Q\+String \&msg)
 \item 
-bool \textbf{ utils\+::\+Move\+File} (QString f, QString dir, QString \&m)
+Q\+String\+List \textbf{ utils\+::\+Find\+All\+Files} (Q\+String dir, Q\+String pattern, bool recursive)
 \item 
-void \textbf{ utils\+::\+Get\+Dir\+Size\+And\+File\+Count} (QString dir, qint64 \&c, qint64 \&b, bool recurse)
+Q\+String\+List \textbf{ utils\+::\+Find\+All\+Dirs} (Q\+String dir, Q\+String pattern, bool recursive, bool includepath)
 \item 
-bool \textbf{ utils\+::\+Write\+Text\+File} (QString filepath, QString str, bool append)
+bool \textbf{ utils\+::\+Rename\+File} (Q\+String filepathorig, Q\+String filepathnew, bool force=true)
 \item 
-QString \textbf{ utils\+::\+Read\+Text\+File\+To\+String} (QString filepath)
+bool \textbf{ utils\+::\+Move\+File} (Q\+String f, Q\+String dir, Q\+String \&m)
 \item 
-bool \textbf{ utils\+::\+Batch\+Rename\+Files} (QString dir, QString seriesnum, QString studynum, QString uid, int \&numfilesrenamed, QString \&msg)
+void \textbf{ utils\+::\+Get\+Dir\+Size\+And\+File\+Count} (Q\+String dir, qint64 \&c, qint64 \&b, bool recurse)
 \item 
-bool \textbf{ utils\+::\+Directory\+Exists} (QString dir)
+bool \textbf{ utils\+::\+Write\+Text\+File} (Q\+String filepath, Q\+String str, bool append)
 \item 
-bool \textbf{ utils\+::\+File\+Exists} (QString f)
+Q\+String \textbf{ utils\+::\+Read\+Text\+File\+To\+String} (Q\+String filepath)
 \item 
-bool \textbf{ utils\+::\+SQLQuery} (QSql\+Query \&q, QString function, QString file, int line, bool d)
+bool \textbf{ utils\+::\+Batch\+Rename\+Files} (Q\+String dir, Q\+String seriesnum, Q\+String studynum, Q\+String uid, int \&numfilesrenamed, Q\+String \&msg)
 \item 
-QString\+List \textbf{ utils\+::\+Get\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type)
+bool \textbf{ utils\+::\+Directory\+Exists} (Q\+String dir)
 \item 
-void \textbf{ utils\+::\+Store\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type, QString\+List paths)
+bool \textbf{ utils\+::\+File\+Exists} (Q\+String f)
 \item 
-void \textbf{ utils\+::\+Remove\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type)
+bool \textbf{ utils\+::\+S\+Q\+L\+Query} (Q\+Sql\+Query \&q, Q\+String function, Q\+String file, int line, bool d)
 \item 
-QHash$<$ QString, QString $>$ \textbf{ utils\+::\+Get\+Params} (qint64 series\+Row\+ID)
+Q\+String\+List \textbf{ utils\+::\+Get\+Staged\+File\+List} (Q\+String database\+U\+U\+ID, qint64 object\+ID, Q\+String object\+Type)
 \item 
-void \textbf{ utils\+::\+Store\+Params} (qint64 series\+Row\+ID, QHash$<$ QString, QString $>$ params)
+void \textbf{ utils\+::\+Store\+Staged\+File\+List} (Q\+String database\+U\+U\+ID, qint64 object\+ID, Q\+String object\+Type, Q\+String\+List paths)
 \item 
-QHash$<$ QString, QString $>$ \textbf{ utils\+::\+Anonymize\+Params} (QHash$<$ QString, QString $>$ params)
+void \textbf{ utils\+::\+Remove\+Staged\+File\+List} (Q\+String database\+U\+U\+ID, qint64 object\+ID, Q\+String object\+Type)
+\item 
+Q\+Hash$<$ Q\+String, Q\+String $>$ \textbf{ utils\+::\+Get\+Params} (Q\+String database\+U\+U\+ID, qint64 series\+Row\+ID)
+\item 
+void \textbf{ utils\+::\+Store\+Params} (Q\+String database\+U\+U\+ID, qint64 series\+Row\+ID, Q\+Hash$<$ Q\+String, Q\+String $>$ params)
+\item 
+Q\+Hash$<$ Q\+String, Q\+String $>$ \textbf{ utils\+::\+Anonymize\+Params} (Q\+Hash$<$ Q\+String, Q\+String $>$ params)
 \end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\label{utils_8h_a93f03159397f25c687840129b18c972d}} 
+\index{utils.h@{utils.h}!PBSTR@{PBSTR}}
+\index{PBSTR@{PBSTR}!utils.h@{utils.h}}
+\doxysubsubsection{PBSTR}
+{\footnotesize\ttfamily \#define P\+B\+S\+TR~\char`\"{}-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\char`\"{}}
+
+\mbox{\label{utils_8h_a69793e71975c25754a8236df29896e15}} 
+\index{utils.h@{utils.h}!PBWIDTH@{PBWIDTH}}
+\index{PBWIDTH@{PBWIDTH}!utils.h@{utils.h}}
+\doxysubsubsection{PBWIDTH}
+{\footnotesize\ttfamily \#define P\+B\+W\+I\+D\+TH~60}
+

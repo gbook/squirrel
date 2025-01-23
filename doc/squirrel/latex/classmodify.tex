@@ -4,17 +4,27 @@
 
 {\ttfamily \#include $<$modify.\+h$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \textbf{ modify} ()
 \item 
-bool \textbf{ Do\+Modify} (QString package\+Path, QString add\+Object, QString remove\+Object, QString data\+Path, bool recursive, QString object\+Data, QString object\+ID, QString subject\+ID, int study\+Num, QString \&m)
-\end{DoxyCompactItemize}
+bool \textbf{ Do\+Modify} (Q\+String package\+Path, Q\+String operation, Q\+String object\+Type, Q\+String data\+Path, bool recursive, Q\+String object\+Data, Q\+String object\+ID, Q\+String subject\+ID, int study\+Num, Q\+String \&m)
+\item 
+void \textbf{ Print\+Variables} (Q\+String object)
+\item 
+bool \textbf{ Add\+Object} (Q\+String package\+Path, Q\+String object\+Type, Q\+String data\+Path, bool recursive, Q\+String object\+Data, Q\+String object\+ID, Q\+String subject\+ID, int study\+Num, Q\+String \&m)
+\item 
+bool \textbf{ Remove\+Object} (Q\+String package\+Path, Q\+String object\+Type, Q\+String data\+Path, bool recursive, Q\+String object\+Data, Q\+String object\+ID, Q\+String subject\+ID, int study\+Num, Q\+String \&m)
+\item 
+bool \textbf{ Update\+Object} (Q\+String package\+Path, Q\+String object\+Type, Q\+String data\+Path, bool recursive, Q\+String object\+Data, Q\+String object\+ID, Q\+String subject\+ID, int study\+Num, Q\+String \&m)
+\item 
+bool \textbf{ Split\+By\+Modality} (Q\+String package\+Path, Q\+String object\+Type, Q\+String data\+Path, bool recursive, Q\+String object\+Data, Q\+String object\+ID, Q\+String subject\+ID, int study\+Num, Q\+String \&m)
+\begin{DoxyCompactList}\small\item\em Split a package by modality. This will create new packages with only the imaging data (and associated analyses/experiments/pipelines) and a separate package with only interventions/observations. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classmodify_a1eb58e3e76e1217d549ffdd19692f46b} 
+\mbox{\label{classmodify_a1eb58e3e76e1217d549ffdd19692f46b}} 
 \index{modify@{modify}!modify@{modify}}
 \index{modify@{modify}!modify@{modify}}
 \doxysubsubsection{modify()}
@@ -23,11 +33,69 @@ bool \textbf{ Do\+Modify} (QString package\+Path, QString add\+Object, QString r
 
 
 \doxysubsection{Member Function Documentation}
-\label{classmodify_a7aa65e2838bfa265d62874ca3facc76b} 
+\mbox{\label{classmodify_ac5bc68aa85f21293a70c72d00af91663}} 
+\index{modify@{modify}!AddObject@{AddObject}}
+\index{AddObject@{AddObject}!modify@{modify}}
+\doxysubsubsection{AddObject()}
+{\footnotesize\ttfamily bool modify\+::\+Add\+Object (\begin{DoxyParamCaption}\item[{Q\+String}]{package\+Path,  }\item[{Q\+String}]{object\+Type,  }\item[{Q\+String}]{data\+Path,  }\item[{bool}]{recursive,  }\item[{Q\+String}]{object\+Data,  }\item[{Q\+String}]{object\+ID,  }\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
+
+\mbox{\label{classmodify_a9725246ef1403aa9aedc8689fbc63c49}} 
 \index{modify@{modify}!DoModify@{DoModify}}
 \index{DoModify@{DoModify}!modify@{modify}}
 \doxysubsubsection{DoModify()}
-{\footnotesize\ttfamily bool modify\+::\+Do\+Modify (\begin{DoxyParamCaption}\item[{QString}]{package\+Path,  }\item[{QString}]{add\+Object,  }\item[{QString}]{remove\+Object,  }\item[{QString}]{data\+Path,  }\item[{bool}]{recursive,  }\item[{QString}]{object\+Data,  }\item[{QString}]{object\+ID,  }\item[{QString}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{QString \&}]{m }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool modify\+::\+Do\+Modify (\begin{DoxyParamCaption}\item[{Q\+String}]{package\+Path,  }\item[{Q\+String}]{operation,  }\item[{Q\+String}]{object\+Type,  }\item[{Q\+String}]{data\+Path,  }\item[{bool}]{recursive,  }\item[{Q\+String}]{object\+Data,  }\item[{Q\+String}]{object\+ID,  }\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
+
+\mbox{\label{classmodify_a18c996688de32a50103caa4da7720692}} 
+\index{modify@{modify}!PrintVariables@{PrintVariables}}
+\index{PrintVariables@{PrintVariables}!modify@{modify}}
+\doxysubsubsection{PrintVariables()}
+{\footnotesize\ttfamily void modify\+::\+Print\+Variables (\begin{DoxyParamCaption}\item[{Q\+String}]{object }\end{DoxyParamCaption})}
+
+\mbox{\label{classmodify_a52726d0ae29adc0b21aed4805f143c6d}} 
+\index{modify@{modify}!RemoveObject@{RemoveObject}}
+\index{RemoveObject@{RemoveObject}!modify@{modify}}
+\doxysubsubsection{RemoveObject()}
+{\footnotesize\ttfamily bool modify\+::\+Remove\+Object (\begin{DoxyParamCaption}\item[{Q\+String}]{package\+Path,  }\item[{Q\+String}]{object\+Type,  }\item[{Q\+String}]{data\+Path,  }\item[{bool}]{recursive,  }\item[{Q\+String}]{object\+Data,  }\item[{Q\+String}]{object\+ID,  }\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
+
+\mbox{\label{classmodify_a5d72ff920630c9ba2b6c9e3ae7b0be18}} 
+\index{modify@{modify}!SplitByModality@{SplitByModality}}
+\index{SplitByModality@{SplitByModality}!modify@{modify}}
+\doxysubsubsection{SplitByModality()}
+{\footnotesize\ttfamily bool modify\+::\+Split\+By\+Modality (\begin{DoxyParamCaption}\item[{Q\+String}]{package\+Path,  }\item[{Q\+String}]{object\+Type,  }\item[{Q\+String}]{data\+Path,  }\item[{bool}]{recursive,  }\item[{Q\+String}]{object\+Data,  }\item[{Q\+String}]{object\+ID,  }\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
+
+
+
+Split a package by modality. This will create new packages with only the imaging data (and associated analyses/experiments/pipelines) and a separate package with only interventions/observations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em package\+Path} & \\
+\hline
+{\em object\+Type} & \\
+\hline
+{\em data\+Path} & \\
+\hline
+{\em recursive} & \\
+\hline
+{\em object\+Data} & \\
+\hline
+{\em object\+ID} & \\
+\hline
+{\em subject\+ID} & \\
+\hline
+{\em study\+Num} & \\
+\hline
+{\em m} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\label{classmodify_a4e0ba9b820a36ed1d3923cb3c1c08449}} 
+\index{modify@{modify}!UpdateObject@{UpdateObject}}
+\index{UpdateObject@{UpdateObject}!modify@{modify}}
+\doxysubsubsection{UpdateObject()}
+{\footnotesize\ttfamily bool modify\+::\+Update\+Object (\begin{DoxyParamCaption}\item[{Q\+String}]{package\+Path,  }\item[{Q\+String}]{object\+Type,  }\item[{Q\+String}]{data\+Path,  }\item[{bool}]{recursive,  }\item[{Q\+String}]{object\+Data,  }\item[{Q\+String}]{object\+ID,  }\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
 
 
 

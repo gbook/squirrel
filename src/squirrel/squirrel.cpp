@@ -1184,7 +1184,7 @@ qint64 squirrel::GetFileCount() {
 /* ----- GetObjectCount --------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetObjectCount
+ * @brief Get the count for a specified object
  * @param object the object to get a count of
  * @return the number of objects
  */
@@ -1260,7 +1260,7 @@ QString squirrel::PrintPackage() {
 /* ----- MakeTempDir ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::MakeTempDir
+ * @brief Make a temporary directory
  * @return true if created/exists, false otherwise
  */
 bool squirrel::MakeTempDir(QString &dir) {
@@ -1288,7 +1288,7 @@ bool squirrel::MakeTempDir(QString &dir) {
 /* ----- DeleteTempDir ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::DeleteTempDir
+ * @brief Delete a temporary directory
  * @return true if created/exists, false otherwise
  */
 bool squirrel::DeleteTempDir(QString dir) {
@@ -1309,7 +1309,7 @@ bool squirrel::DeleteTempDir(QString dir) {
 /* ----- AddStagedFiles --------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::AddStagedFiles - add staged files to the database.
+ * @brief Add the paths of staged files to a specified object
  * These files will be copied when the package is written
  * @param objectType one of the object types
  * @param rowid the database row ID of the object
@@ -1449,7 +1449,7 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
 /* ----- PrintSubjects ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintSubjects print list of subjects to stdout
+ * @brief Print a list of subjects to stdout
  * @param details true to print details, false to print list of subject IDs
  */
 QString squirrel::PrintSubjects(PrintingType printType) {
@@ -1511,7 +1511,7 @@ QString squirrel::PrintSubjects(PrintingType printType) {
 /* ----- PrintStudies ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintStudies print list of studies to the stdout
+ * @brief Print a list of studies to the stdout
  * @param subjectID the subject ID to print studies for
  * @param details true to print details, false to print list of study numbers
  */
@@ -1539,7 +1539,7 @@ QString squirrel::PrintStudies(qint64 subjectRowID, bool details) {
 /* ----- PrintSeries ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintSeries print list of series to stdout
+ * @brief Print a list of series to stdout
  * @param subjectID the subject ID
  * @param studyNum the study number
  * @param details true to print details, false to print list of series numbers
@@ -1624,7 +1624,7 @@ QString squirrel::PrintInterventions(qint64 subjectRowID, PrintingType printType
 /* ----- PrintExperiments ------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintExperiments
+ * @brief Print a list of experiments to stdout
  * @param details true to print details, false to print list of pipeline names
  */
 QString squirrel::PrintExperiments(bool details) {
@@ -1651,7 +1651,7 @@ QString squirrel::PrintExperiments(bool details) {
 /* ----- PrintPipelines --------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintPipelines
+ * @brief Print a list of pipelines to stdout
  * @param details true to print details, false to print list of pipeline names
  */
 QString squirrel::PrintPipelines(bool details) {
@@ -1678,7 +1678,7 @@ QString squirrel::PrintPipelines(bool details) {
 /* ----- PrintGroupAnalyses ----------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::PrintGroupAnalyses
+ * @brief Print a list of group analyses to stdout
  * @param details true to print details, false to print list of group analysis names
  */
 QString squirrel::PrintGroupAnalyses(bool details) {
@@ -1704,6 +1704,11 @@ QString squirrel::PrintGroupAnalyses(bool details) {
 /* ------------------------------------------------------------ */
 /* ----- PrintDataDictionary ---------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Print a list of data dictionaries to stdout
+ * @param details `true` to print details, `false` otherwise
+ * @return The string that was printed to stdout
+ */
 QString squirrel::PrintDataDictionary(bool details) {
     QString str;
 
@@ -1728,7 +1733,7 @@ QString squirrel::PrintDataDictionary(bool details) {
 /* ----- GetExperimentList ------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetExperimentList
+ * @brief Get a list of experiment objects
  * @return list of all experiments
  */
 QList<squirrelExperiment> squirrel::GetExperimentList() {
@@ -1775,7 +1780,7 @@ QList<squirrelPipeline> squirrel::GetPipelineList() {
 /* ----- GetSubjectList --------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Get a list of all subjects in the package
+ * @brief Get a list of all subject objects in the package
  * @return list of all subjects
  */
 QList<squirrelSubject> squirrel::GetSubjectList() {
@@ -1800,7 +1805,7 @@ QList<squirrelSubject> squirrel::GetSubjectList() {
 /* ----- GetStudyList ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Get a list of all studies for a specified subject
+ * @brief Get list of all study objects for a specified subject
  * @param subjectRowID database row ID of the subject
  * @return list of studies
  */
@@ -1826,7 +1831,7 @@ QList<squirrelStudy> squirrel::GetStudyList(qint64 subjectRowID) {
 /* ----- GetSeriesList ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetSeriesList Get all series for a study
+ * @brief Get list of all series objects for a specified study
  * @param studyRowID database row ID of the study
  * @return list of series
  */
@@ -1857,7 +1862,7 @@ QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
 /* ----- GetAnalysisList -------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Get list of all Analysis objects for the specified studyRowID
+ * @brief Get list of all Analysis objects for the specified study
  * @param studyRowID of the parent study
  * @return QList of squirrelAnalysis objects
  */
@@ -1979,9 +1984,9 @@ QList<squirrelDataDictionary> squirrel::GetDataDictionaryList() {
 /* ----- GetSubject ------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetSubject
+ * @brief Get a single subject object by `subjectRowID`
  * @param subjectRowID
- * @return
+ * @return The `squirrelSubject` object
  */
 squirrelSubject squirrel::GetSubject(qint64 subjectRowID) {
     squirrelSubject s(databaseUUID);
@@ -1996,9 +2001,9 @@ squirrelSubject squirrel::GetSubject(qint64 subjectRowID) {
 /* ----- GetStudy --------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetStudy
+ * @brief Get a single study object by `studyRowID`
  * @param studyRowID
- * @return
+ * @return The `squirrelStudy` object
  */
 squirrelStudy squirrel::GetStudy(qint64 studyRowID) {
     squirrelStudy s(databaseUUID);
@@ -2013,9 +2018,9 @@ squirrelStudy squirrel::GetStudy(qint64 studyRowID) {
 /* ----- GetSeries -------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetSeries
+ * @brief Get a single series object by `seriesRowID`
  * @param seriesRowID
- * @return
+ * @return The `squirrelSeries` object
  */
 squirrelSeries squirrel::GetSeries(qint64 seriesRowID) {
     squirrelSeries s(databaseUUID);
@@ -2030,9 +2035,9 @@ squirrelSeries squirrel::GetSeries(qint64 seriesRowID) {
 /* ----- GetAnalysis ------------------------------------------ */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetAnalysis
+ * @brief Get a single analysis object by `analysisRowID`
  * @param analysisRowID
- * @return
+ * @return The `squirrelAnalysis` object
  */
 squirrelAnalysis squirrel::GetAnalysis(qint64 analysisRowID) {
     squirrelAnalysis a(databaseUUID);
@@ -2047,9 +2052,9 @@ squirrelAnalysis squirrel::GetAnalysis(qint64 analysisRowID) {
 /* ----- GetIntervention -------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetIntervention
+ * @brief Get a single intervention object by `interventionRowID`
  * @param interventionRowID
- * @return
+ * @return The `squirrelIntervention` object
  */
 squirrelIntervention squirrel::GetIntervention(qint64 interventionRowID) {
     squirrelIntervention i(databaseUUID);
@@ -2064,9 +2069,9 @@ squirrelIntervention squirrel::GetIntervention(qint64 interventionRowID) {
 /* ----- GetObservation --------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief squirrel::GetObservation
+ * @brief Get a single observation object by `observationRowID`
  * @param observationRowID
- * @return
+ * @return The `squirrelObservation` object
  */
 squirrelObservation squirrel::GetObservation(qint64 observationRowID) {
     squirrelObservation o(databaseUUID);
@@ -2434,279 +2439,326 @@ void squirrel::ResequenceSeries(qint64 studyRowID) {
 /* ------------------------------------------------------------ */
 /* ----- RemoveSubject ---------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveSubject(qint64 subjectRowID) {
-
-    /* get list of studies associated with this subject, and delete them */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("select StudyRowID from Study where SubjectRowID = :subjectRowID");
-    q.bindValue(":subjectRowID", subjectRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    while (q.next()) {
-        if (!RemoveStudy(q.value("StudyRowID").toLongLong()))
-            return false;
-    }
-
-    /* remove Interventions associated with this subject */
-    q.prepare("delete from Intervention where SubjectRowID = :subjectRowID");
-    q.bindValue(":subjectRowID", subjectRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove all observations associated with this subject */
-    q.prepare("delete from Observation where SubjectRowID = :subjectRowID");
-    q.bindValue(":subjectRowID", subjectRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-\
-    /* remove the files, if any from the archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelSubject sqrlSubject(databaseUUID);
-        sqrlSubject.SetObjectID(subjectRowID);
-        sqrlSubject.Get();
-        QString subjectArchivePath = sqrlSubject.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(subjectArchivePath, packagePath, m))
-            return false;
-    }
-
-    /* remove the subject */
-    q.prepare("delete from Subject where SubjectRowID = :subjectRowID");
-    q.bindValue(":subjectRowID", subjectRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    return true;
-}
+//bool squirrel::RemoveSubject(qint64 subjectRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveStudy ------------------------------------------ */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveStudy(qint64 studyRowID) {
-
-    /* get list of studies associated with this subject, and delete them */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("select SeriesRowID from Series where StudyRowID = :studyRowID");
-    q.bindValue(":studyRowID", studyRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    while (q.next()) {
-        if (!RemoveSeries(q.value("SeriesRowID").toLongLong()))
-            return false;
-    }
-
-    /* remove analyses associated with this subject */
-    q.prepare("select AnalysisRowID from Analysis where StudyRowID = :studyRowID");
-    q.bindValue(":studyRowID", studyRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    while (q.next()) {
-        if (!RemoveAnalysis(q.value("AnalysisRowID").toLongLong()))
-            return false;
-    }
-
-    /* remove files from the archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelSubject sqrlStudy(databaseUUID);
-        sqrlStudy.SetObjectID(studyRowID);
-        sqrlStudy.Get();
-        QString studyArchivePath = sqrlStudy.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(studyArchivePath, packagePath, m))
-            return false;
-    }
-
-    /* remove the study */
-    q.prepare("delete from Study where StudyRowID = :studyRowID");
-    q.bindValue(":studyRowID", studyRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    return true;
-}
+//bool squirrel::RemoveStudy(qint64 studyRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveSeries ----------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveSeries(qint64 seriesRowID) {
-
-    /* delete from database */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from Series where SeriesRowID = :seriesRowID");
-    q.bindValue(":seriesRowID", seriesRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove files from archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelSeries sqrlSeries(databaseUUID);
-        sqrlSeries.SetObjectID(seriesRowID);
-        sqrlSeries.Get();
-        QString seriesArchivePath = sqrlSeries.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(seriesArchivePath, packagePath, m))
-            return false;
-    }
-
-    return true;
-}
+//bool squirrel::RemoveSeries(qint64 seriesRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveAnalysis --------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
-
-    /* delete from database */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from Analysis where AnalysisRowID = :analysisRowID");
-    q.bindValue(":analysisRowID", analysisRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove files from archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelAnalysis sqrlAnalysis(databaseUUID);
-        sqrlAnalysis.SetObjectID(analysisRowID);
-        sqrlAnalysis.Get();
-        QString analysisArchivePath = sqrlAnalysis.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(analysisArchivePath, packagePath, m))
-            return false;
-    }
-
-    return true;
-}
+//bool squirrel::RemoveAnalysis(qint64 analysisRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveExperiment ------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveExperiment(qint64 experimentRowID) {
-
-    /* delete from database */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from Experiment where ExperimentRowID = :experimentRowID");
-    q.bindValue(":experimentRowID", experimentRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove files from archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelExperiment sqrlExperiment(databaseUUID);
-        sqrlExperiment.SetObjectID(experimentRowID);
-        sqrlExperiment.Get();
-        QString experimentArchivePath = sqrlExperiment.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(experimentArchivePath, packagePath, m))
-            return false;
-    }
-
-    return true;
-}
+//bool squirrel::RemoveExperiment(qint64 experimentRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemovePipeline --------------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemovePipeline(qint64 pipelineRowID) {
-
-    /* delete from database */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from Pipeline where PipelineRowID = :pipelineRowID");
-    q.bindValue(":pipelineRowID", pipelineRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    q.prepare("delete from PipelineDataStep where PipelineRowID = :pipelineRowID");
-    q.bindValue(":pipelineRowID", pipelineRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove files from archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelPipeline sqrlPipeline(databaseUUID);
-        sqrlPipeline.SetObjectID(pipelineRowID);
-        sqrlPipeline.Get();
-        QString pipelineArchivePath = sqrlPipeline.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(pipelineArchivePath, packagePath, m))
-            return false;
-    }
-
-    return true;
-}
+//bool squirrel::RemovePipeline(qint64 pipelineRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveGroupAnalysis ---------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
-
-    /* delete from database */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from GroupAnalysis where GroupAnalysisRowID = :groupAnalysisRowID");
-    q.bindValue(":groupAnalysisRowID", groupAnalysisRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove files from archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelGroupAnalysis sqrlGroupAnalysis(databaseUUID);
-        sqrlGroupAnalysis.SetObjectID(groupAnalysisRowID);
-        sqrlGroupAnalysis.Get();
-        QString groupAnalysisArchivePath = sqrlGroupAnalysis.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(groupAnalysisArchivePath, packagePath, m))
-            return false;
-    }
-
-    return true;
-}
+//bool squirrel::RemoveGroupAnalysis(qint64 groupAnalysisRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveDataDictionary --------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
-
-    /* delete from database */
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from DataDictionary where DataDictionaryRowID = :dataDictionaryRowID");
-    q.bindValue(":dataDictionaryRowID", dataDictionaryRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    /* remove files from archive */
-    if (fileMode == FileMode::ExistingPackage) {
-        squirrelDataDictionary sqrlDataDictionary(databaseUUID);
-        sqrlDataDictionary.SetObjectID(dataDictionaryRowID);
-        sqrlDataDictionary.Get();
-        QString dataDictionaryArchivePath = sqrlDataDictionary.VirtualPath();
-        QString m;
-        if (!RemoveDirectoryFromArchive(dataDictionaryArchivePath, packagePath, m))
-            return false;
-    }
-
-    return true;
-}
+//bool squirrel::RemoveDataDictionary(qint64 dataDictionaryRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveIntervention ----------------------------------- */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
-
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from Intervention where InterventionRowID = :InterventionRowID");
-    q.bindValue(":InterventionRowID", InterventionRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-    return true;
-}
+//bool squirrel::RemoveIntervention(qint64 InterventionRowID) {
+//}
 
 
 /* ------------------------------------------------------------ */
 /* ----- RemoveObservation ------------------------------------ */
 /* ------------------------------------------------------------ */
-bool squirrel::RemoveObservation(qint64 observationRowID) {
+//bool squirrel::RemoveObservation(qint64 observationRowID) {
+//}
 
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("delete from Observation where ObservationRowID = :observationRowID");
-    q.bindValue(":observationRowID", observationRowID);
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    return true;
+/* ------------------------------------------------------------ */
+/* ----- RemoveObject ----------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Remove an object and child objects from the package
+ * @param objectType Possible object types `subject`, `study`, `series`, `analysis`, `experiment`, `intervention`, `observation`, `pipeline`, `datadictionary`, `groupanalysis`
+ * @param objectRowID object database rowID
+ * @return true if successful, false otherwise
+ */
+bool squirrel::RemoveObject(QString objectType, qint64 objectRowID) {
+    if (objectType == "") {
+        Debug("Blank object type");
+        return false;
+    }
+    else if (objectType == "subject") {
+        /* get list of studies associated with this subject, and delete them */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("select StudyRowID from Study where SubjectRowID = :subjectRowID");
+        q.bindValue(":subjectRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        while (q.next()) {
+            if (!RemoveObject("study", q.value("StudyRowID").toLongLong()))
+                return false;
+        }
+
+        /* remove Interventions associated with this subject */
+        q.prepare("delete from Intervention where SubjectRowID = :subjectRowID");
+        q.bindValue(":subjectRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove all observations associated with this subject */
+        q.prepare("delete from Observation where SubjectRowID = :subjectRowID");
+        q.bindValue(":subjectRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        \
+            /* remove the files, if any from the archive */
+            if (fileMode == FileMode::ExistingPackage) {
+            squirrelSubject sqrlSubject(databaseUUID);
+            sqrlSubject.SetObjectID(objectRowID);
+            sqrlSubject.Get();
+            QString subjectArchivePath = sqrlSubject.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(subjectArchivePath, packagePath, m))
+                return false;
+        }
+
+        /* remove the subject */
+        q.prepare("delete from Subject where SubjectRowID = :subjectRowID");
+        q.bindValue(":subjectRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        return true;
+    }
+    else if (objectType == "study") {
+        /* get list of studies associated with this subject, and delete them */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("select SeriesRowID from Series where StudyRowID = :studyRowID");
+        q.bindValue(":studyRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        while (q.next()) {
+            if (!RemoveObject("series", q.value("SeriesRowID").toLongLong()))
+                return false;
+        }
+
+        /* remove analyses associated with this subject */
+        q.prepare("select AnalysisRowID from Analysis where StudyRowID = :studyRowID");
+        q.bindValue(":studyRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        while (q.next()) {
+            if (!RemoveObject("analysis", q.value("AnalysisRowID").toLongLong()))
+                return false;
+        }
+
+        /* remove files from the archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelSubject sqrlStudy(databaseUUID);
+            sqrlStudy.SetObjectID(objectRowID);
+            sqrlStudy.Get();
+            QString studyArchivePath = sqrlStudy.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(studyArchivePath, packagePath, m))
+                return false;
+        }
+
+        /* remove the study */
+        q.prepare("delete from Study where StudyRowID = :studyRowID");
+        q.bindValue(":studyRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        return true;
+    }
+    else if (objectType == "series") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Series where SeriesRowID = :seriesRowID");
+        q.bindValue(":seriesRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelSeries sqrlSeries(databaseUUID);
+            sqrlSeries.SetObjectID(objectRowID);
+            sqrlSeries.Get();
+            QString seriesArchivePath = sqrlSeries.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(seriesArchivePath, packagePath, m))
+                return false;
+        }
+
+        return true;
+    }
+    else if (objectType == "analysis") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Analysis where AnalysisRowID = :analysisRowID");
+        q.bindValue(":analysisRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelAnalysis sqrlAnalysis(databaseUUID);
+            sqrlAnalysis.SetObjectID(objectRowID);
+            sqrlAnalysis.Get();
+            QString analysisArchivePath = sqrlAnalysis.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(analysisArchivePath, packagePath, m))
+                return false;
+        }
+
+        return true;
+    }
+    else if (objectType == "intervention") {
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Intervention where InterventionRowID = :InterventionRowID");
+        q.bindValue(":InterventionRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        return true;
+    }
+    else if (objectType == "observation") {
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Observation where ObservationRowID = :observationRowID");
+        q.bindValue(":observationRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        return true;
+    }
+    else if (objectType == "analysis") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Analysis where AnalysisRowID = :analysisRowID");
+        q.bindValue(":analysisRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelAnalysis sqrlAnalysis(databaseUUID);
+            sqrlAnalysis.SetObjectID(objectRowID);
+            sqrlAnalysis.Get();
+            QString analysisArchivePath = sqrlAnalysis.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(analysisArchivePath, packagePath, m))
+                return false;
+        }
+
+        return true;
+    }
+    else if (objectType == "experiment") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Experiment where ExperimentRowID = :experimentRowID");
+        q.bindValue(":experimentRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelExperiment sqrlExperiment(databaseUUID);
+            sqrlExperiment.SetObjectID(objectRowID);
+            sqrlExperiment.Get();
+            QString experimentArchivePath = sqrlExperiment.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(experimentArchivePath, packagePath, m))
+                return false;
+        }
+
+        return true;
+    }
+    else if (objectType == "pipeline") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from Pipeline where PipelineRowID = :pipelineRowID");
+        q.bindValue(":pipelineRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        q.prepare("delete from PipelineDataStep where PipelineRowID = :pipelineRowID");
+        q.bindValue(":pipelineRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelPipeline sqrlPipeline(databaseUUID);
+            sqrlPipeline.SetObjectID(objectRowID);
+            sqrlPipeline.Get();
+            QString pipelineArchivePath = sqrlPipeline.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(pipelineArchivePath, packagePath, m))
+                return false;
+        }
+
+        return true;
+    }
+    else if (objectType == "groupanalysis") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from GroupAnalysis where GroupAnalysisRowID = :groupAnalysisRowID");
+        q.bindValue(":groupAnalysisRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelGroupAnalysis sqrlGroupAnalysis(databaseUUID);
+            sqrlGroupAnalysis.SetObjectID(objectRowID);
+            sqrlGroupAnalysis.Get();
+            QString groupAnalysisArchivePath = sqrlGroupAnalysis.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(groupAnalysisArchivePath, packagePath, m))
+                return false;
+        }
+
+        return true;
+    }
+    else if (objectType == "datadictionary") {
+        /* delete from database */
+        QSqlQuery q(QSqlDatabase::database(databaseUUID));
+        q.prepare("delete from DataDictionary where DataDictionaryRowID = :dataDictionaryRowID");
+        q.bindValue(":dataDictionaryRowID", objectRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+        /* remove files from archive */
+        if (fileMode == FileMode::ExistingPackage) {
+            squirrelDataDictionary sqrlDataDictionary(databaseUUID);
+            sqrlDataDictionary.SetObjectID(objectRowID);
+            sqrlDataDictionary.Get();
+            QString dataDictionaryArchivePath = sqrlDataDictionary.VirtualPath();
+            QString m;
+            if (!RemoveDirectoryFromArchive(dataDictionaryArchivePath, packagePath, m))
+                return false;
+        }
+        return true;
+    }
+    else {
+        Debug("Unknown object type [" + objectType + "]");
+        return false;
+    }
 }
-
 
 /* ------------------------------------------------------------ */
 /* ----- ExtractArchiveFileToMemory --------------------------- */

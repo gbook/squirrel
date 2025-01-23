@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['_7esquirrel_0',['~squirrel',['../classsquirrel.html#a7c2bad2ef13d00976770d7aae16ccfc8',1,'squirrel']]],
-  ['_7esquirrelimageio_1',['~squirrelImageIO',['../classsquirrel_image_i_o.html#a0e7460a87b5ee772189cedc96755f578',1,'squirrelImageIO']]]
+  ['write_632',['Write',['../classsquirrel.html#aec053b79aa62fa47dc653f5e80d857b5',1,'squirrel']]],
+  ['writetextfile_633',['WriteTextFile',['../namespaceutils.html#acf4d28448dc62cedc4c5a2f3b0281e21',1,'utils']]]
 ];

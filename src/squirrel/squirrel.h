@@ -48,7 +48,7 @@ typedef QList<QStringPair> pairList;
 /**
  * @brief The squirrel class
  *
- * provides a complete class to read, write, and validate squirrel files
+ * provides a complete class to read, write, modify, split, merge, and validate squirrel files
  */
 class squirrel
 {
@@ -66,16 +66,16 @@ public:
     bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
     /* get/set options */
-    QString GetDatabaseUUID() { return databaseUUID; }
+    QString GetDatabaseUUID() { return databaseUUID; } /*!< get the database UUID */
     QString GetPackagePath();
     QString GetSystemTempDir();
-    bool GetDebug() { return debug; }
-    bool GetDebugSQL() { return debugSQL; }
+    bool GetDebug() { return debug; } /*!< true if debugging is enabled */
+    bool GetDebugSQL() { return debugSQL; } /*!< true if SQL debugging is enabled */
     void SetDebug(bool d);
     void SetDebugSQL(bool d);
     void SetFileMode(FileMode m) { fileMode = m; } /*!< Set the file mode to either NewPackage or ExistingPackage */
     void SetOverwritePackage(bool o);
-    void SetPackagePath(QString p) { packagePath = p; }
+    void SetPackagePath(QString p) { packagePath = p; } /*!< Set the package path */
     void SetQuickRead(bool q);
     void SetSystemTempDir(QString tmpdir);
 
@@ -133,16 +133,17 @@ public:
     qint64 FindSubject(QString id);
 
     /* remove objects */
-    bool RemoveAnalysis(qint64 analysisRowID);
-    bool RemoveDataDictionary(qint64 dataDictionaryRowID);
-    bool RemoveExperiment(qint64 experimentRowID);
-    bool RemoveGroupAnalysis(qint64 groupAnalysisRowID);
-    bool RemoveIntervention(qint64 InterventionRowID);
-    bool RemoveObservation(qint64 observationRowID);
-    bool RemovePipeline(qint64 pipelineRowID);
-    bool RemoveSeries(qint64 seriesRowID);
-    bool RemoveStudy(qint64 studyRowID);
-    bool RemoveSubject(qint64 subjectRowID);
+    //bool RemoveAnalysis(qint64 analysisRowID);
+    //bool RemoveDataDictionary(qint64 dataDictionaryRowID);
+    //bool RemoveExperiment(qint64 experimentRowID);
+    //bool RemoveGroupAnalysis(qint64 groupAnalysisRowID);
+    //bool RemoveIntervention(qint64 InterventionRowID);
+    //bool RemoveObservation(qint64 observationRowID);
+    //bool RemovePipeline(qint64 pipelineRowID);
+    //bool RemoveSeries(qint64 seriesRowID);
+    //bool RemoveStudy(qint64 studyRowID);
+    //bool RemoveSubject(qint64 subjectRowID);
+    bool RemoveObject(QString objectType, qint64 objectRowID);
 
     bool AddStagedFiles(QString objectType, qint64 rowid, QStringList files);
 
@@ -162,6 +163,7 @@ public:
     /* validation functions */
     QString GetTempDir();
     bool IsValid() { return isValid; }
+    /*!< true if ok to delete the object */
     bool OkToDelete() { return isOkToDelete; }
 
     /* functions to read special files */
@@ -170,7 +172,7 @@ public:
     /* logging */
     void Log(QString s);
     void Debug(QString s, QString func="");
-    QString GetLog() { return log; }
+    QString GetLog() { return log; } /*!< Get the entire log */
     QString GetLogBuffer();
     bool quiet=false;
 

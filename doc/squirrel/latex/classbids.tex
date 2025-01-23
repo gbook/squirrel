@@ -4,27 +4,29 @@
 
 {\ttfamily \#include $<$bids.\+h$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \textbf{ bids} ()
 \item 
-bool \textbf{ Load\+To\+Squirrel} (QString dir, \textbf{ squirrel} $\ast$sqrl)
-\begin{DoxyCompactList}\small\item\em Load a BIDS directory into a squirrel object. \end{DoxyCompactList}\item 
-bool \textbf{ Load\+Root\+Files} (QString\+List rootfiles, \textbf{ squirrel} $\ast$sqrl)
-\begin{DoxyCompactList}\small\item\em Load the files contained in the root of the BIDS directory. \end{DoxyCompactList}\item 
-bool \textbf{ Load\+Subject\+Files} (QString\+List subjfiles, QString ID, \textbf{ squirrel} $\ast$sqrl)
-\begin{DoxyCompactList}\small\item\em Load the files contained in the subject\textquotesingle{}s directory in the BIDS object. \end{DoxyCompactList}\item 
-bool \textbf{ Load\+Session\+Dir} (QString sesdir, int study\+Num, \textbf{ squirrel} $\ast$sqrl)
-\begin{DoxyCompactList}\small\item\em Load the files in a session directory. \end{DoxyCompactList}\item 
-bool \textbf{ Load\+Participants\+File} (QString f, \textbf{ squirrel} $\ast$sqrl)
+bool \textbf{ Read} (Q\+String dir, \textbf{ squirrel} $\ast$sqrl)
+\begin{DoxyCompactList}\small\item\em Load a B\+I\+DS directory into a squirrel object. \end{DoxyCompactList}\item 
+bool \textbf{ Load\+To\+Squirrel} (Q\+String dir, \textbf{ squirrel} $\ast$sqrl)
+\begin{DoxyCompactList}\small\item\em Load a B\+I\+DS directory into a squirrel object. \end{DoxyCompactList}\item 
+bool \textbf{ Load\+Root\+Files} (Q\+String\+List rootfiles, \textbf{ squirrel} $\ast$sqrl)
+\begin{DoxyCompactList}\small\item\em Load the files contained in the root of the B\+I\+DS directory. \end{DoxyCompactList}\item 
+bool \textbf{ Load\+Subject\+Files} (Q\+String\+List subjfiles, Q\+String ID, \textbf{ squirrel} $\ast$sqrl)
+\begin{DoxyCompactList}\small\item\em Load the files contained in the subject\textquotesingle{}s directory in the B\+I\+DS object. \end{DoxyCompactList}\item 
+bool \textbf{ Load\+Session\+Dir} (Q\+String sesdir, qint64 subject\+Row\+ID, int study\+Num, \textbf{ squirrel} $\ast$sqrl)
+\begin{DoxyCompactList}\small\item\em Load the files from a B\+I\+DS session directory into a squirrel study. \end{DoxyCompactList}\item 
+bool \textbf{ Load\+Participants\+File} (Q\+String f, \textbf{ squirrel} $\ast$sqrl)
 \begin{DoxyCompactList}\small\item\em Loads the participants.\+tsv file. \end{DoxyCompactList}\item 
-bool \textbf{ Load\+Task\+File} (QString f, \textbf{ squirrel} $\ast$sqrl)
+bool \textbf{ Load\+Task\+File} (Q\+String f, \textbf{ squirrel} $\ast$sqrl)
 \begin{DoxyCompactList}\small\item\em Load a file containing task information. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classbids_a8f3d95f58a724e27cd65ca2a78865de3} 
+\mbox{\label{classbids_a8f3d95f58a724e27cd65ca2a78865de3}} 
 \index{bids@{bids}!bids@{bids}}
 \index{bids@{bids}!bids@{bids}}
 \doxysubsubsection{bids()}
@@ -33,11 +35,11 @@ bool \textbf{ Load\+Task\+File} (QString f, \textbf{ squirrel} $\ast$sqrl)
 
 
 \doxysubsection{Member Function Documentation}
-\label{classbids_ab0c8ec4471aa6f529d169050bdcc40f1} 
+\mbox{\label{classbids_ab0c8ec4471aa6f529d169050bdcc40f1}} 
 \index{bids@{bids}!LoadParticipantsFile@{LoadParticipantsFile}}
 \index{LoadParticipantsFile@{LoadParticipantsFile}!bids@{bids}}
 \doxysubsubsection{LoadParticipantsFile()}
-{\footnotesize\ttfamily bool bids\+::\+Load\+Participants\+File (\begin{DoxyParamCaption}\item[{QString}]{f,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool bids\+::\+Load\+Participants\+File (\begin{DoxyParamCaption}\item[{Q\+String}]{f,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
 
 
 
@@ -53,15 +55,15 @@ Loads the participants.\+tsv file.
 \begin{DoxyReturn}{Returns}
 true if successful, false otherwise 
 \end{DoxyReturn}
-\label{classbids_ab789628a55750b44457f828fc77c28c3} 
+\mbox{\label{classbids_ab789628a55750b44457f828fc77c28c3}} 
 \index{bids@{bids}!LoadRootFiles@{LoadRootFiles}}
 \index{LoadRootFiles@{LoadRootFiles}!bids@{bids}}
 \doxysubsubsection{LoadRootFiles()}
-{\footnotesize\ttfamily bool bids\+::\+Load\+Root\+Files (\begin{DoxyParamCaption}\item[{QString\+List}]{rootfiles,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool bids\+::\+Load\+Root\+Files (\begin{DoxyParamCaption}\item[{Q\+String\+List}]{rootfiles,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
 
 
 
-Load the files contained in the root of the BIDS directory. 
+Load the files contained in the root of the B\+I\+DS directory. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -73,15 +75,15 @@ Load the files contained in the root of the BIDS directory.
 \begin{DoxyReturn}{Returns}
 true if successful, false if any errors 
 \end{DoxyReturn}
-\label{classbids_a2c32c5036d44f6ea18827e6bb4bfe9a2} 
+\mbox{\label{classbids_a40eb476833cd0babb86d4a7313395ccb}} 
 \index{bids@{bids}!LoadSessionDir@{LoadSessionDir}}
 \index{LoadSessionDir@{LoadSessionDir}!bids@{bids}}
 \doxysubsubsection{LoadSessionDir()}
-{\footnotesize\ttfamily bool bids\+::\+Load\+Session\+Dir (\begin{DoxyParamCaption}\item[{QString}]{sesdir,  }\item[{int}]{study\+Num,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool bids\+::\+Load\+Session\+Dir (\begin{DoxyParamCaption}\item[{Q\+String}]{sesdir,  }\item[{qint64}]{subject\+Row\+ID,  }\item[{int}]{study\+Num,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
 
 
 
-Load the files in a session directory. 
+Load the files from a B\+I\+DS session directory into a squirrel study. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -93,21 +95,21 @@ Load the files in a session directory.
 \begin{DoxyReturn}{Returns}
 true 
 \end{DoxyReturn}
-\label{classbids_aa5418b2f36a6a1e2e0eba4baa4900564} 
+\mbox{\label{classbids_aa5418b2f36a6a1e2e0eba4baa4900564}} 
 \index{bids@{bids}!LoadSubjectFiles@{LoadSubjectFiles}}
 \index{LoadSubjectFiles@{LoadSubjectFiles}!bids@{bids}}
 \doxysubsubsection{LoadSubjectFiles()}
-{\footnotesize\ttfamily bool bids\+::\+Load\+Subject\+Files (\begin{DoxyParamCaption}\item[{QString\+List}]{subjfiles,  }\item[{QString}]{ID,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool bids\+::\+Load\+Subject\+Files (\begin{DoxyParamCaption}\item[{Q\+String\+List}]{subjfiles,  }\item[{Q\+String}]{ID,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
 
 
 
-Load the files contained in the subject\textquotesingle{}s directory in the BIDS object. 
+Load the files contained in the subject\textquotesingle{}s directory in the B\+I\+DS object. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em subjfiles} & list of subject files \\
 \hline
-{\em ID} & BIDS ID of this subject \\
+{\em ID} & B\+I\+DS ID of this subject \\
 \hline
 {\em sqrl} & squirrel object \\
 \hline
@@ -115,11 +117,11 @@ Load the files contained in the subject\textquotesingle{}s directory in the BIDS
 \begin{DoxyReturn}{Returns}
 true 
 \end{DoxyReturn}
-\label{classbids_a26587021ad53f5bdb811a47db4743506} 
+\mbox{\label{classbids_a26587021ad53f5bdb811a47db4743506}} 
 \index{bids@{bids}!LoadTaskFile@{LoadTaskFile}}
 \index{LoadTaskFile@{LoadTaskFile}!bids@{bids}}
 \doxysubsubsection{LoadTaskFile()}
-{\footnotesize\ttfamily bool bids\+::\+Load\+Task\+File (\begin{DoxyParamCaption}\item[{QString}]{f,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool bids\+::\+Load\+Task\+File (\begin{DoxyParamCaption}\item[{Q\+String}]{f,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
 
 
 
@@ -135,23 +137,45 @@ Load a file containing task information.
 \begin{DoxyReturn}{Returns}
 true if successful, false otherwise 
 \end{DoxyReturn}
-\label{classbids_ae79a0fb52541ac1823218a9659593ccc} 
+\mbox{\label{classbids_ae79a0fb52541ac1823218a9659593ccc}} 
 \index{bids@{bids}!LoadToSquirrel@{LoadToSquirrel}}
 \index{LoadToSquirrel@{LoadToSquirrel}!bids@{bids}}
 \doxysubsubsection{LoadToSquirrel()}
-{\footnotesize\ttfamily bool bids\+::\+Load\+To\+Squirrel (\begin{DoxyParamCaption}\item[{QString}]{dir,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool bids\+::\+Load\+To\+Squirrel (\begin{DoxyParamCaption}\item[{Q\+String}]{dir,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
 
 
 
-Load a BIDS directory into a squirrel object. 
+Load a B\+I\+DS directory into a squirrel object. 
 
-This function does its best to load an existing BIDS directory into a squirrel package. Due to the complex nature of BIDS structures and addendums, exact converstion of BIDS into squirrel may be incomplete
+This function does its best to load an existing B\+I\+DS directory into a squirrel package. Due to the complex nature of B\+I\+DS structures and addendums, exact converstion of B\+I\+DS into squirrel may be incomplete
 
 
 \begin{DoxyParams}{Parameters}
-{\em dir} & path to the BIDS directory \\
+{\em dir} & path to the B\+I\+DS directory \\
 \hline
 {\em sqrl} & squirrel object \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if loaded successfully, false otherwise 
+\end{DoxyReturn}
+\mbox{\label{classbids_a3703f0285a112e437a10ff0c5a1ef521}} 
+\index{bids@{bids}!Read@{Read}}
+\index{Read@{Read}!bids@{bids}}
+\doxysubsubsection{Read()}
+{\footnotesize\ttfamily bool bids\+::\+Read (\begin{DoxyParamCaption}\item[{Q\+String}]{dir,  }\item[{\textbf{ squirrel} $\ast$}]{sqrl }\end{DoxyParamCaption})}
+
+
+
+Load a B\+I\+DS directory into a squirrel object. 
+
+This function does its best to load an existing B\+I\+DS directory into a squirrel package. Due to the complex nature of B\+I\+DS structures and addendums, exact converstion of B\+I\+DS into squirrel may be incomplete
+
+
+\begin{DoxyParams}{Parameters}
+{\em dir} & Path to the B\+I\+DS directory \\
+\hline
+{\em sqrl} & Squirrel object \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

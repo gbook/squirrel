@@ -9,159 +9,213 @@ The squirrel class.
 
 {\ttfamily \#include $<$squirrel.\+h$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \textbf{ squirrel} (bool dbg=false, bool q=false)
 \begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
 \textbf{ $\sim$squirrel} ()
 \begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print} (bool detail=false)
+\begin{DoxyCompactList}\small\item\em Print the details of a package, including all objects. \end{DoxyCompactList}\item 
+bool \textbf{ Extract} (Q\+String destination\+Dir, Q\+String \&m)
+\item 
 bool \textbf{ Read} ()
 \begin{DoxyCompactList}\small\item\em Read a squirrel package. All parameters must be set first. \end{DoxyCompactList}\item 
-bool \textbf{ Write} (bool write\+Log)
-\begin{DoxyCompactList}\small\item\em Write a squirrel package. All parameters should be set first. \end{DoxyCompactList}\item 
 bool \textbf{ Validate} ()
 \begin{DoxyCompactList}\small\item\em Validate if a squirrel package is readable. \end{DoxyCompactList}\item 
-void \textbf{ Print} ()
-\begin{DoxyCompactList}\small\item\em Print the details of a package, including all objects. \end{DoxyCompactList}\item 
-void \textbf{ Set\+Package\+Path} (QString p)
+bool \textbf{ Write} (bool write\+Log)
+\begin{DoxyCompactList}\small\item\em Write a squirrel package. All parameters should be set first. \end{DoxyCompactList}\item 
+bool \textbf{ Extract\+Archive\+Files\+To\+Directory} (Q\+String archive\+Path, Q\+String file\+Pattern, Q\+String out\+Dir, Q\+String \&m)
 \item 
-QString \textbf{ Get\+Package\+Path} ()
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+Q\+String \textbf{ Get\+Package\+Path} ()
 \begin{DoxyCompactList}\small\item\em Get the package path, with extension. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Get\+System\+Temp\+Dir} ()
+\begin{DoxyCompactList}\small\item\em Get the previously specified system temp dir [using \doxyref{Set\+System\+Temp\+Dir()}{p.}{classsquirrel_a956c45141bd1ab75c56933e093f4bcbb}], or the default temp dir if blank. \end{DoxyCompactList}\item 
+bool \textbf{ Get\+Debug} ()
+\item 
+bool \textbf{ Get\+Debug\+S\+QL} ()
+\item 
+void \textbf{ Set\+Debug} (bool d)
+\begin{DoxyCompactList}\small\item\em Set the option to print debugging information. \end{DoxyCompactList}\item 
+void \textbf{ Set\+Debug\+S\+QL} (bool d)
+\begin{DoxyCompactList}\small\item\em Set the option to print S\+QL debugging statements. \end{DoxyCompactList}\item 
 void \textbf{ Set\+File\+Mode} (\textbf{ File\+Mode} m)
 \item 
-QList$<$ \textbf{ squirrel\+Experiment} $>$ \textbf{ Get\+All\+Experiments} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+All\+Experiments}{p.}{classsquirrel_afc988fad980e4a03b68f8b0e7f9a18bf} \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Pipeline} $>$ \textbf{ Get\+All\+Pipelines} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+All\+Pipelines}{p.}{classsquirrel_ab98b00288c20101ea895088147318d29} \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Subject} $>$ \textbf{ Get\+All\+Subjects} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+All\+Subjects}{p.}{classsquirrel_a60f8beac1595af6ab5238b226772dd25} \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Study} $>$ \textbf{ Get\+Studies} (qint64 subject\+Row\+ID)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Studies}{p.}{classsquirrel_aeb641668bc3b40a5886a0c51db14aaef} \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Series} $>$ \textbf{ Get\+Series} (qint64 study\+Row\+ID)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Series}{p.}{classsquirrel_a59fbbda3717a442fdf571bdd8dff7bba} Get all series for a study \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Analysis} $>$ \textbf{ Get\+Analyses} (qint64 study\+Row\+ID)
-\begin{DoxyCompactList}\small\item\em Get list of all Analysis objects for the specified study\+Row\+ID. \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Measure} $>$ \textbf{ Get\+Measures} (qint64 subject\+Row\+ID)
-\begin{DoxyCompactList}\small\item\em Get a list of all Measure objects for a subject. \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Drug} $>$ \textbf{ Get\+Drugs} (qint64 subject\+Row\+ID)
-\begin{DoxyCompactList}\small\item\em Get a list of all Drug objects. \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Group\+Analysis} $>$ \textbf{ Get\+All\+Group\+Analyses} ()
-\begin{DoxyCompactList}\small\item\em Get a list of all Group\+Analysis objects. \end{DoxyCompactList}\item 
-QList$<$ \textbf{ squirrel\+Data\+Dictionary} $>$ \textbf{ Get\+All\+Data\+Dictionaries} ()
+void \textbf{ Set\+Overwrite\+Package} (bool o)
+\begin{DoxyCompactList}\small\item\em Set the option to overwrite an existing package. \end{DoxyCompactList}\item 
+void \textbf{ Set\+Package\+Path} (Q\+String p)
+\item 
+void \textbf{ Set\+Quick\+Read} (bool q)
+\begin{DoxyCompactList}\small\item\em Set the option to do a quick read ({\itshape not} reading the params.\+json files) or not. \end{DoxyCompactList}\item 
+void \textbf{ Set\+System\+Temp\+Dir} (Q\+String tmpdir)
+\begin{DoxyCompactList}\small\item\em Allow a different temp directory to be used. Sometimes /tmp is on a small partition, and creating a squirrel file of several hundred GB may fill up the root partition. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Analysis} $>$ \textbf{ Get\+Analysis\+List} (qint64 study\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get list of all Analysis objects for the specified study. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Data\+Dictionary} $>$ \textbf{ Get\+Data\+Dictionary\+List} ()
 \begin{DoxyCompactList}\small\item\em Get a list of all Data\+Dictionary objects. \end{DoxyCompactList}\item 
-qint64 \textbf{ Get\+File\+Count} ()
-\begin{DoxyCompactList}\small\item\em Get the number of files in the squirrel package. \end{DoxyCompactList}\item 
-qint64 \textbf{ Get\+Object\+Count} (QString object)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Object\+Count}{p.}{classsquirrel_ac519dd178abce1355a6bca736780d788} \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Subject} (QString id)
-\begin{DoxyCompactList}\small\item\em Find a Subject by subject ID. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Study} (QString subject\+ID, int study\+Num)
-\begin{DoxyCompactList}\small\item\em Find a Study by subject ID and study number. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Study\+By\+UID} (QString study\+UID)
-\begin{DoxyCompactList}\small\item\em Find a Study by the DICOM Study\+UID field. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Series} (QString subject\+ID, int study\+Num, int series\+Num)
-\begin{DoxyCompactList}\small\item\em Find a Series by subject ID, study number, and series number. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Series\+By\+UID} (QString series\+UID)
-\begin{DoxyCompactList}\small\item\em Find a Series by the DICOM Series\+UID field. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Analysis} (QString subject\+ID, int study\+Num, QString analysis\+Name)
+Q\+List$<$ \textbf{ squirrel\+Experiment} $>$ \textbf{ Get\+Experiment\+List} ()
+\begin{DoxyCompactList}\small\item\em Get a list of experiment objects. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Group\+Analysis} $>$ \textbf{ Get\+Group\+Analysis\+List} ()
+\begin{DoxyCompactList}\small\item\em Get a list of all Group\+Analysis objects. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Intervention} $>$ \textbf{ Get\+Intervention\+List} (qint64 subject\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a list of all Intervention objects. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Observation} $>$ \textbf{ Get\+Observation\+List} (qint64 subject\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a list of all Observation objects for a subject. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Pipeline} $>$ \textbf{ Get\+Pipeline\+List} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Pipeline\+List}{p.}{classsquirrel_a3c0f2278c79769352b70bd20bd219d82} \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Series} $>$ \textbf{ Get\+Series\+List} (qint64 study\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get list of all series objects for a specified study. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Study} $>$ \textbf{ Get\+Study\+List} (qint64 subject\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get list of all study objects for a specified subject. \end{DoxyCompactList}\item 
+Q\+List$<$ \textbf{ squirrel\+Subject} $>$ \textbf{ Get\+Subject\+List} ()
+\begin{DoxyCompactList}\small\item\em Get a list of all subject objects in the package. \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Analysis} \textbf{ Get\+Analysis} (qint64 analysis\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a single analysis object by {\ttfamily analysis\+Row\+ID} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Data\+Dictionary} \textbf{ Get\+Data\+Dictionary} (qint64 data\+Dictionary\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Data\+Dictionary}{p.}{classsquirrel_a996beac44353bcd23eaf09e5060dbc93} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Experiment} \textbf{ Get\+Experiment} (qint64 experiment\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Experiment}{p.}{classsquirrel_a865033a6a806cd3659174bd835150b7e} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Group\+Analysis} \textbf{ Get\+Group\+Analysis} (qint64 group\+Analysis\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Group\+Analysis}{p.}{classsquirrel_a417a1639bede33fa062f5a2517c67142} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Intervention} \textbf{ Get\+Intervention} (qint64 intervention\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a single intervention object by {\ttfamily intervention\+Row\+ID} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Observation} \textbf{ Get\+Observation} (qint64 observation\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a single observation object by {\ttfamily observation\+Row\+ID} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Pipeline} \textbf{ Get\+Pipeline} (qint64 pipeline\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Get\+Pipeline}{p.}{classsquirrel_a1fa2a1323c8c5e2a5cc78bb88a46eeb7} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Series} \textbf{ Get\+Series} (qint64 series\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a single series object by {\ttfamily series\+Row\+ID} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Study} \textbf{ Get\+Study} (qint64 study\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a single study object by {\ttfamily study\+Row\+ID} \end{DoxyCompactList}\item 
+\textbf{ squirrel\+Subject} \textbf{ Get\+Subject} (qint64 subject\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Get a single subject object by {\ttfamily subject\+Row\+ID} \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Analysis} (Q\+String subject\+ID, int study\+Num, Q\+String analysis\+Name)
 \begin{DoxyCompactList}\small\item\em Find an Anlaysis using subject ID, study number, and analysis name. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Experiment} (QString experiment\+Name)
-\begin{DoxyCompactList}\small\item\em Find an Experiment by name. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Pipeline} (QString pipeline\+Name)
-\begin{DoxyCompactList}\small\item\em Find a Pipeline by name. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Group\+Analysis} (QString group\+Analysis\+Name)
-\begin{DoxyCompactList}\small\item\em Find a Group\+Analysis by group analysis name. \end{DoxyCompactList}\item 
-qint64 \textbf{ Find\+Data\+Dictionary} (QString data\+Dictionary\+Name)
+qint64 \textbf{ Find\+Data\+Dictionary} (Q\+String data\+Dictionary\+Name)
 \begin{DoxyCompactList}\small\item\em Find a Data\+Dictionary by data dictonary name. \end{DoxyCompactList}\item 
-bool \textbf{ Add\+Staged\+Files} (QString object\+Type, qint64 rowid, QString\+List files)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Add\+Staged\+Files}{p.}{classsquirrel_a0841020e29699beb751ddff1a0663ab4} -\/ add staged files to the database. These are files which will not be copied until the package is written \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Experiment} (Q\+String experiment\+Name)
+\begin{DoxyCompactList}\small\item\em Find an Experiment by name. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Group\+Analysis} (Q\+String group\+Analysis\+Name)
+\begin{DoxyCompactList}\small\item\em Find a Group\+Analysis by group analysis name. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Pipeline} (Q\+String pipeline\+Name)
+\begin{DoxyCompactList}\small\item\em Find a Pipeline by name. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Series} (Q\+String subject\+ID, int study\+Num, int series\+Num)
+\begin{DoxyCompactList}\small\item\em Find a Series by subject ID, study number, and series number. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Series\+By\+U\+ID} (Q\+String series\+U\+ID)
+\begin{DoxyCompactList}\small\item\em Find a Series by the D\+I\+C\+OM Series\+U\+ID field. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Study} (Q\+String subject\+ID, int study\+Num)
+\begin{DoxyCompactList}\small\item\em Find a Study by subject ID and study number. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Study\+By\+U\+ID} (Q\+String study\+U\+ID)
+\begin{DoxyCompactList}\small\item\em Find a Study by the D\+I\+C\+OM Study\+U\+ID field. \end{DoxyCompactList}\item 
+qint64 \textbf{ Find\+Subject} (Q\+String id)
+\begin{DoxyCompactList}\small\item\em Find a Subject by subject ID. \end{DoxyCompactList}\item 
+bool \textbf{ Remove\+Object} (Q\+String object\+Type, qint64 object\+Row\+ID)
+\begin{DoxyCompactList}\small\item\em Remove an object and child objects from the package. \end{DoxyCompactList}\item 
+bool \textbf{ Add\+Staged\+Files} (Q\+String object\+Type, qint64 rowid, Q\+String\+List files)
+\begin{DoxyCompactList}\small\item\em Add the paths of staged files to a specified object These files will be copied when the package is written. \end{DoxyCompactList}\item 
 void \textbf{ Resequence\+Subjects} ()
-\begin{DoxyCompactList}\small\item\em Resequences (renumbers) the subjects. Used when writing package with sequential directory names instead of subject IDs. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Resequences (renumbers) the subjects. Used when writing package with sequential directory names instead of subject I\+Ds. \end{DoxyCompactList}\item 
 void \textbf{ Resequence\+Studies} (qint64 subject\+Row\+ID)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Resequence\+Studies}{p.}{classsquirrel_aed67764e5845964af0ae637d82f555d9} \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Renumber the sequence field for the studies associated with the subject. \end{DoxyCompactList}\item 
 void \textbf{ Resequence\+Series} (qint64 study\+Row\+ID)
 \begin{DoxyCompactList}\small\item\em Resequence the series numbers for a specified study. \end{DoxyCompactList}\item 
+bool \textbf{ Get\+Json\+Header} (Q\+Json\+Document \&jdoc)
+\begin{DoxyCompactList}\small\item\em Get the contents of the J\+S\+ON header. \end{DoxyCompactList}\item 
+bool \textbf{ Update\+Json\+Header} (Q\+String json)
+\begin{DoxyCompactList}\small\item\em Update the J\+S\+ON package header. \end{DoxyCompactList}\item 
+qint64 \textbf{ Get\+File\+Count} ()
+\begin{DoxyCompactList}\small\item\em Get the number of files in the squirrel package. \end{DoxyCompactList}\item 
+qint64 \textbf{ Get\+Free\+Disk\+Space} ()
+\begin{DoxyCompactList}\small\item\em Gets the free disk space where the current package lives on disk. \end{DoxyCompactList}\item 
+qint64 \textbf{ Get\+Object\+Count} (Q\+String object)
+\begin{DoxyCompactList}\small\item\em Get the count for a specified object. \end{DoxyCompactList}\item 
 qint64 \textbf{ Get\+Unzip\+Size} ()
 \begin{DoxyCompactList}\small\item\em Get the unzipped size of the squirrel package in bytes. \end{DoxyCompactList}\item 
-QString \textbf{ Get\+Temp\+Dir} ()
+Q\+String \textbf{ Get\+Temp\+Dir} ()
 \begin{DoxyCompactList}\small\item\em Get the automatically created temp directory. \end{DoxyCompactList}\item 
 bool \textbf{ Is\+Valid} ()
 \item 
 bool \textbf{ Ok\+To\+Delete} ()
 \item 
-QHash$<$ QString, QString $>$ \textbf{ Read\+Params\+File} (QString f)
-\begin{DoxyCompactList}\small\item\em Reads a JSON key/value pair file into a hash. \end{DoxyCompactList}\item 
-void \textbf{ Log} (QString s, QString func)
-\begin{DoxyCompactList}\small\item\em Record a log -\/ prints to screen and stores in log string. \end{DoxyCompactList}\item 
-void \textbf{ Debug} (QString s, QString func="{}"{})
+Q\+Hash$<$ Q\+String, Q\+String $>$ \textbf{ Read\+Params\+File} (Q\+String f)
+\begin{DoxyCompactList}\small\item\em Reads a J\+S\+ON key/value pair file into a hash. \end{DoxyCompactList}\item 
+void \textbf{ Log} (Q\+String s)
+\begin{DoxyCompactList}\small\item\em Record a log to a string and print to the screen. \end{DoxyCompactList}\item 
+void \textbf{ Debug} (Q\+String s, Q\+String func=\char`\"{}\char`\"{})
 \item 
-QString \textbf{ Get\+Log} ()
+Q\+String \textbf{ Get\+Log} ()
 \item 
-bool \textbf{ Get\+Debug} ()
+Q\+String \textbf{ Get\+Log\+Buffer} ()
 \item 
-void \textbf{ Print\+Package} ()
+Q\+String \textbf{ Print\+Data\+Dictionary} (bool details=false)
+\begin{DoxyCompactList}\small\item\em Print a list of data dictionaries to stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Experiments} (bool details=false)
+\begin{DoxyCompactList}\small\item\em Print a list of experiments to stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Group\+Analyses} (bool details=false)
+\begin{DoxyCompactList}\small\item\em Print a list of group analyses to stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Interventions} (qint64 subject\+Row\+ID, \textbf{ Printing\+Type} print\+Type=\textbf{ Printing\+Type\+::\+List})
+\begin{DoxyCompactList}\small\item\em Print all of the interventions for a given subject\+Row\+ID. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Observations} (qint64 subject\+Row\+ID, \textbf{ Printing\+Type} print\+Type=\textbf{ Printing\+Type\+::\+List})
+\begin{DoxyCompactList}\small\item\em Print all of the observations for a given subject\+Row\+ID. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Package} ()
 \begin{DoxyCompactList}\small\item\em Print package details. \end{DoxyCompactList}\item 
-void \textbf{ Print\+Subjects} (bool details=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Print\+Subjects}{p.}{classsquirrel_ab9b21840815eed152a08b77afd087034} print list of subjects to stdout \end{DoxyCompactList}\item 
-void \textbf{ Print\+Studies} (qint64 subject\+Row\+ID, bool details=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Print\+Studies}{p.}{classsquirrel_a8725bea38d83053f6409a00ef3595f1b} print list of studies to the stdout \end{DoxyCompactList}\item 
-void \textbf{ Print\+Series} (qint64 study\+Row\+ID, bool details=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Print\+Series}{p.}{classsquirrel_a72c8b57c053a722be88d4dff92238a48} print list of series to stdout \end{DoxyCompactList}\item 
-void \textbf{ Print\+Experiments} (bool details=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Print\+Experiments}{p.}{classsquirrel_a84be8198aa8cd6321eea2e177fa48d0e} \end{DoxyCompactList}\item 
-void \textbf{ Print\+Pipelines} (bool details=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Print\+Pipelines}{p.}{classsquirrel_ae7190e4983ef8348e49bf790546fdb26} \end{DoxyCompactList}\item 
-void \textbf{ Print\+Group\+Analyses} (bool details=false)
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+::\+Print\+Group\+Analyses}{p.}{classsquirrel_a775198f9d884a4598b7c8550bd102b96} \end{DoxyCompactList}\item 
-void \textbf{ Print\+Data\+Dictionary} (bool details=false)
-\end{DoxyCompactItemize}
-\doxysubsubsection*{Public Attributes}
+Q\+String \textbf{ Print\+Pipelines} (bool details=false)
+\begin{DoxyCompactList}\small\item\em Print a list of pipelines to stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Series} (qint64 study\+Row\+ID, bool details=false)
+\begin{DoxyCompactList}\small\item\em Print a list of series to stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Studies} (qint64 subject\+Row\+ID, bool details=false)
+\begin{DoxyCompactList}\small\item\em Print a list of studies to the stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Subjects} (\textbf{ Printing\+Type} print\+Type=\textbf{ Printing\+Type\+::\+List})
+\begin{DoxyCompactList}\small\item\em Print a list of subjects to stdout. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Print the details of a package, including all objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-QDate\+Time \textbf{ Datetime}
+Q\+Date\+Time \textbf{ Datetime}
 \item 
-QString \textbf{ Changes}
+Q\+String \textbf{ Changes}
 \item 
-QString \textbf{ Data\+Format}
+Q\+String \textbf{ Data\+Format}
 \item 
-QString \textbf{ Description}
+Q\+String \textbf{ Description}
 \item 
-QString \textbf{ License}
+Q\+String \textbf{ License}
 \item 
-QString \textbf{ Ni\+DBversion}
+Q\+String \textbf{ Ni\+D\+Bversion}
 \item 
-QString \textbf{ Notes}
+Q\+String \textbf{ Notes}
 \item 
-QString \textbf{ Package\+Format}
+Q\+String \textbf{ Package\+Format}
 \item 
-QString \textbf{ Package\+Name}
+Q\+String \textbf{ Package\+Name}
 \item 
-QString \textbf{ Readme}
+Q\+String \textbf{ Readme}
 \item 
-QString \textbf{ Series\+Dir\+Format}
+Q\+String \textbf{ Series\+Dir\+Format}
 \item 
-QString \textbf{ Squirrel\+Build}
+Q\+String \textbf{ Squirrel\+Build}
 \item 
-QString \textbf{ Squirrel\+Version}
+Q\+String \textbf{ Squirrel\+Version}
 \item 
-QString \textbf{ Study\+Dir\+Format}
+Q\+String \textbf{ Study\+Dir\+Format}
 \item 
-QString \textbf{ Subject\+Dir\+Format}
+Q\+String \textbf{ Subject\+Dir\+Format}
 \item 
 bool \textbf{ quiet} =false
-\item 
-QSql\+Database \textbf{ db}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 The squirrel class. 
 
-provides a complete class to read, write, and validate squirrel files 
+provides a complete class to read, write, modify, split, merge, and validate squirrel files 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classsquirrel_a1af3586cc908460881798dd72c0103f0} 
+\mbox{\label{classsquirrel_a1af3586cc908460881798dd72c0103f0}} 
 \index{squirrel@{squirrel}!squirrel@{squirrel}}
 \index{squirrel@{squirrel}!squirrel@{squirrel}}
 \doxysubsubsection{squirrel()}
@@ -178,7 +232,7 @@ Constructor.
 {\em q} & true to turn off all output \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a7c2bad2ef13d00976770d7aae16ccfc8} 
+\mbox{\label{classsquirrel_a7c2bad2ef13d00976770d7aae16ccfc8}} 
 \index{squirrel@{squirrel}!````~squirrel@{$\sim$squirrel}}
 \index{````~squirrel@{$\sim$squirrel}!squirrel@{squirrel}}
 \doxysubsubsection{$\sim$squirrel()}
@@ -191,15 +245,15 @@ Destructor.
 
 
 \doxysubsection{Member Function Documentation}
-\label{classsquirrel_a0841020e29699beb751ddff1a0663ab4} 
+\mbox{\label{classsquirrel_a0841020e29699beb751ddff1a0663ab4}} 
 \index{squirrel@{squirrel}!AddStagedFiles@{AddStagedFiles}}
 \index{AddStagedFiles@{AddStagedFiles}!squirrel@{squirrel}}
 \doxysubsubsection{AddStagedFiles()}
-{\footnotesize\ttfamily bool squirrel\+::\+Add\+Staged\+Files (\begin{DoxyParamCaption}\item[{QString}]{object\+Type,  }\item[{qint64}]{rowid,  }\item[{QString\+List}]{files }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool squirrel\+::\+Add\+Staged\+Files (\begin{DoxyParamCaption}\item[{Q\+String}]{object\+Type,  }\item[{qint64}]{rowid,  }\item[{Q\+String\+List}]{files }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Add\+Staged\+Files}{p.}{classsquirrel_a0841020e29699beb751ddff1a0663ab4} -\/ add staged files to the database. These are files which will not be copied until the package is written 
+Add the paths of staged files to a specified object These files will be copied when the package is written. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -213,17 +267,29 @@ Destructor.
 \begin{DoxyReturn}{Returns}
 
 \end{DoxyReturn}
-\label{classsquirrel_a380089a3957355a24f6c93146e8b3ed1} 
+\mbox{\label{classsquirrel_a380089a3957355a24f6c93146e8b3ed1}} 
 \index{squirrel@{squirrel}!Debug@{Debug}}
 \index{Debug@{Debug}!squirrel@{squirrel}}
 \doxysubsubsection{Debug()}
-{\footnotesize\ttfamily void squirrel\+::\+Debug (\begin{DoxyParamCaption}\item[{QString}]{s,  }\item[{QString}]{func = {\ttfamily "{}"{}} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void squirrel\+::\+Debug (\begin{DoxyParamCaption}\item[{Q\+String}]{s,  }\item[{Q\+String}]{func = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})}
 
-\label{classsquirrel_af47163f0c180a78417d3b47dd0f7294f} 
+\mbox{\label{classsquirrel_a72a80bfa315421af13e1afa386ad14c6}} 
+\index{squirrel@{squirrel}!Extract@{Extract}}
+\index{Extract@{Extract}!squirrel@{squirrel}}
+\doxysubsubsection{Extract()}
+{\footnotesize\ttfamily bool squirrel\+::\+Extract (\begin{DoxyParamCaption}\item[{Q\+String}]{destination\+Dir,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
+
+\mbox{\label{classsquirrel_a03fff417eac007e5a06a2fbd818bf8b2}} 
+\index{squirrel@{squirrel}!ExtractArchiveFilesToDirectory@{ExtractArchiveFilesToDirectory}}
+\index{ExtractArchiveFilesToDirectory@{ExtractArchiveFilesToDirectory}!squirrel@{squirrel}}
+\doxysubsubsection{ExtractArchiveFilesToDirectory()}
+{\footnotesize\ttfamily bool squirrel\+::\+Extract\+Archive\+Files\+To\+Directory (\begin{DoxyParamCaption}\item[{Q\+String}]{archive\+Path,  }\item[{Q\+String}]{file\+Pattern,  }\item[{Q\+String}]{out\+Dir,  }\item[{Q\+String \&}]{m }\end{DoxyParamCaption})}
+
+\mbox{\label{classsquirrel_af47163f0c180a78417d3b47dd0f7294f}} 
 \index{squirrel@{squirrel}!FindAnalysis@{FindAnalysis}}
 \index{FindAnalysis@{FindAnalysis}!squirrel@{squirrel}}
 \doxysubsubsection{FindAnalysis()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Analysis (\begin{DoxyParamCaption}\item[{QString}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{QString}]{analysis\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Analysis (\begin{DoxyParamCaption}\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{Q\+String}]{analysis\+Name }\end{DoxyParamCaption})}
 
 
 
@@ -241,11 +307,11 @@ Find an Anlaysis using subject ID, study number, and analysis name.
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_a9ecad97e3d79407b43f948a7d5c40722} 
+\mbox{\label{classsquirrel_a9ecad97e3d79407b43f948a7d5c40722}} 
 \index{squirrel@{squirrel}!FindDataDictionary@{FindDataDictionary}}
 \index{FindDataDictionary@{FindDataDictionary}!squirrel@{squirrel}}
 \doxysubsubsection{FindDataDictionary()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Data\+Dictionary (\begin{DoxyParamCaption}\item[{QString}]{data\+Dictionary\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Data\+Dictionary (\begin{DoxyParamCaption}\item[{Q\+String}]{data\+Dictionary\+Name }\end{DoxyParamCaption})}
 
 
 
@@ -259,11 +325,11 @@ Find a Data\+Dictionary by data dictonary name.
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_a5bc0cdeabd3651dd3342e0b92bd31686} 
+\mbox{\label{classsquirrel_a5bc0cdeabd3651dd3342e0b92bd31686}} 
 \index{squirrel@{squirrel}!FindExperiment@{FindExperiment}}
 \index{FindExperiment@{FindExperiment}!squirrel@{squirrel}}
 \doxysubsubsection{FindExperiment()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Experiment (\begin{DoxyParamCaption}\item[{QString}]{experiment\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Experiment (\begin{DoxyParamCaption}\item[{Q\+String}]{experiment\+Name }\end{DoxyParamCaption})}
 
 
 
@@ -277,11 +343,11 @@ Find an Experiment by name.
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_a916576f0cf13746b1e0da31b75bfa77b} 
+\mbox{\label{classsquirrel_a916576f0cf13746b1e0da31b75bfa77b}} 
 \index{squirrel@{squirrel}!FindGroupAnalysis@{FindGroupAnalysis}}
 \index{FindGroupAnalysis@{FindGroupAnalysis}!squirrel@{squirrel}}
 \doxysubsubsection{FindGroupAnalysis()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Group\+Analysis (\begin{DoxyParamCaption}\item[{QString}]{group\+Analysis\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Group\+Analysis (\begin{DoxyParamCaption}\item[{Q\+String}]{group\+Analysis\+Name }\end{DoxyParamCaption})}
 
 
 
@@ -295,11 +361,11 @@ Find a Group\+Analysis by group analysis name.
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_a23af172f19104a0a869a5b959ab89827} 
+\mbox{\label{classsquirrel_a23af172f19104a0a869a5b959ab89827}} 
 \index{squirrel@{squirrel}!FindPipeline@{FindPipeline}}
 \index{FindPipeline@{FindPipeline}!squirrel@{squirrel}}
 \doxysubsubsection{FindPipeline()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Pipeline (\begin{DoxyParamCaption}\item[{QString}]{pipeline\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Pipeline (\begin{DoxyParamCaption}\item[{Q\+String}]{pipeline\+Name }\end{DoxyParamCaption})}
 
 
 
@@ -313,11 +379,11 @@ Find a Pipeline by name.
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_ac6ab2951e7a357168658536b507fa386} 
+\mbox{\label{classsquirrel_ac6ab2951e7a357168658536b507fa386}} 
 \index{squirrel@{squirrel}!FindSeries@{FindSeries}}
 \index{FindSeries@{FindSeries}!squirrel@{squirrel}}
 \doxysubsubsection{FindSeries()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Series (\begin{DoxyParamCaption}\item[{QString}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{int}]{series\+Num }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Series (\begin{DoxyParamCaption}\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num,  }\item[{int}]{series\+Num }\end{DoxyParamCaption})}
 
 
 
@@ -335,29 +401,29 @@ Find a Series by subject ID, study number, and series number.
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_a9f663aec4167a625a9ee5bf626f1b92b} 
+\mbox{\label{classsquirrel_a9f663aec4167a625a9ee5bf626f1b92b}} 
 \index{squirrel@{squirrel}!FindSeriesByUID@{FindSeriesByUID}}
 \index{FindSeriesByUID@{FindSeriesByUID}!squirrel@{squirrel}}
 \doxysubsubsection{FindSeriesByUID()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Series\+By\+UID (\begin{DoxyParamCaption}\item[{QString}]{series\+UID }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Series\+By\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{series\+U\+ID }\end{DoxyParamCaption})}
 
 
 
-Find a Series by the DICOM Series\+UID field. 
+Find a Series by the D\+I\+C\+OM Series\+U\+ID field. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em series\+UID} & DICOM Series\+UID field to search by \\
+{\em series\+U\+ID} & D\+I\+C\+OM Series\+U\+ID field to search by \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The database rowid 
 \end{DoxyReturn}
-\label{classsquirrel_a916069f92d23c45e7d14e438decaa78b} 
+\mbox{\label{classsquirrel_a916069f92d23c45e7d14e438decaa78b}} 
 \index{squirrel@{squirrel}!FindStudy@{FindStudy}}
 \index{FindStudy@{FindStudy}!squirrel@{squirrel}}
 \doxysubsubsection{FindStudy()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Study (\begin{DoxyParamCaption}\item[{QString}]{subject\+ID,  }\item[{int}]{study\+Num }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Study (\begin{DoxyParamCaption}\item[{Q\+String}]{subject\+ID,  }\item[{int}]{study\+Num }\end{DoxyParamCaption})}
 
 
 
@@ -373,29 +439,29 @@ Find a Study by subject ID and study number.
 \begin{DoxyReturn}{Returns}
 the database row ID 
 \end{DoxyReturn}
-\label{classsquirrel_a65151c1f5c403a13d339857981dd312f} 
+\mbox{\label{classsquirrel_a65151c1f5c403a13d339857981dd312f}} 
 \index{squirrel@{squirrel}!FindStudyByUID@{FindStudyByUID}}
 \index{FindStudyByUID@{FindStudyByUID}!squirrel@{squirrel}}
 \doxysubsubsection{FindStudyByUID()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Study\+By\+UID (\begin{DoxyParamCaption}\item[{QString}]{study\+UID }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Study\+By\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{study\+U\+ID }\end{DoxyParamCaption})}
 
 
 
-Find a Study by the DICOM Study\+UID field. 
+Find a Study by the D\+I\+C\+OM Study\+U\+ID field. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em study\+UID} & The DICOM Study\+UID field to search for \\
+{\em study\+U\+ID} & The D\+I\+C\+OM Study\+U\+ID field to search for \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 the database row ID 
 \end{DoxyReturn}
-\label{classsquirrel_aacbfb0d9ecb51c84082dcb9d9d1de608} 
+\mbox{\label{classsquirrel_aacbfb0d9ecb51c84082dcb9d9d1de608}} 
 \index{squirrel@{squirrel}!FindSubject@{FindSubject}}
 \index{FindSubject@{FindSubject}!squirrel@{squirrel}}
 \doxysubsubsection{FindSubject()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Subject (\begin{DoxyParamCaption}\item[{QString}]{id }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Find\+Subject (\begin{DoxyParamCaption}\item[{Q\+String}]{id }\end{DoxyParamCaption})}
 
 
 
@@ -409,11 +475,71 @@ Find a Subject by subject ID.
 \begin{DoxyReturn}{Returns}
 the database row\+ID of the subject if found, -\/1 otherwise 
 \end{DoxyReturn}
-\label{classsquirrel_acacfe71744316ba8808b05ce2d4308ec} 
-\index{squirrel@{squirrel}!GetAllDataDictionaries@{GetAllDataDictionaries}}
-\index{GetAllDataDictionaries@{GetAllDataDictionaries}!squirrel@{squirrel}}
-\doxysubsubsection{GetAllDataDictionaries()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Data\+Dictionary} $>$ squirrel\+::\+Get\+All\+Data\+Dictionaries (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+\mbox{\label{classsquirrel_a27bf36024a570b40ec7e3a63fed9afd0}} 
+\index{squirrel@{squirrel}!GetAnalysis@{GetAnalysis}}
+\index{GetAnalysis@{GetAnalysis}!squirrel@{squirrel}}
+\doxysubsubsection{GetAnalysis()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Analysis} squirrel\+::\+Get\+Analysis (\begin{DoxyParamCaption}\item[{qint64}]{analysis\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get a single analysis object by {\ttfamily analysis\+Row\+ID} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em analysis\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The {\ttfamily \doxyref{squirrel\+Analysis}{p.}{classsquirrel_analysis}} object 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a3710e595b9c189a8ecf9c53ce071f675}} 
+\index{squirrel@{squirrel}!GetAnalysisList@{GetAnalysisList}}
+\index{GetAnalysisList@{GetAnalysisList}!squirrel@{squirrel}}
+\doxysubsubsection{GetAnalysisList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Analysis} $>$ squirrel\+::\+Get\+Analysis\+List (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get list of all Analysis objects for the specified study. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em study\+Row\+ID} & of the parent study \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Q\+List of \doxyref{squirrel\+Analysis}{p.}{classsquirrel_analysis} objects 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a17080cfaa54009b3af3b53b5c6c98543}} 
+\index{squirrel@{squirrel}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrel@{squirrel}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+get the database U\+U\+ID \mbox{\label{classsquirrel_a996beac44353bcd23eaf09e5060dbc93}} 
+\index{squirrel@{squirrel}!GetDataDictionary@{GetDataDictionary}}
+\index{GetDataDictionary@{GetDataDictionary}!squirrel@{squirrel}}
+\doxysubsubsection{GetDataDictionary()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Data\+Dictionary} squirrel\+::\+Get\+Data\+Dictionary (\begin{DoxyParamCaption}\item[{qint64}]{data\+Dictionary\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+::\+Get\+Data\+Dictionary}{p.}{classsquirrel_a996beac44353bcd23eaf09e5060dbc93} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Dictionary\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a4570249a979635799f122e7498190c19}} 
+\index{squirrel@{squirrel}!GetDataDictionaryList@{GetDataDictionaryList}}
+\index{GetDataDictionaryList@{GetDataDictionaryList}!squirrel@{squirrel}}
+\doxysubsubsection{GetDataDictionaryList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Data\+Dictionary} $>$ squirrel\+::\+Get\+Data\+Dictionary\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
@@ -422,101 +548,50 @@ Get a list of all Data\+Dictionary objects.
 \begin{DoxyReturn}{Returns}
 list of all data\+Dictionary objects 
 \end{DoxyReturn}
-\label{classsquirrel_afc988fad980e4a03b68f8b0e7f9a18bf} 
-\index{squirrel@{squirrel}!GetAllExperiments@{GetAllExperiments}}
-\index{GetAllExperiments@{GetAllExperiments}!squirrel@{squirrel}}
-\doxysubsubsection{GetAllExperiments()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Experiment} $>$ squirrel\+::\+Get\+All\+Experiments (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-\doxyref{squirrel\+::\+Get\+All\+Experiments}{p.}{classsquirrel_afc988fad980e4a03b68f8b0e7f9a18bf} 
-
-\begin{DoxyReturn}{Returns}
-list of all experiments 
-\end{DoxyReturn}
-\label{classsquirrel_a9f553e41ca922a1dec0084c20d34ac24} 
-\index{squirrel@{squirrel}!GetAllGroupAnalyses@{GetAllGroupAnalyses}}
-\index{GetAllGroupAnalyses@{GetAllGroupAnalyses}!squirrel@{squirrel}}
-\doxysubsubsection{GetAllGroupAnalyses()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Group\+Analysis} $>$ squirrel\+::\+Get\+All\+Group\+Analyses (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-Get a list of all Group\+Analysis objects. 
-
-\begin{DoxyReturn}{Returns}
-list of all group\+Analysis objects 
-\end{DoxyReturn}
-\label{classsquirrel_ab98b00288c20101ea895088147318d29} 
-\index{squirrel@{squirrel}!GetAllPipelines@{GetAllPipelines}}
-\index{GetAllPipelines@{GetAllPipelines}!squirrel@{squirrel}}
-\doxysubsubsection{GetAllPipelines()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Pipeline} $>$ squirrel\+::\+Get\+All\+Pipelines (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-\doxyref{squirrel\+::\+Get\+All\+Pipelines}{p.}{classsquirrel_ab98b00288c20101ea895088147318d29} 
-
-\begin{DoxyReturn}{Returns}
-list of all pipelines 
-\end{DoxyReturn}
-\label{classsquirrel_a60f8beac1595af6ab5238b226772dd25} 
-\index{squirrel@{squirrel}!GetAllSubjects@{GetAllSubjects}}
-\index{GetAllSubjects@{GetAllSubjects}!squirrel@{squirrel}}
-\doxysubsubsection{GetAllSubjects()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Subject} $>$ squirrel\+::\+Get\+All\+Subjects (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-\doxyref{squirrel\+::\+Get\+All\+Subjects}{p.}{classsquirrel_a60f8beac1595af6ab5238b226772dd25} 
-
-\begin{DoxyReturn}{Returns}
-list of all subjects 
-\end{DoxyReturn}
-\label{classsquirrel_a84cc04c4358359b2c0535b807da2bae3} 
-\index{squirrel@{squirrel}!GetAnalyses@{GetAnalyses}}
-\index{GetAnalyses@{GetAnalyses}!squirrel@{squirrel}}
-\doxysubsubsection{GetAnalyses()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Analysis} $>$ squirrel\+::\+Get\+Analyses (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID }\end{DoxyParamCaption})}
-
-
-
-Get list of all Analysis objects for the specified study\+Row\+ID. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em study\+Row\+ID} & of the parent study \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-QList of \doxyref{squirrel\+Analysis}{p.}{classsquirrel_analysis} objects 
-\end{DoxyReturn}
-\label{classsquirrel_a59f3ea988abb0f52efd22e2e662521b9} 
+\mbox{\label{classsquirrel_a59f3ea988abb0f52efd22e2e662521b9}} 
 \index{squirrel@{squirrel}!GetDebug@{GetDebug}}
 \index{GetDebug@{GetDebug}!squirrel@{squirrel}}
 \doxysubsubsection{GetDebug()}
 {\footnotesize\ttfamily bool squirrel\+::\+Get\+Debug (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_a4307eeeb09264ae664bc9be16c678757} 
-\index{squirrel@{squirrel}!GetDrugs@{GetDrugs}}
-\index{GetDrugs@{GetDrugs}!squirrel@{squirrel}}
-\doxysubsubsection{GetDrugs()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Drug} $>$ squirrel\+::\+Get\+Drugs (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+true if debugging is enabled \mbox{\label{classsquirrel_a40d321d3f72a86c19d4a273ecd46ece7}} 
+\index{squirrel@{squirrel}!GetDebugSQL@{GetDebugSQL}}
+\index{GetDebugSQL@{GetDebugSQL}!squirrel@{squirrel}}
+\doxysubsubsection{GetDebugSQL()}
+{\footnotesize\ttfamily bool squirrel\+::\+Get\+Debug\+S\+QL (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+true if S\+QL debugging is enabled \mbox{\label{classsquirrel_a865033a6a806cd3659174bd835150b7e}} 
+\index{squirrel@{squirrel}!GetExperiment@{GetExperiment}}
+\index{GetExperiment@{GetExperiment}!squirrel@{squirrel}}
+\doxysubsubsection{GetExperiment()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Experiment} squirrel\+::\+Get\+Experiment (\begin{DoxyParamCaption}\item[{qint64}]{experiment\+Row\+ID }\end{DoxyParamCaption})}
 
 
 
-Get a list of all Drug objects. 
+\doxyref{squirrel\+::\+Get\+Experiment}{p.}{classsquirrel_a865033a6a806cd3659174bd835150b7e} 
 
 
 \begin{DoxyParams}{Parameters}
-{\em subject\+Row\+ID} & \\
+{\em experiment\+Row\+ID} & \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-list of all \doxyref{squirrel\+Drug}{p.}{classsquirrel_drug} objects 
+
 \end{DoxyReturn}
-\label{classsquirrel_ae6cbd5e84390ca518c756f27ef0a6f7c} 
+\mbox{\label{classsquirrel_ad38ced5698806311e1b5498b1ee8dcb2}} 
+\index{squirrel@{squirrel}!GetExperimentList@{GetExperimentList}}
+\index{GetExperimentList@{GetExperimentList}!squirrel@{squirrel}}
+\doxysubsubsection{GetExperimentList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Experiment} $>$ squirrel\+::\+Get\+Experiment\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get a list of experiment objects. 
+
+\begin{DoxyReturn}{Returns}
+list of all experiments 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_ae6cbd5e84390ca518c756f27ef0a6f7c}} 
 \index{squirrel@{squirrel}!GetFileCount@{GetFileCount}}
 \index{GetFileCount@{GetFileCount}!squirrel@{squirrel}}
 \doxysubsubsection{GetFileCount()}
@@ -529,39 +604,125 @@ Get the number of files in the squirrel package.
 \begin{DoxyReturn}{Returns}
 total number of files in the package 
 \end{DoxyReturn}
-\label{classsquirrel_a3f79838127b0cd12098e4aafb20e2abb} 
-\index{squirrel@{squirrel}!GetLog@{GetLog}}
-\index{GetLog@{GetLog}!squirrel@{squirrel}}
-\doxysubsubsection{GetLog()}
-{\footnotesize\ttfamily QString squirrel\+::\+Get\+Log (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-\label{classsquirrel_a0a62ac1701daa0190cf9d4011bf29b40} 
-\index{squirrel@{squirrel}!GetMeasures@{GetMeasures}}
-\index{GetMeasures@{GetMeasures}!squirrel@{squirrel}}
-\doxysubsubsection{GetMeasures()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Measure} $>$ squirrel\+::\+Get\+Measures (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+\mbox{\label{classsquirrel_af65fdfef71156ddd9e0e494217b9dd51}} 
+\index{squirrel@{squirrel}!GetFreeDiskSpace@{GetFreeDiskSpace}}
+\index{GetFreeDiskSpace@{GetFreeDiskSpace}!squirrel@{squirrel}}
+\doxysubsubsection{GetFreeDiskSpace()}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Get\+Free\+Disk\+Space (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-Get a list of all Measure objects for a subject. 
+Gets the free disk space where the current package lives on disk. 
+
+\begin{DoxyReturn}{Returns}
+disk free space in bytes 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a417a1639bede33fa062f5a2517c67142}} 
+\index{squirrel@{squirrel}!GetGroupAnalysis@{GetGroupAnalysis}}
+\index{GetGroupAnalysis@{GetGroupAnalysis}!squirrel@{squirrel}}
+\doxysubsubsection{GetGroupAnalysis()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Group\+Analysis} squirrel\+::\+Get\+Group\+Analysis (\begin{DoxyParamCaption}\item[{qint64}]{group\+Analysis\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+::\+Get\+Group\+Analysis}{p.}{classsquirrel_a417a1639bede33fa062f5a2517c67142} 
 
 
 \begin{DoxyParams}{Parameters}
-{\em subject\+Row\+ID} & of the parent subject \\
+{\em group\+Analysis\+Row\+ID} & \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-QList of \doxyref{squirrel\+Measure}{p.}{classsquirrel_measure} objects 
+
 \end{DoxyReturn}
-\label{classsquirrel_ac519dd178abce1355a6bca736780d788} 
+\mbox{\label{classsquirrel_afc9fa1c4f6c94ee33ef3c38106242241}} 
+\index{squirrel@{squirrel}!GetGroupAnalysisList@{GetGroupAnalysisList}}
+\index{GetGroupAnalysisList@{GetGroupAnalysisList}!squirrel@{squirrel}}
+\doxysubsubsection{GetGroupAnalysisList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Group\+Analysis} $>$ squirrel\+::\+Get\+Group\+Analysis\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get a list of all Group\+Analysis objects. 
+
+\begin{DoxyReturn}{Returns}
+list of all group\+Analysis objects 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_ad030cb040d983eb18219909e2ca58428}} 
+\index{squirrel@{squirrel}!GetIntervention@{GetIntervention}}
+\index{GetIntervention@{GetIntervention}!squirrel@{squirrel}}
+\doxysubsubsection{GetIntervention()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Intervention} squirrel\+::\+Get\+Intervention (\begin{DoxyParamCaption}\item[{qint64}]{intervention\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get a single intervention object by {\ttfamily intervention\+Row\+ID} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em intervention\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The {\ttfamily \doxyref{squirrel\+Intervention}{p.}{classsquirrel_intervention}} object 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a22cc71774b3fa537be6dd1608aae83f4}} 
+\index{squirrel@{squirrel}!GetInterventionList@{GetInterventionList}}
+\index{GetInterventionList@{GetInterventionList}!squirrel@{squirrel}}
+\doxysubsubsection{GetInterventionList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Intervention} $>$ squirrel\+::\+Get\+Intervention\+List (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get a list of all Intervention objects. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em subject\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+list of all \doxyref{squirrel\+Intervention}{p.}{classsquirrel_intervention} objects 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_ab5bf587137a30222d1ad81773638bb4b}} 
+\index{squirrel@{squirrel}!GetJsonHeader@{GetJsonHeader}}
+\index{GetJsonHeader@{GetJsonHeader}!squirrel@{squirrel}}
+\doxysubsubsection{GetJsonHeader()}
+{\footnotesize\ttfamily bool squirrel\+::\+Get\+Json\+Header (\begin{DoxyParamCaption}\item[{Q\+Json\+Document \&}]{jdoc }\end{DoxyParamCaption})}
+
+
+
+Get the contents of the J\+S\+ON header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em jdoc} & a Q\+Json\+Document object containing the header \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if successful, {\ttfamily false} otherwise 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a3f79838127b0cd12098e4aafb20e2abb}} 
+\index{squirrel@{squirrel}!GetLog@{GetLog}}
+\index{GetLog@{GetLog}!squirrel@{squirrel}}
+\doxysubsubsection{GetLog()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Get\+Log (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Get the entire log \mbox{\label{classsquirrel_a585726c0730b91ac12e98fba61c04dca}} 
+\index{squirrel@{squirrel}!GetLogBuffer@{GetLogBuffer}}
+\index{GetLogBuffer@{GetLogBuffer}!squirrel@{squirrel}}
+\doxysubsubsection{GetLogBuffer()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Get\+Log\+Buffer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classsquirrel_ac519dd178abce1355a6bca736780d788}} 
 \index{squirrel@{squirrel}!GetObjectCount@{GetObjectCount}}
 \index{GetObjectCount@{GetObjectCount}!squirrel@{squirrel}}
 \doxysubsubsection{GetObjectCount()}
-{\footnotesize\ttfamily qint64 squirrel\+::\+Get\+Object\+Count (\begin{DoxyParamCaption}\item[{QString}]{object }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily qint64 squirrel\+::\+Get\+Object\+Count (\begin{DoxyParamCaption}\item[{Q\+String}]{object }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Get\+Object\+Count}{p.}{classsquirrel_ac519dd178abce1355a6bca736780d788} 
+Get the count for a specified object. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -571,11 +732,47 @@ QList of \doxyref{squirrel\+Measure}{p.}{classsquirrel_measure} objects
 \begin{DoxyReturn}{Returns}
 the number of objects 
 \end{DoxyReturn}
-\label{classsquirrel_ac0ed0c68207fa719668b22dcf12072c0} 
+\mbox{\label{classsquirrel_ab84961d77ed020a909ef248c57d49555}} 
+\index{squirrel@{squirrel}!GetObservation@{GetObservation}}
+\index{GetObservation@{GetObservation}!squirrel@{squirrel}}
+\doxysubsubsection{GetObservation()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Observation} squirrel\+::\+Get\+Observation (\begin{DoxyParamCaption}\item[{qint64}]{observation\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get a single observation object by {\ttfamily observation\+Row\+ID} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The {\ttfamily \doxyref{squirrel\+Observation}{p.}{classsquirrel_observation}} object 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a8032a87bf28b97d98a229a23ce5688b4}} 
+\index{squirrel@{squirrel}!GetObservationList@{GetObservationList}}
+\index{GetObservationList@{GetObservationList}!squirrel@{squirrel}}
+\doxysubsubsection{GetObservationList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Observation} $>$ squirrel\+::\+Get\+Observation\+List (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get a list of all Observation objects for a subject. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em subject\+Row\+ID} & of the parent subject \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Q\+List of \doxyref{squirrel\+Observation}{p.}{classsquirrel_observation} objects 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_ac0ed0c68207fa719668b22dcf12072c0}} 
 \index{squirrel@{squirrel}!GetPackagePath@{GetPackagePath}}
 \index{GetPackagePath@{GetPackagePath}!squirrel@{squirrel}}
 \doxysubsubsection{GetPackagePath()}
-{\footnotesize\ttfamily QString squirrel\+::\+Get\+Package\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Get\+Package\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
@@ -584,15 +781,64 @@ Get the package path, with extension.
 \begin{DoxyReturn}{Returns}
 the full path to the package 
 \end{DoxyReturn}
-\label{classsquirrel_a59fbbda3717a442fdf571bdd8dff7bba} 
+\mbox{\label{classsquirrel_a1fa2a1323c8c5e2a5cc78bb88a46eeb7}} 
+\index{squirrel@{squirrel}!GetPipeline@{GetPipeline}}
+\index{GetPipeline@{GetPipeline}!squirrel@{squirrel}}
+\doxysubsubsection{GetPipeline()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Pipeline} squirrel\+::\+Get\+Pipeline (\begin{DoxyParamCaption}\item[{qint64}]{pipeline\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+::\+Get\+Pipeline}{p.}{classsquirrel_a1fa2a1323c8c5e2a5cc78bb88a46eeb7} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pipeline\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a3c0f2278c79769352b70bd20bd219d82}} 
+\index{squirrel@{squirrel}!GetPipelineList@{GetPipelineList}}
+\index{GetPipelineList@{GetPipelineList}!squirrel@{squirrel}}
+\doxysubsubsection{GetPipelineList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Pipeline} $>$ squirrel\+::\+Get\+Pipeline\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+::\+Get\+Pipeline\+List}{p.}{classsquirrel_a3c0f2278c79769352b70bd20bd219d82} 
+
+\begin{DoxyReturn}{Returns}
+list of all pipelines 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a856ef98bc58a43ac2e3bce55f7d58647}} 
 \index{squirrel@{squirrel}!GetSeries@{GetSeries}}
 \index{GetSeries@{GetSeries}!squirrel@{squirrel}}
 \doxysubsubsection{GetSeries()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Series} $>$ squirrel\+::\+Get\+Series (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \textbf{ squirrel\+Series} squirrel\+::\+Get\+Series (\begin{DoxyParamCaption}\item[{qint64}]{series\+Row\+ID }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Get\+Series}{p.}{classsquirrel_a59fbbda3717a442fdf571bdd8dff7bba} Get all series for a study 
+Get a single series object by {\ttfamily series\+Row\+ID} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em series\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The {\ttfamily \doxyref{squirrel\+Series}{p.}{classsquirrel_series}} object 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_aaf57c62dc9607734ae2f8b577f8f0d6f}} 
+\index{squirrel@{squirrel}!GetSeriesList@{GetSeriesList}}
+\index{GetSeriesList@{GetSeriesList}!squirrel@{squirrel}}
+\doxysubsubsection{GetSeriesList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Series} $>$ squirrel\+::\+Get\+Series\+List (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get list of all series objects for a specified study. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -602,15 +848,33 @@ the full path to the package
 \begin{DoxyReturn}{Returns}
 list of series 
 \end{DoxyReturn}
-\label{classsquirrel_aeb641668bc3b40a5886a0c51db14aaef} 
-\index{squirrel@{squirrel}!GetStudies@{GetStudies}}
-\index{GetStudies@{GetStudies}!squirrel@{squirrel}}
-\doxysubsubsection{GetStudies()}
-{\footnotesize\ttfamily QList$<$ \textbf{ squirrel\+Study} $>$ squirrel\+::\+Get\+Studies (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+\mbox{\label{classsquirrel_a0a6bb0c35d1ad9e59e4252c8204cfa75}} 
+\index{squirrel@{squirrel}!GetStudy@{GetStudy}}
+\index{GetStudy@{GetStudy}!squirrel@{squirrel}}
+\doxysubsubsection{GetStudy()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Study} squirrel\+::\+Get\+Study (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Get\+Studies}{p.}{classsquirrel_aeb641668bc3b40a5886a0c51db14aaef} 
+Get a single study object by {\ttfamily study\+Row\+ID} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em study\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The {\ttfamily \doxyref{squirrel\+Study}{p.}{classsquirrel_study}} object 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a65e58cf27f795fbe7cf6e492eed4096c}} 
+\index{squirrel@{squirrel}!GetStudyList@{GetStudyList}}
+\index{GetStudyList@{GetStudyList}!squirrel@{squirrel}}
+\doxysubsubsection{GetStudyList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Study} $>$ squirrel\+::\+Get\+Study\+List (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get list of all study objects for a specified subject. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -620,11 +884,55 @@ list of series
 \begin{DoxyReturn}{Returns}
 list of studies 
 \end{DoxyReturn}
-\label{classsquirrel_ae0576f997b3521a42618ee870cc5c07a} 
+\mbox{\label{classsquirrel_a945c9257ef37cff16573c0aeb211f495}} 
+\index{squirrel@{squirrel}!GetSubject@{GetSubject}}
+\index{GetSubject@{GetSubject}!squirrel@{squirrel}}
+\doxysubsubsection{GetSubject()}
+{\footnotesize\ttfamily \textbf{ squirrel\+Subject} squirrel\+::\+Get\+Subject (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Get a single subject object by {\ttfamily subject\+Row\+ID} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em subject\+Row\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The {\ttfamily \doxyref{squirrel\+Subject}{p.}{classsquirrel_subject}} object 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a56d7e77703bf89b33434ec3a45fbf6a1}} 
+\index{squirrel@{squirrel}!GetSubjectList@{GetSubjectList}}
+\index{GetSubjectList@{GetSubjectList}!squirrel@{squirrel}}
+\doxysubsubsection{GetSubjectList()}
+{\footnotesize\ttfamily Q\+List$<$ \textbf{ squirrel\+Subject} $>$ squirrel\+::\+Get\+Subject\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get a list of all subject objects in the package. 
+
+\begin{DoxyReturn}{Returns}
+list of all subjects 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_aef4c65057fed38abec6bb6fbd5253253}} 
+\index{squirrel@{squirrel}!GetSystemTempDir@{GetSystemTempDir}}
+\index{GetSystemTempDir@{GetSystemTempDir}!squirrel@{squirrel}}
+\doxysubsubsection{GetSystemTempDir()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Get\+System\+Temp\+Dir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get the previously specified system temp dir [using \doxyref{Set\+System\+Temp\+Dir()}{p.}{classsquirrel_a956c45141bd1ab75c56933e093f4bcbb}], or the default temp dir if blank. 
+
+\begin{DoxyReturn}{Returns}
+the temp dir 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_ae0576f997b3521a42618ee870cc5c07a}} 
 \index{squirrel@{squirrel}!GetTempDir@{GetTempDir}}
 \index{GetTempDir@{GetTempDir}!squirrel@{squirrel}}
 \doxysubsubsection{GetTempDir()}
-{\footnotesize\ttfamily QString squirrel\+::\+Get\+Temp\+Dir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Get\+Temp\+Dir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
@@ -633,7 +941,7 @@ Get the automatically created temp directory.
 \begin{DoxyReturn}{Returns}
 the temp directory 
 \end{DoxyReturn}
-\label{classsquirrel_a04508e58d4bade893ccb38d2af310371} 
+\mbox{\label{classsquirrel_a04508e58d4bade893ccb38d2af310371}} 
 \index{squirrel@{squirrel}!GetUnzipSize@{GetUnzipSize}}
 \index{GetUnzipSize@{GetUnzipSize}!squirrel@{squirrel}}
 \doxysubsubsection{GetUnzipSize()}
@@ -646,115 +954,161 @@ Get the unzipped size of the squirrel package in bytes.
 \begin{DoxyReturn}{Returns}
 unzipped size of the squirrel package in bytes 
 \end{DoxyReturn}
-\label{classsquirrel_af25981e731f021f56e0ecf8bcb5a8c06} 
+\mbox{\label{classsquirrel_af25981e731f021f56e0ecf8bcb5a8c06}} 
 \index{squirrel@{squirrel}!IsValid@{IsValid}}
 \index{IsValid@{IsValid}!squirrel@{squirrel}}
 \doxysubsubsection{IsValid()}
 {\footnotesize\ttfamily bool squirrel\+::\+Is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_a8d0239afb694da850ded50c877ed47aa} 
+true if ok to delete the object \mbox{\label{classsquirrel_a35011c88b5557fba3520b5572ffb3985}} 
 \index{squirrel@{squirrel}!Log@{Log}}
 \index{Log@{Log}!squirrel@{squirrel}}
 \doxysubsubsection{Log()}
-{\footnotesize\ttfamily void squirrel\+::\+Log (\begin{DoxyParamCaption}\item[{QString}]{s,  }\item[{QString}]{func }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void squirrel\+::\+Log (\begin{DoxyParamCaption}\item[{Q\+String}]{s }\end{DoxyParamCaption})}
 
 
 
-Record a log -\/ prints to screen and stores in log string. 
+Record a log to a string and print to the screen. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em s} & log message \\
+{\em s} & The log message \\
 \hline
-{\em func} & function that called this function \\
+{\em func} & The function that called this function \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a0e586af53fe82a2f51c3a3a1a341aa22} 
+\mbox{\label{classsquirrel_a0e586af53fe82a2f51c3a3a1a341aa22}} 
 \index{squirrel@{squirrel}!OkToDelete@{OkToDelete}}
 \index{OkToDelete@{OkToDelete}!squirrel@{squirrel}}
 \doxysubsubsection{OkToDelete()}
 {\footnotesize\ttfamily bool squirrel\+::\+Ok\+To\+Delete (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_ac87ca49936204e3e37808d749ee255a9} 
+\mbox{\label{classsquirrel_a18ed5ab675316f0476211a728e9e4fc8}} 
 \index{squirrel@{squirrel}!Print@{Print}}
 \index{Print@{Print}!squirrel@{squirrel}}
 \doxysubsubsection{Print()}
-{\footnotesize\ttfamily void squirrel\+::\+Print (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print (\begin{DoxyParamCaption}\item[{bool}]{detail = {\ttfamily false} }\end{DoxyParamCaption})}
 
 
 
 Print the details of a package, including all objects. 
 
-\label{classsquirrel_a8adda84c654bb71d088f9277d80888b5} 
+\mbox{\label{classsquirrel_adceebe2c15eaf222a14b8869bce04f4a}} 
 \index{squirrel@{squirrel}!PrintDataDictionary@{PrintDataDictionary}}
 \index{PrintDataDictionary@{PrintDataDictionary}!squirrel@{squirrel}}
 \doxysubsubsection{PrintDataDictionary()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Data\+Dictionary (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Data\+Dictionary (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
 
-\label{classsquirrel_a84be8198aa8cd6321eea2e177fa48d0e} 
+
+
+Print a list of data dictionaries to stdout. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em details} & {\ttfamily true} to print details, {\ttfamily false} otherwise \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The string that was printed to stdout 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_adb0b7e57534fab0f447f845f705e02fd}} 
 \index{squirrel@{squirrel}!PrintExperiments@{PrintExperiments}}
 \index{PrintExperiments@{PrintExperiments}!squirrel@{squirrel}}
 \doxysubsubsection{PrintExperiments()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Experiments (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Experiments (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Print\+Experiments}{p.}{classsquirrel_a84be8198aa8cd6321eea2e177fa48d0e} 
+Print a list of experiments to stdout. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em details} & true to print details, false to print list of pipeline names \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a775198f9d884a4598b7c8550bd102b96} 
+\mbox{\label{classsquirrel_a47cc664537440e8fc5cb8d627912e1ce}} 
 \index{squirrel@{squirrel}!PrintGroupAnalyses@{PrintGroupAnalyses}}
 \index{PrintGroupAnalyses@{PrintGroupAnalyses}!squirrel@{squirrel}}
 \doxysubsubsection{PrintGroupAnalyses()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Group\+Analyses (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Group\+Analyses (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Print\+Group\+Analyses}{p.}{classsquirrel_a775198f9d884a4598b7c8550bd102b96} 
+Print a list of group analyses to stdout. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em details} & true to print details, false to print list of group analysis names \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_abcf9a73764a6b11d7a666e1b512240e4} 
+\mbox{\label{classsquirrel_a860719423245a372db580c20c516fd91}} 
+\index{squirrel@{squirrel}!PrintInterventions@{PrintInterventions}}
+\index{PrintInterventions@{PrintInterventions}!squirrel@{squirrel}}
+\doxysubsubsection{PrintInterventions()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Interventions (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID,  }\item[{\textbf{ Printing\+Type}}]{print\+Type = {\ttfamily \textbf{ Printing\+Type\+::\+List}} }\end{DoxyParamCaption})}
+
+
+
+Print all of the interventions for a given subject\+Row\+ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em subject\+Row\+ID} & The subject\+Row\+ID \\
+\hline
+{\em print\+Type} & One of the Printing\+Type enumerations \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_a46ce25363573b8eaa6cbbb865ee96078}} 
+\index{squirrel@{squirrel}!PrintObservations@{PrintObservations}}
+\index{PrintObservations@{PrintObservations}!squirrel@{squirrel}}
+\doxysubsubsection{PrintObservations()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Observations (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID,  }\item[{\textbf{ Printing\+Type}}]{print\+Type = {\ttfamily \textbf{ Printing\+Type\+::\+List}} }\end{DoxyParamCaption})}
+
+
+
+Print all of the observations for a given subject\+Row\+ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em subject\+Row\+ID} & The subject\+Row\+ID \\
+\hline
+{\em print\+Type} & One of the Printing\+Type enumerations \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_aa9679f4bf039a94f809d82fddd19c23a}} 
 \index{squirrel@{squirrel}!PrintPackage@{PrintPackage}}
 \index{PrintPackage@{PrintPackage}!squirrel@{squirrel}}
 \doxysubsubsection{PrintPackage()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Package (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Package (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 Print package details. 
 
-\label{classsquirrel_ae7190e4983ef8348e49bf790546fdb26} 
+\mbox{\label{classsquirrel_a20a9ed61ef48c83502dbe474d48530ca}} 
 \index{squirrel@{squirrel}!PrintPipelines@{PrintPipelines}}
 \index{PrintPipelines@{PrintPipelines}!squirrel@{squirrel}}
 \doxysubsubsection{PrintPipelines()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Pipelines (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Pipelines (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Print\+Pipelines}{p.}{classsquirrel_ae7190e4983ef8348e49bf790546fdb26} 
+Print a list of pipelines to stdout. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em details} & true to print details, false to print list of pipeline names \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a72c8b57c053a722be88d4dff92238a48} 
+\mbox{\label{classsquirrel_af378295aad8080c696b9576a1dec38ca}} 
 \index{squirrel@{squirrel}!PrintSeries@{PrintSeries}}
 \index{PrintSeries@{PrintSeries}!squirrel@{squirrel}}
 \doxysubsubsection{PrintSeries()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Series (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID,  }\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Series (\begin{DoxyParamCaption}\item[{qint64}]{study\+Row\+ID,  }\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Print\+Series}{p.}{classsquirrel_a72c8b57c053a722be88d4dff92238a48} print list of series to stdout 
+Print a list of series to stdout. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -765,15 +1119,15 @@ Print package details.
 {\em details} & true to print details, false to print list of series numbers \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a8725bea38d83053f6409a00ef3595f1b} 
+\mbox{\label{classsquirrel_aa1ff4e54608783d2c34efb9a391fb323}} 
 \index{squirrel@{squirrel}!PrintStudies@{PrintStudies}}
 \index{PrintStudies@{PrintStudies}!squirrel@{squirrel}}
 \doxysubsubsection{PrintStudies()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Studies (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID,  }\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Studies (\begin{DoxyParamCaption}\item[{qint64}]{subject\+Row\+ID,  }\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Print\+Studies}{p.}{classsquirrel_a8725bea38d83053f6409a00ef3595f1b} print list of studies to the stdout 
+Print a list of studies to the stdout. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -782,22 +1136,32 @@ Print package details.
 {\em details} & true to print details, false to print list of study numbers \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_ab9b21840815eed152a08b77afd087034} 
+\mbox{\label{classsquirrel_aa0dace74d451dd99f35c631067a880f8}} 
 \index{squirrel@{squirrel}!PrintSubjects@{PrintSubjects}}
 \index{PrintSubjects@{PrintSubjects}!squirrel@{squirrel}}
 \doxysubsubsection{PrintSubjects()}
-{\footnotesize\ttfamily void squirrel\+::\+Print\+Subjects (\begin{DoxyParamCaption}\item[{bool}]{details = {\ttfamily false} }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Subjects (\begin{DoxyParamCaption}\item[{\textbf{ Printing\+Type}}]{print\+Type = {\ttfamily \textbf{ Printing\+Type\+::\+List}} }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+::\+Print\+Subjects}{p.}{classsquirrel_ab9b21840815eed152a08b77afd087034} print list of subjects to stdout 
+Print a list of subjects to stdout. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em details} & true to print details, false to print list of subject IDs \\
+{\em details} & true to print details, false to print list of subject I\+Ds \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a4468a79ec12852f8b677908dc3ceb926} 
+\mbox{\label{classsquirrel_a9d93d03c408f4c3289d4ac1962e1cf83}} 
+\index{squirrel@{squirrel}!PrintTree@{PrintTree}}
+\index{PrintTree@{PrintTree}!squirrel@{squirrel}}
+\doxysubsubsection{PrintTree()}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Print\+Tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Print the details of a package, including all objects. 
+
+\mbox{\label{classsquirrel_a4468a79ec12852f8b677908dc3ceb926}} 
 \index{squirrel@{squirrel}!Read@{Read}}
 \index{Read@{Read}!squirrel@{squirrel}}
 \doxysubsubsection{Read()}
@@ -810,25 +1174,45 @@ Read a squirrel package. All parameters must be set first.
 \begin{DoxyReturn}{Returns}
 true if read succesful 
 \end{DoxyReturn}
-\label{classsquirrel_a3328b9565a04ef3bad3a026561317760} 
+\mbox{\label{classsquirrel_a3328b9565a04ef3bad3a026561317760}} 
 \index{squirrel@{squirrel}!ReadParamsFile@{ReadParamsFile}}
 \index{ReadParamsFile@{ReadParamsFile}!squirrel@{squirrel}}
 \doxysubsubsection{ReadParamsFile()}
-{\footnotesize\ttfamily QHash$<$ QString, QString $>$ squirrel\+::\+Read\+Params\+File (\begin{DoxyParamCaption}\item[{QString}]{f }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+Hash$<$ Q\+String, Q\+String $>$ squirrel\+::\+Read\+Params\+File (\begin{DoxyParamCaption}\item[{Q\+String}]{f }\end{DoxyParamCaption})}
 
 
 
-Reads a JSON key/value pair file into a hash. 
+Reads a J\+S\+ON key/value pair file into a hash. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em f} & JSON file \\
+{\em f} & J\+S\+ON file \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 list of key/value pairs 
 \end{DoxyReturn}
-\label{classsquirrel_a526be9073036e1e0c2e81bf664a07222} 
+\mbox{\label{classsquirrel_a9b52c803c5bbddce849aed70c35f8fa5}} 
+\index{squirrel@{squirrel}!RemoveObject@{RemoveObject}}
+\index{RemoveObject@{RemoveObject}!squirrel@{squirrel}}
+\doxysubsubsection{RemoveObject()}
+{\footnotesize\ttfamily bool squirrel\+::\+Remove\+Object (\begin{DoxyParamCaption}\item[{Q\+String}]{object\+Type,  }\item[{qint64}]{object\+Row\+ID }\end{DoxyParamCaption})}
+
+
+
+Remove an object and child objects from the package. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em object\+Type} & Possible object types {\ttfamily subject}, {\ttfamily study}, {\ttfamily series}, {\ttfamily analysis}, {\ttfamily experiment}, {\ttfamily intervention}, {\ttfamily observation}, {\ttfamily pipeline}, {\ttfamily datadictionary}, {\ttfamily groupanalysis} \\
+\hline
+{\em object\+Row\+ID} & object database row\+ID \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if successful, false otherwise 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a526be9073036e1e0c2e81bf664a07222}} 
 \index{squirrel@{squirrel}!ResequenceSeries@{ResequenceSeries}}
 \index{ResequenceSeries@{ResequenceSeries}!squirrel@{squirrel}}
 \doxysubsubsection{ResequenceSeries()}
@@ -843,7 +1227,7 @@ Resequence the series numbers for a specified study.
 {\em study\+Row\+ID} & The study\+Row\+ID to resequence \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_aed67764e5845964af0ae637d82f555d9} 
+\mbox{\label{classsquirrel_aed67764e5845964af0ae637d82f555d9}} 
 \index{squirrel@{squirrel}!ResequenceStudies@{ResequenceStudies}}
 \index{ResequenceStudies@{ResequenceStudies}!squirrel@{squirrel}}
 \doxysubsubsection{ResequenceStudies()}
@@ -851,14 +1235,14 @@ Resequence the series numbers for a specified study.
 
 
 
-\doxyref{squirrel\+::\+Resequence\+Studies}{p.}{classsquirrel_aed67764e5845964af0ae637d82f555d9} 
+Renumber the sequence field for the studies associated with the subject. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em subject\+Row\+ID} & Renumber the sequence field for the studies associated with this subject \\
+{\em subject\+Row\+ID} & The subject\+Row\+ID of the parent \\
 \hline
 \end{DoxyParams}
-\label{classsquirrel_a6ca4e54c2b6993fb5d825646cbe79670} 
+\mbox{\label{classsquirrel_a6ca4e54c2b6993fb5d825646cbe79670}} 
 \index{squirrel@{squirrel}!ResequenceSubjects@{ResequenceSubjects}}
 \index{ResequenceSubjects@{ResequenceSubjects}!squirrel@{squirrel}}
 \doxysubsubsection{ResequenceSubjects()}
@@ -866,21 +1250,114 @@ Resequence the series numbers for a specified study.
 
 
 
-Resequences (renumbers) the subjects. Used when writing package with sequential directory names instead of subject IDs. 
+Resequences (renumbers) the subjects. Used when writing package with sequential directory names instead of subject I\+Ds. 
 
-\label{classsquirrel_a8df359155df0c36ee8c8cdbcf2c1611b} 
+\mbox{\label{classsquirrel_a63817ffa8d28edb2a4366ebf4b53b4b0}} 
+\index{squirrel@{squirrel}!SetDebug@{SetDebug}}
+\index{SetDebug@{SetDebug}!squirrel@{squirrel}}
+\doxysubsubsection{SetDebug()}
+{\footnotesize\ttfamily void squirrel\+::\+Set\+Debug (\begin{DoxyParamCaption}\item[{bool}]{d }\end{DoxyParamCaption})}
+
+
+
+Set the option to print debugging information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & {\ttfamily true} to print debug information, {\ttfamily false} otherwise \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_a22ab54ce18529d01ddac10907a4d533e}} 
+\index{squirrel@{squirrel}!SetDebugSQL@{SetDebugSQL}}
+\index{SetDebugSQL@{SetDebugSQL}!squirrel@{squirrel}}
+\doxysubsubsection{SetDebugSQL()}
+{\footnotesize\ttfamily void squirrel\+::\+Set\+Debug\+S\+QL (\begin{DoxyParamCaption}\item[{bool}]{d }\end{DoxyParamCaption})}
+
+
+
+Set the option to print S\+QL debugging statements. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & {\ttfamily true} to print debug statements, {\ttfamily false} otherwise \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_a8df359155df0c36ee8c8cdbcf2c1611b}} 
 \index{squirrel@{squirrel}!SetFileMode@{SetFileMode}}
 \index{SetFileMode@{SetFileMode}!squirrel@{squirrel}}
 \doxysubsubsection{SetFileMode()}
 {\footnotesize\ttfamily void squirrel\+::\+Set\+File\+Mode (\begin{DoxyParamCaption}\item[{\textbf{ File\+Mode}}]{m }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_a825372917fec4bf86dd9df6c0add71a4} 
+Set the file mode to either New\+Package or Existing\+Package \mbox{\label{classsquirrel_a73f2b4f2f7121189af88613d4bf44930}} 
+\index{squirrel@{squirrel}!SetOverwritePackage@{SetOverwritePackage}}
+\index{SetOverwritePackage@{SetOverwritePackage}!squirrel@{squirrel}}
+\doxysubsubsection{SetOverwritePackage()}
+{\footnotesize\ttfamily void squirrel\+::\+Set\+Overwrite\+Package (\begin{DoxyParamCaption}\item[{bool}]{o }\end{DoxyParamCaption})}
+
+
+
+Set the option to overwrite an existing package. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em o} & {\ttfamily true} to overwrite an existing package, {\ttfamily false} otherwise \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_a825372917fec4bf86dd9df6c0add71a4}} 
 \index{squirrel@{squirrel}!SetPackagePath@{SetPackagePath}}
 \index{SetPackagePath@{SetPackagePath}!squirrel@{squirrel}}
 \doxysubsubsection{SetPackagePath()}
-{\footnotesize\ttfamily void squirrel\+::\+Set\+Package\+Path (\begin{DoxyParamCaption}\item[{QString}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily void squirrel\+::\+Set\+Package\+Path (\begin{DoxyParamCaption}\item[{Q\+String}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_a16087a449cc3a8f536644f962ffa65a5} 
+Set the package path \mbox{\label{classsquirrel_a8795c310765b996e4572c03c67ba8891}} 
+\index{squirrel@{squirrel}!SetQuickRead@{SetQuickRead}}
+\index{SetQuickRead@{SetQuickRead}!squirrel@{squirrel}}
+\doxysubsubsection{SetQuickRead()}
+{\footnotesize\ttfamily void squirrel\+::\+Set\+Quick\+Read (\begin{DoxyParamCaption}\item[{bool}]{q }\end{DoxyParamCaption})}
+
+
+
+Set the option to do a quick read ({\itshape not} reading the params.\+json files) or not. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em q} & {\ttfamily true} to perform a quick read, {\ttfamily false} otherwise \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_a956c45141bd1ab75c56933e093f4bcbb}} 
+\index{squirrel@{squirrel}!SetSystemTempDir@{SetSystemTempDir}}
+\index{SetSystemTempDir@{SetSystemTempDir}!squirrel@{squirrel}}
+\doxysubsubsection{SetSystemTempDir()}
+{\footnotesize\ttfamily void squirrel\+::\+Set\+System\+Temp\+Dir (\begin{DoxyParamCaption}\item[{Q\+String}]{tmpdir }\end{DoxyParamCaption})}
+
+
+
+Allow a different temp directory to be used. Sometimes /tmp is on a small partition, and creating a squirrel file of several hundred GB may fill up the root partition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tmpdir} & The system temp directory to use \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classsquirrel_ad587471566cc8537e56e799bdebfb2a8}} 
+\index{squirrel@{squirrel}!UpdateJsonHeader@{UpdateJsonHeader}}
+\index{UpdateJsonHeader@{UpdateJsonHeader}!squirrel@{squirrel}}
+\doxysubsubsection{UpdateJsonHeader()}
+{\footnotesize\ttfamily bool squirrel\+::\+Update\+Json\+Header (\begin{DoxyParamCaption}\item[{Q\+String}]{json }\end{DoxyParamCaption})}
+
+
+
+Update the J\+S\+ON package header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em json} & Q\+String with the contents of the entire J\+S\+ON formatted file to be written \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if successful, {\ttfamily false} otherwise 
+\end{DoxyReturn}
+\mbox{\label{classsquirrel_a16087a449cc3a8f536644f962ffa65a5}} 
 \index{squirrel@{squirrel}!Validate@{Validate}}
 \index{Validate@{Validate}!squirrel@{squirrel}}
 \doxysubsubsection{Validate()}
@@ -893,7 +1370,7 @@ Validate if a squirrel package is readable.
 \begin{DoxyReturn}{Returns}
 true if valid squirrel file, false otherwise 
 \end{DoxyReturn}
-\label{classsquirrel_aec053b79aa62fa47dc653f5e80d857b5} 
+\mbox{\label{classsquirrel_aec053b79aa62fa47dc653f5e80d857b5}} 
 \index{squirrel@{squirrel}!Write@{Write}}
 \index{Write@{Write}!squirrel@{squirrel}}
 \doxysubsubsection{Write()}
@@ -914,107 +1391,101 @@ true if successfuly written, false otherwise
 
 
 \doxysubsection{Member Data Documentation}
-\label{classsquirrel_a71f32e23b3209f6bdf16fb27e039cd9c} 
+\mbox{\label{classsquirrel_a71f32e23b3209f6bdf16fb27e039cd9c}} 
 \index{squirrel@{squirrel}!Changes@{Changes}}
 \index{Changes@{Changes}!squirrel@{squirrel}}
 \doxysubsubsection{Changes}
-{\footnotesize\ttfamily QString squirrel\+::\+Changes}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Changes}
 
-any changes since last package release \label{classsquirrel_a9df6b2ed2be0043671f3453de5776b78} 
+any changes since last package release \mbox{\label{classsquirrel_a9df6b2ed2be0043671f3453de5776b78}} 
 \index{squirrel@{squirrel}!DataFormat@{DataFormat}}
 \index{DataFormat@{DataFormat}!squirrel@{squirrel}}
 \doxysubsubsection{DataFormat}
-{\footnotesize\ttfamily QString squirrel\+::\+Data\+Format}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Data\+Format}
 
-orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz \label{classsquirrel_ada529a04adb9f2827c982bdce5d65a09} 
+orig, anon, anonfull, nift3d, nifti3dgz, nifti4d, nifti4dgz \mbox{\label{classsquirrel_ada529a04adb9f2827c982bdce5d65a09}} 
 \index{squirrel@{squirrel}!Datetime@{Datetime}}
 \index{Datetime@{Datetime}!squirrel@{squirrel}}
 \doxysubsubsection{Datetime}
-{\footnotesize\ttfamily QDate\+Time squirrel\+::\+Datetime}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+::\+Datetime}
 
-datetime the package was created \label{classsquirrel_a7ac4ecffb0086735746877d0ad84bc12} 
-\index{squirrel@{squirrel}!db@{db}}
-\index{db@{db}!squirrel@{squirrel}}
-\doxysubsubsection{db}
-{\footnotesize\ttfamily QSql\+Database squirrel\+::db}
-
-\label{classsquirrel_a665dcd3230167ea177af353833ec8b70} 
+datetime the package was created \mbox{\label{classsquirrel_a665dcd3230167ea177af353833ec8b70}} 
 \index{squirrel@{squirrel}!Description@{Description}}
 \index{Description@{Description}!squirrel@{squirrel}}
 \doxysubsubsection{Description}
-{\footnotesize\ttfamily QString squirrel\+::\+Description}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Description}
 
-detailed description of the package \label{classsquirrel_a69930a91efacdcff8061baee2a3d3816} 
+detailed description of the package \mbox{\label{classsquirrel_a69930a91efacdcff8061baee2a3d3816}} 
 \index{squirrel@{squirrel}!License@{License}}
 \index{License@{License}!squirrel@{squirrel}}
 \doxysubsubsection{License}
-{\footnotesize\ttfamily QString squirrel\+::\+License}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+License}
 
-a data usage license \label{classsquirrel_a6bb6936627957648a8b3470792e807f0} 
+a data usage license \mbox{\label{classsquirrel_a6bb6936627957648a8b3470792e807f0}} 
 \index{squirrel@{squirrel}!NiDBversion@{NiDBversion}}
 \index{NiDBversion@{NiDBversion}!squirrel@{squirrel}}
 \doxysubsubsection{NiDBversion}
-{\footnotesize\ttfamily QString squirrel\+::\+Ni\+DBversion}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Ni\+D\+Bversion}
 
-Ni\+DB version that wrote this package \label{classsquirrel_af9f734c81561a3d93c2fff6a114650b4} 
+Ni\+DB version that wrote this package \mbox{\label{classsquirrel_af9f734c81561a3d93c2fff6a114650b4}} 
 \index{squirrel@{squirrel}!Notes@{Notes}}
 \index{Notes@{Notes}!squirrel@{squirrel}}
 \doxysubsubsection{Notes}
-{\footnotesize\ttfamily QString squirrel\+::\+Notes}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Notes}
 
-JSON string of notes (may contain JSON sub-\/elements of \textquotesingle{}import\textquotesingle{}, \textquotesingle{}merge\textquotesingle{}, \textquotesingle{}export\textquotesingle{}) \label{classsquirrel_ab9296b83e930f6fc8da1f455d2a64e26} 
+J\+S\+ON string of notes (may contain J\+S\+ON sub-\/elements of \textquotesingle{}import\textquotesingle{}, \textquotesingle{}merge\textquotesingle{}, \textquotesingle{}export\textquotesingle{}) \mbox{\label{classsquirrel_ab9296b83e930f6fc8da1f455d2a64e26}} 
 \index{squirrel@{squirrel}!PackageFormat@{PackageFormat}}
 \index{PackageFormat@{PackageFormat}!squirrel@{squirrel}}
 \doxysubsubsection{PackageFormat}
-{\footnotesize\ttfamily QString squirrel\+::\+Package\+Format}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Package\+Format}
 
-\textquotesingle{}squirrel\textquotesingle{} \label{classsquirrel_ab06dea972d0b6b87e9cf536dcc7311dc} 
+\textquotesingle{}squirrel\textquotesingle{} \mbox{\label{classsquirrel_ab06dea972d0b6b87e9cf536dcc7311dc}} 
 \index{squirrel@{squirrel}!PackageName@{PackageName}}
 \index{PackageName@{PackageName}!squirrel@{squirrel}}
 \doxysubsubsection{PackageName}
-{\footnotesize\ttfamily QString squirrel\+::\+Package\+Name}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Package\+Name}
 
-name of the package \label{classsquirrel_a71389a54da2ba72c88003d87dbb0d963} 
+name of the package \mbox{\label{classsquirrel_a71389a54da2ba72c88003d87dbb0d963}} 
 \index{squirrel@{squirrel}!quiet@{quiet}}
 \index{quiet@{quiet}!squirrel@{squirrel}}
 \doxysubsubsection{quiet}
 {\footnotesize\ttfamily bool squirrel\+::quiet =false}
 
-\label{classsquirrel_a55f00c3f2d9752adfa7ce63c1c17006a} 
+\mbox{\label{classsquirrel_a55f00c3f2d9752adfa7ce63c1c17006a}} 
 \index{squirrel@{squirrel}!Readme@{Readme}}
 \index{Readme@{Readme}!squirrel@{squirrel}}
 \doxysubsubsection{Readme}
-{\footnotesize\ttfamily QString squirrel\+::\+Readme}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Readme}
 
-a README \label{classsquirrel_a47c6784132921b890e1299f275789fc8} 
+a R\+E\+A\+D\+ME \mbox{\label{classsquirrel_a47c6784132921b890e1299f275789fc8}} 
 \index{squirrel@{squirrel}!SeriesDirFormat@{SeriesDirFormat}}
 \index{SeriesDirFormat@{SeriesDirFormat}!squirrel@{squirrel}}
 \doxysubsubsection{SeriesDirFormat}
-{\footnotesize\ttfamily QString squirrel\+::\+Series\+Dir\+Format}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Series\+Dir\+Format}
 
-orig, seq \label{classsquirrel_a9f1fbf89f3fd95426b9d34da4688fb67} 
+orig, seq \mbox{\label{classsquirrel_a9f1fbf89f3fd95426b9d34da4688fb67}} 
 \index{squirrel@{squirrel}!SquirrelBuild@{SquirrelBuild}}
 \index{SquirrelBuild@{SquirrelBuild}!squirrel@{squirrel}}
 \doxysubsubsection{SquirrelBuild}
-{\footnotesize\ttfamily QString squirrel\+::\+Squirrel\+Build}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Squirrel\+Build}
 
-squirrel build \label{classsquirrel_adfaf710a92ac7ba8249b44d4b45469c4} 
+squirrel build \mbox{\label{classsquirrel_adfaf710a92ac7ba8249b44d4b45469c4}} 
 \index{squirrel@{squirrel}!SquirrelVersion@{SquirrelVersion}}
 \index{SquirrelVersion@{SquirrelVersion}!squirrel@{squirrel}}
 \doxysubsubsection{SquirrelVersion}
-{\footnotesize\ttfamily QString squirrel\+::\+Squirrel\+Version}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Squirrel\+Version}
 
-squirrel version \label{classsquirrel_ae5602770ab07bb733866acb3c3c7b2e5} 
+squirrel version \mbox{\label{classsquirrel_ae5602770ab07bb733866acb3c3c7b2e5}} 
 \index{squirrel@{squirrel}!StudyDirFormat@{StudyDirFormat}}
 \index{StudyDirFormat@{StudyDirFormat}!squirrel@{squirrel}}
 \doxysubsubsection{StudyDirFormat}
-{\footnotesize\ttfamily QString squirrel\+::\+Study\+Dir\+Format}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Study\+Dir\+Format}
 
-orig, seq \label{classsquirrel_a9152f73cd42a21ab8b0fe909fdd01252} 
+orig, seq \mbox{\label{classsquirrel_a9152f73cd42a21ab8b0fe909fdd01252}} 
 \index{squirrel@{squirrel}!SubjectDirFormat@{SubjectDirFormat}}
 \index{SubjectDirFormat@{SubjectDirFormat}!squirrel@{squirrel}}
 \doxysubsubsection{SubjectDirFormat}
-{\footnotesize\ttfamily QString squirrel\+::\+Subject\+Dir\+Format}
+{\footnotesize\ttfamily Q\+String squirrel\+::\+Subject\+Dir\+Format}
 
 orig, seq 
 

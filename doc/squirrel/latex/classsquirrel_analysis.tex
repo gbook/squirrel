@@ -9,14 +9,14 @@ The analysis class.
 
 {\ttfamily \#include $<$squirrel\+Analysis.\+h$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ squirrel\+Analysis} ()
+\textbf{ squirrel\+Analysis} (Q\+String db\+ID)
 \item 
-QJson\+Object \textbf{ To\+JSON} ()
+Q\+Json\+Object \textbf{ To\+J\+S\+ON} ()
 \item 
-void \textbf{ Print\+Analysis} ()
+Q\+String \textbf{ Print\+Analysis} ()
 \begin{DoxyCompactList}\small\item\em Print the analysis details. \end{DoxyCompactList}\item 
 bool \textbf{ Get} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Analysis\+::\+Get}{p.}{classsquirrel_analysis_af5b4d4a2d133162e52e9a6129da9cff9} \end{DoxyCompactList}\item 
@@ -24,42 +24,46 @@ bool \textbf{ Store} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Analysis\+::\+Store}{p.}{classsquirrel_analysis_a68c22f742b487db9aa88c484f9c1a71d} \end{DoxyCompactList}\item 
 bool \textbf{ is\+Valid} ()
 \item 
-QString \textbf{ Error} ()
+Q\+String \textbf{ Error} ()
 \item 
 qint64 \textbf{ Get\+Object\+ID} ()
 \item 
 void \textbf{ Set\+Object\+ID} (qint64 id)
 \item 
-void \textbf{ Set\+Dir\+Format} (QString subject\+\_\+\+Dir\+Format, QString study\+\_\+\+Dir\+Format)
+void \textbf{ Set\+Dir\+Format} (Q\+String subject\+\_\+\+Dir\+Format, Q\+String study\+\_\+\+Dir\+Format)
 \item 
-QString \textbf{ Virtual\+Path} ()
+Q\+String \textbf{ Virtual\+Path} ()
 \item 
-QList$<$ QPair$<$ QString, QString $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+\item 
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+void \textbf{ Set\+Database\+U\+U\+ID} (Q\+String db\+ID)
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Public Attributes}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 qint64 \textbf{ study\+Row\+ID}
 \item 
 qint64 \textbf{ pipeline\+Row\+ID}
 \item 
-QDate\+Time \textbf{ Date\+Cluster\+End}
+Q\+Date\+Time \textbf{ Date\+Cluster\+End}
 \item 
-QDate\+Time \textbf{ Date\+Cluster\+Start}
+Q\+Date\+Time \textbf{ Date\+Cluster\+Start}
 \item 
-QDate\+Time \textbf{ Date\+End}
+Q\+Date\+Time \textbf{ Date\+End}
 \item 
-QDate\+Time \textbf{ Date\+Start}
+Q\+Date\+Time \textbf{ Date\+Start}
 \item 
-QString \textbf{ Analysis\+Name}
+Q\+String \textbf{ Analysis\+Name}
 \item 
-QString \textbf{ Hostname}
+Q\+String \textbf{ Hostname}
 \item 
-QString \textbf{ Last\+Message}
+Q\+String \textbf{ Last\+Message}
 \item 
-QString \textbf{ Pipeline\+Name}
+Q\+String \textbf{ Pipeline\+Name}
 \item 
-QString \textbf{ Status}
+Q\+String \textbf{ Status}
 \item 
 bool \textbf{ Successful}
 \item 
@@ -73,7 +77,7 @@ qint64 \textbf{ Setup\+Time}
 \item 
 qint64 \textbf{ Size}
 \item 
-QString\+List \textbf{ staged\+Files}
+Q\+String\+List \textbf{ staged\+Files}
 \end{DoxyCompactItemize}
 
 
@@ -81,22 +85,22 @@ QString\+List \textbf{ staged\+Files}
 The analysis class. 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classsquirrel_analysis_a4ea0c4a49560f82b0eb23437fe3ba4f9} 
+\mbox{\label{classsquirrel_analysis_a613351ba7bae5a2ca49b4b95408d6e25}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!squirrelAnalysis@{squirrelAnalysis}}
 \index{squirrelAnalysis@{squirrelAnalysis}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{squirrelAnalysis()}
-{\footnotesize\ttfamily squirrel\+Analysis\+::squirrel\+Analysis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily squirrel\+Analysis\+::squirrel\+Analysis (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Function Documentation}
-\label{classsquirrel_analysis_ac7b1447eedca3969208dfd7e70889198} 
+\mbox{\label{classsquirrel_analysis_ac7b1447eedca3969208dfd7e70889198}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Error@{Error}}
 \index{Error@{Error}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Error()}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_analysis_af5b4d4a2d133162e52e9a6129da9cff9} 
+\mbox{\label{classsquirrel_analysis_af5b4d4a2d133162e52e9a6129da9cff9}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Get@{Get}}
 \index{Get@{Get}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Get()}
@@ -109,47 +113,59 @@ The analysis class.
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the analysis data from the database. The analysis\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_analysis_a913e3b3c454700e26cebfb4ba05aa5bb} 
+This function will attempt to load the analysis data from the database. The analysis\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_analysis_a08ed522f7e05b5000f3278d5e7391b71}} 
+\index{squirrelAnalysis@{squirrelAnalysis}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrelAnalysis@{squirrelAnalysis}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_analysis_a913e3b3c454700e26cebfb4ba05aa5bb}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!GetObjectID@{GetObjectID}}
 \index{GetObjectID@{GetObjectID}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{GetObjectID()}
 {\footnotesize\ttfamily qint64 squirrel\+Analysis\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_analysis_a2b77412cab83981aac488f073bf788a0} 
+\mbox{\label{classsquirrel_analysis_a2b77412cab83981aac488f073bf788a0}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!GetStagedFileList@{GetStagedFileList}}
 \index{GetStagedFileList@{GetStagedFileList}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{GetStagedFileList()}
-{\footnotesize\ttfamily QList$<$ QPair$<$ QString, QString $>$ $>$ squirrel\+Analysis\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ squirrel\+Analysis\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_analysis_a7adc9e755a9b13d8ac4f4a31b2489de7} 
+\mbox{\label{classsquirrel_analysis_a7adc9e755a9b13d8ac4f4a31b2489de7}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!isValid@{isValid}}
 \index{isValid@{isValid}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{isValid()}
 {\footnotesize\ttfamily bool squirrel\+Analysis\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_analysis_a224fd140bf67f1d7f4911cb5c689f37f} 
+\mbox{\label{classsquirrel_analysis_a0c26668530328c67aec202594e5c0653}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!PrintAnalysis@{PrintAnalysis}}
 \index{PrintAnalysis@{PrintAnalysis}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{PrintAnalysis()}
-{\footnotesize\ttfamily void squirrel\+Analysis\+::\+Print\+Analysis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Print\+Analysis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 Print the analysis details. 
 
-\label{classsquirrel_analysis_afe535e89234bd4ab656ff749ba0d7045} 
+\mbox{\label{classsquirrel_analysis_aebcd1c0bb86a9b12a8379716410feab2}} 
+\index{squirrelAnalysis@{squirrelAnalysis}!SetDatabaseUUID@{SetDatabaseUUID}}
+\index{SetDatabaseUUID@{SetDatabaseUUID}!squirrelAnalysis@{squirrelAnalysis}}
+\doxysubsubsection{SetDatabaseUUID()}
+{\footnotesize\ttfamily void squirrel\+Analysis\+::\+Set\+Database\+U\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_analysis_afe535e89234bd4ab656ff749ba0d7045}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!SetDirFormat@{SetDirFormat}}
 \index{SetDirFormat@{SetDirFormat}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{SetDirFormat()}
-{\footnotesize\ttfamily void squirrel\+Analysis\+::\+Set\+Dir\+Format (\begin{DoxyParamCaption}\item[{QString}]{subject\+\_\+\+Dir\+Format,  }\item[{QString}]{study\+\_\+\+Dir\+Format }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily void squirrel\+Analysis\+::\+Set\+Dir\+Format (\begin{DoxyParamCaption}\item[{Q\+String}]{subject\+\_\+\+Dir\+Format,  }\item[{Q\+String}]{study\+\_\+\+Dir\+Format }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_analysis_a03811c25ad97ba088a705b3613e6c599} 
+\mbox{\label{classsquirrel_analysis_a03811c25ad97ba088a705b3613e6c599}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!SetObjectID@{SetObjectID}}
 \index{SetObjectID@{SetObjectID}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{SetObjectID()}
 {\footnotesize\ttfamily void squirrel\+Analysis\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_analysis_a68c22f742b487db9aa88c484f9c1a71d} 
+\mbox{\label{classsquirrel_analysis_a68c22f742b487db9aa88c484f9c1a71d}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Store@{Store}}
 \index{Store@{Store}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Store()}
@@ -162,124 +178,124 @@ Print the analysis details.
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_analysis_a86f7167c4646234a2f0ceff5098ea701} 
+This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_analysis_a86f7167c4646234a2f0ceff5098ea701}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!ToJSON@{ToJSON}}
 \index{ToJSON@{ToJSON}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{ToJSON()}
-{\footnotesize\ttfamily QJson\+Object squirrel\+Analysis\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Analysis\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_analysis_ab58c4e72ce5df44cb8cc66f48f1be93c} 
+\mbox{\label{classsquirrel_analysis_ab58c4e72ce5df44cb8cc66f48f1be93c}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!VirtualPath@{VirtualPath}}
 \index{VirtualPath@{VirtualPath}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{VirtualPath()}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Data Documentation}
-\label{classsquirrel_analysis_a796af6bbbed28dbbefa52eec22310341} 
+\mbox{\label{classsquirrel_analysis_a796af6bbbed28dbbefa52eec22310341}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!AnalysisName@{AnalysisName}}
 \index{AnalysisName@{AnalysisName}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{AnalysisName}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Analysis\+Name}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Analysis\+Name}
 
-name of this analysis, usually same as the pipeline name \label{classsquirrel_analysis_a5462cb3b9d94626f41b3f56e9012a44b} 
+name of this analysis, usually same as the pipeline name \mbox{\label{classsquirrel_analysis_a5462cb3b9d94626f41b3f56e9012a44b}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!DateClusterEnd@{DateClusterEnd}}
 \index{DateClusterEnd@{DateClusterEnd}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{DateClusterEnd}
-{\footnotesize\ttfamily QDate\+Time squirrel\+Analysis\+::\+Date\+Cluster\+End}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Analysis\+::\+Date\+Cluster\+End}
 
-datetime the analysis finished running on the cluster \label{classsquirrel_analysis_a43f0f7d17216c01458a8184c045f8f8b} 
+datetime the analysis finished running on the cluster \mbox{\label{classsquirrel_analysis_a43f0f7d17216c01458a8184c045f8f8b}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!DateClusterStart@{DateClusterStart}}
 \index{DateClusterStart@{DateClusterStart}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{DateClusterStart}
-{\footnotesize\ttfamily QDate\+Time squirrel\+Analysis\+::\+Date\+Cluster\+Start}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Analysis\+::\+Date\+Cluster\+Start}
 
-datetime the analysis started running on the cluster \label{classsquirrel_analysis_a69f33854d4cb2e2ffebd9781b655af7d} 
+datetime the analysis started running on the cluster \mbox{\label{classsquirrel_analysis_a69f33854d4cb2e2ffebd9781b655af7d}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!DateEnd@{DateEnd}}
 \index{DateEnd@{DateEnd}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{DateEnd}
-{\footnotesize\ttfamily QDate\+Time squirrel\+Analysis\+::\+Date\+End}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Analysis\+::\+Date\+End}
 
-datetime the analysis ended \label{classsquirrel_analysis_a61bb81d406e5546d763468991c6137c1} 
+datetime the analysis ended \mbox{\label{classsquirrel_analysis_a61bb81d406e5546d763468991c6137c1}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!DateStart@{DateStart}}
 \index{DateStart@{DateStart}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{DateStart}
-{\footnotesize\ttfamily QDate\+Time squirrel\+Analysis\+::\+Date\+Start}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Analysis\+::\+Date\+Start}
 
-datetime the analysis was started, includes the setup time \label{classsquirrel_analysis_aaecfa33a02ce6cd8712ebd972c733523} 
+datetime the analysis was started, includes the setup time \mbox{\label{classsquirrel_analysis_aaecfa33a02ce6cd8712ebd972c733523}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Hostname@{Hostname}}
 \index{Hostname@{Hostname}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Hostname}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Hostname}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Hostname}
 
-hostname on which the analysis was run \label{classsquirrel_analysis_a4d1a13be3936cdd7a525fc783c2b3402} 
+hostname on which the analysis was run \mbox{\label{classsquirrel_analysis_a4d1a13be3936cdd7a525fc783c2b3402}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!LastMessage@{LastMessage}}
 \index{LastMessage@{LastMessage}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{LastMessage}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Last\+Message}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Last\+Message}
 
-if the analysis had a status message, the last would be stored here \label{classsquirrel_analysis_a73d5ec1caadf7135b2a7ae5376ab408a} 
+if the analysis had a status message, the last would be stored here \mbox{\label{classsquirrel_analysis_a73d5ec1caadf7135b2a7ae5376ab408a}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!PipelineName@{PipelineName}}
 \index{PipelineName@{PipelineName}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{PipelineName}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Pipeline\+Name}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Pipeline\+Name}
 
-name of the pipeline \label{classsquirrel_analysis_a60ca424848784abf1044a25dd2c2b12e} 
+name of the pipeline \mbox{\label{classsquirrel_analysis_a60ca424848784abf1044a25dd2c2b12e}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!pipelineRowID@{pipelineRowID}}
 \index{pipelineRowID@{pipelineRowID}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{pipelineRowID}
 {\footnotesize\ttfamily qint64 squirrel\+Analysis\+::pipeline\+Row\+ID}
 
-database row id of the parent pipeline \label{classsquirrel_analysis_a1be62b3b16f8b905a873a6329c74d481} 
+database row id of the parent pipeline \mbox{\label{classsquirrel_analysis_a1be62b3b16f8b905a873a6329c74d481}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!PipelineVersion@{PipelineVersion}}
 \index{PipelineVersion@{PipelineVersion}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{PipelineVersion}
 {\footnotesize\ttfamily int squirrel\+Analysis\+::\+Pipeline\+Version}
 
-pipeline version \label{classsquirrel_analysis_ac35608ad7e661898a0867db16ca4be55} 
+pipeline version \mbox{\label{classsquirrel_analysis_ac35608ad7e661898a0867db16ca4be55}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!RunTime@{RunTime}}
 \index{RunTime@{RunTime}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{RunTime}
 {\footnotesize\ttfamily qint64 squirrel\+Analysis\+::\+Run\+Time}
 
-total run time in minutes (elapsed wall time) of the analysis after analysis was submitted to the cluster \label{classsquirrel_analysis_add82027bebd28bb0dabde29cae08549e} 
+total run time in minutes (elapsed wall time) of the analysis after analysis was submitted to the cluster \mbox{\label{classsquirrel_analysis_add82027bebd28bb0dabde29cae08549e}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!SeriesCount@{SeriesCount}}
 \index{SeriesCount@{SeriesCount}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{SeriesCount}
 {\footnotesize\ttfamily int squirrel\+Analysis\+::\+Series\+Count}
 
-number of series downloaded into the analysis \label{classsquirrel_analysis_a6018e97542b7fec89dbecab18b725499} 
+number of series downloaded into the analysis \mbox{\label{classsquirrel_analysis_a6018e97542b7fec89dbecab18b725499}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!SetupTime@{SetupTime}}
 \index{SetupTime@{SetupTime}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{SetupTime}
 {\footnotesize\ttfamily qint64 squirrel\+Analysis\+::\+Setup\+Time}
 
-total time in minutes (elapsed wall time) to setup the analysis, most time will be spent copying data into the analysis directories \label{classsquirrel_analysis_a166422ac976f46832da08a44bc901eff} 
+total time in minutes (elapsed wall time) to setup the analysis, most time will be spent copying data into the analysis directories \mbox{\label{classsquirrel_analysis_a166422ac976f46832da08a44bc901eff}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Size@{Size}}
 \index{Size@{Size}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Size}
 {\footnotesize\ttfamily qint64 squirrel\+Analysis\+::\+Size}
 
-disk size in bytes of the analysis \label{classsquirrel_analysis_a10fe86257f84c774dbaad4164e999c4c} 
+disk size in bytes of the analysis \mbox{\label{classsquirrel_analysis_a10fe86257f84c774dbaad4164e999c4c}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!stagedFiles@{stagedFiles}}
 \index{stagedFiles@{stagedFiles}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{stagedFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Analysis\+::staged\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Analysis\+::staged\+Files}
 
-staged file list\+: list of files in their own original paths which will be copied in before the package is zipped up \label{classsquirrel_analysis_a0fab1ff0cb3a2371eb2248fd46a19dcd} 
+staged file list\+: list of files in their own original paths which will be copied in before the package is zipped up \mbox{\label{classsquirrel_analysis_a0fab1ff0cb3a2371eb2248fd46a19dcd}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Status@{Status}}
 \index{Status@{Status}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Status}
-{\footnotesize\ttfamily QString squirrel\+Analysis\+::\+Status}
+{\footnotesize\ttfamily Q\+String squirrel\+Analysis\+::\+Status}
 
-status of the analysis. eg running, complete, pending \label{classsquirrel_analysis_a41373d9e6756db5688da10a00c7d1ff8} 
+status of the analysis. eg running, complete, pending \mbox{\label{classsquirrel_analysis_a41373d9e6756db5688da10a00c7d1ff8}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!studyRowID@{studyRowID}}
 \index{studyRowID@{studyRowID}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{studyRowID}
 {\footnotesize\ttfamily qint64 squirrel\+Analysis\+::study\+Row\+ID}
 
-database row id of the parent study \label{classsquirrel_analysis_aec78183bc3b93dd98b912dc59e7ca28f} 
+database row id of the parent study \mbox{\label{classsquirrel_analysis_aec78183bc3b93dd98b912dc59e7ca28f}} 
 \index{squirrelAnalysis@{squirrelAnalysis}!Successful@{Successful}}
 \index{Successful@{Successful}!squirrelAnalysis@{squirrelAnalysis}}
 \doxysubsubsection{Successful}

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['write_0',['Write',['../classsquirrel.html#aec053b79aa62fa47dc653f5e80d857b5',1,'squirrel']]],
-  ['writetextfile_1',['WriteTextFile',['../namespaceutils.html#acf4d28448dc62cedc4c5a2f3b0281e21',1,'utils']]]
+  ['updatejsonheader_628',['UpdateJsonHeader',['../classsquirrel.html#ad587471566cc8537e56e799bdebfb2a8',1,'squirrel']]],
+  ['updateobject_629',['UpdateObject',['../classmodify.html#a4e0ba9b820a36ed1d3923cb3c1c08449',1,'modify']]]
 ];

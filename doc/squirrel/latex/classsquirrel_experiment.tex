@@ -9,41 +9,45 @@ The experiment class.
 
 {\ttfamily \#include $<$squirrel\+Experiment.\+h$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ squirrel\+Experiment} ()
+\textbf{ squirrel\+Experiment} (Q\+String db\+ID)
 \item 
-QJson\+Object \textbf{ To\+JSON} ()
+Q\+Json\+Object \textbf{ To\+J\+S\+ON} ()
 \item 
-void \textbf{ Print\+Experiment} ()
-\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Experiment\+::\+Print\+Experiment}{p.}{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f} \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Experiment} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Experiment\+::\+Print\+Experiment}{p.}{classsquirrel_experiment_aaefc32a172e8429ae7d7376e6679ef01} \end{DoxyCompactList}\item 
 bool \textbf{ Get} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Experiment\+::\+Get}{p.}{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591} \end{DoxyCompactList}\item 
 bool \textbf{ Store} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Experiment\+::\+Store}{p.}{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2} \end{DoxyCompactList}\item 
 bool \textbf{ is\+Valid} ()
 \item 
-QString \textbf{ Error} ()
+Q\+String \textbf{ Error} ()
 \item 
 qint64 \textbf{ Get\+Object\+ID} ()
 \item 
 void \textbf{ Set\+Object\+ID} (qint64 id)
 \item 
-QString \textbf{ Virtual\+Path} ()
+Q\+String \textbf{ Virtual\+Path} ()
 \item 
-QList$<$ QPair$<$ QString, QString $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+\item 
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+void \textbf{ Set\+Database\+U\+U\+ID} (Q\+String db\+ID)
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Public Attributes}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-QString \textbf{ Experiment\+Name}
+Q\+String \textbf{ Experiment\+Name}
 \item 
 qint64 \textbf{ File\+Count}
 \item 
 qint64 \textbf{ Size}
 \item 
-QString\+List \textbf{ staged\+Files}
+Q\+String\+List \textbf{ staged\+Files}
 \end{DoxyCompactItemize}
 
 
@@ -51,22 +55,22 @@ QString\+List \textbf{ staged\+Files}
 The experiment class. 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classsquirrel_experiment_ad9488f2b25da74c24f51a321333b2a6f} 
+\mbox{\label{classsquirrel_experiment_a7769ace9a495c483d5d4b0e201da0f43}} 
 \index{squirrelExperiment@{squirrelExperiment}!squirrelExperiment@{squirrelExperiment}}
 \index{squirrelExperiment@{squirrelExperiment}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{squirrelExperiment()}
-{\footnotesize\ttfamily squirrel\+Experiment\+::squirrel\+Experiment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily squirrel\+Experiment\+::squirrel\+Experiment (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Function Documentation}
-\label{classsquirrel_experiment_a5276e737121a8976866c4a9cbdf23049} 
+\mbox{\label{classsquirrel_experiment_a5276e737121a8976866c4a9cbdf23049}} 
 \index{squirrelExperiment@{squirrelExperiment}!Error@{Error}}
 \index{Error@{Error}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{Error()}
-{\footnotesize\ttfamily QString squirrel\+Experiment\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591} 
+\mbox{\label{classsquirrel_experiment_a6c70cad94bcb5b2e760aa0216a5c1591}} 
 \index{squirrelExperiment@{squirrelExperiment}!Get@{Get}}
 \index{Get@{Get}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{Get()}
@@ -79,41 +83,53 @@ The experiment class.
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_experiment_a3664fddfc1edac88877bf059ef7ac89f} 
+This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_experiment_a23fbdd09cd0ec5dc18d24bb8d014b2fc}} 
+\index{squirrelExperiment@{squirrelExperiment}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_experiment_a3664fddfc1edac88877bf059ef7ac89f}} 
 \index{squirrelExperiment@{squirrelExperiment}!GetObjectID@{GetObjectID}}
 \index{GetObjectID@{GetObjectID}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{GetObjectID()}
 {\footnotesize\ttfamily qint64 squirrel\+Experiment\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_experiment_a37cb24b62f1cbbbf9ea12e70ec170acf} 
+\mbox{\label{classsquirrel_experiment_a37cb24b62f1cbbbf9ea12e70ec170acf}} 
 \index{squirrelExperiment@{squirrelExperiment}!GetStagedFileList@{GetStagedFileList}}
 \index{GetStagedFileList@{GetStagedFileList}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{GetStagedFileList()}
-{\footnotesize\ttfamily QList$<$ QPair$<$ QString, QString $>$ $>$ squirrel\+Experiment\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ squirrel\+Experiment\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_experiment_a1c05f4e0c523d38b1f24b83c9a09a51d} 
+\mbox{\label{classsquirrel_experiment_a1c05f4e0c523d38b1f24b83c9a09a51d}} 
 \index{squirrelExperiment@{squirrelExperiment}!isValid@{isValid}}
 \index{isValid@{isValid}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{isValid()}
 {\footnotesize\ttfamily bool squirrel\+Experiment\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f} 
+\mbox{\label{classsquirrel_experiment_aaefc32a172e8429ae7d7376e6679ef01}} 
 \index{squirrelExperiment@{squirrelExperiment}!PrintExperiment@{PrintExperiment}}
 \index{PrintExperiment@{PrintExperiment}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{PrintExperiment()}
-{\footnotesize\ttfamily void squirrel\+Experiment\+::\+Print\+Experiment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::\+Print\+Experiment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-\doxyref{squirrel\+Experiment\+::\+Print\+Experiment}{p.}{classsquirrel_experiment_a6c501120ea4d512153dccebf2d6fa40f} 
+\doxyref{squirrel\+Experiment\+::\+Print\+Experiment}{p.}{classsquirrel_experiment_aaefc32a172e8429ae7d7376e6679ef01} 
 
-\label{classsquirrel_experiment_a3611f9527c452525477afdd4be0fb6c6} 
+\mbox{\label{classsquirrel_experiment_a5568c70c2cf7da0dbaf969ecc3fb4784}} 
+\index{squirrelExperiment@{squirrelExperiment}!SetDatabaseUUID@{SetDatabaseUUID}}
+\index{SetDatabaseUUID@{SetDatabaseUUID}!squirrelExperiment@{squirrelExperiment}}
+\doxysubsubsection{SetDatabaseUUID()}
+{\footnotesize\ttfamily void squirrel\+Experiment\+::\+Set\+Database\+U\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_experiment_a3611f9527c452525477afdd4be0fb6c6}} 
 \index{squirrelExperiment@{squirrelExperiment}!SetObjectID@{SetObjectID}}
 \index{SetObjectID@{SetObjectID}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{SetObjectID()}
 {\footnotesize\ttfamily void squirrel\+Experiment\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2} 
+\mbox{\label{classsquirrel_experiment_ab490dba9c7100264511ec88750498dc2}} 
 \index{squirrelExperiment@{squirrelExperiment}!Store@{Store}}
 \index{Store@{Store}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{Store()}
@@ -126,44 +142,44 @@ This function will attempt to load the experiment data from the database. The ex
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991} 
+This function will attempt to load the experiment data from the database. The experiment\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_experiment_ac5c6b2b05c1cf0364e7c7b8f2c114991}} 
 \index{squirrelExperiment@{squirrelExperiment}!ToJSON@{ToJSON}}
 \index{ToJSON@{ToJSON}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{ToJSON()}
-{\footnotesize\ttfamily QJson\+Object squirrel\+Experiment\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Experiment\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_experiment_a1285690168bbff9b87149f5b297620ed} 
+\mbox{\label{classsquirrel_experiment_a1285690168bbff9b87149f5b297620ed}} 
 \index{squirrelExperiment@{squirrelExperiment}!VirtualPath@{VirtualPath}}
 \index{VirtualPath@{VirtualPath}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{VirtualPath()}
-{\footnotesize\ttfamily QString squirrel\+Experiment\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Data Documentation}
-\label{classsquirrel_experiment_a20a9aea72bc38567c6b5bc6a6073426b} 
+\mbox{\label{classsquirrel_experiment_a20a9aea72bc38567c6b5bc6a6073426b}} 
 \index{squirrelExperiment@{squirrelExperiment}!ExperimentName@{ExperimentName}}
 \index{ExperimentName@{ExperimentName}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{ExperimentName}
-{\footnotesize\ttfamily QString squirrel\+Experiment\+::\+Experiment\+Name}
+{\footnotesize\ttfamily Q\+String squirrel\+Experiment\+::\+Experiment\+Name}
 
-experiment name (required) \label{classsquirrel_experiment_ad5eec03af126ef0bd8ced5bb0581a232} 
+experiment name (required) \mbox{\label{classsquirrel_experiment_ad5eec03af126ef0bd8ced5bb0581a232}} 
 \index{squirrelExperiment@{squirrelExperiment}!FileCount@{FileCount}}
 \index{FileCount@{FileCount}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{FileCount}
 {\footnotesize\ttfamily qint64 squirrel\+Experiment\+::\+File\+Count}
 
-number of experiment files (required) \label{classsquirrel_experiment_a0f011f45009e8ccf78f8fd38fd3fd168} 
+number of experiment files (required) \mbox{\label{classsquirrel_experiment_a0f011f45009e8ccf78f8fd38fd3fd168}} 
 \index{squirrelExperiment@{squirrelExperiment}!Size@{Size}}
 \index{Size@{Size}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{Size}
 {\footnotesize\ttfamily qint64 squirrel\+Experiment\+::\+Size}
 
-total size in bytes of the experiment files (required) \label{classsquirrel_experiment_afde3993d2f04839357568806e5abbfa3} 
+total size in bytes of the experiment files (required) \mbox{\label{classsquirrel_experiment_afde3993d2f04839357568806e5abbfa3}} 
 \index{squirrelExperiment@{squirrelExperiment}!stagedFiles@{stagedFiles}}
 \index{stagedFiles@{stagedFiles}!squirrelExperiment@{squirrelExperiment}}
 \doxysubsubsection{stagedFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Experiment\+::staged\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Experiment\+::staged\+Files}
 
 staged file list -\/ list of files in their own original paths which will be copied in before the package is zipped up 
 

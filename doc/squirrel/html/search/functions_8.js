@@ -1,10 +1,5 @@
 var searchData=
 [
-  ['loadparticipantsfile_0',['LoadParticipantsFile',['../classbids.html#ab0c8ec4471aa6f529d169050bdcc40f1',1,'bids']]],
-  ['loadrootfiles_1',['LoadRootFiles',['../classbids.html#ab789628a55750b44457f828fc77c28c3',1,'bids']]],
-  ['loadsessiondir_2',['LoadSessionDir',['../classbids.html#a2c32c5036d44f6ea18827e6bb4bfe9a2',1,'bids']]],
-  ['loadsubjectfiles_3',['LoadSubjectFiles',['../classbids.html#aa5418b2f36a6a1e2e0eba4baa4900564',1,'bids']]],
-  ['loadtaskfile_4',['LoadTaskFile',['../classbids.html#a26587021ad53f5bdb811a47db4743506',1,'bids']]],
-  ['loadtosquirrel_5',['LoadToSquirrel',['../classbids.html#ae79a0fb52541ac1823218a9659593ccc',1,'bids::LoadToSquirrel()'],['../classdicom.html#af3bad3536500f6565595d601294347f5',1,'dicom::LoadToSquirrel()']]],
-  ['log_6',['Log',['../classsquirrel.html#a8d0239afb694da850ded50c877ed47aa',1,'squirrel']]]
+  ['isdicomfile_540',['IsDICOMFile',['../classsquirrel_image_i_o.html#ae1c73f26bb71b5b42a7f6679a872b764',1,'squirrelImageIO']]],
+  ['isvalid_541',['isValid',['../classsquirrel_analysis.html#a7adc9e755a9b13d8ac4f4a31b2489de7',1,'squirrelAnalysis::isValid()'],['../classsquirrel_data_dictionary.html#a39af717c2144d079fd44f924dacb5a60',1,'squirrelDataDictionary::isValid()'],['../classsquirrel_experiment.html#a1c05f4e0c523d38b1f24b83c9a09a51d',1,'squirrelExperiment::isValid()'],['../classsquirrel_group_analysis.html#abe6da4010a9af95b262c5849235ab382',1,'squirrelGroupAnalysis::isValid()'],['../classsquirrel_intervention.html#a60d711a273f585489e27e5e41bc21f44',1,'squirrelIntervention::isValid()'],['../classsquirrel_observation.html#af8ebb73a30fe117e447a661524cd0a4f',1,'squirrelObservation::isValid()'],['../classsquirrel_pipeline.html#a3ca3626aaedf68fe9735aaedd1eb4c46',1,'squirrelPipeline::isValid()'],['../classsquirrel_series.html#abfe2c8e89b575442fe562b28fc6bdb2f',1,'squirrelSeries::isValid()'],['../classsquirrel_study.html#a1ae0aabc79fbc8f8a7e6c64d15aa0cc7',1,'squirrelStudy::isValid()'],['../classsquirrel_subject.html#a7eb1442a79cced0ce6212ccdfc360fb8',1,'squirrelSubject::isValid()'],['../classsquirrel.html#af25981e731f021f56e0ecf8bcb5a8c06',1,'squirrel::IsValid()']]]
 ];

@@ -9,17 +9,19 @@ The series class.
 
 {\ttfamily \#include $<$squirrel\+Series.\+h$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ squirrel\+Series} ()
+\textbf{ squirrel\+Series} (Q\+String db\+ID)
 \item 
-void \textbf{ Print\+Series} ()
+Q\+String \textbf{ Print\+Series} ()
 \begin{DoxyCompactList}\small\item\em Print the series details. \end{DoxyCompactList}\item 
-QJson\+Object \textbf{ To\+JSON} ()
-\begin{DoxyCompactList}\small\item\em Get a JSON object for the entire series. \end{DoxyCompactList}\item 
-QJson\+Object \textbf{ Params\+To\+JSON} ()
-\begin{DoxyCompactList}\small\item\em Get series params in JSON format, likely MRI sequence params. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Tree} (bool is\+Last)
+\begin{DoxyCompactList}\small\item\em Print series tree. \end{DoxyCompactList}\item 
+Q\+Json\+Object \textbf{ To\+J\+S\+ON} ()
+\begin{DoxyCompactList}\small\item\em Get a J\+S\+ON object for the entire series. \end{DoxyCompactList}\item 
+Q\+Json\+Object \textbf{ Params\+To\+J\+S\+ON} ()
+\begin{DoxyCompactList}\small\item\em Get series params in J\+S\+ON format, likely M\+RI sequence params. \end{DoxyCompactList}\item 
 bool \textbf{ Get} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Series\+::\+Get}{p.}{classsquirrel_series_a0da8067e59555668398ad6b24cdd3f8d} \end{DoxyCompactList}\item 
 bool \textbf{ Store} ()
@@ -28,56 +30,72 @@ bool \textbf{ Remove} ()
 \item 
 bool \textbf{ is\+Valid} ()
 \item 
-QString \textbf{ Error} ()
+Q\+String \textbf{ Error} ()
 \item 
 qint64 \textbf{ Get\+Object\+ID} ()
 \item 
 void \textbf{ Set\+Object\+ID} (qint64 id)
 \item 
-void \textbf{ Set\+Dir\+Format} (QString subject\+\_\+\+Dir\+Format, QString study\+\_\+\+Dir\+Format, QString series\+\_\+\+Dir\+Format)
+void \textbf{ Set\+Dir\+Format} (Q\+String subject\+\_\+\+Dir\+Format, Q\+String study\+\_\+\+Dir\+Format, Q\+String series\+\_\+\+Dir\+Format)
 \item 
-QString \textbf{ Virtual\+Path} ()
+Q\+String \textbf{ Virtual\+Path} ()
 \item 
 void \textbf{ Anonymize\+Params} ()
 \item 
-QList$<$ QPair$<$ QString, QString $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+\item 
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+void \textbf{ Set\+Database\+U\+U\+ID} (Q\+String db\+ID)
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Public Attributes}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 qint64 \textbf{ study\+Row\+ID}
 \item 
 qint64 \textbf{ experiment\+Row\+ID} = -\/1
 \item 
-qint64 \textbf{ Series\+Number} = -\/1
+Q\+Date\+Time \textbf{ Date\+Time}
 \item 
-QDate\+Time \textbf{ Date\+Time}
+Q\+Hash$<$ Q\+String, Q\+String $>$ \textbf{ params}
 \item 
-QString \textbf{ Series\+UID}
+Q\+String \textbf{ B\+I\+D\+S\+Entity}
 \item 
-QString \textbf{ Description}
+Q\+String \textbf{ B\+I\+D\+S\+Suffix}
 \item 
-QString \textbf{ Protocol}
+Q\+String \textbf{ B\+I\+D\+S\+Task}
 \item 
-qint64 \textbf{ File\+Count} = 0
+Q\+String \textbf{ B\+I\+D\+S\+Run}
 \item 
-qint64 \textbf{ Size} = 0
+Q\+String \textbf{ B\+I\+D\+S\+Phase\+Encoding\+Direction}
+\item 
+Q\+String \textbf{ Description}
+\item 
+Q\+String \textbf{ Protocol}
+\item 
+Q\+String \textbf{ Series\+U\+ID}
+\item 
+int \textbf{ Sequence\+Number} = 0
+\item 
+int \textbf{ Run} = 1
 \item 
 qint64 \textbf{ Behavioral\+File\+Count} = 0
 \item 
 qint64 \textbf{ Behavioral\+Size} = 0
 \item 
-QHash$<$ QString, QString $>$ \textbf{ params}
+qint64 \textbf{ File\+Count} = 0
 \item 
-int \textbf{ Sequence\+Number} = 0
+qint64 \textbf{ Series\+Number} = -\/1
 \item 
-QString\+List \textbf{ staged\+Files}
+qint64 \textbf{ Size} = 0
 \item 
-QString\+List \textbf{ staged\+Beh\+Files}
+Q\+String\+List \textbf{ staged\+Files}
 \item 
-QString\+List \textbf{ files}
+Q\+String\+List \textbf{ staged\+Beh\+Files}
 \item 
-QString\+List \textbf{ beh\+Files}
+Q\+String\+List \textbf{ files}
+\item 
+Q\+String\+List \textbf{ beh\+Files}
 \end{DoxyCompactItemize}
 
 
@@ -87,28 +105,28 @@ The series class.
 provides details of a series 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classsquirrel_series_ac4aee3be57ee42862007ba4681a93bd4} 
+\mbox{\label{classsquirrel_series_a58055c154a8c173f22f0af1a091241c7}} 
 \index{squirrelSeries@{squirrelSeries}!squirrelSeries@{squirrelSeries}}
 \index{squirrelSeries@{squirrelSeries}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{squirrelSeries()}
-{\footnotesize\ttfamily squirrel\+Series\+::squirrel\+Series (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily squirrel\+Series\+::squirrel\+Series (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Function Documentation}
-\label{classsquirrel_series_a8cfe897e3e072d060ee32be7552616f9} 
+\mbox{\label{classsquirrel_series_a8cfe897e3e072d060ee32be7552616f9}} 
 \index{squirrelSeries@{squirrelSeries}!AnonymizeParams@{AnonymizeParams}}
 \index{AnonymizeParams@{AnonymizeParams}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{AnonymizeParams()}
 {\footnotesize\ttfamily void squirrel\+Series\+::\+Anonymize\+Params (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_series_ad22a6edf6d62a03726f186b4d33a7cd9} 
+\mbox{\label{classsquirrel_series_ad22a6edf6d62a03726f186b4d33a7cd9}} 
 \index{squirrelSeries@{squirrelSeries}!Error@{Error}}
 \index{Error@{Error}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Error()}
-{\footnotesize\ttfamily QString squirrel\+Series\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_series_a0da8067e59555668398ad6b24cdd3f8d} 
+\mbox{\label{classsquirrel_series_a0da8067e59555668398ad6b24cdd3f8d}} 
 \index{squirrelSeries@{squirrelSeries}!Get@{Get}}
 \index{Get@{Get}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Get()}
@@ -121,66 +139,88 @@ provides details of a series
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the series data from the database. The series\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_series_a307345161406a3b4f7f6a9030396503a} 
+This function will attempt to load the series data from the database. The series\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_series_ac50686db00734bad4dee7c61b91a51f3}} 
+\index{squirrelSeries@{squirrelSeries}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_series_a307345161406a3b4f7f6a9030396503a}} 
 \index{squirrelSeries@{squirrelSeries}!GetObjectID@{GetObjectID}}
 \index{GetObjectID@{GetObjectID}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{GetObjectID()}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_series_ab2b23d03372c6d7faf45843f64848c35} 
+\mbox{\label{classsquirrel_series_ab2b23d03372c6d7faf45843f64848c35}} 
 \index{squirrelSeries@{squirrelSeries}!GetStagedFileList@{GetStagedFileList}}
 \index{GetStagedFileList@{GetStagedFileList}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{GetStagedFileList()}
-{\footnotesize\ttfamily QList$<$ QPair$<$ QString, QString $>$ $>$ squirrel\+Series\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ squirrel\+Series\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_series_abfe2c8e89b575442fe562b28fc6bdb2f} 
+\mbox{\label{classsquirrel_series_abfe2c8e89b575442fe562b28fc6bdb2f}} 
 \index{squirrelSeries@{squirrelSeries}!isValid@{isValid}}
 \index{isValid@{isValid}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{isValid()}
 {\footnotesize\ttfamily bool squirrel\+Series\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_series_a9fe6c2798c4de5b8351ab09c0f3c0baf} 
+\mbox{\label{classsquirrel_series_a9fe6c2798c4de5b8351ab09c0f3c0baf}} 
 \index{squirrelSeries@{squirrelSeries}!ParamsToJSON@{ParamsToJSON}}
 \index{ParamsToJSON@{ParamsToJSON}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{ParamsToJSON()}
-{\footnotesize\ttfamily QJson\+Object squirrel\+Series\+::\+Params\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Series\+::\+Params\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-Get series params in JSON format, likely MRI sequence params. 
+Get series params in J\+S\+ON format, likely M\+RI sequence params. 
 
 \begin{DoxyReturn}{Returns}
-JSON object containing series params 
+J\+S\+ON object containing series params 
 \end{DoxyReturn}
-\label{classsquirrel_series_adf0c3524f2f9d2b3bb7bf6c60f584c86} 
+\mbox{\label{classsquirrel_series_a7cc05aa4cc806f06324c280126be7972}} 
 \index{squirrelSeries@{squirrelSeries}!PrintSeries@{PrintSeries}}
 \index{PrintSeries@{PrintSeries}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{PrintSeries()}
-{\footnotesize\ttfamily void squirrel\+Series\+::\+Print\+Series (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Print\+Series (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 Print the series details. 
 
-\label{classsquirrel_series_a9c9e83d3b33bec7ef0de23d7f64435df} 
+\mbox{\label{classsquirrel_series_a61f3c655d6a5477220809bfd6a0e4235}} 
+\index{squirrelSeries@{squirrelSeries}!PrintTree@{PrintTree}}
+\index{PrintTree@{PrintTree}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{PrintTree()}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Print\+Tree (\begin{DoxyParamCaption}\item[{bool}]{is\+Last }\end{DoxyParamCaption})}
+
+
+
+Print series tree. 
+
+\mbox{\label{classsquirrel_series_a9c9e83d3b33bec7ef0de23d7f64435df}} 
 \index{squirrelSeries@{squirrelSeries}!Remove@{Remove}}
 \index{Remove@{Remove}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Remove()}
 {\footnotesize\ttfamily bool squirrel\+Series\+::\+Remove (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_series_ae4ffb3315c192dd1b6f2fbfc94309366} 
+\mbox{\label{classsquirrel_series_af3ef64b7667253cf09b0af9a132285c8}} 
+\index{squirrelSeries@{squirrelSeries}!SetDatabaseUUID@{SetDatabaseUUID}}
+\index{SetDatabaseUUID@{SetDatabaseUUID}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{SetDatabaseUUID()}
+{\footnotesize\ttfamily void squirrel\+Series\+::\+Set\+Database\+U\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_series_ae4ffb3315c192dd1b6f2fbfc94309366}} 
 \index{squirrelSeries@{squirrelSeries}!SetDirFormat@{SetDirFormat}}
 \index{SetDirFormat@{SetDirFormat}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{SetDirFormat()}
-{\footnotesize\ttfamily void squirrel\+Series\+::\+Set\+Dir\+Format (\begin{DoxyParamCaption}\item[{QString}]{subject\+\_\+\+Dir\+Format,  }\item[{QString}]{study\+\_\+\+Dir\+Format,  }\item[{QString}]{series\+\_\+\+Dir\+Format }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily void squirrel\+Series\+::\+Set\+Dir\+Format (\begin{DoxyParamCaption}\item[{Q\+String}]{subject\+\_\+\+Dir\+Format,  }\item[{Q\+String}]{study\+\_\+\+Dir\+Format,  }\item[{Q\+String}]{series\+\_\+\+Dir\+Format }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_series_a67c6702a2d0f44133d847fce3400f091} 
+\mbox{\label{classsquirrel_series_a67c6702a2d0f44133d847fce3400f091}} 
 \index{squirrelSeries@{squirrelSeries}!SetObjectID@{SetObjectID}}
 \index{SetObjectID@{SetObjectID}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{SetObjectID()}
 {\footnotesize\ttfamily void squirrel\+Series\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_series_ab1a55d70843cc9e30aa003dcd36ebcb7} 
+\mbox{\label{classsquirrel_series_ab1a55d70843cc9e30aa003dcd36ebcb7}} 
 \index{squirrelSeries@{squirrelSeries}!Store@{Store}}
 \index{Store@{Store}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Store()}
@@ -193,125 +233,161 @@ Print the series details.
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the series data from the database. The series\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_series_a2edaad24c5c20e66ef96b48e86515a69} 
+This function will attempt to load the series data from the database. The series\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_series_a2edaad24c5c20e66ef96b48e86515a69}} 
 \index{squirrelSeries@{squirrelSeries}!ToJSON@{ToJSON}}
 \index{ToJSON@{ToJSON}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{ToJSON()}
-{\footnotesize\ttfamily QJson\+Object squirrel\+Series\+::\+To\+JSON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Series\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
-Get a JSON object for the entire series. 
+Get a J\+S\+ON object for the entire series. 
 
 \begin{DoxyReturn}{Returns}
-JSON object 
+J\+S\+ON object 
 \end{DoxyReturn}
-\label{classsquirrel_series_adf0dd205bef6864e2c3afea117e11d16} 
+\mbox{\label{classsquirrel_series_adf0dd205bef6864e2c3afea117e11d16}} 
 \index{squirrelSeries@{squirrelSeries}!VirtualPath@{VirtualPath}}
 \index{VirtualPath@{VirtualPath}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{VirtualPath()}
-{\footnotesize\ttfamily QString squirrel\+Series\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Data Documentation}
-\label{classsquirrel_series_a8fb0c6850b47d9f9b8450de1f0e4c197} 
+\mbox{\label{classsquirrel_series_a8fb0c6850b47d9f9b8450de1f0e4c197}} 
 \index{squirrelSeries@{squirrelSeries}!BehavioralFileCount@{BehavioralFileCount}}
 \index{BehavioralFileCount@{BehavioralFileCount}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{BehavioralFileCount}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::\+Behavioral\+File\+Count = 0}
 
-Number of files associated with the behavioral data \label{classsquirrel_series_a540fe882165dd8c68b5172a160b31536} 
+Number of files associated with the behavioral data \mbox{\label{classsquirrel_series_a540fe882165dd8c68b5172a160b31536}} 
 \index{squirrelSeries@{squirrelSeries}!BehavioralSize@{BehavioralSize}}
 \index{BehavioralSize@{BehavioralSize}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{BehavioralSize}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::\+Behavioral\+Size = 0}
 
-total size in bytes of the beh data \label{classsquirrel_series_aa5586aa4950390ce6a9a11c6897267db} 
+total size in bytes of the beh data \mbox{\label{classsquirrel_series_aa5586aa4950390ce6a9a11c6897267db}} 
 \index{squirrelSeries@{squirrelSeries}!behFiles@{behFiles}}
 \index{behFiles@{behFiles}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{behFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Series\+::beh\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::beh\+Files}
 
-\label{classsquirrel_series_a806e64a58b1c65926d69526253f2d5a0} 
+\mbox{\label{classsquirrel_series_a50fb986cba45dbd3ea676a9110919309}} 
+\index{squirrelSeries@{squirrelSeries}!BIDSEntity@{BIDSEntity}}
+\index{BIDSEntity@{BIDSEntity}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{BIDSEntity}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+B\+I\+D\+S\+Entity}
+
+B\+I\+DS entity (anat, func, etc) \mbox{\label{classsquirrel_series_adc41fa41910ad807536afac8a872ae0d}} 
+\index{squirrelSeries@{squirrelSeries}!BIDSPhaseEncodingDirection@{BIDSPhaseEncodingDirection}}
+\index{BIDSPhaseEncodingDirection@{BIDSPhaseEncodingDirection}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{BIDSPhaseEncodingDirection}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+B\+I\+D\+S\+Phase\+Encoding\+Direction}
+
+B\+I\+DS phase encoding direction \mbox{\label{classsquirrel_series_add29a95b0e3393c6f03ea865f683f791}} 
+\index{squirrelSeries@{squirrelSeries}!BIDSRun@{BIDSRun}}
+\index{BIDSRun@{BIDSRun}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{BIDSRun}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+B\+I\+D\+S\+Run}
+
+B\+I\+DS run number \mbox{\label{classsquirrel_series_ad3cac011515e7e3b433d85c322f54b97}} 
+\index{squirrelSeries@{squirrelSeries}!BIDSSuffix@{BIDSSuffix}}
+\index{BIDSSuffix@{BIDSSuffix}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{BIDSSuffix}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+B\+I\+D\+S\+Suffix}
+
+B\+I\+DS suffix (T1w, T2w, etc) \mbox{\label{classsquirrel_series_a7b7edb7cd288e7c141cca0675de0a9ae}} 
+\index{squirrelSeries@{squirrelSeries}!BIDSTask@{BIDSTask}}
+\index{BIDSTask@{BIDSTask}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{BIDSTask}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+B\+I\+D\+S\+Task}
+
+B\+I\+DS task \mbox{\label{classsquirrel_series_a806e64a58b1c65926d69526253f2d5a0}} 
 \index{squirrelSeries@{squirrelSeries}!DateTime@{DateTime}}
 \index{DateTime@{DateTime}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{DateTime}
-{\footnotesize\ttfamily QDate\+Time squirrel\+Series\+::\+Date\+Time}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Series\+::\+Date\+Time}
 
-Series datetime \label{classsquirrel_series_a29c47c672a1e057aab4e87c5060dd878} 
+Series datetime \mbox{\label{classsquirrel_series_a29c47c672a1e057aab4e87c5060dd878}} 
 \index{squirrelSeries@{squirrelSeries}!Description@{Description}}
 \index{Description@{Description}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Description}
-{\footnotesize\ttfamily QString squirrel\+Series\+::\+Description}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Description}
 
-Description of the series \label{classsquirrel_series_a4d43627794f1188e34e3e6bbcf5a8597} 
+Description of the series \mbox{\label{classsquirrel_series_a4d43627794f1188e34e3e6bbcf5a8597}} 
 \index{squirrelSeries@{squirrelSeries}!experimentRowID@{experimentRowID}}
 \index{experimentRowID@{experimentRowID}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{experimentRowID}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::experiment\+Row\+ID = -\/1}
 
-\label{classsquirrel_series_a77b22d864ab5079b2b3196635396bffe} 
+\mbox{\label{classsquirrel_series_a77b22d864ab5079b2b3196635396bffe}} 
 \index{squirrelSeries@{squirrelSeries}!FileCount@{FileCount}}
 \index{FileCount@{FileCount}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{FileCount}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::\+File\+Count = 0}
 
-Number of files associated with the series \label{classsquirrel_series_a51489ac472e502fb2d0bc09bf4770e8b} 
+Number of files associated with the series \mbox{\label{classsquirrel_series_a51489ac472e502fb2d0bc09bf4770e8b}} 
 \index{squirrelSeries@{squirrelSeries}!files@{files}}
 \index{files@{files}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{files}
-{\footnotesize\ttfamily QString\+List squirrel\+Series\+::files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::files}
 
-\label{classsquirrel_series_a064f009bfab65d36653177f9c3daeb67} 
+\mbox{\label{classsquirrel_series_a064f009bfab65d36653177f9c3daeb67}} 
 \index{squirrelSeries@{squirrelSeries}!params@{params}}
 \index{params@{params}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{params}
-{\footnotesize\ttfamily QHash$<$QString, QString$>$ squirrel\+Series\+::params}
+{\footnotesize\ttfamily Q\+Hash$<$Q\+String, Q\+String$>$ squirrel\+Series\+::params}
 
-Hash containing experimental parameters. eg MR params \label{classsquirrel_series_acf4f3e61103c0efea1514036e4b917d5} 
+Hash containing experimental parameters. eg MR params \mbox{\label{classsquirrel_series_acf4f3e61103c0efea1514036e4b917d5}} 
 \index{squirrelSeries@{squirrelSeries}!Protocol@{Protocol}}
 \index{Protocol@{Protocol}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Protocol}
-{\footnotesize\ttfamily QString squirrel\+Series\+::\+Protocol}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Protocol}
 
-Protocol (may differ from description) \label{classsquirrel_series_a3d177cc6d77a468d6cd7b985f03a8e4a} 
+Protocol (may differ from description) \mbox{\label{classsquirrel_series_a29a531eaa6f33a1b3dbb20bd8e0c7e65}} 
+\index{squirrelSeries@{squirrelSeries}!Run@{Run}}
+\index{Run@{Run}!squirrelSeries@{squirrelSeries}}
+\doxysubsubsection{Run}
+{\footnotesize\ttfamily int squirrel\+Series\+::\+Run = 1}
+
+Run number, if multiple identical series \mbox{\label{classsquirrel_series_a3d177cc6d77a468d6cd7b985f03a8e4a}} 
 \index{squirrelSeries@{squirrelSeries}!SequenceNumber@{SequenceNumber}}
 \index{SequenceNumber@{SequenceNumber}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{SequenceNumber}
 {\footnotesize\ttfamily int squirrel\+Series\+::\+Sequence\+Number = 0}
 
-\label{classsquirrel_series_ad2c5a8a2ff43795e9cfc9ea34a34db1f} 
+\mbox{\label{classsquirrel_series_ad2c5a8a2ff43795e9cfc9ea34a34db1f}} 
 \index{squirrelSeries@{squirrelSeries}!SeriesNumber@{SeriesNumber}}
 \index{SeriesNumber@{SeriesNumber}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{SeriesNumber}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::\+Series\+Number = -\/1}
 
-Series number. must be unique to the study \label{classsquirrel_series_a34d2d0011bbaae573103ee436353bfb6} 
+Series number. must be unique to the study \mbox{\label{classsquirrel_series_a34d2d0011bbaae573103ee436353bfb6}} 
 \index{squirrelSeries@{squirrelSeries}!SeriesUID@{SeriesUID}}
 \index{SeriesUID@{SeriesUID}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{SeriesUID}
-{\footnotesize\ttfamily QString squirrel\+Series\+::\+Series\+UID}
+{\footnotesize\ttfamily Q\+String squirrel\+Series\+::\+Series\+U\+ID}
 
-Series\+Instance\+UID \label{classsquirrel_series_aa68ab0dc3133cc571e52b48cee53cd50} 
+Series\+Instance\+U\+ID \mbox{\label{classsquirrel_series_aa68ab0dc3133cc571e52b48cee53cd50}} 
 \index{squirrelSeries@{squirrelSeries}!Size@{Size}}
 \index{Size@{Size}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{Size}
 {\footnotesize\ttfamily qint64 squirrel\+Series\+::\+Size = 0}
 
-total size in bytes of the series \label{classsquirrel_series_a73768263e2ca3bcc5d7787f8f1b44062} 
+total size in bytes of the series \mbox{\label{classsquirrel_series_a73768263e2ca3bcc5d7787f8f1b44062}} 
 \index{squirrelSeries@{squirrelSeries}!stagedBehFiles@{stagedBehFiles}}
 \index{stagedBehFiles@{stagedBehFiles}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{stagedBehFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Series\+::staged\+Beh\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::staged\+Beh\+Files}
 
-staged beh file list\+: list of raw files in their own directories before the package is zipped up \label{classsquirrel_series_a442ad2f1e9631ac17d4ba6ddcdb0809c} 
+staged beh file list\+: list of raw files in their own directories before the package is zipped up \mbox{\label{classsquirrel_series_a442ad2f1e9631ac17d4ba6ddcdb0809c}} 
 \index{squirrelSeries@{squirrelSeries}!stagedFiles@{stagedFiles}}
 \index{stagedFiles@{stagedFiles}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{stagedFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Series\+::staged\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Series\+::staged\+Files}
 
-staged file list\+: list of raw files in their own directories before the package is zipped up \label{classsquirrel_series_a3544362f121b68946192e80086839159} 
+staged file list\+: list of raw files in their own directories before the package is zipped up \mbox{\label{classsquirrel_series_a3544362f121b68946192e80086839159}} 
 \index{squirrelSeries@{squirrelSeries}!studyRowID@{studyRowID}}
 \index{studyRowID@{studyRowID}!squirrelSeries@{squirrelSeries}}
 \doxysubsubsection{studyRowID}

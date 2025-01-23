@@ -1,74 +1,80 @@
 \doxysection{C\+:/squirrel/src/squirrel/utils.cpp File Reference}
 \label{utils_8cpp}\index{C:/squirrel/src/squirrel/utils.cpp@{C:/squirrel/src/squirrel/utils.cpp}}
-{\ttfamily \#include "{}utils.\+h"{}}\newline
-{\ttfamily \#include "{}squirrel\+Version.\+h"{}}\newline
-\doxysubsubsection*{Namespaces}
+{\ttfamily \#include \char`\"{}utils.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}squirrel\+Version.\+h\char`\"{}}\newline
+\doxysubsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
-namespace \textbf{ utils}
+ \textbf{ utils}
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Functions}
+\doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool \textbf{ utils\+::\+SQLQuery} (QSql\+Query \&q, QString function, QString file, int line, bool d)
+bool \textbf{ utils\+::\+S\+Q\+L\+Query} (Q\+Sql\+Query \&q, Q\+String function, Q\+String file, int line, bool d)
 \item 
-void \textbf{ utils\+::\+Print} (QString s, bool n, bool pad)
+Q\+String \textbf{ utils\+::\+Print} (Q\+String s, bool n, bool pad)
 \item 
-QString \textbf{ utils\+::\+Create\+Current\+Date\+Time} (int format)
+Q\+String \textbf{ utils\+::\+Create\+Current\+Date\+Time} (int format)
 \item 
-QString \textbf{ utils\+::\+Create\+Log\+Date} ()
+Q\+String \textbf{ utils\+::\+Create\+Log\+Date} ()
 \item 
-QString \textbf{ utils\+::\+System\+Command} (QString s, bool detail, bool truncate)
+Q\+String \textbf{ utils\+::\+System\+Command} (Q\+String s, bool detail, bool truncate)
 \item 
-bool \textbf{ utils\+::\+Make\+Path} (QString p, QString \&msg, bool perm777)
+bool \textbf{ utils\+::\+Make\+Path} (Q\+String p, Q\+String \&msg, bool perm777)
 \item 
-bool \textbf{ utils\+::\+Remove\+Dir} (QString p, QString \&msg)
+bool \textbf{ utils\+::\+Remove\+Dir} (Q\+String p, Q\+String \&msg)
 \item 
-QString \textbf{ utils\+::\+Generate\+Random\+String} (int n)
+Q\+String \textbf{ utils\+::\+Generate\+Random\+String} (int n)
 \item 
-QString\+List \textbf{ utils\+::\+Find\+All\+Files} (QString dir, QString pattern, bool recursive)
+Q\+String\+List \textbf{ utils\+::\+Find\+All\+Files} (Q\+String dir, Q\+String pattern, bool recursive)
 \item 
-QString\+List \textbf{ utils\+::\+Find\+All\+Dirs} (QString dir, QString pattern, bool recursive, bool includepath)
+Q\+String\+List \textbf{ utils\+::\+Find\+All\+Dirs} (Q\+String dir, Q\+String pattern, bool recursive, bool includepath)
 \item 
-void \textbf{ utils\+::\+Get\+Dir\+Size\+And\+File\+Count} (QString dir, qint64 \&c, qint64 \&b, bool recurse)
+void \textbf{ utils\+::\+Get\+Dir\+Size\+And\+File\+Count} (Q\+String dir, qint64 \&c, qint64 \&b, bool recurse)
 \item 
-QString \textbf{ utils\+::\+Parse\+Date} (QString s)
+Q\+String \textbf{ utils\+::\+Parse\+Date} (Q\+String s)
 \item 
-QString \textbf{ utils\+::\+Parse\+Time} (QString s)
+Q\+String \textbf{ utils\+::\+Parse\+Time} (Q\+String s)
 \item 
-bool \textbf{ utils\+::\+Parse\+CSV} (QString csv, \textbf{ indexed\+Hash} \&table, QString\+List \&columns, QString \&msg)
+bool \textbf{ utils\+::\+Parse\+C\+SV} (Q\+String csv, indexed\+Hash \&table, Q\+String\+List \&columns, Q\+String \&msg)
 \item 
-bool \textbf{ utils\+::\+Parse\+TSV} (QString tsv, \textbf{ indexed\+Hash} \&table, QString\+List \&columns, QString \&msg)
+bool \textbf{ utils\+::\+Parse\+T\+SV} (Q\+String tsv, indexed\+Hash \&table, Q\+String\+List \&columns, Q\+String \&msg)
 \item 
-QString \textbf{ utils\+::\+Clean\+JSON} (QString s)
+Q\+String \textbf{ utils\+::\+Clean\+J\+S\+ON} (Q\+String s)
 \item 
-bool \textbf{ utils\+::\+Write\+Text\+File} (QString filepath, QString str, bool append)
+bool \textbf{ utils\+::\+Write\+Text\+File} (Q\+String filepath, Q\+String str, bool append)
 \item 
-QString \textbf{ utils\+::\+Read\+Text\+File\+To\+String} (QString filepath)
+Q\+String \textbf{ utils\+::\+Read\+Text\+File\+To\+String} (Q\+String filepath)
 \item 
-bool \textbf{ utils\+::\+Batch\+Rename\+Files} (QString dir, QString seriesnum, QString studynum, QString uid, int \&numfilesrenamed, QString \&msg)
+bool \textbf{ utils\+::\+Batch\+Rename\+Files} (Q\+String dir, Q\+String seriesnum, Q\+String studynum, Q\+String uid, int \&numfilesrenamed, Q\+String \&msg)
 \item 
-double \textbf{ utils\+::\+Get\+Patient\+Age} (QString Patient\+Age\+Str, QString Study\+Date, QString Patient\+Birth\+Date)
+double \textbf{ utils\+::\+Get\+Patient\+Age} (Q\+String Patient\+Age\+Str, Q\+String Study\+Date, Q\+String Patient\+Birth\+Date)
 \item 
-bool \textbf{ utils\+::\+Directory\+Exists} (QString dir)
+bool \textbf{ utils\+::\+Directory\+Exists} (Q\+String dir)
 \item 
-bool \textbf{ utils\+::\+File\+Exists} (QString f)
+bool \textbf{ utils\+::\+File\+Exists} (Q\+String f)
 \item 
-bool \textbf{ utils\+::\+Copy\+File} (QString f, QString dir)
+bool \textbf{ utils\+::\+Copy\+File} (Q\+String f, Q\+String dir)
 \item 
-QString\+List \textbf{ utils\+::\+Get\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type)
+Q\+String\+List \textbf{ utils\+::\+Get\+Staged\+File\+List} (Q\+String database\+U\+U\+ID, qint64 object\+ID, Q\+String object\+Type)
 \item 
-void \textbf{ utils\+::\+Store\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type, QString\+List paths)
+void \textbf{ utils\+::\+Store\+Staged\+File\+List} (Q\+String database\+U\+U\+ID, qint64 object\+ID, Q\+String object\+Type, Q\+String\+List paths)
 \item 
-void \textbf{ utils\+::\+Remove\+Staged\+File\+List} (qint64 object\+ID, QString object\+Type)
+void \textbf{ utils\+::\+Remove\+Staged\+File\+List} (Q\+String database\+U\+U\+ID, qint64 object\+ID, Q\+String object\+Type)
 \item 
-QHash$<$ QString, QString $>$ \textbf{ utils\+::\+Get\+Params} (qint64 series\+Row\+ID)
+Q\+Hash$<$ Q\+String, Q\+String $>$ \textbf{ utils\+::\+Get\+Params} (Q\+String database\+U\+U\+ID, qint64 series\+Row\+ID)
 \item 
-void \textbf{ utils\+::\+Store\+Params} (qint64 series\+Row\+ID, QHash$<$ QString, QString $>$ params)
+void \textbf{ utils\+::\+Store\+Params} (Q\+String database\+U\+U\+ID, qint64 series\+Row\+ID, Q\+Hash$<$ Q\+String, Q\+String $>$ params)
 \item 
-QString \textbf{ utils\+::\+Clean\+String} (QString s)
+Q\+String \textbf{ utils\+::\+Clean\+String} (Q\+String s)
 \item 
-QHash$<$ QString, QString $>$ \textbf{ utils\+::\+Anonymize\+Params} (QHash$<$ QString, QString $>$ params)
+Q\+Hash$<$ Q\+String, Q\+String $>$ \textbf{ utils\+::\+Anonymize\+Params} (Q\+Hash$<$ Q\+String, Q\+String $>$ params)
 \item 
 void \textbf{ utils\+::\+Print\+Header} ()
+\item 
+Q\+String \textbf{ utils\+::\+Human\+Readable\+Size} (qint64 bytes)
+\item 
+void \textbf{ utils\+::\+Print\+Progress} (double percentage)
+\item 
+Q\+Date\+Time \textbf{ utils\+::\+String\+To\+Datetime} (Q\+String datetime)
 \end{DoxyCompactItemize}

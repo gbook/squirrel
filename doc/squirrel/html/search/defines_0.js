@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['squirrel_5fversion_5fmaj_0',['SQUIRREL_VERSION_MAJ',['../squirrel_version_8h.html#a2fbe6a38be866631281b0e2b27a5fa20',1,'squirrelVersion.h']]],
-  ['squirrel_5fversion_5fmin_1',['SQUIRREL_VERSION_MIN',['../squirrel_version_8h.html#abd3081a87bbbae66a8008fae671da751',1,'squirrelVersion.h']]]
+  ['pbstr_809',['PBSTR',['../utils_8h.html#a93f03159397f25c687840129b18c972d',1,'utils.h']]],
+  ['pbwidth_810',['PBWIDTH',['../utils_8h.html#a69793e71975c25754a8236df29896e15',1,'utils.h']]]
 ];

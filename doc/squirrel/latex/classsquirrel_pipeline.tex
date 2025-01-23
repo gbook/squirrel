@@ -9,19 +9,19 @@ The pipeline class.
 
 {\ttfamily \#include $<$squirrel\+Pipeline.\+h$>$}
 
-\doxysubsubsection*{Classes}
+\doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 struct \textbf{ flag}
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ squirrel\+Pipeline} ()
+\textbf{ squirrel\+Pipeline} (Q\+String db\+ID)
 \item 
-QJson\+Object \textbf{ To\+JSON} (QString path)
-\begin{DoxyCompactList}\small\item\em Get JSON object describing the pipeline. \end{DoxyCompactList}\item 
-void \textbf{ Print\+Pipeline} ()
+Q\+Json\+Object \textbf{ To\+J\+S\+ON} (Q\+String path)
+\begin{DoxyCompactList}\small\item\em Get J\+S\+ON object describing the pipeline. \end{DoxyCompactList}\item 
+Q\+String \textbf{ Print\+Pipeline} ()
 \begin{DoxyCompactList}\small\item\em Print pipeline details. \end{DoxyCompactList}\item 
 bool \textbf{ Get} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Pipeline\+::\+Get}{p.}{classsquirrel_pipeline_a0047e60af4c1b86a22e04b298ec740b9} \end{DoxyCompactList}\item 
@@ -29,62 +29,66 @@ bool \textbf{ Store} ()
 \begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Pipeline\+::\+Store}{p.}{classsquirrel_pipeline_ade98b1758d4baaf1eb7412748142263f} \end{DoxyCompactList}\item 
 bool \textbf{ is\+Valid} ()
 \item 
-QString \textbf{ Error} ()
+Q\+String \textbf{ Error} ()
 \item 
 qint64 \textbf{ Get\+Object\+ID} ()
 \item 
 void \textbf{ Set\+Object\+ID} (qint64 id)
 \item 
-QString \textbf{ Virtual\+Path} ()
+Q\+String \textbf{ Virtual\+Path} ()
 \item 
-QList$<$ QPair$<$ QString, QString $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ \textbf{ Get\+Staged\+File\+List} ()
+\item 
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+void \textbf{ Set\+Database\+U\+U\+ID} (Q\+String db\+ID)
 \end{DoxyCompactItemize}
-\doxysubsubsection*{Public Attributes}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-QDate\+Time \textbf{ Create\+Date}
+Q\+Date\+Time \textbf{ Create\+Date}
 \item 
-QString \textbf{ Cluster\+Queue}
+Q\+String \textbf{ Cluster\+Queue}
 \item 
-QString \textbf{ Cluster\+Submit\+Host}
+Q\+String \textbf{ Cluster\+Submit\+Host}
 \item 
-QString \textbf{ Cluster\+Type}
+Q\+String \textbf{ Cluster\+Type}
 \item 
-QString \textbf{ Cluster\+User}
+Q\+String \textbf{ Cluster\+User}
 \item 
-QString \textbf{ Data\+Copy\+Method}
+Q\+String \textbf{ Data\+Copy\+Method}
 \item 
-QString \textbf{ Dependency\+Directory}
+Q\+String \textbf{ Dependency\+Directory}
 \item 
-QString \textbf{ Dependency\+Level}
+Q\+String \textbf{ Dependency\+Level}
 \item 
-QString \textbf{ Dependency\+Link\+Type}
+Q\+String \textbf{ Dependency\+Link\+Type}
 \item 
-QString \textbf{ Description}
+Q\+String \textbf{ Description}
 \item 
-QString \textbf{ Directory}
+Q\+String \textbf{ Directory}
 \item 
-QString \textbf{ Directory\+Structure}
+Q\+String \textbf{ Directory\+Structure}
 \item 
-QString \textbf{ Group}
+Q\+String \textbf{ Group}
 \item 
-QString \textbf{ Group\+Type}
+Q\+String \textbf{ Group\+Type}
 \item 
-QString \textbf{ Notes}
+Q\+String \textbf{ Notes}
 \item 
-QString \textbf{ Pipeline\+Name}
+Q\+String \textbf{ Pipeline\+Name}
 \item 
-QString \textbf{ Primary\+Script}
+Q\+String \textbf{ Primary\+Script}
 \item 
-QString \textbf{ Result\+Script}
+Q\+String \textbf{ Result\+Script}
 \item 
-QString \textbf{ Secondary\+Script}
+Q\+String \textbf{ Secondary\+Script}
 \item 
-QString \textbf{ Temp\+Directory}
+Q\+String \textbf{ Temp\+Directory}
 \item 
-QString\+List \textbf{ Complete\+Files}
+Q\+String\+List \textbf{ Complete\+Files}
 \item 
-QString\+List \textbf{ Parent\+Pipelines}
+Q\+String\+List \textbf{ Parent\+Pipelines}
 \item 
 int \textbf{ Cluster\+Max\+Wall\+Time}
 \item 
@@ -102,11 +106,11 @@ int \textbf{ Version}
 \item 
 struct \textbf{ squirrel\+Pipeline\+::flag} \textbf{ flags}
 \item 
-QList$<$ \textbf{ data\+Step} $>$ \textbf{ data\+Steps}
+Q\+List$<$ \textbf{ data\+Step} $>$ \textbf{ data\+Steps}
 \item 
-QString\+List \textbf{ staged\+Files}
+Q\+String\+List \textbf{ staged\+Files}
 \item 
-QString\+List \textbf{ files}
+Q\+String\+List \textbf{ files}
 \end{DoxyCompactItemize}
 
 
@@ -118,22 +122,22 @@ pipelines contain 3 sections\+: pipeline info, dataspec, steps (the script)
 [Ni\+DB] fields are used when sharing pipelines between Ni\+DB instances. These are optional in the squirrel format spec, but the fields can be useful when sharing pipelines in other contexts 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\label{classsquirrel_pipeline_ae7930deb926d3e17079462bd961e4a11} 
+\mbox{\label{classsquirrel_pipeline_a171c3dafa60a1a3bdd01e9d6b3ca5733}} 
 \index{squirrelPipeline@{squirrelPipeline}!squirrelPipeline@{squirrelPipeline}}
 \index{squirrelPipeline@{squirrelPipeline}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{squirrelPipeline()}
-{\footnotesize\ttfamily squirrel\+Pipeline\+::squirrel\+Pipeline (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily squirrel\+Pipeline\+::squirrel\+Pipeline (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Function Documentation}
-\label{classsquirrel_pipeline_af0d645c37939d99b1605484d453f29d0} 
+\mbox{\label{classsquirrel_pipeline_af0d645c37939d99b1605484d453f29d0}} 
 \index{squirrelPipeline@{squirrelPipeline}!Error@{Error}}
 \index{Error@{Error}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Error()}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_pipeline_a0047e60af4c1b86a22e04b298ec740b9} 
+\mbox{\label{classsquirrel_pipeline_a0047e60af4c1b86a22e04b298ec740b9}} 
 \index{squirrelPipeline@{squirrelPipeline}!Get@{Get}}
 \index{Get@{Get}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Get()}
@@ -146,41 +150,53 @@ pipelines contain 3 sections\+: pipeline info, dataspec, steps (the script)
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the pipeline data from the database. The pipeline\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_pipeline_a2449ba0d472182bacde20ae0555a0821} 
+This function will attempt to load the pipeline data from the database. The pipeline\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_pipeline_a7e3ce9673277598f078e0be0961d8836}} 
+\index{squirrelPipeline@{squirrelPipeline}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrelPipeline@{squirrelPipeline}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_pipeline_a2449ba0d472182bacde20ae0555a0821}} 
 \index{squirrelPipeline@{squirrelPipeline}!GetObjectID@{GetObjectID}}
 \index{GetObjectID@{GetObjectID}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{GetObjectID()}
 {\footnotesize\ttfamily qint64 squirrel\+Pipeline\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_pipeline_ae47217a04591fc0fa2e3d19c76faea1e} 
+\mbox{\label{classsquirrel_pipeline_ae47217a04591fc0fa2e3d19c76faea1e}} 
 \index{squirrelPipeline@{squirrelPipeline}!GetStagedFileList@{GetStagedFileList}}
 \index{GetStagedFileList@{GetStagedFileList}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{GetStagedFileList()}
-{\footnotesize\ttfamily QList$<$ QPair$<$ QString, QString $>$ $>$ squirrel\+Pipeline\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+List$<$ Q\+Pair$<$ Q\+String, Q\+String $>$ $>$ squirrel\+Pipeline\+::\+Get\+Staged\+File\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\label{classsquirrel_pipeline_a3ca3626aaedf68fe9735aaedd1eb4c46} 
+\mbox{\label{classsquirrel_pipeline_a3ca3626aaedf68fe9735aaedd1eb4c46}} 
 \index{squirrelPipeline@{squirrelPipeline}!isValid@{isValid}}
 \index{isValid@{isValid}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{isValid()}
 {\footnotesize\ttfamily bool squirrel\+Pipeline\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_pipeline_ac8c015e41039710ada345cfe9fa8ce6e} 
+\mbox{\label{classsquirrel_pipeline_aa554b0d8e7c39ad823eb4354ec574967}} 
 \index{squirrelPipeline@{squirrelPipeline}!PrintPipeline@{PrintPipeline}}
 \index{PrintPipeline@{PrintPipeline}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{PrintPipeline()}
-{\footnotesize\ttfamily void squirrel\+Pipeline\+::\+Print\+Pipeline (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Print\+Pipeline (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 Print pipeline details. 
 
-\label{classsquirrel_pipeline_a2e42cca92475ef8c2fd60efe86e3107e} 
+\mbox{\label{classsquirrel_pipeline_a40c4f555af0b182e7ecc62a6cfa46a52}} 
+\index{squirrelPipeline@{squirrelPipeline}!SetDatabaseUUID@{SetDatabaseUUID}}
+\index{SetDatabaseUUID@{SetDatabaseUUID}!squirrelPipeline@{squirrelPipeline}}
+\doxysubsubsection{SetDatabaseUUID()}
+{\footnotesize\ttfamily void squirrel\+Pipeline\+::\+Set\+Database\+U\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_pipeline_a2e42cca92475ef8c2fd60efe86e3107e}} 
 \index{squirrelPipeline@{squirrelPipeline}!SetObjectID@{SetObjectID}}
 \index{SetObjectID@{SetObjectID}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{SetObjectID()}
 {\footnotesize\ttfamily void squirrel\+Pipeline\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\label{classsquirrel_pipeline_ade98b1758d4baaf1eb7412748142263f} 
+\mbox{\label{classsquirrel_pipeline_ade98b1758d4baaf1eb7412748142263f}} 
 \index{squirrelPipeline@{squirrelPipeline}!Store@{Store}}
 \index{Store@{Store}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Store()}
@@ -193,227 +209,227 @@ Print pipeline details.
 \begin{DoxyReturn}{Returns}
 true if successful
 \end{DoxyReturn}
-This function will attempt to load the pipeline data from the database. The pipeline\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \label{classsquirrel_pipeline_ab78101ff2328514265dd584db5cf5beb} 
+This function will attempt to load the pipeline data from the database. The pipeline\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_pipeline_ab78101ff2328514265dd584db5cf5beb}} 
 \index{squirrelPipeline@{squirrelPipeline}!ToJSON@{ToJSON}}
 \index{ToJSON@{ToJSON}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ToJSON()}
-{\footnotesize\ttfamily QJson\+Object squirrel\+Pipeline\+::\+To\+JSON (\begin{DoxyParamCaption}\item[{QString}]{path }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Pipeline\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}\item[{Q\+String}]{path }\end{DoxyParamCaption})}
 
 
 
-Get JSON object describing the pipeline. 
+Get J\+S\+ON object describing the pipeline. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em path} & if a path is specified, the full JSON object is written to that path and a smaller JSON object is returned \\
+{\em path} & if a path is specified, the full J\+S\+ON object is written to that path and a smaller J\+S\+ON object is returned \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-JSON object 
+J\+S\+ON object 
 \end{DoxyReturn}
-\label{classsquirrel_pipeline_a1b0df1aa849d7b1aff7848b510b1dd02} 
+\mbox{\label{classsquirrel_pipeline_a1b0df1aa849d7b1aff7848b510b1dd02}} 
 \index{squirrelPipeline@{squirrelPipeline}!VirtualPath@{VirtualPath}}
 \index{VirtualPath@{VirtualPath}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{VirtualPath()}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Virtual\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 
 
 \doxysubsection{Member Data Documentation}
-\label{classsquirrel_pipeline_aa7a36e1d9e8edea04ce951bad6eb2f34} 
+\mbox{\label{classsquirrel_pipeline_aa7a36e1d9e8edea04ce951bad6eb2f34}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterMaxWallTime@{ClusterMaxWallTime}}
 \index{ClusterMaxWallTime@{ClusterMaxWallTime}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterMaxWallTime}
 {\footnotesize\ttfamily int squirrel\+Pipeline\+::\+Cluster\+Max\+Wall\+Time}
 
-[Ni\+DB] maximum allowed clock (wall) time the analysis is allowed to run (seconds) \label{classsquirrel_pipeline_aa4267eff925192c2926a5f10e3c4cbe3} 
+[Ni\+DB] maximum allowed clock (wall) time the analysis is allowed to run (seconds) \mbox{\label{classsquirrel_pipeline_aa4267eff925192c2926a5f10e3c4cbe3}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterMemory@{ClusterMemory}}
 \index{ClusterMemory@{ClusterMemory}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterMemory}
 {\footnotesize\ttfamily int squirrel\+Pipeline\+::\+Cluster\+Memory}
 
-[Ni\+DB] memory requested \label{classsquirrel_pipeline_ac151a41f9af6a382acaba9d8f58bb2ff} 
+[Ni\+DB] memory requested \mbox{\label{classsquirrel_pipeline_ac151a41f9af6a382acaba9d8f58bb2ff}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterNumberCores@{ClusterNumberCores}}
 \index{ClusterNumberCores@{ClusterNumberCores}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterNumberCores}
 {\footnotesize\ttfamily int squirrel\+Pipeline\+::\+Cluster\+Number\+Cores}
 
-[Ni\+DB] number of cores requested \label{classsquirrel_pipeline_a5e22b03f9251081ba4069461436ab0de} 
+[Ni\+DB] number of cores requested \mbox{\label{classsquirrel_pipeline_a5e22b03f9251081ba4069461436ab0de}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterQueue@{ClusterQueue}}
 \index{ClusterQueue@{ClusterQueue}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterQueue}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Cluster\+Queue}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Cluster\+Queue}
 
-[Ni\+DB] compute cluster queue \label{classsquirrel_pipeline_a336282d2061026df85e86a5a509c66de} 
+[Ni\+DB] compute cluster queue \mbox{\label{classsquirrel_pipeline_a336282d2061026df85e86a5a509c66de}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterSubmitHost@{ClusterSubmitHost}}
 \index{ClusterSubmitHost@{ClusterSubmitHost}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterSubmitHost}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Cluster\+Submit\+Host}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Cluster\+Submit\+Host}
 
-[Ni\+DB] hostname of the sge/slurm submit node \label{classsquirrel_pipeline_a006a9f1836729fbdf05d713eb5825368} 
+[Ni\+DB] hostname of the sge/slurm submit node \mbox{\label{classsquirrel_pipeline_a006a9f1836729fbdf05d713eb5825368}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterType@{ClusterType}}
 \index{ClusterType@{ClusterType}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterType}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Cluster\+Type}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Cluster\+Type}
 
-[Ni\+DB] compute cluster engine (sge, slurm) \label{classsquirrel_pipeline_a086f16ae48538de114daa4084edec087} 
+[Ni\+DB] compute cluster engine (sge, slurm) \mbox{\label{classsquirrel_pipeline_a086f16ae48538de114daa4084edec087}} 
 \index{squirrelPipeline@{squirrelPipeline}!ClusterUser@{ClusterUser}}
 \index{ClusterUser@{ClusterUser}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ClusterUser}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Cluster\+User}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Cluster\+User}
 
-[Ni\+DB] compute cluster user \label{classsquirrel_pipeline_ae1941963ef5f0b109023a36975c6df60} 
+[Ni\+DB] compute cluster user \mbox{\label{classsquirrel_pipeline_ae1941963ef5f0b109023a36975c6df60}} 
 \index{squirrelPipeline@{squirrelPipeline}!CompleteFiles@{CompleteFiles}}
 \index{CompleteFiles@{CompleteFiles}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{CompleteFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Pipeline\+::\+Complete\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Pipeline\+::\+Complete\+Files}
 
-list of files that must exists to indicate the analysis was complete \label{classsquirrel_pipeline_a859a7e4cc3d0e05965d115f8c5168191} 
+list of files that must exists to indicate the analysis was complete \mbox{\label{classsquirrel_pipeline_a859a7e4cc3d0e05965d115f8c5168191}} 
 \index{squirrelPipeline@{squirrelPipeline}!CreateDate@{CreateDate}}
 \index{CreateDate@{CreateDate}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{CreateDate}
-{\footnotesize\ttfamily QDate\+Time squirrel\+Pipeline\+::\+Create\+Date}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Pipeline\+::\+Create\+Date}
 
-date the pipeline was created \label{classsquirrel_pipeline_a7e85102c3d1a6f17b48e88fc073d1374} 
+date the pipeline was created \mbox{\label{classsquirrel_pipeline_a7e85102c3d1a6f17b48e88fc073d1374}} 
 \index{squirrelPipeline@{squirrelPipeline}!DataCopyMethod@{DataCopyMethod}}
 \index{DataCopyMethod@{DataCopyMethod}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{DataCopyMethod}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Data\+Copy\+Method}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Data\+Copy\+Method}
 
 cp, hardlink, softlink ~\newline
- \label{classsquirrel_pipeline_a84255ab48debb8899ab686d9f6d4bfd8} 
+ \mbox{\label{classsquirrel_pipeline_a84255ab48debb8899ab686d9f6d4bfd8}} 
 \index{squirrelPipeline@{squirrelPipeline}!dataSteps@{dataSteps}}
 \index{dataSteps@{dataSteps}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{dataSteps}
-{\footnotesize\ttfamily QList$<$\textbf{ data\+Step}$>$ squirrel\+Pipeline\+::data\+Steps}
+{\footnotesize\ttfamily Q\+List$<$\textbf{ data\+Step}$>$ squirrel\+Pipeline\+::data\+Steps}
 
-\label{classsquirrel_pipeline_abd40feef3c2a4285d93ee63a54f14114} 
+\mbox{\label{classsquirrel_pipeline_abd40feef3c2a4285d93ee63a54f14114}} 
 \index{squirrelPipeline@{squirrelPipeline}!DependencyDirectory@{DependencyDirectory}}
 \index{DependencyDirectory@{DependencyDirectory}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{DependencyDirectory}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Dependency\+Directory}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Dependency\+Directory}
 
-dependency directory \label{classsquirrel_pipeline_aa78faadbe4376e1cf066d0dc41a93ff8} 
+dependency directory \mbox{\label{classsquirrel_pipeline_aa78faadbe4376e1cf066d0dc41a93ff8}} 
 \index{squirrelPipeline@{squirrelPipeline}!DependencyLevel@{DependencyLevel}}
 \index{DependencyLevel@{DependencyLevel}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{DependencyLevel}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Dependency\+Level}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Dependency\+Level}
 
-\label{classsquirrel_pipeline_ace5ca5275357cc8a40acd10f23943ba4} 
+\mbox{\label{classsquirrel_pipeline_ace5ca5275357cc8a40acd10f23943ba4}} 
 \index{squirrelPipeline@{squirrelPipeline}!DependencyLinkType@{DependencyLinkType}}
 \index{DependencyLinkType@{DependencyLinkType}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{DependencyLinkType}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Dependency\+Link\+Type}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Dependency\+Link\+Type}
 
-\label{classsquirrel_pipeline_af256ed28fd4b95646b3826419bbc3c8b} 
+\mbox{\label{classsquirrel_pipeline_af256ed28fd4b95646b3826419bbc3c8b}} 
 \index{squirrelPipeline@{squirrelPipeline}!Description@{Description}}
 \index{Description@{Description}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Description}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Description}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Description}
 
-longer description \label{classsquirrel_pipeline_ac7c112a41762f417f2b335d97083a68b} 
+longer description \mbox{\label{classsquirrel_pipeline_ac7c112a41762f417f2b335d97083a68b}} 
 \index{squirrelPipeline@{squirrelPipeline}!Directory@{Directory}}
 \index{Directory@{Directory}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Directory}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Directory}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Directory}
 
-[Ni\+DB] directory where this pipeline will live if not using the default pipeline directory \label{classsquirrel_pipeline_a3af54bb103b346535cb06e4f0e200659} 
+[Ni\+DB] directory where this pipeline will live if not using the default pipeline directory \mbox{\label{classsquirrel_pipeline_a3af54bb103b346535cb06e4f0e200659}} 
 \index{squirrelPipeline@{squirrelPipeline}!DirectoryStructure@{DirectoryStructure}}
 \index{DirectoryStructure@{DirectoryStructure}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{DirectoryStructure}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Directory\+Structure}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Directory\+Structure}
 
-\label{classsquirrel_pipeline_aa7891f17fd519b6c997cc0767b9e0953} 
+\mbox{\label{classsquirrel_pipeline_aa7891f17fd519b6c997cc0767b9e0953}} 
 \index{squirrelPipeline@{squirrelPipeline}!files@{files}}
 \index{files@{files}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{files}
-{\footnotesize\ttfamily QString\+List squirrel\+Pipeline\+::files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Pipeline\+::files}
 
-\label{classsquirrel_pipeline_a8ec2e7d31351febb1c145a8a260d713b} 
+files as they will appear in the package, including virtual paths \mbox{\label{classsquirrel_pipeline_a22270a0d82b7801b81c239851a1096ce}} 
 \index{squirrelPipeline@{squirrelPipeline}!flags@{flags}}
 \index{flags@{flags}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{flags}
-{\footnotesize\ttfamily struct \textbf{ squirrel\+Pipeline\+::flag} squirrel\+Pipeline\+::flags}
+{\footnotesize\ttfamily struct \textbf{ squirrel\+Pipeline\+::flag}  squirrel\+Pipeline\+::flags}
 
-\label{classsquirrel_pipeline_af9eb80ea2a317bc611aaaf474613ce19} 
+\mbox{\label{classsquirrel_pipeline_af9eb80ea2a317bc611aaaf474613ce19}} 
 \index{squirrelPipeline@{squirrelPipeline}!Group@{Group}}
 \index{Group@{Group}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Group}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Group}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Group}
 
-[Ni\+DB] group on which the pipeline will be run \label{classsquirrel_pipeline_a66a1cca8857bf92a6264888a478b7383} 
+[Ni\+DB] group on which the pipeline will be run \mbox{\label{classsquirrel_pipeline_a66a1cca8857bf92a6264888a478b7383}} 
 \index{squirrelPipeline@{squirrelPipeline}!GroupType@{GroupType}}
 \index{GroupType@{GroupType}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{GroupType}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Group\+Type}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Group\+Type}
 
-[Ni\+DB] subject, study \label{classsquirrel_pipeline_a209262e51c8c124b3f6fad1b8a102e51} 
+[Ni\+DB] subject, study \mbox{\label{classsquirrel_pipeline_a209262e51c8c124b3f6fad1b8a102e51}} 
 \index{squirrelPipeline@{squirrelPipeline}!Level@{Level}}
 \index{Level@{Level}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Level}
 {\footnotesize\ttfamily int squirrel\+Pipeline\+::\+Level}
 
-1 (subject), or 2 (group) \label{classsquirrel_pipeline_a949b336c5fc4e5cfb38e6c6689843254} 
+1 (subject), or 2 (group) \mbox{\label{classsquirrel_pipeline_a949b336c5fc4e5cfb38e6c6689843254}} 
 \index{squirrelPipeline@{squirrelPipeline}!Notes@{Notes}}
 \index{Notes@{Notes}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Notes}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Notes}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Notes}
 
-freeform area for notes \label{classsquirrel_pipeline_a0af7e7dff7d9cf2254dd2995030879a5} 
+freeform area for notes \mbox{\label{classsquirrel_pipeline_a0af7e7dff7d9cf2254dd2995030879a5}} 
 \index{squirrelPipeline@{squirrelPipeline}!NumberConcurrentAnalyses@{NumberConcurrentAnalyses}}
 \index{NumberConcurrentAnalyses@{NumberConcurrentAnalyses}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{NumberConcurrentAnalyses}
 {\footnotesize\ttfamily int squirrel\+Pipeline\+::\+Number\+Concurrent\+Analyses}
 
-[Ni\+DB] max number of concurrent analyses allowed to run \label{classsquirrel_pipeline_a0b9b1c4345537632c5e487ea51776ac3} 
+[Ni\+DB] max number of concurrent analyses allowed to run \mbox{\label{classsquirrel_pipeline_a0b9b1c4345537632c5e487ea51776ac3}} 
 \index{squirrelPipeline@{squirrelPipeline}!ParentPipelines@{ParentPipelines}}
 \index{ParentPipelines@{ParentPipelines}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ParentPipelines}
-{\footnotesize\ttfamily QString\+List squirrel\+Pipeline\+::\+Parent\+Pipelines}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Pipeline\+::\+Parent\+Pipelines}
 
-list of pipelines on which this pipeline depends \label{classsquirrel_pipeline_aebb0dfb0b342082265ee976eddd4ddf5} 
+list of pipelines on which this pipeline depends \mbox{\label{classsquirrel_pipeline_aebb0dfb0b342082265ee976eddd4ddf5}} 
 \index{squirrelPipeline@{squirrelPipeline}!PipelineName@{PipelineName}}
 \index{PipelineName@{PipelineName}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{PipelineName}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Pipeline\+Name}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Pipeline\+Name}
 
-pipeline name (required) \label{classsquirrel_pipeline_a95cdc882e130ea728ab1387369f2d67d} 
+pipeline name (required) \mbox{\label{classsquirrel_pipeline_a95cdc882e130ea728ab1387369f2d67d}} 
 \index{squirrelPipeline@{squirrelPipeline}!PrimaryScript@{PrimaryScript}}
 \index{PrimaryScript@{PrimaryScript}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{PrimaryScript}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Primary\+Script}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Primary\+Script}
 
-\label{classsquirrel_pipeline_a22e34ec6133d1cd20e83466f815dddde} 
+\mbox{\label{classsquirrel_pipeline_a22e34ec6133d1cd20e83466f815dddde}} 
 \index{squirrelPipeline@{squirrelPipeline}!ResultScript@{ResultScript}}
 \index{ResultScript@{ResultScript}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{ResultScript}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Result\+Script}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Result\+Script}
 
-path to a script to run to get a results at the end \label{classsquirrel_pipeline_a9a7868499655a67717ce3f6a609a3e8a} 
+path to a script to run to get a results at the end \mbox{\label{classsquirrel_pipeline_a9a7868499655a67717ce3f6a609a3e8a}} 
 \index{squirrelPipeline@{squirrelPipeline}!SecondaryScript@{SecondaryScript}}
 \index{SecondaryScript@{SecondaryScript}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{SecondaryScript}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Secondary\+Script}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Secondary\+Script}
 
-\label{classsquirrel_pipeline_ad88e0c39190844984eaa8669062f972e} 
+\mbox{\label{classsquirrel_pipeline_ad88e0c39190844984eaa8669062f972e}} 
 \index{squirrelPipeline@{squirrelPipeline}!stagedFiles@{stagedFiles}}
 \index{stagedFiles@{stagedFiles}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{stagedFiles}
-{\footnotesize\ttfamily QString\+List squirrel\+Pipeline\+::staged\+Files}
+{\footnotesize\ttfamily Q\+String\+List squirrel\+Pipeline\+::staged\+Files}
 
-staged file list\+: list of files in their own original directories which will be copied in before the package is zipped up \label{classsquirrel_pipeline_ad9ce7ba6352de8871c828e954e3dc3a1} 
+staged file list\+: list of files in their own original directories which will be copied in before the package is zipped up \mbox{\label{classsquirrel_pipeline_ad9ce7ba6352de8871c828e954e3dc3a1}} 
 \index{squirrelPipeline@{squirrelPipeline}!SubmitDelay@{SubmitDelay}}
 \index{SubmitDelay@{SubmitDelay}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{SubmitDelay}
 {\footnotesize\ttfamily int squirrel\+Pipeline\+::\+Submit\+Delay}
 
-[Ni\+DB] time in hours after the study datetime to delay before running this analysis \label{classsquirrel_pipeline_a79bb289cb4d7258fe92f2f93e1c92cf7} 
+[Ni\+DB] time in hours after the study datetime to delay before running this analysis \mbox{\label{classsquirrel_pipeline_a79bb289cb4d7258fe92f2f93e1c92cf7}} 
 \index{squirrelPipeline@{squirrelPipeline}!TempDirectory@{TempDirectory}}
 \index{TempDirectory@{TempDirectory}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{TempDirectory}
-{\footnotesize\ttfamily QString squirrel\+Pipeline\+::\+Temp\+Directory}
+{\footnotesize\ttfamily Q\+String squirrel\+Pipeline\+::\+Temp\+Directory}
 
-name of temp dir, if one is to be used \label{classsquirrel_pipeline_a9a2257228fa9e55be5e3382b9ff40fea} 
+name of temp dir, if one is to be used \mbox{\label{classsquirrel_pipeline_a9a2257228fa9e55be5e3382b9ff40fea}} 
 \index{squirrelPipeline@{squirrelPipeline}!Version@{Version}}
 \index{Version@{Version}!squirrelPipeline@{squirrelPipeline}}
 \doxysubsubsection{Version}

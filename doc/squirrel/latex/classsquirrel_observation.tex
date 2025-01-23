@@ -1,0 +1,245 @@
+\doxysection{squirrel\+Observation Class Reference}
+\label{classsquirrel_observation}\index{squirrelObservation@{squirrelObservation}}
+
+
+The observation class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Observation.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ squirrel\+Observation} (Q\+String db\+ID)
+\item 
+Q\+Json\+Object \textbf{ To\+J\+S\+ON} ()
+\item 
+Q\+String \textbf{ Print\+Observation} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Observation\+::\+Print\+Observation}{p.}{classsquirrel_observation_ab83791211cfb849149c5f30df9c802fe} \end{DoxyCompactList}\item 
+bool \textbf{ Get} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Observation\+::\+Get}{p.}{classsquirrel_observation_adb58e1d3a60d8ecc6a974351c6824112} \end{DoxyCompactList}\item 
+bool \textbf{ Store} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Observation\+::\+Store}{p.}{classsquirrel_observation_adf45d33a519d74092807e653b5c5a060} \end{DoxyCompactList}\item 
+bool \textbf{ is\+Valid} ()
+\item 
+Q\+String \textbf{ Error} ()
+\item 
+qint64 \textbf{ Get\+Object\+ID} ()
+\item 
+void \textbf{ Set\+Object\+ID} (qint64 id)
+\item 
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+void \textbf{ Set\+Database\+U\+U\+ID} (Q\+String db\+ID)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+qint64 \textbf{ subject\+Row\+ID}
+\item 
+Q\+Date\+Time \textbf{ Date\+End}
+\item 
+Q\+Date\+Time \textbf{ Date\+Record\+Create}
+\item 
+Q\+Date\+Time \textbf{ Date\+Record\+Entry}
+\item 
+Q\+Date\+Time \textbf{ Date\+Record\+Modify}
+\item 
+Q\+Date\+Time \textbf{ Date\+Start}
+\item 
+Q\+String \textbf{ Description}
+\item 
+Q\+String \textbf{ Instrument\+Name}
+\item 
+Q\+String \textbf{ Observation\+Name}
+\item 
+Q\+String \textbf{ Notes}
+\item 
+Q\+String \textbf{ Rater}
+\item 
+Q\+String \textbf{ Value}
+\item 
+double \textbf{ Duration}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The observation class. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classsquirrel_observation_a2b50bd0208c0c19f69f44ebccae2820a}} 
+\index{squirrelObservation@{squirrelObservation}!squirrelObservation@{squirrelObservation}}
+\index{squirrelObservation@{squirrelObservation}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{squirrelObservation()}
+{\footnotesize\ttfamily squirrel\+Observation\+::squirrel\+Observation (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classsquirrel_observation_a36c56b153fc0d2a82e3821faa5782ef9}} 
+\index{squirrelObservation@{squirrelObservation}!Error@{Error}}
+\index{Error@{Error}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Error()}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_observation_adb58e1d3a60d8ecc6a974351c6824112}} 
+\index{squirrelObservation@{squirrelObservation}!Get@{Get}}
+\index{Get@{Get}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Get()}
+{\footnotesize\ttfamily bool squirrel\+Observation\+::\+Get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+Observation\+::\+Get}{p.}{classsquirrel_observation_adb58e1d3a60d8ecc6a974351c6824112} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the observation data from the database. The observation\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_observation_a6ab0dee69f2da56f11009e1c19cbca2e}} 
+\index{squirrelObservation@{squirrelObservation}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_observation_a3dede5c97734f6c881f51699f2b7fee5}} 
+\index{squirrelObservation@{squirrelObservation}!GetObjectID@{GetObjectID}}
+\index{GetObjectID@{GetObjectID}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{GetObjectID()}
+{\footnotesize\ttfamily qint64 squirrel\+Observation\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_observation_af8ebb73a30fe117e447a661524cd0a4f}} 
+\index{squirrelObservation@{squirrelObservation}!isValid@{isValid}}
+\index{isValid@{isValid}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{isValid()}
+{\footnotesize\ttfamily bool squirrel\+Observation\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_observation_ab83791211cfb849149c5f30df9c802fe}} 
+\index{squirrelObservation@{squirrelObservation}!PrintObservation@{PrintObservation}}
+\index{PrintObservation@{PrintObservation}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{PrintObservation()}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Print\+Observation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+Observation\+::\+Print\+Observation}{p.}{classsquirrel_observation_ab83791211cfb849149c5f30df9c802fe} 
+
+\mbox{\label{classsquirrel_observation_a5854c561f43784de00f72a4da91e13b8}} 
+\index{squirrelObservation@{squirrelObservation}!SetDatabaseUUID@{SetDatabaseUUID}}
+\index{SetDatabaseUUID@{SetDatabaseUUID}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{SetDatabaseUUID()}
+{\footnotesize\ttfamily void squirrel\+Observation\+::\+Set\+Database\+U\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_observation_a7218196f52c534b1b0f7a65a6d84216f}} 
+\index{squirrelObservation@{squirrelObservation}!SetObjectID@{SetObjectID}}
+\index{SetObjectID@{SetObjectID}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{SetObjectID()}
+{\footnotesize\ttfamily void squirrel\+Observation\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_observation_adf45d33a519d74092807e653b5c5a060}} 
+\index{squirrelObservation@{squirrelObservation}!Store@{Store}}
+\index{Store@{Store}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Store()}
+{\footnotesize\ttfamily bool squirrel\+Observation\+::\+Store (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+Observation\+::\+Store}{p.}{classsquirrel_observation_adf45d33a519d74092807e653b5c5a060} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the observation data from the database. The observation\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_observation_a79cdffcd1c9dfca9f3b52741d8fd2234}} 
+\index{squirrelObservation@{squirrelObservation}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{ToJSON()}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Observation\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classsquirrel_observation_a3d9ed1f4b4262fb6f2c57e26f7c51b1a}} 
+\index{squirrelObservation@{squirrelObservation}!DateEnd@{DateEnd}}
+\index{DateEnd@{DateEnd}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{DateEnd}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Observation\+::\+Date\+End}
+
+end date of the observationment \mbox{\label{classsquirrel_observation_a4a4818e1cc0af351d563ac465471069e}} 
+\index{squirrelObservation@{squirrelObservation}!DateRecordCreate@{DateRecordCreate}}
+\index{DateRecordCreate@{DateRecordCreate}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{DateRecordCreate}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Observation\+::\+Date\+Record\+Create}
+
+date the record was created \mbox{\label{classsquirrel_observation_ab297a486744e9e2c4232d267fd53f838}} 
+\index{squirrelObservation@{squirrelObservation}!DateRecordEntry@{DateRecordEntry}}
+\index{DateRecordEntry@{DateRecordEntry}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{DateRecordEntry}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Observation\+::\+Date\+Record\+Entry}
+
+date the record was entered \mbox{\label{classsquirrel_observation_af2a89de6cb1389145e3128ae88794670}} 
+\index{squirrelObservation@{squirrelObservation}!DateRecordModify@{DateRecordModify}}
+\index{DateRecordModify@{DateRecordModify}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{DateRecordModify}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Observation\+::\+Date\+Record\+Modify}
+
+date the record was modified \mbox{\label{classsquirrel_observation_a3e051e45a8cc24125ff18f2350aeb64b}} 
+\index{squirrelObservation@{squirrelObservation}!DateStart@{DateStart}}
+\index{DateStart@{DateStart}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{DateStart}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Observation\+::\+Date\+Start}
+
+start date of the observationment (required) \mbox{\label{classsquirrel_observation_a8154805236faefe9a44e21c97f9f2a52}} 
+\index{squirrelObservation@{squirrelObservation}!Description@{Description}}
+\index{Description@{Description}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Description}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Description}
+
+extended observationment description \mbox{\label{classsquirrel_observation_a52304d1c0341e079234cc2bf9137e2ab}} 
+\index{squirrelObservation@{squirrelObservation}!Duration@{Duration}}
+\index{Duration@{Duration}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Duration}
+{\footnotesize\ttfamily double squirrel\+Observation\+::\+Duration}
+
+duration of the observation, in seconds \mbox{\label{classsquirrel_observation_a48a1d15f6b877ee78b0a1b06e19139a2}} 
+\index{squirrelObservation@{squirrelObservation}!InstrumentName@{InstrumentName}}
+\index{InstrumentName@{InstrumentName}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{InstrumentName}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Instrument\+Name}
+
+name of the instrument (test, assessment, etc) from which this observation came \mbox{\label{classsquirrel_observation_a0eaf5ea6a04ff61a55de26daf25f4d37}} 
+\index{squirrelObservation@{squirrelObservation}!Notes@{Notes}}
+\index{Notes@{Notes}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Notes}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Notes}
+
+notes about the observation \mbox{\label{classsquirrel_observation_a64c9c125ec7188a4ff847963c941eb4b}} 
+\index{squirrelObservation@{squirrelObservation}!ObservationName@{ObservationName}}
+\index{ObservationName@{ObservationName}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{ObservationName}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Observation\+Name}
+
+observation name (required) \mbox{\label{classsquirrel_observation_aa27b14c0e0cf5a4253abbf0ec77c3a0b}} 
+\index{squirrelObservation@{squirrelObservation}!Rater@{Rater}}
+\index{Rater@{Rater}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Rater}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Rater}
+
+name or username of the person who rated the observation \mbox{\label{classsquirrel_observation_ab07da8930fba0fa7006770db2bf8e59b}} 
+\index{squirrelObservation@{squirrelObservation}!subjectRowID@{subjectRowID}}
+\index{subjectRowID@{subjectRowID}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{subjectRowID}
+{\footnotesize\ttfamily qint64 squirrel\+Observation\+::subject\+Row\+ID}
+
+\mbox{\label{classsquirrel_observation_abf8807dd61f5322546b78cfe4e0dec5f}} 
+\index{squirrelObservation@{squirrelObservation}!Value@{Value}}
+\index{Value@{Value}!squirrelObservation@{squirrelObservation}}
+\doxysubsubsection{Value}
+{\footnotesize\ttfamily Q\+String squirrel\+Observation\+::\+Value}
+
+value, in string or number stored as a string 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/squirrel/src/squirrel/\textbf{ squirrel\+Observation.\+h}\item 
+C\+:/squirrel/src/squirrel/\textbf{ squirrel\+Observation.\+cpp}\end{DoxyCompactItemize}

@@ -1,0 +1,279 @@
+\doxysection{squirrel\+Intervention Class Reference}
+\label{classsquirrel_intervention}\index{squirrelIntervention@{squirrelIntervention}}
+
+
+The Intervention class.  
+
+
+
+
+{\ttfamily \#include $<$squirrel\+Intervention.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ squirrel\+Intervention} (Q\+String db\+ID)
+\item 
+Q\+Json\+Object \textbf{ To\+J\+S\+ON} ()
+\item 
+Q\+String \textbf{ Print\+Intervention} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Intervention\+::\+Print\+Intervention}{p.}{classsquirrel_intervention_a559053d4316f64b2be544b35ea91068e} \end{DoxyCompactList}\item 
+bool \textbf{ Get} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Intervention\+::\+Get}{p.}{classsquirrel_intervention_a84ce54d45a5c12d60ab9c7da0a5458c1} \end{DoxyCompactList}\item 
+bool \textbf{ Store} ()
+\begin{DoxyCompactList}\small\item\em \doxyref{squirrel\+Intervention\+::\+Store}{p.}{classsquirrel_intervention_ae8f30e85ccff2f52eecc0faf5082b27a} \end{DoxyCompactList}\item 
+bool \textbf{ is\+Valid} ()
+\item 
+Q\+String \textbf{ Error} ()
+\item 
+qint64 \textbf{ Get\+Object\+ID} ()
+\item 
+void \textbf{ Set\+Object\+ID} (qint64 id)
+\item 
+Q\+String \textbf{ Get\+Database\+U\+U\+ID} ()
+\item 
+void \textbf{ Set\+Database\+U\+U\+ID} (Q\+String db\+ID)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+qint64 \textbf{ subject\+Row\+ID}
+\item 
+Q\+Date\+Time \textbf{ Date\+End}
+\item 
+Q\+Date\+Time \textbf{ Date\+Record\+Create}
+\item 
+Q\+Date\+Time \textbf{ Date\+Record\+Entry}
+\item 
+Q\+Date\+Time \textbf{ Date\+Record\+Modify}
+\item 
+Q\+Date\+Time \textbf{ Date\+Start}
+\item 
+Q\+String \textbf{ Administration\+Route}
+\item 
+Q\+String \textbf{ Description}
+\item 
+Q\+String \textbf{ Dose\+Frequency}
+\item 
+Q\+String \textbf{ Dose\+Key}
+\item 
+Q\+String \textbf{ Dose\+String}
+\item 
+Q\+String \textbf{ Dose\+Unit}
+\item 
+Q\+String \textbf{ Intervention\+Class}
+\item 
+Q\+String \textbf{ Intervention\+Name}
+\item 
+Q\+String \textbf{ Notes}
+\item 
+Q\+String \textbf{ Rater}
+\item 
+double \textbf{ Dose\+Amount}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The Intervention class. 
+
+Most string fields are freeform, and not all are required 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classsquirrel_intervention_af8dafda542afd74f39ec68de0b36967f}} 
+\index{squirrelIntervention@{squirrelIntervention}!squirrelIntervention@{squirrelIntervention}}
+\index{squirrelIntervention@{squirrelIntervention}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{squirrelIntervention()}
+{\footnotesize\ttfamily squirrel\+Intervention\+::squirrel\+Intervention (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classsquirrel_intervention_a46ba209e3242cad2a2c0d9b4a4b03bbe}} 
+\index{squirrelIntervention@{squirrelIntervention}!Error@{Error}}
+\index{Error@{Error}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{Error()}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_intervention_a84ce54d45a5c12d60ab9c7da0a5458c1}} 
+\index{squirrelIntervention@{squirrelIntervention}!Get@{Get}}
+\index{Get@{Get}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{Get()}
+{\footnotesize\ttfamily bool squirrel\+Intervention\+::\+Get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+Intervention\+::\+Get}{p.}{classsquirrel_intervention_a84ce54d45a5c12d60ab9c7da0a5458c1} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the Intervention data from the database. The Intervention\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_intervention_a5e8d60a055c2df0574dd4fecb715b190}} 
+\index{squirrelIntervention@{squirrelIntervention}!GetDatabaseUUID@{GetDatabaseUUID}}
+\index{GetDatabaseUUID@{GetDatabaseUUID}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{GetDatabaseUUID()}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Get\+Database\+U\+U\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_intervention_a228967b83c2293fcc7bc9f4e80636676}} 
+\index{squirrelIntervention@{squirrelIntervention}!GetObjectID@{GetObjectID}}
+\index{GetObjectID@{GetObjectID}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{GetObjectID()}
+{\footnotesize\ttfamily qint64 squirrel\+Intervention\+::\+Get\+Object\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_intervention_a60d711a273f585489e27e5e41bc21f44}} 
+\index{squirrelIntervention@{squirrelIntervention}!isValid@{isValid}}
+\index{isValid@{isValid}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{isValid()}
+{\footnotesize\ttfamily bool squirrel\+Intervention\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_intervention_a559053d4316f64b2be544b35ea91068e}} 
+\index{squirrelIntervention@{squirrelIntervention}!PrintIntervention@{PrintIntervention}}
+\index{PrintIntervention@{PrintIntervention}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{PrintIntervention()}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Print\+Intervention (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+Intervention\+::\+Print\+Intervention}{p.}{classsquirrel_intervention_a559053d4316f64b2be544b35ea91068e} 
+
+\mbox{\label{classsquirrel_intervention_a7e90dc6620a50b6cf1661fcbf264838b}} 
+\index{squirrelIntervention@{squirrelIntervention}!SetDatabaseUUID@{SetDatabaseUUID}}
+\index{SetDatabaseUUID@{SetDatabaseUUID}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{SetDatabaseUUID()}
+{\footnotesize\ttfamily void squirrel\+Intervention\+::\+Set\+Database\+U\+U\+ID (\begin{DoxyParamCaption}\item[{Q\+String}]{db\+ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_intervention_a7c9114db6ba1a1c7fc04a1760b8068ae}} 
+\index{squirrelIntervention@{squirrelIntervention}!SetObjectID@{SetObjectID}}
+\index{SetObjectID@{SetObjectID}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{SetObjectID()}
+{\footnotesize\ttfamily void squirrel\+Intervention\+::\+Set\+Object\+ID (\begin{DoxyParamCaption}\item[{qint64}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{classsquirrel_intervention_ae8f30e85ccff2f52eecc0faf5082b27a}} 
+\index{squirrelIntervention@{squirrelIntervention}!Store@{Store}}
+\index{Store@{Store}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{Store()}
+{\footnotesize\ttfamily bool squirrel\+Intervention\+::\+Store (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxyref{squirrel\+Intervention\+::\+Store}{p.}{classsquirrel_intervention_ae8f30e85ccff2f52eecc0faf5082b27a} 
+
+\begin{DoxyReturn}{Returns}
+true if successful
+\end{DoxyReturn}
+This function will attempt to load the Intervention data from the database. The Intervention\+Row\+ID must be set before calling this function. If the object exists in the DB, it will return true. Otherwise it will return false. \mbox{\label{classsquirrel_intervention_a3bc5442475c8ead1df253d278f366f0e}} 
+\index{squirrelIntervention@{squirrelIntervention}!ToJSON@{ToJSON}}
+\index{ToJSON@{ToJSON}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{ToJSON()}
+{\footnotesize\ttfamily Q\+Json\+Object squirrel\+Intervention\+::\+To\+J\+S\+ON (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classsquirrel_intervention_ab157d2a9f804bb2b1f0c9649538de5e4}} 
+\index{squirrelIntervention@{squirrelIntervention}!AdministrationRoute@{AdministrationRoute}}
+\index{AdministrationRoute@{AdministrationRoute}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{AdministrationRoute}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Administration\+Route}
+
+Intervention delivery route (oral, IV, IM, etc) \mbox{\label{classsquirrel_intervention_a88b76bbbae78528558041f1dd2c8c820}} 
+\index{squirrelIntervention@{squirrelIntervention}!DateEnd@{DateEnd}}
+\index{DateEnd@{DateEnd}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DateEnd}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Intervention\+::\+Date\+End}
+
+Intervention end date \mbox{\label{classsquirrel_intervention_aa4ee75af782378ca8705792250ffd11b}} 
+\index{squirrelIntervention@{squirrelIntervention}!DateRecordCreate@{DateRecordCreate}}
+\index{DateRecordCreate@{DateRecordCreate}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DateRecordCreate}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Intervention\+::\+Date\+Record\+Create}
+
+date the record was created \mbox{\label{classsquirrel_intervention_ac54b3c12b85131329985d8e455c2c425}} 
+\index{squirrelIntervention@{squirrelIntervention}!DateRecordEntry@{DateRecordEntry}}
+\index{DateRecordEntry@{DateRecordEntry}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DateRecordEntry}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Intervention\+::\+Date\+Record\+Entry}
+
+date the record was entered \mbox{\label{classsquirrel_intervention_a9ce05e8a4c5ccfdc4645f3007c490f00}} 
+\index{squirrelIntervention@{squirrelIntervention}!DateRecordModify@{DateRecordModify}}
+\index{DateRecordModify@{DateRecordModify}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DateRecordModify}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Intervention\+::\+Date\+Record\+Modify}
+
+date the record was modified \mbox{\label{classsquirrel_intervention_a12f1bc83ce115fcee370c5cd42c3cad2}} 
+\index{squirrelIntervention@{squirrelIntervention}!DateStart@{DateStart}}
+\index{DateStart@{DateStart}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DateStart}
+{\footnotesize\ttfamily Q\+Date\+Time squirrel\+Intervention\+::\+Date\+Start}
+
+Intervention start date (required) \mbox{\label{classsquirrel_intervention_a799d3a02fb33245443142e4641dbae89}} 
+\index{squirrelIntervention@{squirrelIntervention}!Description@{Description}}
+\index{Description@{Description}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{Description}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Description}
+
+longer description of the Intervention and dosing \mbox{\label{classsquirrel_intervention_a63e93640fee6c2a0e21001d9fc0aa85f}} 
+\index{squirrelIntervention@{squirrelIntervention}!DoseAmount@{DoseAmount}}
+\index{DoseAmount@{DoseAmount}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DoseAmount}
+{\footnotesize\ttfamily double squirrel\+Intervention\+::\+Dose\+Amount}
+
+dose amount (required) \mbox{\label{classsquirrel_intervention_a8653ada2b5bc0aca1606640a755229e4}} 
+\index{squirrelIntervention@{squirrelIntervention}!DoseFrequency@{DoseFrequency}}
+\index{DoseFrequency@{DoseFrequency}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DoseFrequency}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Dose\+Frequency}
+
+string representation of dose frequency, ie \textquotesingle{}2 tablets daily\textquotesingle{} \mbox{\label{classsquirrel_intervention_a418d5a0e9666ae40ed734bbc06dda55a}} 
+\index{squirrelIntervention@{squirrelIntervention}!DoseKey@{DoseKey}}
+\index{DoseKey@{DoseKey}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DoseKey}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Dose\+Key}
+
+for clinical trials, the dose key \mbox{\label{classsquirrel_intervention_ad2b769b44ebb102972e7cf53ed9ebd99}} 
+\index{squirrelIntervention@{squirrelIntervention}!DoseString@{DoseString}}
+\index{DoseString@{DoseString}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DoseString}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Dose\+String}
+
+full dose string (example \char`\"{}tylenol 325mg twice daily by mouth\char`\"{}) \mbox{\label{classsquirrel_intervention_a5ec3e5706a8000a2abc17d9c38e59932}} 
+\index{squirrelIntervention@{squirrelIntervention}!DoseUnit@{DoseUnit}}
+\index{DoseUnit@{DoseUnit}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{DoseUnit}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Dose\+Unit}
+
+mg, g, ml, tablets, etc \mbox{\label{classsquirrel_intervention_abc655d51f1b55462ab053336919d2d08}} 
+\index{squirrelIntervention@{squirrelIntervention}!InterventionClass@{InterventionClass}}
+\index{InterventionClass@{InterventionClass}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{InterventionClass}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Intervention\+Class}
+
+Intervention class (drug class) \mbox{\label{classsquirrel_intervention_a2d57b743def38eba211a97844d25b6d7}} 
+\index{squirrelIntervention@{squirrelIntervention}!InterventionName@{InterventionName}}
+\index{InterventionName@{InterventionName}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{InterventionName}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Intervention\+Name}
+
+Intervention name (required) \mbox{\label{classsquirrel_intervention_a0ef7f7335ad9ee550cd4c3fca4ae2a66}} 
+\index{squirrelIntervention@{squirrelIntervention}!Notes@{Notes}}
+\index{Notes@{Notes}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{Notes}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Notes}
+
+freeform field for notes \mbox{\label{classsquirrel_intervention_ad6764174180a1f6fc10f1d77068526c0}} 
+\index{squirrelIntervention@{squirrelIntervention}!Rater@{Rater}}
+\index{Rater@{Rater}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{Rater}
+{\footnotesize\ttfamily Q\+String squirrel\+Intervention\+::\+Rater}
+
+rater/experimenter/prescriber \mbox{\label{classsquirrel_intervention_a04b41146f39897874d505013b8404a05}} 
+\index{squirrelIntervention@{squirrelIntervention}!subjectRowID@{subjectRowID}}
+\index{subjectRowID@{subjectRowID}!squirrelIntervention@{squirrelIntervention}}
+\doxysubsubsection{subjectRowID}
+{\footnotesize\ttfamily qint64 squirrel\+Intervention\+::subject\+Row\+ID}
+
+database row ID of the parent object 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/squirrel/src/squirrel/\textbf{ squirrel\+Intervention.\+h}\item 
+C\+:/squirrel/src/squirrel/\textbf{ squirrel\+Intervention.\+cpp}\end{DoxyCompactItemize}
