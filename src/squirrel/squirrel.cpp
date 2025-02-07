@@ -1452,19 +1452,19 @@ QHash<QString, QString> squirrel::ReadParamsFile(QString f) {
  * @brief Print a list of subjects to stdout
  * @param details true to print details, false to print list of subject IDs
  */
-QString squirrel::PrintSubjects(PrintingType printType) {
+QString squirrel::PrintSubjects(PrintFormat printFormat) {
     QString str;
 
     QList <squirrelSubject> subjects = GetSubjectList();
     int count = subjects.size();
     if (count > 0) {
-        if (printType == PrintingType::Details) {
+        if (printFormat == PrintFormat::Details) {
             foreach (squirrelSubject s, subjects) {
                 if (s.Get())
                     str += s.PrintDetails();
             }
         }
-        else if (printType == PrintingType::CSV) {
+        else if (printFormat == PrintFormat::CSV) {
             QStringList csvLines;
             foreach (squirrelSubject s, subjects) {
                 if (s.Get())
@@ -1473,7 +1473,7 @@ QString squirrel::PrintSubjects(PrintingType printType) {
             str += utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
             str += utils::Print(csvLines.join("\n"));
         }
-        else if (printType == PrintingType::Tree) {
+        else if (printFormat == PrintFormat::Tree) {
             str += utils::Print("Subjects");
             int i = 0;
             foreach (squirrelSubject s, subjects) {
@@ -1515,20 +1515,20 @@ QString squirrel::PrintSubjects(PrintingType printType) {
  * @param subjectID the subject ID to print studies for
  * @param details true to print details, false to print list of study numbers
  */
-QString squirrel::PrintStudies(qint64 subjectRowID, bool details) {
+QString squirrel::PrintStudies(qint64 subjectRowID, PrintFormat printFormat) {
     QString str;
 
     QList <squirrelStudy> studies = GetStudyList(subjectRowID);
     QStringList studyNumbers;
     foreach (squirrelStudy s, studies) {
         if (s.Get()) {
-            if (details)
+            if (printFormat == PrintFormat::Details)
                 str += s.PrintStudy();
-            else
+            else if (printFormat == PrintFormat::List)
                 studyNumbers.append(QString("%1").arg(s.StudyNumber));
         }
     }
-    if (!details)
+    if (printFormat == PrintFormat::List)
         str += utils::Print("Studies: " + studyNumbers.join(" "));
 
     return str;
@@ -1544,20 +1544,20 @@ QString squirrel::PrintStudies(qint64 subjectRowID, bool details) {
  * @param studyNum the study number
  * @param details true to print details, false to print list of series numbers
  */
-QString squirrel::PrintSeries(qint64 studyRowID, bool details) {
+QString squirrel::PrintSeries(qint64 studyRowID, PrintFormat printFormat) {
     QString str;
 
     QList <squirrelSeries> series = GetSeriesList(studyRowID);
     QStringList seriesNumbers;
     foreach (squirrelSeries s, series) {
         if (s.Get()) {
-            if (details)
+            if (printFormat == PrintFormat::Details)
                 str += s.PrintSeries();
-            else
+            else if (printFormat == PrintFormat::List)
                 seriesNumbers.append(QString("%1").arg(s.SeriesNumber));
         }
     }
-    if (!details)
+    if (printFormat == PrintFormat::List)
         str += utils::Print("Series: " + seriesNumbers.join(" "));
 
     return str;
@@ -1570,22 +1570,22 @@ QString squirrel::PrintSeries(qint64 studyRowID, bool details) {
 /**
  * @brief Print all of the observations for a given subjectRowID
  * @param subjectRowID The subjectRowID
- * @param printType One of the PrintingType enumerations
+ * @param printFormat One of the PrintFormat enumerations
  */
-QString squirrel::PrintObservations(qint64 subjectRowID, PrintingType printType) {
+QString squirrel::PrintObservations(qint64 subjectRowID, PrintFormat printFormat) {
     QString str;
 
     QList <squirrelObservation> observations = GetObservationList(subjectRowID);
     QStringList observationNames;
     foreach (squirrelObservation o, observations) {
         if (o.Get()) {
-            if (printType == PrintingType::Details)
+            if (printFormat == PrintFormat::Details)
                 str += o.PrintObservation();
             else
                 observationNames.append(o.ObservationName);
         }
     }
-    if (printType == PrintingType::Details)
+    if (printFormat == PrintFormat::Details)
         str += utils::Print("Observations: " + observationNames.join(" "));
 
     return str;
@@ -1598,22 +1598,22 @@ QString squirrel::PrintObservations(qint64 subjectRowID, PrintingType printType)
 /**
  * @brief Print all of the interventions for a given subjectRowID
  * @param subjectRowID The subjectRowID
- * @param printType One of the PrintingType enumerations
+ * @param printFormat One of the PrintFormat enumerations
  */
-QString squirrel::PrintInterventions(qint64 subjectRowID, PrintingType printType) {
+QString squirrel::PrintInterventions(qint64 subjectRowID, PrintFormat printFormat) {
     QString str;
 
     QList <squirrelIntervention> interventions = GetInterventionList(subjectRowID);
     QStringList interventionNames;
     foreach (squirrelIntervention o, interventions) {
         if (o.Get()) {
-            if (printType == PrintingType::Details)
+            if (printFormat == PrintFormat::Details)
                 str += o.PrintIntervention();
             else
                 interventionNames.append(o.InterventionName);
         }
     }
-    if (printType == PrintingType::Details)
+    if (printFormat == PrintFormat::Details)
         str += utils::Print("Interventions: " + interventionNames.join(" "));
 
     return str;
@@ -1627,20 +1627,20 @@ QString squirrel::PrintInterventions(qint64 subjectRowID, PrintingType printType
  * @brief Print a list of experiments to stdout
  * @param details true to print details, false to print list of pipeline names
  */
-QString squirrel::PrintExperiments(bool details) {
+QString squirrel::PrintExperiments(PrintFormat printFormat) {
     QString str;
 
     QList <squirrelExperiment> exps = GetExperimentList();
     QStringList experimentNames;
     foreach (squirrelExperiment e, exps) {
         if (e.Get()) {
-            if (details)
+            if (printFormat == PrintFormat::Details)
                 str += e.PrintExperiment();
-            else
+            else if (printFormat == PrintFormat::List)
                 experimentNames.append(e.ExperimentName);
         }
     }
-    if (!details)
+    if (printFormat == PrintFormat::List)
         str += utils::Print("Experiments: " + experimentNames.join(" "));
 
     return str;
@@ -1654,20 +1654,20 @@ QString squirrel::PrintExperiments(bool details) {
  * @brief Print a list of pipelines to stdout
  * @param details true to print details, false to print list of pipeline names
  */
-QString squirrel::PrintPipelines(bool details) {
+QString squirrel::PrintPipelines(PrintFormat printFormat) {
     QString str;
 
     QList <squirrelPipeline> pipelines = GetPipelineList();
     QStringList pipelineNames;
     foreach (squirrelPipeline p, pipelines) {
         if (p.Get()) {
-            if (details)
+            if (printFormat == PrintFormat::Details)
                 str += p.PrintPipeline();
-            else
+            else if (printFormat == PrintFormat::List)
                 pipelineNames.append(p.PipelineName);
         }
     }
-    if (!details)
+    if (printFormat == PrintFormat::List)
         str += utils::Print("Pipelines: " + pipelineNames.join(" "));
 
     return str;
@@ -1681,20 +1681,20 @@ QString squirrel::PrintPipelines(bool details) {
  * @brief Print a list of group analyses to stdout
  * @param details true to print details, false to print list of group analysis names
  */
-QString squirrel::PrintGroupAnalyses(bool details) {
+QString squirrel::PrintGroupAnalyses(PrintFormat printFormat) {
     QString str;
 
     QList <squirrelGroupAnalysis> groupAnalyses = GetGroupAnalysisList();
     QStringList groupAnalysisNames;
     foreach (squirrelGroupAnalysis g, groupAnalyses) {
         if (g.Get()) {
-            if (details)
+            if (printFormat == PrintFormat::Details)
                 str += g.PrintGroupAnalysis();
-            else
+            else if (printFormat == PrintFormat::List)
                 groupAnalysisNames.append(g.GroupAnalysisName);
         }
     }
-    if (!details)
+    if (printFormat == PrintFormat::List)
         str += utils::Print("GroupAnalysis: " + groupAnalysisNames.join(" "));
 
     return str;
@@ -1709,21 +1709,49 @@ QString squirrel::PrintGroupAnalyses(bool details) {
  * @param details `true` to print details, `false` otherwise
  * @return The string that was printed to stdout
  */
-QString squirrel::PrintDataDictionary(bool details) {
+QString squirrel::PrintDataDictionary(PrintFormat printFormat) {
     QString str;
 
     QList <squirrelDataDictionary> dataDictionaries = GetDataDictionaryList();
     QStringList dataDictionaryNames;
     foreach (squirrelDataDictionary d, dataDictionaries) {
         if (d.Get()) {
-            if (details)
+            if (printFormat == PrintFormat::Details)
                 str += d.PrintDataDictionary();
-            else
+            else if (printFormat == PrintFormat::List)
                 dataDictionaryNames.append(d.DataDictionaryName);
         }
     }
-    if (!details)
+    if (printFormat == PrintFormat::List)
         str += utils::Print("DataDictionary: " + dataDictionaryNames.join(" "));
+
+    return str;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PrintAnalyses ---------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Print a list of studies to the stdout
+ * @param subjectID the subject ID to print studies for
+ * @param details true to print details, false to print list of study numbers
+ */
+QString squirrel::PrintAnalyses(qint64 studyRowID, PrintFormat printFormat) {
+    QString str;
+
+    QList <squirrelAnalysis> analyses = GetAnalysisList(studyRowID);
+    QStringList analysisDates;
+    foreach (squirrelAnalysis a, analyses) {
+        if (a.Get()) {
+            if (printFormat == PrintFormat::Details)
+                str += a.PrintAnalysis();
+            else if (printFormat == PrintFormat::List)
+                analysisDates.append(QString("%1").arg(a.DateStart.toString()));
+        }
+    }
+    if (printFormat == PrintFormat::List)
+        str += utils::Print("Analyses: " + analysisDates.join(" "));
 
     return str;
 }

@@ -41,7 +41,7 @@
 #include "squirrelVersion.h"
 
 enum FileMode { NewPackage, ExistingPackage };
-enum PrintingType { List, Details, CSV, Tree };
+enum PrintFormat { List, Details, CSV, Tree };
 typedef QPair<QString, QString> QStringPair;
 typedef QList<QStringPair> pairList;
 
@@ -177,16 +177,17 @@ public:
     bool quiet=false;
 
     /* printing of information to console */
-    QString PrintDataDictionary(bool details=false);
-    QString PrintExperiments(bool details=false);
-    QString PrintGroupAnalyses(bool details=false);
-    QString PrintInterventions(qint64 subjectRowID, PrintingType printType=PrintingType::List);
-    QString PrintObservations(qint64 subjectRowID, PrintingType printType=PrintingType::List);
+    QString PrintAnalyses(qint64 studyRowID, PrintFormat printFormat=PrintFormat::List);
+    QString PrintDataDictionary(PrintFormat printFormat=PrintFormat::List);
+    QString PrintExperiments(PrintFormat printFormat=PrintFormat::List);
+    QString PrintGroupAnalyses(PrintFormat printFormat=PrintFormat::List);
+    QString PrintInterventions(qint64 subjectRowID, PrintFormat printFormat=PrintFormat::List);
+    QString PrintObservations(qint64 subjectRowID, PrintFormat printFormat=PrintFormat::List);
     QString PrintPackage();
-    QString PrintPipelines(bool details=false);
-    QString PrintSeries(qint64 studyRowID, bool details=false);
-    QString PrintStudies(qint64 subjectRowID, bool details=false);
-    QString PrintSubjects(PrintingType printType=PrintingType::List);
+    QString PrintPipelines(PrintFormat printFormat=PrintFormat::List);
+    QString PrintSeries(qint64 studyRowID, PrintFormat printFormat=PrintFormat::List);
+    QString PrintStudies(qint64 subjectRowID, PrintFormat printFormat=PrintFormat::List);
+    QString PrintSubjects(PrintFormat printFormat=PrintFormat::List);
     QString PrintTree();
 
 private:
