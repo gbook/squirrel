@@ -80,7 +80,7 @@ squirrel::squirrel(bool dbg, bool q)
     databaseUUID = QUuid::createUuid().toString(QUuid::WithoutBraces);
     Debug(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
 
-    if (!DatabaseConnect()) {
+    if (DatabaseConnect()) {
         Log("Error connecting to database. Unable to initilize squirrel library");
         isValid = false;
     }
@@ -164,8 +164,10 @@ bool squirrel::DatabaseConnect() {
         QFile::remove(QDir::tempPath() + "/" + databaseUUID + "-sqlite.db");
         db.setDatabaseName(QDir::tempPath() + "/" + databaseUUID + "-sqlite.db");
     }
-    else
+    else {
         db.setDatabaseName(":memory:");
+        Debug("Set database name to :memory:");
+    }
 
     if (db.open()) {
         Debug(QString("Successfuly opened SQLite database [%1]").arg(db.databaseName()), __FUNCTION__);
