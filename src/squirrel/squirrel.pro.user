@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 15.0.1, 2025-02-07T14:15:21. -->
+<!-- Written by QtCreator 15.0.1, 2025-02-10T14:37:42. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -206,7 +206,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/squirrel/src/squirrel/squirrel.pro</value>
     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
-    <value type="QString" key="RunConfiguration.Arguments">info D:/BSNIP2-Georgia.sqrl</value>
+    <value type="QString" key="RunConfiguration.Arguments">modify D:/BSNIP2-Georgia.sqrl --operation splitbymodality</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

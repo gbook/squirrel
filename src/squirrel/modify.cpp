@@ -716,6 +716,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
         sqrl2->SetFileMode(FileMode::NewPackage);
         sqrl2->SetPackagePath(newPackagePath);
         sqrl2->SetOverwritePackage(true);
+        sqrl2->DataFormat = "orig";
         QString newDbID = sqrl2->GetDatabaseUUID();
         //sqrl2->SetSystemTempDir();
 

@@ -416,21 +416,32 @@ bool squirrel::Read() {
                 if (!quickRead) {
                     /* read any params from the data/Subject/Study/Series/params.json file */
                     QString parms;
-                    QString paramsfilepath = QString("data/%1/%2/%3/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    QString paramsfilepath;
+                    #ifdef Q_OS_WINDOWS
+                        paramsfilepath = QString("data\\%1\\%2\\%3\\params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    #else
+                        paramsfilepath = QString("data/%1/%2/%3/params.json").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    #endif
                     if (ExtractArchiveFileToMemory(GetPackagePath(), paramsfilepath, parms)) {
                         sqrlSeries.params = ReadParamsFile(parms);
-                        Log(QString("Read params file [%1]. series.params contains [%2] items").arg(paramsfilepath).arg(sqrlSeries.params.size()));
+                        Debug(QString("Read params file [%1]. series.params contains [%2] items").arg(paramsfilepath).arg(sqrlSeries.params.size()));
                     }
                     else {
                         Log("Unable to read params file [" + paramsfilepath + "]");
                     }
 
                     /* get file listing */
-                    QString seriesPath = QString("data/%1/%2/%3").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    QString seriesPath;
+                    #ifdef Q_OS_WINDOWS
+                        seriesPath = QString("data\\%1\\%2\\%3").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    #else
+                        seriesPath = QString("data/%1/%2/%3").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
+                    #endif
+
                     QStringList files;
                     QString m;
                     GetArchiveFileListing(GetPackagePath(), seriesPath, files, m);
-                    Log(QString("archiveSeriesPath [%1] found [%2] files [%3]").arg(seriesPath).arg(files.size()).arg(files.join(",")));
+                    Debug(QString("archiveSeriesPath [%1] found [%2] files [%3]").arg(seriesPath).arg(files.size()).arg(files.join(",")));
                     sqrlSeries.files = files;
                     sqrlSeries.FileCount = files.size();
                 }
@@ -670,18 +681,32 @@ bool squirrel::Write(bool writeLog) {
                         Debug(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
                         /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
-                            QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                            Log(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
-                            Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+                            if (utils::CopyFileToDir(f, seriesPath))
+                                Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
+                            else
+                                Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
+
+                            //QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
+                            //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
                     }
                     else if (study.Modality.toUpper() != "MR") {
                         Debug(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
                         /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
-                            QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                            Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath));
-                            Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+                            if (utils::CopyFileToDir(f, seriesPath))
+                                Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
+                            else
+                                Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
+
+                            //QString systemstring;
+                            //#ifdef Q_OS_WINDOWS
+                            //    systemstring = QString("copy %1 %2/").arg(f).arg(seriesPath);
+                            //#else
+                            //    systemstring = QString("cp -uv %1 %2/").arg(f).arg(seriesPath);
+                            //#endif
+                            //Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath));
+                            //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
                     }
                     else if ((DataFormat == "anon") || (DataFormat == "anonfull")) {
@@ -691,8 +716,13 @@ bool squirrel::Write(bool writeLog) {
                             /* copy all files to temp directory */
                             QString systemstring;
                             foreach (QString f, series.stagedFiles) {
-                                systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
-                                Debug(utils::SystemCommand(systemstring), __FUNCTION__);
+                                if (utils::CopyFileToDir(f, td))
+                                    Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(td));
+                                else
+                                    Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(td));
+
+                                //systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
+                                //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                             }
 
                             /* anonymize the directory */
@@ -1269,7 +1299,7 @@ bool squirrel::MakeTempDir(QString &dir) {
     //#ifdef Q_OS_WINDOWS
     //    d = QString("C:/tmp/%1").arg(utils::GenerateRandomString(20));
     //#else
-    d = QString(QDir::tempPath() + "%1").arg(utils::GenerateRandomString(20));
+    d = QString(QDir::tempPath() + "/%1").arg(utils::GenerateRandomString(20));
     //#endif
 
     QString m;
