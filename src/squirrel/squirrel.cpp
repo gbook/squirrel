@@ -78,7 +78,7 @@ squirrel::squirrel(bool dbg, bool q)
     quickRead = true;
     quiet = q;
     databaseUUID = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    Debug(QString("Generated UUID [%1]").arg(databaseUUID), __FUNCTION__);
+    Log(QString("Generated UUID [%1]").arg(databaseUUID));
 
     if (!DatabaseConnect()) {
         Log("Error connecting to database. Unable to initilize squirrel library");
@@ -86,7 +86,7 @@ squirrel::squirrel(bool dbg, bool q)
     }
 
     if (!InitializeDatabase()) {
-        Log("Error connecting to database. Unable to initilize squirrel library");
+        Log("Error initializing database");
         isValid = false;
     }
 
