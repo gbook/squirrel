@@ -252,7 +252,7 @@ QString squirrelSeries::PrintTree(bool isLast) {
 
     QString dateTime = DateTime.toString("yyyy-MM-dd HH:mm:ss");
     QString protocol = Protocol.trimmed();
-    QString seriesDesc = seriesDesc.trimmed();
+    QString seriesDesc = Description.trimmed();
     if (dateTime == "")
         dateTime = "(blankDateTime)";
     if (protocol == "")
@@ -288,7 +288,10 @@ QJsonObject squirrelSeries::ToJSON() {
     json["BehavioralSize"] = BehavioralSize;
     json["Description"] = Description;
     json["FileCount"] = FileCount;
-    json["Protocol"] = Protocol;
+    if (Protocol == "")
+        json["Protocol"] = Description;
+    else
+        json["Protocol"] = Protocol;
     json["Run"] = Run;
     json["SequenceNumber"] = SequenceNumber;
     json["SeriesDatetime"] = DateTime.toString("yyyy-MM-dd HH:mm:ss");
