@@ -29,12 +29,12 @@ class modify
 public:
     modify();
 
-    bool DoModify(QString packagePath, QString operation, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
+    bool DoModify(QString packagePath, QString operation, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
     void PrintVariables(QString object);
-    bool AddObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
-    bool RemoveObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
-    bool UpdateObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
-    bool SplitByModality(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
+    bool AddObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
+    bool RemoveObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
+    bool UpdateObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m);
+    bool SplitByModality(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString &m);
 };
 
 #endif // MODIFY_H

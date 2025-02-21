@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "operation", "Operation to perform on the package [add  remove  update  splitbymodality].", "operation"));
         p.addOption(QCommandLineOption(QStringList() << "object", "Object type to perform operation on [package  subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "datapath", "Path to new object data. Can include wildcard: /path/*.dcm", "path"));
-        p.addOption(QCommandLineOption(QStringList() << "recursive", "Search the data path recursively"));
+        //p.addOption(QCommandLineOption(QStringList() << "recursive", "Search the data path recursively"));
         p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to modify.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when adding a study, series, observation, intervention, or analysis object.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when adding a series or analysis object (subjectid is also needed).", "num"));
@@ -293,14 +293,14 @@ int main(int argc, char *argv[])
         QString subjectID = p.value("subjectid").trimmed();
         QString variablelist = p.value("variablelist").trimmed();
         int studyNum = p.value("studynum").toInt();
-        bool recursive = p.isSet("recursive");
+        //bool recursive = p.isSet("recursive");
 
         QString m;
         modify mod;
         if (variablelist != "") {
             mod.PrintVariables(variablelist);
         }
-        else if (!mod.DoModify(inputPath, operation, objectType, dataPath, recursive, objectData, objectID, subjectID, studyNum, m)) {
+        else if (!mod.DoModify(inputPath, operation, objectType, dataPath, objectData, objectID, subjectID, studyNum, m)) {
             CommandLineError(p,m);
         }
     }

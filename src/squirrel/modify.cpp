@@ -33,28 +33,28 @@ modify::modify() {
 /* ---------------------------------------------------------------------------- */
 /* ----- DoModify ------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::DoModify(QString packagePath, QString operation, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::DoModify(QString packagePath, QString operation, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     if (operation == "add") {
-        if (AddObject(packagePath, objectType, dataPath, recursive, objectData, objectID, subjectID, studyNum, m))
+        if (AddObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
             return true;
         else
             return false;
     }
     else if (operation == "remove") {
-        if (RemoveObject(packagePath, objectType, dataPath, recursive, objectData, objectID, subjectID, studyNum, m))
+        if (RemoveObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
             return true;
         else
             return false;
     }
     else if (operation == "update") {
-        if (UpdateObject(packagePath, objectType, dataPath, recursive, objectData, objectID, subjectID, studyNum, m))
+        if (UpdateObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
             return true;
         else
             return false;
     }
     else if (operation == "splitbymodality") {
-        if (SplitByModality(packagePath, objectType, dataPath, recursive, objectData, objectID, subjectID, studyNum, m))
+        if (SplitByModality(packagePath, objectType, dataPath, objectData, objectID, m))
             return true;
         else
             return false;
@@ -69,7 +69,7 @@ bool modify::DoModify(QString packagePath, QString operation, QString objectType
 /* ---------------------------------------------------------------------------- */
 /* ----- AddObject ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
-bool modify::AddObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::AddObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     QStringList objectsWithPaths = {"series", "analysis", "experiment", "pipeline", "groupanalysis"};
 
@@ -438,13 +438,14 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
     sqrl->Write(true);
 
     delete sqrl;
+    return true;
 }
 
 
 /* ---------------------------------------------------------------------------- */
 /* ----- RemoveObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::RemoveObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::RemoveObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     if (objectType != "") {
         /* load the package */
@@ -548,7 +549,7 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
 /* ---------------------------------------------------------------------------- */
 /* ----- UpdateObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::UpdateObject(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::UpdateObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     if (objectType != "") {
         /* load the package */
@@ -628,7 +629,7 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
  * @param m
  * @return
  */
-bool modify::SplitByModality(QString packagePath, QString objectType, QString dataPath, bool recursive, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::SplitByModality(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString &m) {
     /* Note: the data is COPIED, not moved, from the original package to the new packages.
      * So an example package of 100MB with 2 modalities will write out 2 packages, with each being 50MB
      * and the original package will remain on disk. After the split operation there will be three image packages

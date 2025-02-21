@@ -3,7 +3,8 @@
 QT -= gui
 QT += sql
 
-CONFIG += c++17 cmdline
+CONFIG += c++17
+CONFIG += cmdline
 CONFIG -= app_bundle
 CONFIG += silent
 
