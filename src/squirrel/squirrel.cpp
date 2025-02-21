@@ -130,12 +130,17 @@ bool squirrel::Get7zipLibPath() {
 #else
     if (QFile::exists("/usr/libexec/p7zip/7z.so")) {
         p7zipLibPath = "/usr/libexec/p7zip/7z.so";
-        Debug("Found 7zip path /usr/libexec/p7zip/7z.so", __FUNCTION__);
+        Debug("Found 7zip library path /usr/libexec/p7zip/7z.so", __FUNCTION__);
         return true;
     }
     else if (QFile::exists("/usr/libexec/p7zip/7za.so")) {
         p7zipLibPath = "/usr/libexec/p7zip/7za.so";
-        Debug("Found 7zip path /usr/libexec/p7zip/7za.so", __FUNCTION__);
+        Debug("Found 7zip library path /usr/libexec/p7zip/7za.so", __FUNCTION__);
+        return true;
+    }
+    else if (QFile::exists("/usr/lib/7zip/7z.so")) {
+        p7zipLibPath = "/usr/lib/7zip/7z.so";
+        Debug("Found 7zip library path /usr/lib/7zip/7z.so", __FUNCTION__);
         return true;
     }
 #endif
