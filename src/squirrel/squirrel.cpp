@@ -2846,17 +2846,21 @@ bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath,
         Bit7zLibrary lib(p7zipLibPath.toStdString());
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             BitFileExtractor extractor(lib, BitFormat::Zip);
-            //extractor.setProgressCallback(progressCallback);
-            //extractor.setTotalCallback(totalArchiveSizeCallback);
+            extractor.setProgressCallback(progressCallback);
+            extractor.setTotalCallback(totalArchiveSizeCallback);
             extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
         }
         else {
             BitFileExtractor extractor(lib, BitFormat::SevenZip);
-            //extractor.setProgressCallback(progressCallback);
-            //extractor.setTotalCallback(totalArchiveSizeCallback);
+            extractor.setProgressCallback(progressCallback);
+            extractor.setTotalCallback(totalArchiveSizeCallback);
+            Debug("Before calling extractMatching()", __FUNCTION__);
             extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
+            Debug(QString("After calling extractMatching() buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
         }
+        Debug(QString("Copying buffer to std::string. Buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
         std::string str{buffer.begin(), buffer.end()};
+        Debug(QString("Copying std::string to QString. string size [%1] bytes").arg(str.size()), __FUNCTION__);
         fileContents = QString::fromStdString(str);
         Debug(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
         return true;
