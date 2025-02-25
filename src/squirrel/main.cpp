@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     p.addVersionOption();
 
     /* setup and obtain the tool we're supposed to run */
-    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel - Converts BIDS to squirrel\n   dicom2squirrel - Convert DICOM to squirrel\n   info - Display information about a package or its contents\n   modify - Add/remove objects from a package\n   validate - Check if a package is valid");
+    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel - Converts BIDS to squirrel\n   dicom2squirrel - Convert DICOM to squirrel\n   info - Display information about a package or its contents\n   modify - Add/remove objects from a package\n   extract - Extract data from a package\n   validate - Check if a package is valid");
     p.parse(QCoreApplication::arguments());
     const QStringList args = p.positionalArguments();
     const QString command = args.isEmpty() ? QString() : args.first();
@@ -301,6 +301,41 @@ int main(int argc, char *argv[])
             mod.PrintVariables(variablelist);
         }
         else if (!mod.DoModify(inputPath, operation, objectType, dataPath, objectData, objectID, subjectID, studyNum, m)) {
+            CommandLineError(p,m);
+        }
+    }
+    else if (command == "extract") {
+        p.clearPositionalArguments();
+        p.addPositionalArgument("extract", "Extract objects to disk from a squirrel package.", "extract");
+        p.addPositionalArgument("package", "The squirrel package.", "package");
+        p.parse(QCoreApplication::arguments());
+        QStringList args = p.positionalArguments();
+        QString inputPath;
+        if (args.size() > 1)
+            inputPath = args[1];
+
+        /* command line flag options */
+        p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
+        p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Quiet mode. No printing of headers and checks"));
+        p.addOption(QCommandLineOption(QStringList() << "object", "Object type to perform operation on [package  subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "outdir", "Path to output directory", "outdir"));
+        p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to modify.", "id"));
+        p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when adding a study, series, observation, intervention, or analysis object.", "id"));
+        p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when adding a series or analysis object (subjectid is also needed).", "num"));
+
+        p.process(a);
+
+        QString operation = p.value("operation").trimmed();
+        QString objectType = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
+        QString outputPath = p.value("outdir").trimmed();
+        QString objectData = p.value("objectdata").trimmed();
+        QString objectID = p.value("objectid").trimmed();
+        QString subjectID = p.value("subjectid").trimmed();
+        int studyNum = p.value("studynum").toInt();
+
+        QString m;
+        extract ext;
+        else if (!ext.DoExtraction(inputPath, operation, objectType, dataPath, objectData, objectID, subjectID, studyNum, m)) {
             CommandLineError(p,m);
         }
     }
