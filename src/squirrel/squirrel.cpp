@@ -2447,6 +2447,31 @@ qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
 }
 
 
+bool squirrel::ExtractSubject(qint64 subjectRowID, QString outDir, bool recursive) {
+    if (subjectRowID < 0)
+        return false;
+
+    /* get the subject */
+    squirrelSubject s = GetSubject(subjectRowID);
+    s.PrintDetails();
+    QString virtualPath = s.VirtualPath();
+    #ifdef Q_OS_WINDOWS
+        virtualPath += "\\*";
+    #else
+        virtualPath += "/*";
+    #endif
+
+    QString m;
+    if (ExtractArchiveFilesToDirectory(packagePath, virtualPath, outDir, m)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
+
+
 /* ------------------------------------------------------------ */
 /* ----- ResequenceSubjects ----------------------------------- */
 /* ------------------------------------------------------------ */
@@ -3273,6 +3298,7 @@ bool squirrel::UpdateJsonHeader(QString json) {
 /* ----- ExtractArchiveFilesToDirectory ----------------------- */
 /* ------------------------------------------------------------ */
 bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m) {
+    utils::Print(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir));
     try {
         using namespace bit7z;
         Bit7zLibrary lib(p7zipLibPath.toStdString());

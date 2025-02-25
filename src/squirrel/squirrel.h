@@ -132,17 +132,10 @@ public:
     qint64 FindStudyByUID(QString studyUID);
     qint64 FindSubject(QString id);
 
+    /* extract objects */
+    bool ExtractSubject(qint64 subjectRowID, QString outDir, bool recursive=false);
+
     /* remove objects */
-    //bool RemoveAnalysis(qint64 analysisRowID);
-    //bool RemoveDataDictionary(qint64 dataDictionaryRowID);
-    //bool RemoveExperiment(qint64 experimentRowID);
-    //bool RemoveGroupAnalysis(qint64 groupAnalysisRowID);
-    //bool RemoveIntervention(qint64 InterventionRowID);
-    //bool RemoveObservation(qint64 observationRowID);
-    //bool RemovePipeline(qint64 pipelineRowID);
-    //bool RemoveSeries(qint64 seriesRowID);
-    //bool RemoveStudy(qint64 studyRowID);
-    //bool RemoveSubject(qint64 subjectRowID);
     bool RemoveObject(QString objectType, qint64 objectRowID);
 
     bool AddStagedFiles(QString objectType, qint64 rowid, QStringList files);

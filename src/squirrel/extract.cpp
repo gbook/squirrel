@@ -21,40 +21,54 @@
   ------------------------------------------------------------------------------ */
 
 #include "extract.h"
+#include "utils.h"
 
 extract::extract() {}
 
 /* ---------------------------------------------------------------------------- */
 /* ----- DoExtract ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
-bool extract::DoExtract(QString packagePath, QString operation, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool extract::DoExtract(QString packagePath, QString outputPath, QString objectType, QString objectIdentifier, QString subjectID, int studyNum, QString &m) {
 
-    if (operation == "add") {
-        if (AddObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
-            return true;
-        else
+    utils::Print(QString("Extracting subject [%1] from package [%2] to directory [%3]...").arg(objectIdentifier).arg(packagePath).arg(outputPath));
+
+    /* read squirrel package */
+    squirrel *sqrl = new squirrel();
+    sqrl->SetFileMode(FileMode::ExistingPackage);
+    sqrl->SetPackagePath(packagePath);
+    sqrl->SetQuickRead(true);
+    sqrl->Read();
+
+    if (objectType == "subject") {
+        /* find the subjectRowID */
+        qint64 subjectRowID = sqrl->FindSubject(objectIdentifier);
+        if (subjectRowID < 0) {
+            utils::Print("Subject [" + objectIdentifier + "] not found in this package");
+            delete sqrl;
             return false;
-    }
-    else if (operation == "remove") {
-        if (RemoveObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
-            return true;
-        else
+        }
+
+        /* create outputDir */
+        QString m;
+        if (utils::MakePath(outputPath, m)) {
+            utils::Print("Created output path [" + outputPath + "]");
+        }
+        else {
+            utils::Print("Error creating output path [" + outputPath + "]. Message [" + m + "]");
+            delete sqrl;
             return false;
-    }
-    else if (operation == "update") {
-        if (UpdateObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
-            return true;
-        else
-            return false;
-    }
-    else if (operation == "splitbymodality") {
-        if (SplitByModality(packagePath, objectType, dataPath, objectData, objectID, m))
-            return true;
-        else
-            return false;
+        }
+
+        /* extract the subject */
+        utils::Print("Extracting subject [" + objectIdentifier + "] to output path [" + outputPath + "]");
+        sqrl->ExtractSubject(subjectRowID, outputPath);
     }
     else {
-        m = "Invalid operation [" + operation + "] specified";
+        m = "Invalid oject type [" + objectType + "] specified";
+        delete sqrl;
         return false;
     }
+
+    delete sqrl;
+    return true;
 }

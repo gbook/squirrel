@@ -376,7 +376,11 @@ QString squirrelSubject::VirtualPath() {
     else
         subjectDir = QString("%1").arg(SequenceNumber);
 
-    vPath = QString("data/%1").arg(subjectDir);
+    #ifdef Q_OS_WINDOWS
+        vPath = QString("data\\%1").arg(subjectDir);
+    #else
+        vPath = QString("data/%1").arg(subjectDir);
+    #endif
 
     return vPath;
 }
