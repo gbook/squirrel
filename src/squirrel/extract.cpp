@@ -61,7 +61,7 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
 
         /* extract the subject */
         utils::Print("Extracting subject [" + objectIdentifier + "] to output path [" + outputPath + "]");
-        sqrl->ExtractSubject(subjectRowID, outputPath);
+        sqrl->ExtractObject("subject", subjectRowID, outputPath);
     }
     else {
         m = "Invalid oject type [" + objectType + "] specified";

@@ -2447,14 +2447,88 @@ qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
 }
 
 
-bool squirrel::ExtractSubject(qint64 subjectRowID, QString outDir, bool recursive) {
-    if (subjectRowID < 0)
+/* ------------------------------------------------------------ */
+/* ----- ExtractSubject --------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Extract an object from the archive into a directory on disk
+ * @param objectType the object type
+ * @param subjectRowID The object rowID
+ * @param outDir output directory
+ * @param recursive `true` if all data should be extracted, recursively (studies and series). This is the default
+ * @return `true` if successful, `false` otherwise
+ */
+bool squirrel::ExtractObject(QString objectType, qint64 objectRowID, QString outDir, bool recursive) {
+    if (objectRowID < 0) {
+        Log("Invalid object ID []");
         return false;
+    }
 
-    /* get the subject */
-    squirrelSubject s = GetSubject(subjectRowID);
-    s.PrintDetails();
-    QString virtualPath = s.VirtualPath();
+    QString virtualPath;
+    QString jsonPath;
+    QString j;
+    if (objectType == "subject") {
+        squirrelSubject s = GetSubject(objectRowID);
+        virtualPath = s.VirtualPath();
+        jsonPath = outDir + "/subject.json";
+        QJsonDocument doc(s.ToJSON());
+        j = doc.toJson();
+    }
+    else if (objectType == "study") {
+        squirrelStudy s = GetStudy(objectRowID);
+        virtualPath = s.VirtualPath();
+        jsonPath = outDir + "/study.json";
+        QJsonDocument doc(s.ToJSON());
+        j = doc.toJson();
+    }
+    else if (objectType == "series") {
+        squirrelSeries s = GetSeries(objectRowID);
+        virtualPath = s.VirtualPath();
+        jsonPath = outDir + "/series.json";
+        QJsonDocument doc(s.ToJSON());
+        j = doc.toJson();
+    }
+    else if (objectType == "analysis") {
+        squirrelAnalysis a = GetAnalysis(objectRowID);
+        virtualPath = a.VirtualPath();
+        jsonPath = outDir + "/analysis.json";
+        QJsonDocument doc(a.ToJSON());
+        j = doc.toJson();
+    }
+    else if (objectType == "experiment") {
+        squirrelExperiment e = GetExperiment(objectRowID);
+        virtualPath = e.VirtualPath();
+        jsonPath = outDir + "/experiment.json";
+        QJsonDocument doc(e.ToJSON());
+        j = doc.toJson();
+    }
+    else if (objectType == "pipeline") {
+        squirrelPipeline p = GetPipeline(objectRowID);
+        virtualPath = p.VirtualPath();
+        jsonPath = outDir + "/pipeline.json";
+        QJsonDocument doc(p.ToJSON(jsonPath));
+        j = doc.toJson();
+    }
+    else if (objectType == "groupanalysis") {
+        squirrelGroupAnalysis g = GetGroupAnalysis(objectRowID);
+        virtualPath = g.VirtualPath();
+        jsonPath = outDir + "/groupanalysis.json";
+        QJsonDocument doc(g.ToJSON());
+        j = doc.toJson();
+    }
+    else if (objectType == "datadictionary") {
+        squirrelDataDictionary d = GetDataDictionary(objectRowID);
+        virtualPath = d.VirtualPath();
+        jsonPath = outDir + "/datadictionary.json";
+        QJsonDocument doc(d.ToJSON());
+        j = doc.toJson();
+    }
+    else {
+        Log("Unknown object type [" + objectType + "]");
+        return false;
+    }
+
+    /* do the extraction to disk */
     #ifdef Q_OS_WINDOWS
         virtualPath += "\\*";
     #else
@@ -2463,12 +2537,15 @@ bool squirrel::ExtractSubject(qint64 subjectRowID, QString outDir, bool recursiv
 
     QString m;
     if (ExtractArchiveFilesToDirectory(packagePath, virtualPath, outDir, m)) {
+        /* write out the JSON to disk for this subject as well */
+        if (!utils::WriteTextFile(jsonPath, j))
+            Log("Error writing " + jsonPath);
+
         return true;
     }
     else {
         return false;
     }
-
 }
 
 
