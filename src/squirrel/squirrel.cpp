@@ -680,7 +680,12 @@ bool squirrel::Write(bool writeLog) {
             Debug(QString("Writing [%1] series for [%2][%3]").arg(serieses.size()).arg(subject.ID).arg(study.StudyNumber));
             foreach (squirrelSeries series, serieses) {
                 QString m;
-                QString seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
+                QString seriesPath;
+                #ifdef Q_OS_WINDOWS
+                    seriesPath = QString("%1\\%2").arg(workingDir).arg(series.VirtualPath());
+                #else
+                    seriesPath = QString("%1/%2").arg(workingDir).arg(series.VirtualPath());
+                #endif
 
                 if (fileMode == FileMode::NewPackage) {
                     utils::MakePath(seriesPath,m);
