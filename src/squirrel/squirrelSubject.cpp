@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel subject.cpp
-  Copyright (C) 2004 - 2024
+  Copyright (C) 2004 - 2025
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -22,7 +22,6 @@
 
 #include "squirrelSubject.h"
 #include "utils.h"
-
 
 /* ------------------------------------------------------------ */
 /* ----- subject ---------------------------------------------- */
@@ -246,7 +245,7 @@ bool squirrelSubject::Remove() {
         int studyRowID = q.value("StudyRowID").toInt();
 
         /* ... delete any staged Study files */
-        utils::RemoveStagedFileList(databaseUUID, studyRowID, "study");
+        utils::RemoveStagedFileList(databaseUUID, studyRowID, Study);
 
         /* ... delete all staged Series files */
         QSqlQuery q2(QSqlDatabase::database(databaseUUID));
@@ -257,7 +256,7 @@ bool squirrelSubject::Remove() {
             int seriesRowID = q2.value("SeriesRowID").toInt();
 
             /* ... delete any staged Series files */
-            utils::RemoveStagedFileList(databaseUUID, seriesRowID, "series");
+            utils::RemoveStagedFileList(databaseUUID, seriesRowID, Series);
         }
 
         /* ... delete all series for those studies */
@@ -276,7 +275,7 @@ bool squirrelSubject::Remove() {
     q.bindValue(":subjectid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    utils::RemoveStagedFileList(databaseUUID, objectID, "subject");
+    utils::RemoveStagedFileList(databaseUUID, objectID, Subject);
 
     /* in case anyone tries to use this object again */
     objectID = -1;

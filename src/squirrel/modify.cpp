@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel modify.cpp
-  Copyright (C) 2004 - 2024
+  Copyright (C) 2004 - 2025
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -33,28 +33,30 @@ modify::modify() {
 /* ---------------------------------------------------------------------------- */
 /* ----- DoModify ------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::DoModify(QString packagePath, QString operation, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::DoModify(QString packagePath, QString operation, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+
+    //ObjectType object = squirrel::ObjectTypeToEnum(objectType);
 
     if (operation == "add") {
-        if (AddObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
+        if (AddObject(packagePath, object, dataPath, objectData, objectID, subjectID, studyNum, m))
             return true;
         else
             return false;
     }
     else if (operation == "remove") {
-        if (RemoveObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
+        if (RemoveObject(packagePath, object, dataPath, objectData, objectID, subjectID, studyNum, m))
             return true;
         else
             return false;
     }
     else if (operation == "update") {
-        if (UpdateObject(packagePath, objectType, dataPath, objectData, objectID, subjectID, studyNum, m))
+        if (UpdateObject(packagePath, object, dataPath, objectData, objectID, subjectID, studyNum, m))
             return true;
         else
             return false;
     }
     else if (operation == "splitbymodality") {
-        if (SplitByModality(packagePath, objectType, dataPath, objectData, objectID, m))
+        if (SplitByModality(packagePath, dataPath, objectData, objectID, m))
             return true;
         else
             return false;
@@ -69,16 +71,16 @@ bool modify::DoModify(QString packagePath, QString operation, QString objectType
 /* ---------------------------------------------------------------------------- */
 /* ----- AddObject ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
-bool modify::AddObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
-
-    QStringList objectsWithPaths = {"series", "analysis", "experiment", "pipeline", "groupanalysis"};
+bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     /* check if the user should have specified a path */
-    if (objectsWithPaths.contains(objectType)) {
+    if ((object == Series) || (object == Analysis) || (object == Experiment) || (object == Pipeline) || (object == GroupAnalysis)) {
+    }
+    else {
 
         /* check if that path is specified */
         if (dataPath == "") {
-            m = QString("No datapath specified for this object. A datapath must be specified for %1 objects.").arg(objectType);
+            m = "No datapath specified for this object type. A datapath must be specified.";
             return false;
         }
 
@@ -113,7 +115,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
     }
 
     /* ----- subject ----- */
-    if (objectType == "subject") {
+    if (object == Subject) {
         qint64 subjectRowID;
         subjectRowID = sqrl->FindSubject(vars["ID"]);
         if (subjectRowID < 0) {
@@ -138,7 +140,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- study ----- */
-    else if (objectType == "study") {
+    else if (object == Study) {
         qint64 subjectRowID = sqrl->FindSubject(subjectID);
         qint64 studyRowID = sqrl->FindStudy(subjectID, vars["StudyNumber"].toInt());
         if (studyRowID < 0) {
@@ -169,7 +171,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- series ----- */
-    else if (objectType == "series") {
+    else if (object == Series) {
         qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
         qint64 seriesRowID = sqrl->FindSeries(subjectID, studyNum, vars["SeriesNumber"].toInt());
         if (seriesRowID < 0) {
@@ -194,7 +196,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- observation ----- */
-    else if (objectType == "observation") {
+    else if (object == Observation) {
         qint64 subjectRowID = sqrl->FindSubject(subjectID);
         if (subjectRowID < 0) {
             m = QString("Subject [%1] not found in package").arg(subjectID);
@@ -264,7 +266,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- intervention ----- */
-    else if (objectType == "intervention") {
+    else if (object == Intervention) {
         qint64 subjectRowID = sqrl->FindSubject(subjectID);
         if (subjectRowID < 0) {
             m = QString("Subject [%1] not found in package").arg(subjectID);
@@ -294,7 +296,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- analysis ----- */
-    else if (objectType == "analysis") {
+    else if (object == Analysis) {
         qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
         qint64 analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
         if (analysisRowID < 0) {
@@ -326,7 +328,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- experiment ----- */
-    else if (objectType == "experiment") {
+    else if (object == Experiment) {
         qint64 experimentRowID = sqrl->FindExperiment(vars["ExperimentName"]);
         if (experimentRowID < 0) {
             squirrelExperiment experiment(sqrl->GetDatabaseUUID());
@@ -344,7 +346,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- pipeline ----- */
-    else if (objectType == "pipeline") {
+    else if (object == Pipeline) {
         qint64 pipelineRowID = sqrl->FindPipeline(vars["PipelineName"]);
         if (pipelineRowID < 0) {
             squirrelPipeline pipeline(sqrl->GetDatabaseUUID());
@@ -389,7 +391,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- groupanalysis ----- */
-    else if (objectType == "groupanalysis") {
+    else if (object == GroupAnalysis) {
         qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(vars["GroupAnalysisName"]);
         if (groupAnalysisRowID < 0) {
             squirrelGroupAnalysis groupAnalysis(sqrl->GetDatabaseUUID());
@@ -410,7 +412,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
         }
     }
     /* ----- datadictionary ----- */
-    else if (objectType == "datadictionary") {
+    else if (object == DataDictionary) {
         qint64 dataDictionaryRowID = sqrl->FindDataDictionary(vars["DataDictionaryName"]);
         if (dataDictionaryRowID < 0) {
             squirrelDataDictionary dataDictionary(sqrl->GetDatabaseUUID());
@@ -429,7 +431,7 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
     }
     /* ----- unknown ----- */
     else {
-        m = QString("Unrecognized object type [%1]").arg(objectType);
+        m = "Unknown object type";
         delete sqrl;
         return false;
     }
@@ -445,9 +447,9 @@ bool modify::AddObject(QString packagePath, QString objectType, QString dataPath
 /* ---------------------------------------------------------------------------- */
 /* ----- RemoveObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::RemoveObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
-    if (objectType != "") {
+    //if (object != "") {
         /* load the package */
         squirrel *sqrl = new squirrel();
         sqrl->SetFileMode(FileMode::ExistingPackage);
@@ -459,10 +461,10 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
         }
 
         /* ----- subject ----- */
-        if (objectType == "subject") {
+        if (object == Subject) {
             qint64 subjectRowID = sqrl->FindSubject(objectID);
             if (subjectRowID < 0) {
-                sqrl->RemoveObject("subject", subjectRowID);
+                sqrl->RemoveObject(Subject, subjectRowID);
                 sqrl->ResequenceSubjects();
             }
             else {
@@ -471,11 +473,11 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-        else if (objectType == "study") {
+        else if (object == Study) {
             qint64 studyRowID = sqrl->FindStudy(subjectID, objectID.toInt());
             qint64 subjectRowID = sqrl->FindSubject(objectID);
             if (studyRowID < 0) {
-                sqrl->RemoveObject("study", studyRowID);
+                sqrl->RemoveObject(Study, studyRowID);
                 sqrl->ResequenceStudies(subjectRowID);
             }
             else {
@@ -484,11 +486,11 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-        else if (objectType == "series") {
+        else if (object == Series) {
             qint64 seriesRowID = sqrl->FindSeries(subjectID, studyNum, objectID.toInt());
             qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
             if (seriesRowID < 0) {
-                sqrl->RemoveObject("series", seriesRowID);
+                sqrl->RemoveObject(Series, seriesRowID);
                 sqrl->ResequenceSeries(studyRowID);
             }
             else {
@@ -497,10 +499,10 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-        else if (objectType == "experiment") {
+        else if (object == Experiment) {
             qint64 experimentRowID = sqrl->FindExperiment(objectID);
             if (experimentRowID < 0) {
-                sqrl->RemoveObject("experiment", experimentRowID);
+                sqrl->RemoveObject(Experiment, experimentRowID);
             }
             else {
                 m = QString("Experiment with ExperimentName [%1] not found in package").arg(objectID);
@@ -508,10 +510,10 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-        else if (objectType == "pipeline") {
+        else if (object == Pipeline) {
             qint64 pipelineRowID = sqrl->FindPipeline(objectID);
             if (pipelineRowID < 0) {
-                sqrl->RemoveObject("pipeline", pipelineRowID);
+                sqrl->RemoveObject(Pipeline, pipelineRowID);
             }
             else {
                 m = QString("Pipeline with PipelineName [%1] not found in package").arg(objectID);
@@ -519,10 +521,10 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-        else if (objectType == "groupanalysis") {
+        else if (object == GroupAnalysis) {
             qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(objectID);
             if (groupAnalysisRowID < 0) {
-                sqrl->RemoveObject("groupanalysis", groupAnalysisRowID);
+                sqrl->RemoveObject(GroupAnalysis, groupAnalysisRowID);
             }
             else {
                 m = QString("GroupAnalysis with GroupAnalysisName [%1] not found in package").arg(objectID);
@@ -530,10 +532,10 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-        else if (objectType == "datadictionary") {
+        else if (object == DataDictionary) {
             qint64 dataDictionaryRowID = sqrl->FindDataDictionary(objectID);
             if (dataDictionaryRowID < 0) {
-                sqrl->RemoveObject("datadictionary", dataDictionaryRowID);
+                sqrl->RemoveObject(DataDictionary, dataDictionaryRowID);
             }
             else {
                 m = QString("DataDictionary with DataDictionaryName [%1] not found in package").arg(objectID);
@@ -541,7 +543,11 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
                 return false;
             }
         }
-    }
+        else {
+            m = "Unknown object type";
+            return false;
+        }
+    //}
     return true;
 }
 
@@ -549,9 +555,9 @@ bool modify::RemoveObject(QString packagePath, QString objectType, QString dataP
 /* ---------------------------------------------------------------------------- */
 /* ----- UpdateObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::UpdateObject(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
+bool modify::UpdateObject(QString packagePath, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
-    if (objectType != "") {
+    //if (objectType != "") {
         /* load the package */
         squirrel *sqrl = new squirrel();
         sqrl->SetFileMode(FileMode::ExistingPackage);
@@ -570,7 +576,7 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
         //utils::Print(QString("queryObject [%1]").arg(queryObject.toString()));
 
         /* ----- package ----- */
-        if (objectType == "package") {
+        if (object == Package) {
             //utils::Print("Checkpoint B - objectType is package");
 
             /* read the JSON file from the package --"QJsonObject squirrel::ReadSquirrelHeader()" */
@@ -600,16 +606,15 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
                 utils::Print("Error updating json header in package");
             }
         }
+        else {
+            m = "Unknown object type";
+            return false;
+        }
 
         /* delete the object when done */
         delete sqrl;
 
         return true;
-    }
-    else {
-        m = "object type not specified";
-        return false;
-    }
 }
 
 
@@ -629,7 +634,7 @@ bool modify::UpdateObject(QString packagePath, QString objectType, QString dataP
  * @param m
  * @return
  */
-bool modify::SplitByModality(QString packagePath, QString objectType, QString dataPath, QString objectData, QString objectID, QString &m) {
+bool modify::SplitByModality(QString packagePath, QString dataPath, QString objectData, QString objectID, QString &m) {
     /* Note: the data is COPIED, not moved, from the original package to the new packages.
      * So an example package of 100MB with 2 modalities will write out 2 packages, with each being 50MB
      * and the original package will remain on disk. After the split operation there will be three image packages
@@ -792,7 +797,7 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
                                                 utils::Print(QString("Searching %1 for files matching '*'").arg(newSeriesPath));
                                                 QStringList allFiles = utils::FindAllFiles(newSeriesPath, "*");
                                                 utils::Print(QString("Found %1 files [%2] in path [%3]").arg(allFiles.size()).arg(allFiles.join(", ")).arg(newSeriesPath));
-                                                sqrl2->AddStagedFiles("series", newSeriesRowID, allFiles);
+                                                sqrl2->AddStagedFiles(Series, newSeriesRowID, allFiles);
                                                 sqrl2->Debug(QString("Added staged series files from directory [%1] to seriesRowID [%2]").arg(newSeriesPath).arg(newSeriesRowID), __FUNCTION__);
                                             }
                                         }
@@ -821,11 +826,11 @@ bool modify::SplitByModality(QString packagePath, QString objectType, QString da
 /* ---------------------------------------------------------------------------- */
 /* ----- PrintVariables ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-void modify::PrintVariables(QString object) {
+void modify::PrintVariables(ObjectType object) {
     using namespace std;
     vector<vector<string>> data;
 
-    if (object == "package") {
+    if (object == Package) {
         data = {
             {"Variable","Type","Default","Description"},
             {"Changes","string","","Any CHANGE files"},
@@ -838,7 +843,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "subject") {
+    if (object == Subject) {
         data = {
             {"Variable","Type","Required","Description"},
             {"AlternateIDs","JSON array","","List of alternate IDs. Comma separated"},
@@ -852,7 +857,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "study") {
+    if (object == Study) {
         data = {
             {"Variable","Type","Required","Description"},
             {"AgeAtStudy","number","*","Subject's age in years at the time of the study"},
@@ -870,7 +875,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "series") {
+    if (object == Series) {
         data = {
             {"Variable","Type","Required","Description"},
             {"BidsEntity","string","","BIDS entity (anat, fmri, dwi, etc)"},
@@ -888,7 +893,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "analysis") {
+    if (object == Analysis) {
         data = {
             {"Variable","Type","Required","Description"},
             {"DateStart","date","*","Datetime of the start of the analysis"},
@@ -907,7 +912,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "observation") {
+    if (object == Observation) {
         data = {
             {"Variable","Type","Required","Description"},
             {"DateEnd","datetime","","End datetime of the observation"},
@@ -925,7 +930,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "intervention") {
+    if (object == Intervention) {
         data = {
             {"Variable","Type","Required","Description"},
             {"AdministrationRoute","string","","Drug entry route (oral, IV, unknown, etc)"},
@@ -947,7 +952,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "pipeline") {
+    if (object == Pipeline) {
         data = {
             {"Variable","Type","Required","Description"},
             {"ClusterType","string","","Compute cluster engine (sge or slurm)"},
@@ -984,21 +989,21 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "experiment") {
+    if (object == Experiment) {
         data = {
             {"Variable","Type","Required","Description"},
             {"ExperimentName","string","*","Unique name of the experiment"}
         };
     }
 
-    if (object == "data-dictionary") {
+    if (object == DataDictionary) {
         data = {
             {"Variable","Type","Required","Description"},
             {"DataDictionaryName","string","*","Name of this data dictionary"}
         };
     }
 
-    if (object == "data-dictionary-item") {
+    if (object == DataDictionaryItem) {
         data = {
             {"Variable","Type","Required","Description"},
             {"VariableType","string","*","Type of variable"},
@@ -1011,7 +1016,7 @@ void modify::PrintVariables(QString object) {
         };
     }
 
-    if (object == "group-analysis") {
+    if (object == GroupAnalysis) {
         data = {
             {"Variable","Type","Required","Description"},
             {"Datetime","datetime","","Datetime of the group analysis"},

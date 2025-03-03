@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel extract.cpp
-  Copyright (C) 2004 - 2024
+  Copyright (C) 2004 - 2025
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -39,7 +39,8 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
     sqrl->SetQuickRead(true);
     sqrl->Read();
 
-    if (objectType == "subject") {
+    ObjectType object = sqrl->ObjectTypeToEnum(objectType);
+    if (object == Subject) {
         /* find the subjectRowID */
         qint64 subjectRowID = sqrl->FindSubject(objectIdentifier);
         if (subjectRowID < 0) {
@@ -61,10 +62,10 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
 
         /* extract the subject */
         utils::Print("Extracting subject [" + objectIdentifier + "] to output path [" + outputPath + "]");
-        sqrl->ExtractObject("subject", subjectRowID, outputPath);
+        sqrl->ExtractObject(Subject, subjectRowID, outputPath);
     }
     else {
-        m = "Invalid oject type [" + objectType + "] specified";
+        m = "Invalid oject type [" + sqrl->ObjectTypeToString(object) + "] specified";
         delete sqrl;
         return false;
     }

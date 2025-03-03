@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel study.cpp
-  Copyright (C) 2004 - 2024
+  Copyright (C) 2004 - 2025
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -24,6 +24,7 @@
 #include "utils.h"
 #include <iostream>
 #include <exception>
+#include "squirrel.h"
 
 /* ------------------------------------------------------------ */
 /* ----- study ------------------------------------------------ */
@@ -174,7 +175,7 @@ bool squirrelStudy::Store() {
  */
 bool squirrelStudy::Remove() {
     /* ... delete any staged Study files */
-    utils::RemoveStagedFileList(databaseUUID, objectID, "study");
+    utils::RemoveStagedFileList(databaseUUID, objectID, Study);
 
     /* ... delete all staged Series files */
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
@@ -183,7 +184,7 @@ bool squirrelStudy::Remove() {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
         /* ... delete any staged Series files */
-        utils::RemoveStagedFileList(databaseUUID, q.value("SeriesRowID").toInt(), "series");
+        utils::RemoveStagedFileList(databaseUUID, q.value("SeriesRowID").toInt(), Series);
     }
 
     /* ... delete all series for those studies */
@@ -196,7 +197,7 @@ bool squirrelStudy::Remove() {
     q.bindValue(":subjectid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    utils::RemoveStagedFileList(databaseUUID, objectID, "subject");
+    utils::RemoveStagedFileList(databaseUUID, objectID, Subject);
 
     /* in case anyone tries to use this object again */
     objectID = -1;

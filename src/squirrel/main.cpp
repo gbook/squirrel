@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------------
   Squirrel main.cpp
-  Copyright (C) 2004 - 2024
+  Copyright (C) 2004 - 2025
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
   ------------------------------------------------------------------------------
@@ -30,6 +30,7 @@
 #include "extract.h"
 #include "info.h"
 #include "squirrel.h"
+#include "squirrelTypes.h"
 
 void CommandLineError(QCommandLineParser &p, QString m) {
     std::cout << p.helpText().toStdString().c_str();
@@ -234,7 +235,7 @@ int main(int argc, char *argv[])
         p.process(a);
 
         bool debug = p.isSet("d");
-        QString object = p.value("object").trimmed();
+        ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
         bool details = p.isSet("details");
@@ -251,8 +252,8 @@ int main(int argc, char *argv[])
         else
             printType = PrintFormat::List;
 
-        if (object == "")
-            object = "package";
+        if (object == UnknownObjectType)
+            object = Package;
 
         QString m;
         info information;
@@ -287,21 +288,23 @@ int main(int argc, char *argv[])
         p.process(a);
 
         QString operation = p.value("operation").trimmed();
-        QString objectType = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
+        //QString object = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
+        ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
         QString dataPath = p.value("datapath").trimmed();
         QString objectData = p.value("objectdata").trimmed();
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
-        QString variablelist = p.value("variablelist").trimmed();
+        //QString variablelist = p.value("variablelist").trimmed();
+        ObjectType variableList = squirrel::ObjectTypeToEnum(p.value("variableList").trimmed());
         int studyNum = p.value("studynum").toInt();
         //bool recursive = p.isSet("recursive");
 
         QString m;
         modify mod;
-        if (variablelist != "") {
-            mod.PrintVariables(variablelist);
+        if (variableList != UnknownObjectType) {
+            mod.PrintVariables(variableList);
         }
-        else if (!mod.DoModify(inputPath, operation, objectType, dataPath, objectData, objectID, subjectID, studyNum, m)) {
+        else if (!mod.DoModify(inputPath, operation, object, dataPath, objectData, objectID, subjectID, studyNum, m)) {
             CommandLineError(p,m);
         }
     }
@@ -326,7 +329,7 @@ int main(int argc, char *argv[])
 
         p.process(a);
 
-        QString objectType = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
+        QString object = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
         QString outputPath = p.value("outdir").trimmed();
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
@@ -334,7 +337,7 @@ int main(int argc, char *argv[])
 
         QString m;
         extract ext;
-        if (!ext.DoExtract(inputPath, outputPath, objectType, objectID, subjectID, studyNum, m)) {
+        if (!ext.DoExtract(inputPath, outputPath, object, objectID, subjectID, studyNum, m)) {
             CommandLineError(p,m);
         }
     }

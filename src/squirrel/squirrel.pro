@@ -55,6 +55,7 @@ HEADERS += \
 	squirrelImageIO.h \
 	squirrelIntervention.h \
 	squirrelObservation.h \
+	squirrelTypes.h \
 	squirrelVersion.h \
 	squirrelGroupAnalysis.h \
 	utils.h \
