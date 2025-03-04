@@ -167,16 +167,16 @@ public:
 
     /* printing of information to console */
     QString PrintAnalyses(qint64 studyRowID, PrintFormat printFormat=List);
-    QString PrintDataDictionary(PrintFormat printFormat=PrintFormat::List);
-    QString PrintExperiments(PrintFormat printFormat=PrintFormat::List);
-    QString PrintGroupAnalyses(PrintFormat printFormat=PrintFormat::List);
-    QString PrintInterventions(qint64 subjectRowID, PrintFormat printFormat=PrintFormat::List);
-    QString PrintObservations(qint64 subjectRowID, PrintFormat printFormat=PrintFormat::List);
+    QString PrintDataDictionary(PrintFormat printFormat=List);
+    QString PrintExperiments(PrintFormat printFormat=List);
+    QString PrintGroupAnalyses(PrintFormat printFormat=List);
+    QString PrintInterventions(qint64 subjectRowID, PrintFormat printFormat=List);
+    QString PrintObservations(qint64 subjectRowID, PrintFormat printFormat=List);
     QString PrintPackage();
-    QString PrintPipelines(PrintFormat printFormat=PrintFormat::List);
-    QString PrintSeries(qint64 studyRowID, PrintFormat printFormat=PrintFormat::List);
-    QString PrintStudies(qint64 subjectRowID, PrintFormat printFormat=PrintFormat::List);
-    QString PrintSubjects(PrintFormat printFormat=PrintFormat::List);
+    QString PrintPipelines(PrintFormat printFormat=List);
+    QString PrintSeries(qint64 studyRowID, PrintFormat printFormat=List);
+    QString PrintStudies(qint64 subjectRowID, PrintFormat printFormat=List);
+    QString PrintSubjects(PrintFormat printFormat=List);
     QString PrintTree();
 
     /* database and utility functions */
