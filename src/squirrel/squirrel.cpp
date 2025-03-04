@@ -212,8 +212,8 @@ bool squirrel::InitializeDatabase() {
     q.prepare(tableDataDictionary);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionary]"); utils::Print("Error creating table [DataDictionary]"); return false; }
 
-    q.prepare(tableDataDictionaryItems);
-    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionaryItems]"); utils::Print("Error creating table [DataDictionaryItems]"); return false; }
+    q.prepare(tableDataDictionaryItem);
+    if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [DataDictionaryItem]"); utils::Print("Error creating table [DataDictionaryItem]"); return false; }
 
     q.prepare(tableExperiment);
     if (!utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) { Log("Error creating table [Experiment]"); utils::Print("Error creating table [Experiment]"); return false; }
@@ -370,6 +370,7 @@ bool squirrel::Read() {
         sqrlSubject.Gender = jsonSubject["Gender"].toString();
         sqrlSubject.Ethnicity1 = jsonSubject["Ethnicity1"].toString();
         sqrlSubject.Ethnicity2 = jsonSubject["Ethnicity2"].toString();
+        sqrlSubject.Notes = jsonSubject["Notes"].toString();
         sqrlSubject.Store();
         qint64 subjectRowID = sqrlSubject.GetObjectID();
 
@@ -388,6 +389,7 @@ bool squirrel::Read() {
             sqrlStudy.Equipment = jsonStudy["Equipment"].toString();
             sqrlStudy.Height = jsonStudy["Height"].toDouble();
             sqrlStudy.Modality = jsonStudy["Modality"].toString();
+            sqrlStudy.Notes = jsonStudy["Notes"].toString();
             sqrlStudy.StudyNumber = jsonStudy["StudyNumber"].toInt();
             sqrlStudy.StudyUID = jsonStudy["StudyUID"].toString();
             sqrlStudy.TimePoint = jsonStudy["TimePoint"].toInt();
@@ -701,9 +703,6 @@ bool squirrel::Write(bool writeLog) {
                                 Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
                             else
                                 Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
-
-                            //QString systemstring = QString("cp -uv %1 %2").arg(f).arg(seriesPath);
-                            //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
                     }
                     else if (study.Modality.toUpper() != "MR") {
@@ -714,15 +713,6 @@ bool squirrel::Write(bool writeLog) {
                                 Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
                             else
                                 Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
-
-                            //QString systemstring;
-                            //#ifdef Q_OS_WINDOWS
-                            //    systemstring = QString("copy %1 %2/").arg(f).arg(seriesPath);
-                            //#else
-                            //    systemstring = QString("cp -uv %1 %2/").arg(f).arg(seriesPath);
-                            //#endif
-                            //Log(QString("  ... copying files from %1 to %2").arg(f).arg(seriesPath));
-                            //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                         }
                     }
                     else if ((DataFormat == "anon") || (DataFormat == "anonfull")) {
@@ -736,9 +726,6 @@ bool squirrel::Write(bool writeLog) {
                                     Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(td));
                                 else
                                     Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(td));
-
-                                //systemstring = QString("cp -uv %1 %2").arg(f).arg(td);
-                                //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
                             }
 
                             /* anonymize the directory */
@@ -1272,17 +1259,17 @@ qint64 squirrel::GetObjectCount(ObjectType object) {
 QString squirrel::PrintPackage() {
     QString str;
 
-    qint64 numSubjects = GetObjectCount(Subject);
-    qint64 numStudies = GetObjectCount(Study);
-    qint64 numSeries = GetObjectCount(Series);
-    qint64 numObservations = GetObjectCount(Observation);
-    qint64 numInterventions = GetObjectCount(Intervention);
     qint64 numAnalyses = GetObjectCount(Analysis);
-    qint64 numExperiments = GetObjectCount(Experiment);
-    qint64 numPipelines = GetObjectCount(Pipeline);
-    qint64 numGroupAnalyses = GetObjectCount(GroupAnalysis);
     qint64 numDataDictionaries = GetObjectCount(DataDictionary);
-    //qint64 numDataDictionaryItems = GetObjectCount(DataDictionaryItem);
+    qint64 numDataDictionaryItem = GetObjectCount(DataDictionaryItem);
+    qint64 numExperiments = GetObjectCount(Experiment);
+    qint64 numGroupAnalyses = GetObjectCount(GroupAnalysis);
+    qint64 numInterventions = GetObjectCount(Intervention);
+    qint64 numObservations = GetObjectCount(Observation);
+    qint64 numPipelines = GetObjectCount(Pipeline);
+    qint64 numSeries = GetObjectCount(Series);
+    qint64 numStudies = GetObjectCount(Study);
+    qint64 numSubjects = GetObjectCount(Subject);
 
     QString fileModeStr = "UnknownFileMode";
     if (fileMode == FileMode::NewPackage) fileModeStr = "NewPackage";
@@ -1518,7 +1505,7 @@ QString squirrel::PrintSubjects(PrintFormat printFormat) {
                 if (s.Get())
                     csvLines.append(s.CSVLine());
             }
-            str += utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex");
+            str += utils::Print("ID, AlternateIDs, DateOfBirth, Ethnicity1, Ethnicity2, GUID, Gender, Sex, Notes");
             str += utils::Print(csvLines.join("\n"));
         }
         else if (printFormat == PrintFormat::Tree) {
@@ -3427,7 +3414,7 @@ qint64 squirrel::GetFreeDiskSpace() {
 
 
 /* ------------------------------------------------------------ */
-/* ----- ObjectTypeEnumToString ------------------------------- */
+/* ----- ObjectTypeToString ----------------------------------- */
 /* ------------------------------------------------------------ */
 /**
  * @brief Get the string object type from an enum
@@ -3454,7 +3441,7 @@ QString squirrel::ObjectTypeToString(ObjectType object) {
 
 
 /* ------------------------------------------------------------ */
-/* ----- ObjectTypeStringToEnum ------------------------------- */
+/* ----- ObjectTypeToEnum ------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
  * @brief Get the enum object type from a string

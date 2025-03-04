@@ -129,6 +129,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
             subject.Gender = vars["Gender"];
             subject.Ethnicity1 = vars["Ethnicity1"];
             subject.Ethnicity2 = vars["Ethnicity2"];
+            subject.Notes = vars["Notes"];
             subject.Store();
             /* resequence the newly added subject */
             sqrl->ResequenceSubjects();
@@ -158,6 +159,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
             study.DayNumber = vars["DayNumber"].toInt();
             study.TimePoint = vars["TimePoint"].toInt();
             study.Equipment = vars["Equipment"];
+            study.Notes = vars["Notes"];
             study.subjectRowID = subjectRowID;
             study.Store();
             //studyRowID = study.GetObjectID();
@@ -852,6 +854,7 @@ void modify::PrintVariables(ObjectType object) {
             {"GUID","string","","Globally unique identifier, from NDA"},
             {"Ethnicity1","string","","NIH defined ethnicity: Usually hispanic, non-hispanic"},
             {"Ethnicity2","string","","NIH defined race: americanindian, asian, black, hispanic, islander, white"},
+            {"Notes","string","","Any notes about the subject"},
             {"Sex","char","*","Sex at birth (F,M,O,U)"},
             {"SubjectID","string","*","Unique ID of this subject. Each subject ID must be unique within the package"}
         };
@@ -867,6 +870,7 @@ void modify::PrintVariables(ObjectType object) {
             {"Equipment","string","","Equipment name, on which the imaging session was collected"},
             {"Height","number","","Height in m of the subject at the time of the study"},
             {"Modality","string","*","Defines the type of data. See table of supported modalities"},
+            {"Notes","string","","Any notes about the study"},
             {"StudyNumber","number","*","Study number. May be sequential or correspond to NiDB assigned study number"},
             {"StudyUID","string","","DICOM field StudyUID"},
             {"TimePoint","number","","Similar to day number, but this should be an ordinal number"},

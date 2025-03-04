@@ -22,14 +22,12 @@
 
 #ifndef SQUIRRELSUBJECT_H
 #define SQUIRRELSUBJECT_H
+
 #include <QtSql>
 #include <QString>
 #include <QDate>
 #include <QJsonObject>
 #include <QJsonArray>
-#include "squirrelStudy.h"
-#include "squirrelObservation.h"
-#include "squirrelIntervention.h"
 
 /**
  * @brief The subject class
@@ -67,6 +65,7 @@ public:
     QString GUID;           /*!< globally unique identifier, from NIMH's NDA */
     QString Gender;         /*!< Gender identity */
     QString ID;             /*!< --- Unique identifier --- Must be unique within the squirrel package */
+    QString Notes;
     QString Sex;            /*!< Sex at birth (biological sex) */
     QStringList AlternateIDs;   /*!< List of alternate subject IDs */
     int SequenceNumber;
