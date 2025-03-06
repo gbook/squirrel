@@ -2229,10 +2229,10 @@ qint64 squirrel::FindSubject(QString id) {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("SubjectRowID").toLongLong();
-        Debug(QString("Searched for SubjectID [%1] and found SubjectRowID [%2]").arg(id).arg(rowid), __FUNCTION__);
+        Log(QString("Searched for SubjectID [%1] and found SubjectRowID [%2]").arg(id).arg(rowid));
     }
     else {
-        Debug(QString("Could not find SubjectID [%1]").arg(id), __FUNCTION__);
+        Log(QString("Could not find SubjectID [%1]").arg(id));
     }
     return rowid;
 }
@@ -2631,9 +2631,9 @@ bool squirrel::RemoveObject(ObjectType object, qint64 objectRowID) {
         q.prepare("delete from Observation where SubjectRowID = :subjectRowID");
         q.bindValue(":subjectRowID", objectRowID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        \
-            /* remove the files, if any from the archive */
-            if (fileMode == FileMode::ExistingPackage) {
+
+        /* remove the files, if any from the archive */
+        if (fileMode == ExistingPackage) {
             squirrelSubject sqrlSubject(databaseUUID);
             sqrlSubject.SetObjectID(objectRowID);
             sqrlSubject.Get();
