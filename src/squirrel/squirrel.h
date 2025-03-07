@@ -175,8 +175,8 @@ public:
     QString PrintPackage();
     QString PrintPipelines(PrintFormat printFormat=List);
     QString PrintSeries(qint64 studyRowID, PrintFormat printFormat=List);
-    QString PrintStudies(qint64 subjectRowID, PrintFormat printFormat=List);
-    QString PrintSubjects(PrintFormat printFormat=List);
+    QString PrintStudies(DatasetType dataType, PrintFormat printFormat, qint64 subjectRowID);
+    QString PrintSubjects(DatasetType dataType, PrintFormat printFormat);
     QString PrintTree();
 
     /* database and utility functions */

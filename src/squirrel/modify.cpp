@@ -837,7 +837,7 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
 /* ---------------------------------------------------------------------------- */
 void modify::PrintVariables(ObjectType object) {
     using namespace std;
-    vector<vector<string>> data;
+    vector<vector<string> > data;
 
     if (object == Package) {
         data = {
