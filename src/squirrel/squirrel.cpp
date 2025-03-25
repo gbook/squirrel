@@ -3111,6 +3111,7 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
             archive.setUpdateMode(UpdateMode::Update);
             archive.setCompressionLevel(BitCompressionLevel::Fastest);
             archive.setRetainDirectories(true);
+            archive.setSolidMode(false);
             archive.setProgressCallback(progressCallback);
             archive.setTotalCallback(totalArchiveSizeCallback);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
@@ -3157,6 +3158,7 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
         else {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
+            editor.setSolidMode(false);
             editor.setProgressCallback(progressCallback);
             editor.setTotalCallback(totalArchiveSizeCallback);
             for (int i=0; i<filePaths.size(); i++) {
@@ -3270,6 +3272,7 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
         else {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
+            editor.setSolidMode(false);
             editor.setProgressCallback(progressCallback);
             editor.setTotalCallback(totalArchiveSizeCallback);
             editor.updateItem(compressedFilePath.toStdString(), i);
