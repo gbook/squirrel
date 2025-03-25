@@ -61,6 +61,12 @@ bool modify::DoModify(QString packagePath, QString operation, ObjectType object,
         else
             return false;
     }
+    else if (operation == "removephi") {
+        if (RemovePHI(packagePath, dataPath, m))
+            return true;
+        else
+            return false;
+    }
     else {
         m = "Invalid operation [" + operation + "] specified";
         return false;
@@ -108,6 +114,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
     squirrel *sqrl = new squirrel();
     sqrl->SetFileMode(FileMode::ExistingPackage);
     sqrl->SetPackagePath(packagePath);
+    sqrl->SetWriteLog(true);
     if (!sqrl->Read()) {
         m = QString("Package unreadable [%1] already exists in package").arg(vars["ID"]);
         delete sqrl;
@@ -439,7 +446,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
     }
 
     /* write the squirrel object */
-    sqrl->Write(true);
+    sqrl->Write();
 
     delete sqrl;
     return true;
@@ -455,6 +462,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     squirrel *sqrl = new squirrel();
     sqrl->SetFileMode(FileMode::ExistingPackage);
     sqrl->SetPackagePath(packagePath);
+    sqrl->SetWriteLog(false);
     if (!sqrl->Read()) {
         m = QString("Package unreadable");
         delete sqrl;
@@ -549,7 +557,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
         return false;
     }
 
-    if (sqrl->Write(false)) {
+    if (sqrl->Write()) {
         m = "Successfully removed object and wrote squirrel package";
         return true;
     }
@@ -732,6 +740,7 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
         sqrl2->SetPackagePath(newPackagePath);
         sqrl2->SetOverwritePackage(true);
         sqrl2->DataFormat = "orig";
+        sqrl2->SetWriteLog(true);
         QString newDbID = sqrl2->GetDatabaseUUID();
         //sqrl2->SetSystemTempDir();
 
@@ -821,12 +830,67 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
             }
         }
         //sqrl2->Print();
-        sqrl2->Write(true);
+        sqrl2->Write();
         delete sqrl2;
     }
 
     /* delete squirrel object(s) */
     delete sqrl;
+
+    return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- RemovePHI ------------------------------------------------------------ */
+/* ---------------------------------------------------------------------------- */
+bool modify::RemovePHI(QString packagePath, QString dataPath, QString &m) {
+
+    squirrel *sqrl = new squirrel();
+    sqrl->SetFileMode(FileMode::ExistingPackage);
+    sqrl->SetPackagePath(packagePath);
+    sqrl->SetQuickRead(true);
+
+    if (sqrl->Read()) {
+        utils::Print("Read package [" + packagePath + "] successfully");
+    }
+    else {
+        m = QString("Package unreadable [" + packagePath + "]");
+        m += QString("Log [" + sqrl->GetLog() + "]");
+        delete sqrl;
+        return false;
+    }
+
+    QSqlQuery q(QSqlDatabase::database(sqrl->GetDatabaseUUID()));
+
+    /* alphabetically by table ... */
+
+    /* remove intervention dates */
+    q.prepare("update Intervention set DateStart = '0000-00-00 00:00:00', DateEnd = '0000-00-00 00:00:00', DateRecordCreate = '0000-00-00 00:00:00', DateRecordEntry = '0000-00-00 00:00:00', DateRecordModify = '0000-00-00 00:00:00'");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    sqrl->Log("Removed intervention dates");
+
+    /* remove observation dates */
+    q.prepare("update Intervention set DateStart = '0000-00-00 00:00:00', DateEnd = '0000-00-00 00:00:00', DateRecordCreate = '0000-00-00 00:00:00', DateRecordEntry = '0000-00-00 00:00:00', DateRecordModify = '0000-00-00 00:00:00'");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    sqrl->Log("Removed observation dates");
+
+    /* remove series datetime */
+    q.prepare("update Series set Datetime = '0000-00-00 00:00:00'");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    sqrl->Log("Removed series dates");
+
+    /* remove study datetime */
+    q.prepare("update Study set Datetime = '0000-00-00 00:00:00'");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    sqrl->Log("Removed study dates");
+
+    /* remove subject dateOfBirth */
+    q.prepare("update Subject set DateOfBirth = '0000-00-00'");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    sqrl->Log("Removed subject birthdates");
+
+    sqrl->WriteUpdate();
 
     return true;
 }

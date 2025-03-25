@@ -38,7 +38,7 @@ class squirrelSubject
 {
 public:
     squirrelSubject(QString dbID);
-    void SetDebug(bool d) { debug = debug; }
+    void SetDebug(bool d) { debug = d; }
 
     /* functions */
     QHash<QString, QString> GetData(DatasetType d);

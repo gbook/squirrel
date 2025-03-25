@@ -79,6 +79,7 @@ squirrel::squirrel(bool dbg, bool q)
     isValid = true;
     quickRead = true;
     quiet = q;
+    writeLog = false;
     databaseUUID = QUuid::createUuid().toString(QUuid::WithoutBraces);
     Log(QString("Generated UUID [%1]").arg(databaseUUID));
 
@@ -646,7 +647,7 @@ bool squirrel::Read() {
  * @param writeLog true if logfile should be written
  * @return true if successfuly written, false otherwise
  */
-bool squirrel::Write(bool writeLog) {
+bool squirrel::Write() {
 
     /* create the log file */
     QFileInfo finfo(GetPackagePath());
@@ -970,6 +971,134 @@ bool squirrel::Write(bool writeLog) {
         if (!UpdateMemoryFileToArchive(j, "squirrel.json", GetPackagePath(), m)) {
             Log("Error [" + m + "] compressing memory file to archive");
         }
+    }
+
+    /* write the log file */
+    if (writeLog)
+        utils::WriteTextFile(logfile, log);
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- WriteUpdate ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Update the squirrel package *header only*, in place. All parameters should be set first
+ * @return true if successfuly written, false otherwise
+ */
+bool squirrel::WriteUpdate() {
+    QString m;
+
+    /* create the log file */
+    QFileInfo finfo(GetPackagePath());
+    logfile = QString(finfo.absolutePath() + "/squirrel-" + utils::CreateLogDate() + ".log");
+
+    /* create JSON object */
+    QJsonObject root;
+
+    QJsonObject pkgInfo;
+    pkgInfo["Changes"] = Changes;
+    pkgInfo["DataFormat"] = DataFormat;
+    pkgInfo["Datetime"] = utils::CreateCurrentDateTime(2);
+    pkgInfo["Description"] = Description;
+    pkgInfo["License"] = License;
+    pkgInfo["Notes"] = Notes;
+    pkgInfo["PackageFormat"] = DataFormat;
+    pkgInfo["PackageName"] = PackageName;
+    pkgInfo["Readme"] = Readme;
+    pkgInfo["SeriesDirectoryFormat"] = SeriesDirFormat;
+    pkgInfo["SquirrelBuild"] = SquirrelBuild;
+    pkgInfo["SquirrelVersion"] = SquirrelVersion;
+    pkgInfo["StudyDirectoryFormat"] = StudyDirFormat;
+    pkgInfo["SubjectDirectoryFormat"] = SubjectDirFormat;
+
+    root["package"] = pkgInfo;
+
+    QJsonObject data;
+    QJsonArray JSONsubjects;
+
+    /* add subjects to JSON */
+    QList<squirrelSubject> subjectses = GetSubjectList();
+    Log(QString("Adding %1 subjects").arg(subjectses.size()));
+    foreach (squirrelSubject subject, subjectses) {
+        JSONsubjects.append(subject.ToJSON());
+        Log("Added subject [" + subject.ID + "]");
+    }
+
+    /* add group-analyses */
+    QList <squirrelGroupAnalysis> groupAnalyses = GetGroupAnalysisList();
+    if (groupAnalyses.size() > 0) {
+        Log(QString("Adding %1 group-analyses").arg(groupAnalyses.size()));
+        QJsonArray JSONgroupanalyses;
+        foreach (squirrelGroupAnalysis g, groupAnalyses) {
+            if (g.Get()) {
+                JSONgroupanalyses.append(g.ToJSON());
+                Log(QString("Added group-analysis [%1]").arg(g.GroupAnalysisName));
+            }
+        }
+        data["GroupAnalysisCount"] = JSONgroupanalyses.size();
+        data["group-analysis"] = JSONgroupanalyses;
+    }
+
+    data["SubjectCount"] = JSONsubjects.size();
+    data["subjects"] = JSONsubjects;
+    root["data"] = data;
+
+    /* add pipelines */
+    QList <squirrelPipeline> pipelines = GetPipelineList();
+    if (pipelines.size() > 0) {
+        Log(QString("Adding %1 pipelines").arg(pipelines.size()));
+        QJsonArray JSONpipelines;
+        foreach (squirrelPipeline p, pipelines) {
+            if (p.Get()) {
+                JSONpipelines.append(p.ToJSON(workingDir));
+                Log(QString("Added pipeline [%1]").arg(p.PipelineName));
+            }
+        }
+        root["PipelineCount"] = JSONpipelines.size();
+        root["pipelines"] = JSONpipelines;
+    }
+
+    /* add experiments */
+    QList <squirrelExperiment> exps = GetExperimentList();
+    if (exps.size() > 0) {
+        Log(QString("Adding %1 experiments").arg(exps.size()));
+        QJsonArray JSONexperiments;
+        foreach (squirrelExperiment e, exps) {
+            if (e.Get()) {
+                JSONexperiments.append(e.ToJSON());
+                Log(QString("Added experiment [%1]").arg(e.ExperimentName));
+            }
+        }
+        root["ExperimentCount"] = JSONexperiments.size();
+        root["experiments"] = JSONexperiments;
+    }
+
+    /* add data-dictionary */
+    QList <squirrelDataDictionary> dicts = GetDataDictionaryList();
+    if (dicts.size() > 0) {
+        Log(QString("Adding %1 data-dictionaries").arg(dicts.size()));
+        QJsonArray JSONdataDictionaries;
+        foreach (squirrelDataDictionary d, dicts) {
+            if (d.Get()) {
+                JSONdataDictionaries.append(d.ToJSON());
+                Log("Added data-dictionary");
+            }
+        }
+        root["DataDictionaryCount"] = JSONdataDictionaries.size();
+        root["data-dictionaries"] = JSONdataDictionaries;
+    }
+    root["TotalSize"] = GetUnzipSize();
+    root["TotalFileCount"] = GetFileCount();
+
+    QString j = QJsonDocument(root).toJson();
+
+    /* update the package in place with the new .json file */
+    Log("Updating existing package");
+    if (!UpdateMemoryFileToArchive(j, "squirrel.json", GetPackagePath(), m)) {
+        Log("Error [" + m + "] compressing memory file to archive");
     }
 
     /* write the log file */
@@ -1583,11 +1712,10 @@ QString squirrel::PrintStudies(DatasetType dataType, PrintFormat printFormat, qi
             if (s.Get()) {
                 QStringHash row = s.GetData(dataType);
 
+                /* add in subject information */
                 squirrelSubject subj = GetSubject(s.subjectRowID);
                 subj.Get();
                 QStringHash row2 = subj.GetData(DatasetBasic);
-
-                /* merge the rows */
                 row = utils::MergeStringHash(row, row2);
 
                 rows.append(row);
