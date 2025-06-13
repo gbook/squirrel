@@ -9,7 +9,7 @@ URL:            http://github.com/gbook/squirrel
 
 BuildArch:	x86_64
 BuildRequires:  gcc, cmake, make
-Requires:       openssl, p7zip
+Requires:       openssl, p7zip, p7zip-plugins
 
 %description
 squirrel library and utilities is a data format to allow aggregation and dissemination of neuroscience data.
