@@ -12,8 +12,8 @@ mkdir -p $DEBDIR
 # try to copy the binaries to their final locations (this may fail because it requires sudo, but its not a critical step to build)
 cp -uv bin/squirrel/libsquirrel* $LIBDIR
 cp -uv bin/gdcm/bin/libgdcm* $LIBDIR
-cp -uv ~/Qt/6.6.3/gcc_64/lib/libQt6Sql.so* ~/Qt/6.6.3/gcc_64/lib/libQt6Network.so* ~/Qt/6.6.3/gcc_64/lib/libQt6Core.so* $LIBDIR
-cp -uv ~/Qt/6.6.3/gcc_64/lib/libicui18n.so.56 ~/Qt/6.6.3/gcc_64/lib/libicuuc.so.56 ~/Qt/6.6.3/gcc_64/lib/libicudata.so.56 $LIBDIR
+cp -uv ~/Qt/6.9.1/gcc_64/lib/libQt6Sql.so* ~/Qt/6.9.1/gcc_64/lib/libQt6Network.so* ~/Qt/6.9.1/gcc_64/lib/libQt6Core.so* $LIBDIR
+cp -uv ~/Qt/6.9.1/gcc_64/lib/libicui18n.so.56 ~/Qt/6.9.1/gcc_64/lib/libicuuc.so.56 ~/Qt/6.9.1/gcc_64/lib/libicudata.so.56 $LIBDIR
 
 cp -uv bin/squirrel/squirrel $BINDIR
 
