@@ -874,7 +874,7 @@ namespace utils {
         //QDateTime qdt = QDateTime(date, time);
         //qdt = qdt.toLocalTime();
 
-        /* thank you to the internet for this one very efficient datetime conversion (https://forum.qt.io/topic/139690) */
+        /* thank you to the internet for this very efficient datetime conversion (https://forum.qt.io/topic/139690) */
         auto DateTimeParser = [](const QStringView string) -> QDateTime {
             const QDate date(string.left(4).toInt(), string.mid(4, 2).toInt(), string.mid(6, 2).toInt());
             const QTime time(string.mid(9, 2).toInt(), string.mid(11, 2).toInt(), string.mid(13, 2).toInt(), string.mid(15, 3).toInt());
