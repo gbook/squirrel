@@ -41,9 +41,9 @@ cp -f %{_builddir}/bin/gdcm/bin/libgdcmMEXD.so.3.0 %{buildroot}/usr/lib/ # copy 
 cp -f %{_builddir}/bin/gdcm/bin/libsocketxx.so.1.2 %{buildroot}/usr/lib/ # copy GDCM libs
 cp -f ~/Qt/6.9.3/gcc_64/lib/libQt6Core.so.6 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.9.3/gcc_64/lib/libQt6Sql.so.6 %{buildroot}/usr/lib/ # copy Qt libs
-cp -f ~/Qt/6.9.3/gcc_64/lib/libicudata.so.56 %{buildroot}/usr/lib/ # copy Qt libs
-cp -f ~/Qt/6.9.3/gcc_64/lib/libicui18n.so.56 %{buildroot}/usr/lib/ # copy Qt libs
-cp -f ~/Qt/6.9.3/gcc_64/lib/libicuuc.so.56 %{buildroot}/usr/lib/ # copy Qt libs
+cp -f ~/Qt/6.9.3/gcc_64/lib/libicudata.so.73 %{buildroot}/usr/lib/ # copy Qt libs
+cp -f ~/Qt/6.9.3/gcc_64/lib/libicui18n.so.73 %{buildroot}/usr/lib/ # copy Qt libs
+cp -f ~/Qt/6.9.3/gcc_64/lib/libicuuc.so.73 %{buildroot}/usr/lib/ # copy Qt libs
 cp -f ~/Qt/6.9.3/gcc_64/plugins/sqldrivers/libqsqlite.so %{buildroot}/usr/local/bin/sqldrivers/ # copy SQLite driver
 
 # This section LISTS the files that are available once everything is installed, but this is NOT the specification for what files will be installed...
