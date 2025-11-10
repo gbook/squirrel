@@ -1464,11 +1464,10 @@ QString squirrel::PrintPackage() {
 bool squirrel::MakeTempDir(QString &dir) {
 
     QString d;
-    //#ifdef Q_OS_WINDOWS
-    //    d = QString("C:/tmp/%1").arg(utils::GenerateRandomString(20));
-    //#else
-    d = QString(QDir::tempPath() + "/%1").arg(utils::GenerateRandomString(20));
-    //#endif
+    if (cmdLineExec)
+        d = QString(QDir::tempPath() + "/%1").arg(utils::GenerateRandomString(20));
+    else
+        d = QString(systemTempDir + "/%1").arg(utils::GenerateRandomString(20));
 
     QString m;
     if (utils::MakePath(d, m)) {
