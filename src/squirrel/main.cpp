@@ -233,18 +233,12 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  --subjectid must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "dataset", "Dataset type [id  basic  full]", "dataset"));
         p.addOption(QCommandLineOption(QStringList() << "format", "Printing format [list  csv]", "format"));
-        //p.addOption(QCommandLineOption(QStringList() << "detail", "Include details when printing lists."));
-        //p.addOption(QCommandLineOption(QStringList() << "tree", "Display tree view of data."));
-        //p.addOption(QCommandLineOption(QStringList() << "csv", "Display csv output of data"));
         p.process(a);
 
         bool debug = p.isSet("d");
         ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
-        //bool details = p.isSet("detail");
-        //bool tree = p.isSet("tree");
-        //bool csv = p.isSet("csv");
         QString dataset = p.value("dataset").trimmed();
         QString format = p.value("format").trimmed();
 

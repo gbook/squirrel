@@ -317,7 +317,7 @@ bool squirrel::Read() {
     }
 
     double elapsedSec = static_cast<double>(timer.elapsed())/1000.0;
-    utils::Print(QString("Extracted package header in %1 sec").arg(elapsedSec, 0, 'f', 2));
+    utils::Print(QString("\nExtracted package header in %1 sec").arg(elapsedSec, 0, 'f', 2));
 
     timer.restart();
 
@@ -2704,7 +2704,7 @@ qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
  */
 bool squirrel::ExtractObject(ObjectType object, qint64 objectRowID, QString outDir, bool recursive) {
     if (objectRowID < 0) {
-        Log("Invalid object ID []");
+        Log(QString("Invalid object ID [%1]").arg(objectRowID));
         return false;
     }
 
