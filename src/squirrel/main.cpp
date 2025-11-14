@@ -44,14 +44,19 @@ void PrintExampleUsage() {
     printf("    squirrel modify <package> --operation update --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
 }
 
+void PrintExampleModifyUsage() {
+    printf("\nExample modify usage: \n");
+    printf("    squirrel modify <package> --operation update --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
+}
+
 void PrintExampleUsageInfo() {
-    printf("\nExample \033[1minfo\033[0m usage: \n");
+    printf("\nExample info usage: \n");
     printf("    squirrel info <package> --object subject --dataset full --format csv\n");
     printf("    squirrel info <package> --object study --subjectid S1234 \n");
 }
 
 void PrintExampleUsageExtract() {
-    printf("\nExample \033[1mextract\033[0m usage: \n");
+    printf("\nExample extract usage: \n");
     printf("    squirrel extract <package> --object subject --objectid S1234ABC\n");
     printf("    squirrel extract <package> --object series --objectid 1 --subjectid S1234ABC --studynum 1\n");
     printf("    squirrel extract <package> --object experiment --objectid 'MyExperiment'\n");
