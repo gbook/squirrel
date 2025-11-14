@@ -36,12 +36,25 @@ void CommandLineError(QCommandLineParser &p, QString m) {
     std::cout << p.helpText().toStdString().c_str();
     std::cout << "\n----- ERROR ----->> " << m.toStdString().c_str() << "\n\n";
 }
+
 void PrintExampleUsage() {
-    printf("Example usage: \n");
+    printf("\nExample usage: \n");
     printf("    squirrel dicom2squirrel <inputDir> <outputPackage> --dataformat nift4d --dirformat orig\n");
     printf("    squirrel bids2squirrel <inputFile> <outputPackage>\n");
-    printf("    squirrel info <package> --object study --subjectid S1234\n");
-    printf("    squirrel modify <package> --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
+    printf("    squirrel modify <package> --operation update --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
+}
+
+void PrintExampleUsageInfo() {
+    printf("\nExample \e[1minfo\e[0m usage: \n");
+    printf("    squirrel info <package> --object subject --dataset full --format csv\n");
+    printf("    squirrel info <package> --object study --subjectid S1234 \n");
+}
+
+void PrintExampleUsageExtract() {
+    printf("\nExample \e[1mextract\e[0m usage: \n");
+    printf("    squirrel extract <package> --object subject --objectid S1234ABC\n");
+    printf("    squirrel extract <package> --object series --objectid 1 --subjectid S1234ABC --studynum 1\n");
+    printf("    squirrel extract <package> --object experiment --objectid 'MyExperiment'\n");
 }
 
 int main(int argc, char *argv[])
@@ -50,13 +63,13 @@ int main(int argc, char *argv[])
 
     QString bindir = QDir::currentPath();
 
-    /* this whole section reads the command line parameters */
+    /* the entire section below reads the command line parameters */
     a.setApplicationVersion(QString("Build %1.%2.%3  (squirrellib %4.%5)  Build date %6 %7").arg(UTIL_VERSION_MAJ).arg(UTIL_VERSION_MIN).arg(UTIL_BUILD_NUM).arg(SQUIRREL_VERSION_MAJ).arg(SQUIRREL_VERSION_MIN).arg(__DATE__).arg(__TIME__));
     a.setApplicationName("Squirrel Utilities");
 
     /* setup the command line parser */
     QCommandLineParser p;
-    p.setApplicationDescription("Tools to manage squirrel data packages");
+    p.setApplicationDescription("Command line tools to manage squirrel data packages");
     p.setSingleDashWordOptionMode(QCommandLineParser::ParseAsCompactedShortOptions);
     p.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsOptions);
     p.addHelpOption();
@@ -235,36 +248,41 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "format", "Printing format [list  csv]", "format"));
         p.process(a);
 
-        bool debug = p.isSet("d");
-        ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
-        QString subjectID = p.value("subjectid").trimmed();
-        int studyNum = p.value("studynum").toInt();
-        QString dataset = p.value("dataset").trimmed();
-        QString format = p.value("format").trimmed();
-
-        DatasetType datasetType;
-        PrintFormat printType;
-        if (dataset == "id")
-            datasetType = DatasetID;
-        else if (dataset == "basic")
-            datasetType = DatasetBasic;
-        else
-            datasetType = DatasetFull;
-
-        if (format == "list")
-            printType = List;
-        else
-            printType = CSV;
-
-        if (object == UnknownObjectType)
-            object = Package;
-
-        QString m;
-        info information;
-        if (!information.DisplayInfo(inputPath, debug, object, subjectID, studyNum, datasetType, printType, m)) {
-            CommandLineError(p,m);
+        if (inputPath == "") {
+            std::cout << p.helpText().toStdString().c_str();
+            PrintExampleUsageInfo();
         }
+        else {
+            bool debug = p.isSet("d");
+            ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
+            QString subjectID = p.value("subjectid").trimmed();
+            int studyNum = p.value("studynum").toInt();
+            QString dataset = p.value("dataset").trimmed();
+            QString format = p.value("format").trimmed();
 
+            DatasetType datasetType;
+            PrintFormat printType;
+            if (dataset == "id")
+                datasetType = DatasetID;
+            else if (dataset == "basic")
+                datasetType = DatasetBasic;
+            else
+                datasetType = DatasetFull;
+
+            if (format == "list")
+                printType = List;
+            else
+                printType = CSV;
+
+            if (object == UnknownObjectType)
+                object = Package;
+
+            QString m;
+            info information;
+            if (!information.DisplayInfo(inputPath, debug, object, subjectID, studyNum, datasetType, printType, m)) {
+                CommandLineError(p,m);
+            }
+        }
     }
     else if (command == "modify") {
         p.clearPositionalArguments();
@@ -339,10 +357,17 @@ int main(int argc, char *argv[])
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
 
-        QString m;
-        extract ext;
-        if (!ext.DoExtract(inputPath, outputPath, object, objectID, subjectID, studyNum, m)) {
-            CommandLineError(p,m);
+        /* validate the input */
+        if (inputPath == "") {
+            std::cout << p.helpText().toStdString().c_str();
+            PrintExampleUsageExtract();
+        }
+        else {
+            QString m;
+            extract ext;
+            if (!ext.DoExtract(inputPath, outputPath, object, objectID, subjectID, studyNum, m)) {
+                CommandLineError(p,m);
+            }
         }
     }
     else if (command == "validate") {
