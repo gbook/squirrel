@@ -1444,7 +1444,8 @@ QString squirrel::PrintPackage() {
     str += utils::Print(QString("  Description: %1").arg(Description));
     str += utils::Print(QString("  DirectoryFormat (subject, study, series): %1, %2, %3").arg(SubjectDirFormat).arg(StudyDirFormat).arg(SeriesDirFormat));
     str += utils::Print(QString("  FileMode: %1").arg(fileModeStr));
-    str += utils::Print(QString("  Files:\n    %1 files\n    %2 (unzipped)").arg(GetFileCount()).arg(utils::HumanReadableSize(GetUnzipSize())));
+    //str += utils::Print(QString("  Files:\n    %1 files\n    %2 (unzipped)").arg(GetFileCount()).arg(utils::HumanReadableSize(GetUnzipSize())));
+    str += utils::Print(QString("  Files:\n    %1 files\n    %2 bytes (unzipped)").arg(GetFileCount()).arg(GetUnzipSize()));
     str += utils::Print(QString("  PackageName: %1").arg(PackageName));
     str += utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
     str += utils::Print(QString("  SquirrelVersion: %1").arg(SquirrelVersion));
