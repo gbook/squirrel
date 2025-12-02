@@ -322,7 +322,7 @@ int main(int argc, char *argv[])
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
         //QString variablelist = p.value("variablelist").trimmed();
-        ObjectType variableList = squirrel::ObjectTypeToEnum(p.value("variableList").trimmed());
+        ObjectType variableList = squirrel::ObjectTypeToEnum(p.value("variablelist").trimmed());
         int studyNum = p.value("studynum").toInt();
         //bool recursive = p.isSet("recursive");
 
@@ -353,9 +353,11 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to modify.", "identifer"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when extracting a study, series, observation, intervention, or analysis object.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when extracting a series or analysis object (subjectid is also needed).", "num"));
+        p.addOption(QCommandLineOption(QStringList() << "recurse", "Include all child objects of the specified object"));
 
         p.process(a);
 
+        bool recurse = p.isSet("recurse");
         QString object = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
         QString outputPath = p.value("outdir").trimmed();
         QString objectID = p.value("objectid").trimmed();

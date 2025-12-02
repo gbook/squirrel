@@ -382,6 +382,8 @@ bool squirrel::Read() {
         sqrlSubject.DateOfBirth = QDate::fromString(jsonSubject["DateOfBirth"].toString(), "yyyy-MM-dd");
         sqrlSubject.Sex = jsonSubject["Sex"].toString();
         sqrlSubject.Gender = jsonSubject["Gender"].toString();
+        sqrlSubject.EnrollmentGroup = jsonSubject["EnrollmentGroup"].toString();
+        sqrlSubject.EnrollmentStatus = jsonSubject["EnrollmentStatus"].toString();
         sqrlSubject.Ethnicity1 = jsonSubject["Ethnicity1"].toString();
         sqrlSubject.Ethnicity2 = jsonSubject["Ethnicity2"].toString();
         sqrlSubject.Notes = jsonSubject["Notes"].toString();
