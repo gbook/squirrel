@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     }
 
   gdcm::Directory d;
-  d.Load( dir1.c_str(), true ); // recursive !
+  d.Load( dir1, true ); // recursive !
   const gdcm::Directory::FilenamesType &l1 = d.GetFilenames();
   const size_t nfiles = l1.size();
   std::cout << nfiles << std::endl;
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
   const gdcm::Scanner::ValuesType &values = s.GetValues();
   nvalues = values.size();
   std::cout << "There are " << nvalues << " different type of values" << std::endl;
-  assert( nfiles2 % nvalues == 0 );
+  gdcm_assert( nfiles2 % nvalues == 0 );
   std::cout << "Series is composed of " << (nfiles/nvalues) << " different 3D volumes" << std::endl;
 }
 

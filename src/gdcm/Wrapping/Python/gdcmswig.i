@@ -96,6 +96,8 @@
 #include "gdcmSubject.h"
 #include "gdcmCommand.h"
 #include "gdcmAnonymizer.h"
+#include "gdcmDPath.h"
+#include "gdcmCleaner.h"
 #include "gdcmFileAnonymizer.h"
 #include "gdcmFileStreamer.h"
 #include "gdcmSystem.h"
@@ -435,7 +437,12 @@ EXTEND_CLASS_PRINT(gdcm::Bitmap)
   void GetBuffer(char **buffer, unsigned int *size) {
     *size = self->GetBufferLength();
     *buffer = (char*)malloc(*size);
-    self->GetBuffer(*buffer);
+    bool ret = self->GetBuffer(*buffer);
+    if (!ret) {
+      free(*buffer);
+      *buffer = 0;
+      *size = 0;
+    }
   }
 };
 %include "gdcmIconImage.h"
@@ -581,6 +588,7 @@ EXTEND_CLASS_PRINT(gdcm::Scanner)
 EXTEND_CLASS_PRINT(gdcm::StrictScanner)
 
 %template(SmartPtrAno) gdcm::SmartPointer<gdcm::Anonymizer>;
+%template(SmartPtrCleaner) gdcm::SmartPointer<gdcm::Cleaner>;
 //%ignore gdcm::Anonymizer::Anonymizer;
 
 
@@ -590,6 +598,8 @@ EXTEND_CLASS_PRINT(gdcm::StrictScanner)
 //%feature("unref") Anonymizer "coucou $this->Delete();"
 // http://www.swig.org/Doc1.3/SWIGPlus.html#SWIGPlus%5Fnn34
 %include "gdcmAnonymizer.h"
+%include "gdcmDPath.h"
+%include "gdcmCleaner.h"
 %apply char[] { char* value_data }
 %include "gdcmFileAnonymizer.h"
 %clear char* value_data;
@@ -616,19 +626,19 @@ static bool callback_helper(gdcm::DataSet const & ds1, gdcm::DataSet const & ds2
   func = 0; //(PyObject *)data;
   if (!(arglist = Py_BuildValue("()"))) {
     /* fail */
-    assert(0);
+    gdcm_assert(0);
   }
-  result = PyEval_CallObject(func, arglist);
+  result = PyObject_CallObject(func, arglist);
   Py_DECREF(arglist);
   if (result && result != Py_None) {
     PyErr_SetString(PyExc_TypeError,
                     "Callback function should return nothing");
     Py_DECREF(result);
     /* fail */
-    assert(0);
+    gdcm_assert(0);
   } else if (!result) {
     /* fail: a Python exception was raised */
-    assert(0);
+    gdcm_assert(0);
   }
   return true;
 }

@@ -20,23 +20,22 @@
 #include <iostream>
 #include <string>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h> // strspn
-#include <assert.h>
-#include <errno.h>
+#include <cassert>
+#include <cerrno>
+#include <climits> // PATH_MAX
+#include <cstdio> // snprintf
+#include <cstdlib>
+#include <cstring> // strspn
 #include <sys/stat.h>
-#include <limits.h> // PATH_MAX
 
 // gettimeofday
 #ifdef GDCM_HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#include <time.h>
+#include <ctime>
 #ifdef GDCM_HAVE_WINSOCK_H
 #include <winsock.h>
 #endif
-#include <cstdio> // snprintf
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define snprintf _snprintf
 #endif
@@ -213,7 +212,7 @@ bool System::FileExists(const char* filename)
     }
   else
     {
-    //assert( !FileIsDirectory(filename) );
+    //gdcm_assert( !FileIsDirectory(filename) );
     return true;
     }
 }
@@ -229,7 +228,7 @@ bool System::FileIsDirectory(const char* name)
   if(stat(name, &fs) == 0)
 #endif
     {
-#if _WIN32
+#ifdef _WIN32
     return ((fs.st_mode & _S_IFDIR) != 0);
 #else
     return S_ISDIR(fs.st_mode);
@@ -438,7 +437,7 @@ bool System::DeleteDirectory(const char *source)
         out = prefix + (out.c_str() + 2);
       } else {
         // regular C:\ style path:
-        assert(out[1] == ':');
+        gdcm_assert(out[1] == ':');
         const std::wstring prefix = LR"(\\?\)";
         out = prefix + out.c_str();
       }
@@ -607,28 +606,27 @@ const char *System::GetCurrentResourcesDirectory()
  */
 inline int getlastdigit(unsigned char *data, unsigned long size)
 {
-  int extended, carry = 0;
+  int carry = 0;
   for(unsigned int i=0;i<size;i++)
     {
-    extended = (carry << 8) + data[i];
+    int extended = (carry << 8) + data[i];
     data[i] = (unsigned char)(extended / 10);
     carry = extended % 10;
     }
-  assert( carry >= 0 && carry < 10 );
+  gdcm_assert( carry >= 0 && carry < 10 );
   return carry;
 }
 
 size_t System::EncodeBytes(char *out, const unsigned char *data, int size)
 {
   bool zero = false;
-  int res;
   std::string sres;
   unsigned char buffer[32];
   unsigned char *addr = buffer;
   memcpy(addr, data, size);
   while(!zero)
     {
-    res = getlastdigit(addr, size);
+    int res = getlastdigit(addr, size);
     const char v = (char)('0' + res);
     sres.insert(sres.begin(), v);
     zero = true;
@@ -691,7 +689,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
        (other than the declaration) is a bug. Thus, the following is purely of
        historic interest.
 */
-  assert( tz == 0 );
+  gdcm_assert( tz == 0 );
   FILETIME ft;
   unsigned __int64 tmpres = 0;
   //static int tzflag;
@@ -820,7 +818,7 @@ const char *System::GetTimezoneOffsetFromUTC()
   time_t t = time(nullptr);
   struct tm *tmp = localtime(&t);
   size_t l = strftime(outstr, sizeof(outstr), "%z", tmp);
-  assert( l == 5 ); (void)l;
+  gdcm_assert( l == 5 ); (void)l;
   buffer = outstr;
   return buffer.c_str();
 }
@@ -848,7 +846,7 @@ bool System::FormatDateTime(char date[22], time_t timep, long milliseconds)
     }
   // Format the date and time, down to a single second.
   size_t ret = strftime (tmp, sizeof (tmp), "%Y%m%d%H%M%S", ptm);
-  assert( ret == 14 );
+  gdcm_assert( ret == 14 );
   if( ret == 0 || ret >= maxsize )
     {
     return false;
@@ -913,7 +911,7 @@ bool System::GetCurrentDateTime(char date[22])
   // "59"), SS = Second (range "00" - "60").
   // FFFFFF = Fractional Second contains a fractional part of a second as small
   // as 1 millionth of a second (range 000000 - 999999).
-  assert( tv.tv_usec >= 0 && tv.tv_usec < 1000000 );
+  gdcm_assert( tv.tv_usec >= 0 && tv.tv_usec < 1000000 );
   milliseconds = tv.tv_usec;
 
   return FormatDateTime(date, timep, milliseconds);
@@ -927,7 +925,7 @@ int System::StrNCaseCmp(const char *s1, const char *s2, size_t n)
   return _strnicmp(s1,s2,n);
 #else // default implementation
 #error
-  assert( n ); // TODO
+  gdcm_assert( n ); // TODO
   while (--n && *s1 && (tolower(*s1) == tolower(*s2)))
     {
     s1++;
@@ -960,7 +958,7 @@ bool System::GetHostName(char name[255])
 {
 // http://msdn.microsoft.com/en-us/library/ms738527.aspx
 // WSANOTINITIALISED A successful WSAStartup call must occur before using this function.
-#if _WIN32
+#ifdef _WIN32
   // Get the hostname
   WORD wVersionRequested;
   WSADATA wsaData;
@@ -1044,16 +1042,16 @@ char *System::StrSep(char **sp, const char *sep)
 #endif
 }
 
+#if defined(_WIN32)
 struct CharsetAliasType
 {
   const char *alias;
   const char *name;
 };
 
-#if defined(_WIN32)
 static const char *CharsetAliasToName(const char *alias)
 {
-  assert( alias );
+  gdcm_assert( alias );
   //gdcmDebugMacro( alias );
   // http://msdn.microsoft.com/en-us/library/windows/desktop/dd317756(v=vs.85).aspx
   // 1252 windows-1252  ANSI Latin 1; Western European (Windows)
@@ -1100,8 +1098,8 @@ const char *System::GetLocaleCharset()
   const char *codeset2;
   codeset1 = buf1;
   codeset2 = buf2;
-  sprintf(buf1, "CP%d", GetConsoleCP());
-  sprintf(buf2, "CP%d", GetConsoleOutputCP());
+  snprintf(buf1, sizeof(buf1), "CP%d", GetConsoleCP());
+  snprintf(buf2, sizeof(buf2), "CP%d", GetConsoleOutputCP());
 
   // BUG: both returns 'CP437' on debian + mingw32...
   // instead prefer GetACP() call:
@@ -1109,7 +1107,7 @@ const char *System::GetLocaleCharset()
   static char buf[2+10+1]; // 2 char, 10 bytes + 0
   // GetACP: Retrieves the current Windows ANSI code page identifier for the
   // operating system.
-  sprintf (buf, "CP%u", GetACP ());
+  snprintf (buf, sizeof(buf), "CP%u", GetACP ());
   codeset = CharsetAliasToName(buf);
 #endif
 

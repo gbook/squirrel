@@ -57,7 +57,16 @@ public:
   bool ComputeMOSAICSliceNormal( double dims[3], bool & inverted );
 
   /// Extract the value for ImagePositionPatient (requires inverted flag)
+  /// Deprecated
   bool ComputeMOSAICSlicePosition( double pos[3], bool inverted );
+
+  /// Extract the value for ImagePositionPatient
+  bool ComputeMOSAICImagePositionPatient( double pos[3],
+    const double ipp[6],
+    const double dircos[6],
+    const double pixelspacing[3],
+    const unsigned int image_dims[3] ,
+    const unsigned int mosaic_dims[3], bool inverted );
 
   void SetImage(const Image& image);
   const Image &GetImage() const { return *I; }
@@ -72,6 +81,12 @@ public:
 
   /// Return the value for NumberOfImagesInMosaic, or compute it from Acquisition Size
   static unsigned int GetNumberOfImagesInMosaic( File const & file );
+  
+  /// Return the DataElement for the CSA Image Header
+  static const DataElement& ComputeCSAImageHeaderInfo(const DataSet& ds, bool handleMissingPrivateCreator = true);
+  
+  /// Return the DataElement for the CSA Series Header
+  static const DataElement& ComputeCSASeriesHeaderInfo(const DataSet& ds, bool handleMissingPrivateCreator = true);
 
 protected:
 

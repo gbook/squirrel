@@ -53,6 +53,7 @@
 #ifndef VTKIMAGECOLORVIEWER_H
 #define VTKIMAGECOLORVIEWER_H
 
+#include "vtkgdcmModule.h"
 #include "vtkObject.h"
 #include "vtkVersion.h"
 
@@ -68,7 +69,7 @@ class vtkRenderer;
 class vtkRenderWindowInteractor;
 class vtkPolyData;
 
-class VTK_EXPORT vtkImageColorViewer : public vtkObject
+class VTKGDCM_EXPORT vtkImageColorViewer : public vtkObject
 {
 public:
   static vtkImageColorViewer *New();
@@ -197,22 +198,6 @@ public:
   virtual void SetOffScreenRendering(int);
   virtual int GetOffScreenRendering();
   vtkBooleanMacro(OffScreenRendering,int);
-
-  // Description:
-  // @deprecated Replaced by vtkImageColorViewer::GetSliceMin() as of VTK 5.0.
-  VTK_LEGACY(int GetWholeZMin());
-
-  // Description:
-  // @deprecated Replaced by vtkImageColorViewer::GetSliceMax() as of VTK 5.0.
-  VTK_LEGACY(int GetWholeZMax());
-
-  // Description:
-  // @deprecated Replaced by vtkImageColorViewer::GetSlice() as of VTK 5.0.
-  VTK_LEGACY(int GetZSlice());
-
-  // Description:
-  // @deprecated Replaced by vtkImageColorViewer::SetSlice() as of VTK 5.0.
-  VTK_LEGACY(void SetZSlice(int));
 
 protected:
   vtkImageColorViewer();

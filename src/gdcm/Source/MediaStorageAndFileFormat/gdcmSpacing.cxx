@@ -18,8 +18,6 @@ namespace gdcm
 
 Spacing::Spacing() = default;
 
-Spacing::~Spacing() = default;
-
 /*
  * http://www.ics.uci.edu/~eppstein/numth/frap.c
  * http://stackoverflow.com/questions/95727/how-to-convert-floats-to-human-readable-fractions
@@ -92,7 +90,7 @@ double frap(double frac[2], double startx, double maxden = 10 )
   //printf("%ld/%ld, error = %e\n", m[0][0], m[1][0],
   //  startx - ((double) m[0][0] / (double) m[1][0]));
   const double error2 = startx - ((double) m[0][0] / (double) m[1][0]);
-  assert( fabs(error) < fabs(error2) ); (void)error2;
+  gdcm_assert( fabs(error) < fabs(error2) ); (void)error2;
 
   return error;
 }

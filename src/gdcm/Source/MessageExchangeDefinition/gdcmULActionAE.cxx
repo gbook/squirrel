@@ -96,10 +96,10 @@ EStateID ULActionAE3::PerformAction(Subject *, ULEvent& inEvent, ULConnection& i
 
 
   // Mark please check this junk:
-  assert(!inEvent.GetPDUs().empty());
+  gdcm_assert(!inEvent.GetPDUs().empty());
   AAssociateACPDU* acpdu;
     acpdu = dynamic_cast<AAssociateACPDU*>(inEvent.GetPDUs()[0]);
-  assert( acpdu );
+  gdcm_assert( acpdu );
   uint32_t maxpdu = acpdu->GetUserInformation().GetMaximumLengthSub().GetMaximumLength();
   inConnection.SetMaxPDUSize(maxpdu);
 
@@ -158,7 +158,7 @@ EStateID ULActionAE6::PerformAction(Subject *, ULEvent& inEvent, ULConnection& i
     acceptable = false; //can't accept an empty set of pdus.
     //also, requrie little endian, not sure how to set that, but it should be here.
   }
-  AAssociateRQPDU* rqpdu;
+  AAssociateRQPDU* rqpdu = nullptr;
   if (acceptable){
     rqpdu = dynamic_cast<AAssociateRQPDU*>(inEvent.GetPDUs()[0]);
     if (rqpdu == nullptr){
@@ -175,7 +175,7 @@ EStateID ULActionAE6::PerformAction(Subject *, ULEvent& inEvent, ULConnection& i
 
     AAssociateACPDU acpdu;
 
-    assert( rqpdu->GetNumberOfPresentationContext() );
+    gdcm_assert( rqpdu->GetNumberOfPresentationContext() );
     for( unsigned int index = 0; index < rqpdu->GetNumberOfPresentationContext(); index++ )
       {
       // FIXME / HARDCODED We only ever accept Little Endian
@@ -229,7 +229,7 @@ EStateID ULActionAE6::PerformAction(Subject *, ULEvent& inEvent, ULConnection& i
       pcac1.SetReason( result );
       acpdu.AddPresentationContextAC( pcac1 );
     }
-    assert( acpdu.GetNumberOfPresentationContextAC() );
+    gdcm_assert( acpdu.GetNumberOfPresentationContextAC() );
 
     // Init AE-Titles:
     acpdu.InitFromRQ( *rqpdu );

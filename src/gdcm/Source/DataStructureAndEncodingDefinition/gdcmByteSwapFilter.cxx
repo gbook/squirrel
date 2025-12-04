@@ -27,8 +27,6 @@ namespace gdcm
 //{
 //}
 //-----------------------------------------------------------------------------
-ByteSwapFilter::~ByteSwapFilter()
-= default;
 
 bool ByteSwapFilter::ByteSwap()
 {
@@ -38,7 +36,7 @@ bool ByteSwapFilter::ByteSwap()
     {
     const DataElement &de = *it;
     VR const & vr = de.GetVR();
-    //assert( vr & VR::VRASCII || vr & VR::VRBINARY );
+    //gdcm_assert( vr & VR::VRASCII || vr & VR::VRBINARY );
     ByteValue *bv = const_cast<ByteValue*>(de.GetByteValue());
     gdcm::SmartPointer<gdcm::SequenceOfItems> si = de.GetValueAsSQ();
     if( de.IsEmpty() )
@@ -46,15 +44,15 @@ bool ByteSwapFilter::ByteSwap()
       }
     else if( bv && !si )
       {
-      assert( !si );
+      gdcm_assert( !si );
       // ASCII do not need byte swap
       if( vr & VR::VRBINARY /*&& de.GetTag().IsPrivate()*/ )
         {
-        //assert( de.GetTag().IsPrivate() );
+        //gdcm_assert( de.GetTag().IsPrivate() );
         switch(vr)
           {
         case VR::AT:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         case VR::FL:
           // FIXME: Technically FL should not be byte-swapped...
@@ -62,22 +60,22 @@ bool ByteSwapFilter::ByteSwap()
           SwapperDoOp::SwapArray((uint32_t*)bv->GetVoidPointer(), bv->GetLength() / sizeof(uint32_t) );
           break;
         case VR::FD:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         case VR::OB:
           // I think we are fine, unless this is one of those OB_OW thingy
           break;
         case VR::OF:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         case VR::OW:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         case VR::SL:
           SwapperDoOp::SwapArray((uint32_t*)bv->GetVoidPointer(), bv->GetLength() / sizeof(uint32_t) );
           break;
         case VR::SQ:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         case VR::SS:
           SwapperDoOp::SwapArray((uint16_t*)bv->GetVoidPointer(), bv->GetLength() / sizeof(uint16_t) );
@@ -86,16 +84,16 @@ bool ByteSwapFilter::ByteSwap()
           SwapperDoOp::SwapArray((uint32_t*)bv->GetVoidPointer(), bv->GetLength() / sizeof(uint32_t) );
           break;
         case VR::UN:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         case VR::US:
           SwapperDoOp::SwapArray((uint16_t*)bv->GetVoidPointer(), bv->GetLength() / sizeof(uint16_t) );
           break;
         case VR::UT:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           break;
         default:
-          assert( 0 && "Should not happen" );
+          gdcm_assert( 0 && "Should not happen" );
           }
         }
       }
@@ -118,11 +116,11 @@ bool ByteSwapFilter::ByteSwap()
     else if( const SequenceOfFragments *sf = de.GetSequenceOfFragments() )
       {
       (void)sf;
-      assert( 0 && "Should not happen" );
+      gdcm_assert( 0 && "Should not happen" );
       }
     else
       {
-      assert( 0 && "error" );
+      gdcm_assert( 0 && "error" );
       }
 
     }
@@ -137,7 +135,6 @@ bool ByteSwapFilter::ByteSwap()
       de.SetTag(
         Tag( SwapperDoOp::Swap( tag.GetGroup() ), SwapperDoOp::Swap( tag.GetElement() ) ) );
       copy.Insert( de );
-      DS.Remove( de.GetTag() );
       }
     DS = copy;
     }

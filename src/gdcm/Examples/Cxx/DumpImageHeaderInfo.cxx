@@ -46,7 +46,7 @@ std::istream & element::read( std::istream & is )
     return is;
     }
   //os << magic << std::endl;
-  assert( magic == ref ); (void)ref;
+  gdcm_assert( magic == ref ); (void)ref;
 
   uint32_t l;
   is.read( (char*)&l, sizeof(l) );
@@ -60,13 +60,13 @@ std::istream & element::read( std::istream & is )
   bytes.resize( l - 16 );
   if( !bytes.empty() )
     {
-    is.read( &bytes[0], l - 16 );
+    is.read( bytes.data(), l - 16 );
     }
   //os << "pos:" << is.tellg() << std::endl;
 
   if( strcmp(str, "TUSREMEASUREMENT" ) == 0 )
     {
-    const char *p = &bytes[0];
+    const char *p = bytes.data();
     uint32_t val;
     memcpy( (char*)&val, p, sizeof(val) );
     os << " " << val << std::endl;
@@ -127,7 +127,7 @@ static bool DumpImageHeaderInfo( std::istream & is, size_t reflen )
     {
     }
   //size_t pos = is.tellg();
-  //assert( pos == reflen );
+  //gdcm_assert( pos == reflen );
   (void)reflen;
 
   return true;

@@ -37,7 +37,7 @@ class ParseException : public Exception
 {
 public:
   ParseException() = default;
-  ~ParseException() throw() override {};
+  ~ParseException() throw() override {}
 
   /** Assignment operator. */
   ParseException &operator= ( const ParseException &orig )
@@ -68,7 +68,7 @@ public:
     return strwhat.c_str();
     }
 */
-  void SetLastElement(DataElement& de)
+  void SetLastElement(const DataElement& de)
     {
     LastElement = de;
     }

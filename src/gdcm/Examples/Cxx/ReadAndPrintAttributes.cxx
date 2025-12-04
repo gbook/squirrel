@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     }
   const char *filename = argv[1];
 
-  // Instanciate the reader:
+  // Instantiate the reader:
   gdcm::Reader reader;
   reader.SetFileName( filename );
   if( !reader.Read() )
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
     // Let's assume for a moment we knew the tag number:
     Attribute<0x3004,0x000e> at;
-    assert( at.GetTag() == tDoseGridScaling );
+    gdcm_assert( at.GetTag() == tDoseGridScaling );
     at.SetFromDataSet( ds );
     // For the sake of long term maintenance, we will not write
     // that this particular attribute is stored as a double. What if

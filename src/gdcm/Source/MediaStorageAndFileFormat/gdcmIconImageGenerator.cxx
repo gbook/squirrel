@@ -140,7 +140,7 @@ Retrieved from: http://en.literateprograms.org/Median_cut_algorithm_(C_Plus_Plus
 
   Block::Block(Point* pts, std::ptrdiff_t ptslen)
     {
-    assert( ptslen > 0 );
+    gdcm_assert( ptslen > 0 );
     this->points = pts;
     this->pointsLength = (int)ptslen;
     for(int i=0; i < NUM_DIMENSIONS; i++)
@@ -207,16 +207,16 @@ Retrieved from: http://en.literateprograms.org/Median_cut_algorithm_(C_Plus_Plus
   std::list<Point> medianCut(DataElement const &PixelData, int numPoints, unsigned int desiredSize,
     std::vector<unsigned char> & outputimage )
     {
-    assert( numPoints > 0 );
+    gdcm_assert( numPoints > 0 );
     //Point* Points = (Point*)malloc(sizeof(Point) * numPoints);
     Point* Points = new Point[numPoints];
-    assert( Points );
+    gdcm_assert( Points );
     const ByteValue *bv = PixelData.GetByteValue();
-    assert( bv );
+    gdcm_assert( bv );
     const unsigned char *inbuffer = (const unsigned char*)bv->GetPointer();
-    assert( inbuffer );
+    gdcm_assert( inbuffer );
     size_t bvlen = bv->GetLength(); (void)bvlen;
-    assert( bvlen == (size_t) numPoints * 3 ); // only 8bits RGB please
+    gdcm_assert( bvlen == (size_t) numPoints * 3 ); // only 8bits RGB please
     for(int i = 0; i < numPoints; i++)
       {
 #if 0
@@ -289,19 +289,19 @@ Retrieved from: http://en.literateprograms.org/Median_cut_algorithm_(C_Plus_Plus
 
       //int index = std::distance(s.begin(), it.first);
       size_t index = result.size();
-      assert( index <= 256 );
+      gdcm_assert( index <= 256 );
 
       for(int i = 0; i < numPoints; i++)
         {
         const unsigned char *currentcolor = inbuffer + 3 * i;
         for(size_t j = 0; j < (size_t)block.numPoints(); j++)
           {
-          assert( currentcolor < inbuffer + bvlen );
-          assert( currentcolor + 3 <= inbuffer + bvlen );
+          gdcm_assert( currentcolor < inbuffer + bvlen );
+          gdcm_assert( currentcolor + 3 <= inbuffer + bvlen );
           if( std::equal( currentcolor, currentcolor + 3, points[j].x ) )
             {
-            //assert( outputimage[i] == 0 );
-            assert( index > 0 );
+            //gdcm_assert( outputimage[i] == 0 );
+            gdcm_assert( index > 0 );
             outputimage[i] = (unsigned char)(index - 1);
             }
           }
@@ -317,7 +317,7 @@ Retrieved from: http://en.literateprograms.org/Median_cut_algorithm_(C_Plus_Plus
 // Create LUT with a maximum number of color equal to \param maxcolor
 void IconImageGenerator::BuildLUT( Bitmap & bitmap, unsigned int maxcolor )
 {
-  assert( Internals->ConvertRGBToPaletteColor );
+  gdcm_assert( Internals->ConvertRGBToPaletteColor );
   using namespace quantization;
   const unsigned int *dims = bitmap.GetDimensions();
   unsigned int numPoints = dims[0]*dims[1];
@@ -345,11 +345,11 @@ void IconImageGenerator::BuildLUT( Bitmap & bitmap, unsigned int maxcolor )
   for( int i = 0; i < 3; ++i )
     {
     lut.InitializeLUT( LookupTable::LookupTableType(i), (unsigned short)ncolors, 0, 8 );
-    lut.SetLUT( LookupTable::LookupTableType(i), &buffer[i][0], (unsigned short)ncolors );
+    lut.SetLUT( LookupTable::LookupTableType(i), buffer[i].data(), (unsigned short)ncolors );
     }
 
-  bitmap.GetDataElement().SetByteValue( (char*)&indeximage[0], (uint32_t)indeximage.size() );
-  assert( lut.Initialized() );
+  bitmap.GetDataElement().SetByteValue( (char*)indeximage.data(), (uint32_t)indeximage.size() );
+  gdcm_assert( lut.Initialized() );
 }
 
 void IconImageGenerator::SetOutsideValuePixel(double v)
@@ -381,9 +381,9 @@ void IconImageGenerator::SetPixelMinMax(double min, double max)
 template <typename TPixelType>
 void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &max, double discardvalue)
 {
-  assert( npixels );
+  gdcm_assert( npixels );
   const TPixelType discard = (TPixelType)discardvalue;
-  assert( (double)discard == discardvalue );
+  gdcm_assert( (double)discard == discardvalue );
   TPixelType lmin = std::numeric_limits< TPixelType>::max();
   TPixelType lmax = std::numeric_limits< TPixelType>::min();
   for( size_t i = 0; i < npixels; ++i )
@@ -397,8 +397,8 @@ void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &
       lmax = p[i];
       }
     }
-  //assert( lmin != std::numeric_limits< TPixelType>::max() );
-  //assert( lmax != std::numeric_limits< TPixelType>::min() );
+  //gdcm_assert( lmin != std::numeric_limits< TPixelType>::max() );
+  //gdcm_assert( lmax != std::numeric_limits< TPixelType>::min() );
 
   // what if lmin == lmax == 0 for example:
   // let's fake a slightly different min/max found:
@@ -407,7 +407,7 @@ void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &
     if( lmax == std::numeric_limits<TPixelType>::max() )
       {
       lmin--;
-      assert( lmin + 1 > lmin );
+      gdcm_assert( lmin + 1 > lmin );
       }
     else
       {
@@ -422,7 +422,7 @@ void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &
 template <typename TPixelType>
 void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &max)
 {
-  assert( npixels );
+  gdcm_assert( npixels );
   TPixelType lmin = std::numeric_limits< TPixelType>::max();
   TPixelType lmax = std::numeric_limits< TPixelType>::min();
   for( size_t i = 0; i < npixels; ++i )
@@ -436,8 +436,8 @@ void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &
       lmax = p[i];
       }
     }
-  //assert( lmin != std::numeric_limits< TPixelType>::max() );
-  //assert( lmax != std::numeric_limits< TPixelType>::min() );
+  //gdcm_assert( lmin != std::numeric_limits< TPixelType>::max() );
+  //gdcm_assert( lmax != std::numeric_limits< TPixelType>::min() );
 
   // what if lmin == lmax == 0 for example:
   // let's fake a slightly different min/max found:
@@ -446,7 +446,7 @@ void ComputeMinMax( const TPixelType *p, size_t npixels , double & min, double &
     if( lmax == std::numeric_limits<TPixelType>::max() )
       {
       lmin--;
-      assert( lmin + 1 > lmin );
+      gdcm_assert( lmin + 1 > lmin );
       }
     else
       {
@@ -521,7 +521,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
   else
     {
     I->SetPhotometricInterpretation( P->GetPhotometricInterpretation() );
-    assert( I->GetPhotometricInterpretation() == PhotometricInterpretation::MONOCHROME1
+    gdcm_assert( I->GetPhotometricInterpretation() == PhotometricInterpretation::MONOCHROME1
       || I->GetPhotometricInterpretation() == PhotometricInterpretation::MONOCHROME2
       || I->GetPhotometricInterpretation() == PhotometricInterpretation::PALETTE_COLOR );
     if( !Internals->ConvertRGBToPaletteColor
@@ -531,7 +531,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
       }
     }
 
-  assert( I->GetPlanarConfiguration() == 0 );
+  gdcm_assert( I->GetPlanarConfiguration() == 0 );
 
   // FIXME we should not retrieve the whole image, ideally we only need a
   // single 2D frame
@@ -540,11 +540,11 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
   if( P->GetNumberOfDimensions() == 3 )
     {
     const unsigned int *dims = P->GetDimensions();
-    assert( framelen % dims[2] == 0 );
+    gdcm_assert( framelen % dims[2] == 0 );
     framelen /= dims[2];
     }
   vbuffer.resize( P->GetBufferLength() );
-  char *buffer = &vbuffer[0];
+  char *buffer = vbuffer.data();
   bool boolean = P->GetBuffer(buffer);
   if( !boolean ) return false;
 
@@ -560,8 +560,8 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
 
   uint8_t ps = I->GetPixelFormat().GetPixelSize();
 
-  char *iconb = &vbuffer2[0];
-  char *imgb = &vbuffer[0];
+  char *iconb = vbuffer2.data();
+  char *imgb = vbuffer.data();
 
   const unsigned int *imgdims = P->GetDimensions();
   const unsigned int stepi = imgdims[0] / Internals->dims[0];
@@ -573,22 +573,22 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
   for(unsigned int i = 0; i < Internals->dims[1]; ++i )
     for(unsigned int j = 0; j < Internals->dims[0]; ++j )
       {
-      assert( (i * Internals->dims[0] + j) * ps < I->GetBufferLength() );
-      assert( (i * imgdims[0] * stepj + j * stepi) * ps < framelen /*P->GetBufferLength()*/ );
+      gdcm_assert( (i * Internals->dims[0] + j) * ps < I->GetBufferLength() );
+      gdcm_assert( (i * imgdims[0] * stepj + j * stepi) * ps < framelen /*P->GetBufferLength()*/ );
       memcpy(iconb + (i * Internals->dims[0] + j) * ps,
         imgb + (i * imgdims[0] * stepj + j * stepi) * ps, ps );
       }
   // Apply LUT
   if( P->GetPhotometricInterpretation() == PhotometricInterpretation::PALETTE_COLOR )
     {
-    std::string tempvbuf(&vbuffer2[0], vbuffer2.size());
+    std::string tempvbuf(vbuffer2.data(), vbuffer2.size());
     std::istringstream is( tempvbuf );
     std::stringstream ss;
     P->GetLUT().Decode( is, ss );
 
     if( I->GetPixelFormat().GetBitsAllocated() == 16 )
       {
-      //assert( I->GetPixelFormat().GetPixelRepresentation() == 0 );
+      //gdcm_assert( I->GetPixelFormat().GetPixelRepresentation() == 0 );
       std::string s = ss.str();
       Rescaler r;
       r.SetPixelFormat( I->GetPixelFormat() );
@@ -605,17 +605,17 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
       r.SetIntercept( 0 - step );
 
       // paranoid self check:
-      assert( r.GetIntercept() + r.GetSlope() * min == 0. );
-      assert( r.GetIntercept() + r.GetSlope() * max == 255. );
+      gdcm_assert( r.GetIntercept() + r.GetSlope() * min == 0. );
+      gdcm_assert( r.GetIntercept() + r.GetSlope() * max == 255. );
 
       r.SetTargetPixelType( PixelFormat::UINT8 );
       r.SetUseTargetPixelType(true);
 
       std::vector<char> v8;
       v8.resize( Internals->dims[0] * Internals->dims[1] * 3 );
-      if( !r.Rescale(&v8[0],&s[0],s.size()) )
+      if( !r.Rescale(v8.data(),s.data(),s.size()) )
         {
-        assert( 0 ); // should not happen in real life
+        gdcm_assert( 0 ); // should not happen in real life
         gdcmErrorMacro( "Problem in the rescaler" );
         return false;
         }
@@ -626,12 +626,12 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
 
         // re-encode:
         std::stringstream ss2;
-        ss2.str( std::string( &v8[0], v8.size() ) );
+        ss2.str( std::string( v8.data(), v8.size() ) );
 
         std::string s2 = ss2.str();
         // As per standard, we only support 8bits icon
         I->SetPixelFormat( PixelFormat::UINT8 );
-        pixeldata.SetByteValue( &s2[0], (uint32_t)s2.size() );
+        pixeldata.SetByteValue( s2.data(), (uint32_t)s2.size() );
 
         BuildLUT( *I, 256 );
         }
@@ -639,12 +639,12 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         {
         I->SetPixelFormat( PixelFormat::UINT8 );
         I->GetPixelFormat().SetSamplesPerPixel( 3 );
-        pixeldata.SetByteValue( &v8[0], (uint32_t)v8.size() );
+        pixeldata.SetByteValue( v8.data(), (uint32_t)v8.size() );
         }
       }
     else
       {
-      assert( I->GetPixelFormat() == PixelFormat::UINT8 );
+      gdcm_assert( I->GetPixelFormat() == PixelFormat::UINT8 );
       std::string s = ss.str();
       if( Internals->ConvertRGBToPaletteColor )
         {
@@ -653,7 +653,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
 
         // As per standard, we only support 8bits icon
         I->SetPixelFormat( PixelFormat::UINT8 );
-        pixeldata.SetByteValue( &s[0], (uint32_t)s.size() );
+        pixeldata.SetByteValue( s.data(), (uint32_t)s.size() );
 
         BuildLUT(*I, 256 );
         }
@@ -661,7 +661,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         {
         I->SetPixelFormat( PixelFormat::UINT8 );
         I->GetPixelFormat().SetSamplesPerPixel( 3 );
-        pixeldata.SetByteValue( &s[0], (uint32_t)s.size() );
+        pixeldata.SetByteValue( s.data(), (uint32_t)s.size() );
         }
       }
     }
@@ -671,14 +671,14 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
     || P->GetPhotometricInterpretation() == PhotometricInterpretation::YBR_ICT
     || P->GetPhotometricInterpretation() == PhotometricInterpretation::YBR_RCT )
     {
-    std::string tempvbuf( &vbuffer2[0], vbuffer2.size() );
+    std::string tempvbuf( vbuffer2.data(), vbuffer2.size() );
     if( P->GetPhotometricInterpretation() == PhotometricInterpretation::YBR_FULL
     || P->GetPhotometricInterpretation() == PhotometricInterpretation::YBR_FULL_422 )
       {
-      assert( I->GetPixelFormat() == PixelFormat::UINT8 );
+      gdcm_assert( I->GetPixelFormat() == PixelFormat::UINT8 );
       if( P->GetPlanarConfiguration() == 0 )
         {
-        unsigned char *ybr = (unsigned char*)&tempvbuf[0];
+        unsigned char *ybr = (unsigned char*)tempvbuf.data();
         unsigned char *ybr_out = ybr;
         unsigned char *ybr_end = ybr + vbuffer2.size();
         int R, G, B;
@@ -712,21 +712,21 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
     d.write( &tempvbuf[0], tempvbuf.size() );
     d.close();
 #endif
-        assert( ybr_out == ybr_end );
+        gdcm_assert( ybr_out == ybr_end );
         }
       else // ( P->GetPlanarConfiguration() == 1 )
         {
         std::string tempvbufybr = tempvbuf;
 
-        unsigned char *ybr = (unsigned char*)&tempvbufybr[0];
+        unsigned char *ybr = (unsigned char*)tempvbufybr.data();
         unsigned char *ybr_end = ybr + vbuffer2.size();
-        assert( vbuffer2.size() % 3 == 0 );
+        gdcm_assert( vbuffer2.size() % 3 == 0 );
         size_t ybrl = vbuffer2.size() / 3;
         unsigned char *ybra = ybr + 0 * ybrl;
         unsigned char *ybrb = ybr + 1 * ybrl;
         unsigned char *ybrc = ybr + 2 * ybrl;
 
-        unsigned char *ybr_out = (unsigned char*)&tempvbuf[0];
+        unsigned char *ybr_out = (unsigned char*)tempvbuf.data();
         unsigned char *ybr_out_end = ybr_out + vbuffer2.size();
         int R, G, B;
         for( ; ybr_out != ybr_out_end; )
@@ -754,27 +754,27 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
           *ybr_out = (unsigned char)G; ++ybr_out;
           *ybr_out = (unsigned char)B; ++ybr_out;
           }
-        assert( ybra + 2 * ybrl == ybr_end ); (void)ybr_end;
-        assert( ybrb + 1 * ybrl == ybr_end );
-        assert( ybrc + 0 * ybrl == ybr_end );
+        gdcm_assert( ybra + 2 * ybrl == ybr_end ); (void)ybr_end;
+        gdcm_assert( ybrb + 1 * ybrl == ybr_end );
+        gdcm_assert( ybrc + 0 * ybrl == ybr_end );
         }
       }
     else
       {
       if( P->GetPlanarConfiguration() == 1 )
         {
-        assert( I->GetPixelFormat() == PixelFormat::UINT8 );
+        gdcm_assert( I->GetPixelFormat() == PixelFormat::UINT8 );
         std::string tempvbufrgb = tempvbuf;
 
-        unsigned char *rgb = (unsigned char*)&tempvbufrgb[0];
+        unsigned char *rgb = (unsigned char*)tempvbufrgb.data();
         unsigned char *rgb_end = rgb + vbuffer2.size();
-        assert( vbuffer2.size() % 3 == 0 );
+        gdcm_assert( vbuffer2.size() % 3 == 0 );
         size_t rgbl = vbuffer2.size() / 3;
         unsigned char *rgba = rgb + 0 * rgbl;
         unsigned char *rgbb = rgb + 1 * rgbl;
         unsigned char *rgbc = rgb + 2 * rgbl;
 
-        unsigned char *rgb_out = (unsigned char*)&tempvbuf[0];
+        unsigned char *rgb_out = (unsigned char*)tempvbuf.data();
         unsigned char *rgb_out_end = rgb_out + vbuffer2.size();
         for( ; rgb_out != rgb_out_end; )
           {
@@ -786,9 +786,9 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
           *rgb_out = b; ++rgb_out;
           *rgb_out = c; ++rgb_out;
           }
-        assert( rgba + 2 * rgbl == rgb_end ); (void)rgb_end;
-        assert( rgbb + 1 * rgbl == rgb_end );
-        assert( rgbc + 0 * rgbl == rgb_end );
+        gdcm_assert( rgba + 2 * rgbl == rgb_end ); (void)rgb_end;
+        gdcm_assert( rgbb + 1 * rgbl == rgb_end );
+        gdcm_assert( rgbc + 0 * rgbl == rgb_end );
         }
       }
 
@@ -800,7 +800,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         {
         // As per standard, we only support 8bits icon
         I->SetPixelFormat( PixelFormat::UINT8 );
-        pixeldata.SetByteValue( &s[0], (uint32_t)s.size() );
+        pixeldata.SetByteValue( s.data(), (uint32_t)s.size() );
 
         BuildLUT(*I, 256 );
         }
@@ -808,13 +808,13 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         {
         I->SetPixelFormat( PixelFormat::UINT8 );
         I->GetPixelFormat().SetSamplesPerPixel( 3 );
-        pixeldata.SetByteValue( &s[0], (uint32_t)s.size() );
+        pixeldata.SetByteValue( s.data(), (uint32_t)s.size() );
         }
       }
     else
       {
-      assert( I->GetPixelFormat() == PixelFormat::UINT16 );
-      assert( I->GetPixelFormat().GetPixelRepresentation() == 0 );
+      gdcm_assert( I->GetPixelFormat() == PixelFormat::UINT16 );
+      gdcm_assert( I->GetPixelFormat().GetPixelRepresentation() == 0 );
       std::string s = is.str();
       Rescaler r;
       r.SetPixelFormat( I->GetPixelFormat() );
@@ -831,17 +831,17 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
       r.SetIntercept( 0 - step );
 
       // paranoid self check:
-      assert( r.GetIntercept() + r.GetSlope() * min == 0. );
-      assert( r.GetIntercept() + r.GetSlope() * max == 255. );
+      gdcm_assert( r.GetIntercept() + r.GetSlope() * min == 0. );
+      gdcm_assert( r.GetIntercept() + r.GetSlope() * max == 255. );
 
       r.SetTargetPixelType( PixelFormat::UINT8 );
       r.SetUseTargetPixelType(true);
 
       std::vector<char> v8;
       v8.resize( Internals->dims[0] * Internals->dims[1] * 3 );
-      if( !r.Rescale(&v8[0],&s[0],s.size()) )
+      if( !r.Rescale(v8.data(),s.data(),s.size()) )
         {
-        assert( 0 ); // should not happen in real life
+        gdcm_assert( 0 ); // should not happen in real life
         gdcmErrorMacro( "Problem in the rescaler" );
         return false;
         }
@@ -852,7 +852,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         lut.Allocate();
 
         I->SetPixelFormat( PixelFormat::UINT8 );
-        pixeldata.SetByteValue( &v8[0], (uint32_t)v8.size() );
+        pixeldata.SetByteValue( v8.data(), (uint32_t)v8.size() );
 
         BuildLUT(*I, 256 );
         }
@@ -860,14 +860,14 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         {
         I->SetPixelFormat( PixelFormat::UINT8 );
         I->GetPixelFormat().SetSamplesPerPixel( 3 );
-        pixeldata.SetByteValue( &v8[0], (uint32_t)v8.size() );
+        pixeldata.SetByteValue( v8.data(), (uint32_t)v8.size() );
         }
       }
     }
   else
     {
     // MONOCHROME1 / MONOCHROME2 ...
-    char *buffer2 = &vbuffer2[0];
+    char *buffer2 = vbuffer2.data();
     pixeldata.SetByteValue( buffer2, (uint32_t)vbuffer2.size() );
 
     Rescaler r;
@@ -886,10 +886,10 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
       }
     if( Internals->AutoMinMax )
       {
-      void *p = &vbuffer2[0];
+      void *p = vbuffer2.data();
       size_t len = vbuffer2.size();
       const PixelFormat &pf = I->GetPixelFormat();
-      assert( pf.GetSamplesPerPixel() == 1 );
+      gdcm_assert( pf.GetSamplesPerPixel() == 1 );
       if( Internals->UseOutsideValuePixel )
         {
         const double d = Internals->OutsideValuePixel;
@@ -908,7 +908,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
           ComputeMinMax<int16_t>( (const int16_t*)p, len / sizeof( int16_t ), min, max, d);
           break;
         default:
-          assert( 0 ); // should not happen
+          gdcm_assert( 0 ); // should not happen
           break;
           }
         // ok we have found the min value, we should now be able to replace all value 'd' with this min now:
@@ -927,7 +927,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
           std::replace( (int16_t*)p, (int16_t*)p + len / sizeof( int16_t ), (int16_t)d, (int16_t)min);
           break;
         default:
-          assert( 0 ); // should not happen
+          gdcm_assert( 0 ); // should not happen
           break;
           }
         }
@@ -946,7 +946,7 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
         ComputeMinMax<int16_t>( (const int16_t*)p, len / sizeof( int16_t ), min, max);
         break;
       default:
-        assert( 0 ); // should not happen
+        gdcm_assert( 0 ); // should not happen
         break;
         }
       }
@@ -955,40 +955,40 @@ f. If a Palette Color lookup Table is used, an 8 Bit Allocated (0028,0100) shall
     r.SetIntercept( 0 - step );
 
     // paranoid self check:
-    assert( (int)(0.5 + r.GetIntercept() + r.GetSlope() * min) == 0 );
-    assert( (int)(0.5 + r.GetIntercept() + r.GetSlope() * max) == 255 );
+    gdcm_assert( (int)(0.5 + r.GetIntercept() + r.GetSlope() * min) == 0 );
+    gdcm_assert( (int)(0.5 + r.GetIntercept() + r.GetSlope() * max) == 255 );
 
     r.SetTargetPixelType( PixelFormat::UINT8 );
     r.SetUseTargetPixelType(true);
 
     std::vector<char> v8;
     v8.resize( Internals->dims[0] * Internals->dims[1] );
-    if( !r.Rescale(&v8[0],&vbuffer2[0],vbuffer2.size()) )
+    if( !r.Rescale(v8.data(),vbuffer2.data(),vbuffer2.size()) )
       {
-      assert( 0 ); // should not happen in real life
+      gdcm_assert( 0 ); // should not happen in real life
       gdcmErrorMacro( "Problem in the rescaler" );
       return false;
       }
 
     // As per standard, we only support 8bits icon
     I->SetPixelFormat( PixelFormat::UINT8 );
-    pixeldata.SetByteValue( &v8[0], (uint32_t)v8.size() );
+    pixeldata.SetByteValue( v8.data(), (uint32_t)v8.size() );
     }
 
   // \postcondition
   if( !Internals->ConvertRGBToPaletteColor
     && I->GetPhotometricInterpretation() == PhotometricInterpretation::RGB )
     {
-    assert( I->GetPixelFormat().GetSamplesPerPixel() == 3 );
+    gdcm_assert( I->GetPixelFormat().GetSamplesPerPixel() == 3 );
     }
   else
     {
-    assert( I->GetPixelFormat().GetSamplesPerPixel() == 1 );
+    gdcm_assert( I->GetPixelFormat().GetSamplesPerPixel() == 1 );
     }
-  assert( I->GetPixelFormat().GetBitsAllocated() == 8 );
-  assert( I->GetPixelFormat().GetBitsStored() == 8 );
-  assert( I->GetPixelFormat().GetHighBit() == 7 );
-  assert( I->GetPixelFormat().GetPixelRepresentation() == 0 );
+  gdcm_assert( I->GetPixelFormat().GetBitsAllocated() == 8 );
+  gdcm_assert( I->GetPixelFormat().GetBitsStored() == 8 );
+  gdcm_assert( I->GetPixelFormat().GetHighBit() == 7 );
+  gdcm_assert( I->GetPixelFormat().GetPixelRepresentation() == 0 );
 
   return true;
 }

@@ -23,13 +23,13 @@
 namespace gdcm_ns
 {
   void DataElement::SetVLToUndefined() {
-    assert( VRField == VR::SQ || VRField == VR::INVALID
+    gdcm_assert( VRField == VR::SQ || VRField == VR::INVALID
       || (VRField == VR::UN /*&& IsUndefinedLength()*/ ) );
     SequenceOfItems *sqi = dynamic_cast<SequenceOfItems*>(ValueField.GetPointer());
     if( sqi )
       {
       sqi->SetLengthToUndefined();
-      assert( GetValueAsSQ()->IsUndefinedLength() );
+      gdcm_assert( GetValueAsSQ()->IsUndefinedLength() );
       }
     ValueLengthField.SetToUndefined();
   }
@@ -61,7 +61,7 @@ namespace gdcm_ns
     SequenceOfItems *sq = dynamic_cast<SequenceOfItems*>(ValueField.GetPointer());
     if( sq ) // all set !
       {
-      //assert( GetVR() == VR::SQ );
+      //gdcm_assert( GetVR() == VR::SQ );
       SmartPointer<SequenceOfItems> sqi = sq;
       return sqi;
       }
@@ -72,7 +72,7 @@ namespace gdcm_ns
         if( GetVR() == VR::INVALID )
           {
           const ByteValue *bv = GetByteValue();
-          assert( bv );
+          gdcm_assert( bv );
           SequenceOfItems *sqi = new SequenceOfItems;
           sqi->SetLength( bv->GetLength() );
           std::string s( bv->GetPointer(), bv->GetLength() );
@@ -111,9 +111,9 @@ namespace gdcm_ns
           }
         else if  ( GetVR() == VR::UN ) // cp 246, IVRLE SQ
           {
-          assert( GetVR() == VR::UN ); // cp 246, IVRLE SQ
+          gdcm_assert( GetVR() == VR::UN ); // cp 246, IVRLE SQ
           const ByteValue *bv = GetByteValue();
-          assert( bv );
+          gdcm_assert( bv );
           SequenceOfItems *sqi = new SequenceOfItems;
           sqi->SetLength( bv->GetLength() );
           std::string s( bv->GetPointer(), bv->GetLength() );
@@ -156,13 +156,41 @@ namespace gdcm_ns
                 return nullptr;
                 }
               }
+            catch ( ... )
+              {
+              gdcmErrorMacro( "Could not read SQ, unknown exception" );
+              delete sqi;
+              return nullptr;
+              }
+            }
+          return sqi;
+          }
+        else if  ( GetVR() & VR::OB_OW ) // pre-dicom 1993 ?
+          {
+          const ByteValue *bv = GetByteValue();
+          gdcm_assert( bv );
+          SequenceOfItems *sqi = new SequenceOfItems;
+          sqi->SetLength( bv->GetLength() );
+          std::string s( bv->GetPointer(), bv->GetLength() );
+          try
+            {
+            std::stringstream ss;
+            ss.str( s );
+            sqi->Read<ImplicitDataElement,SwapperNoOp>( ss, true );
+            }
+          catch ( Exception &ex0 )
+            {
+            gdcmErrorMacro( "Could not read SQ as OB. Giving up" );
+            gdcmErrorMacro(ex0.what()); (void)ex0;
+            delete sqi;
+            return nullptr;
             }
           return sqi;
           }
         else
           {
-          assert( GetVR().IsVRFile() );
-          assert( GetByteValue() );
+          gdcm_assert( GetVR().IsVRFile() );
+          gdcm_assert( GetByteValue() );
           return nullptr;
           }
         }

@@ -22,7 +22,7 @@
 int TestReadCanRead(const char *subdir, const char* filename, bool verbose = false)
 {
   if( verbose )
-  std::cout << "TestReadCanRead: " << filename << std::endl;
+    std::cout << "TestReadCanRead: " << filename << std::endl;
 
   bool b1, b2;
 
@@ -58,8 +58,8 @@ int TestReadCanRead(const char *subdir, const char* filename, bool verbose = fal
     {
     std::cerr << "TestReadCanRead: incompatible result " << filename << std::endl;
     if( b1 )
-    std::cerr << "TestReadCanRead: CanRead was true: " << filename << std::endl;
-    //assert( !ret );
+      std::cerr << "TestReadCanRead: CanRead was true: " << filename << std::endl;
+    //gdcm_assert( !ret );
     return ret;
     }
 
@@ -91,7 +91,7 @@ int TestReadCanRead(const char *subdir, const char* filename, bool verbose = fal
     reader2.SetFileName( outfilename.c_str() );
     b1 = reader2.CanRead( );
     //reader2.GetFile().GetHeader().GetPreamble().Remove();
-    //assert( reader2.GetFile().GetHeader().GetPreamble().IsEmpty() );
+    //gdcm_assert( reader2.GetFile().GetHeader().GetPreamble().IsEmpty() );
     b2 = reader2.Read();
     if ( (b1 && !b2) || (!b1 && b2)  )
       {

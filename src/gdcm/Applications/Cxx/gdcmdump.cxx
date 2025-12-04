@@ -49,10 +49,17 @@
 #include "gdcmASN1.h"
 #include "gdcmAttribute.h"
 #include "gdcmBase64.h"
+#include "gdcmMEC_MR3.h"
 #include "gdcmTagKeywords.h"
+#include "gdcmDeflateStream.h"
+#include "gdcmSplitMosaicFilter.h"
 
 #include <string>
 #include <iostream>
+#ifdef GDCM_HAVE_CODECVT
+#include <codecvt>
+#endif
+#include <locale>
 
 #include <stdio.h>     /* for printf */
 #include <stdlib.h>    /* for exit */
@@ -87,12 +94,12 @@ static void printvaluet(std::istream & is, uint32_t numels)
 
 static void printvalue(std::istream &is, uint32_t type, uint32_t numels, uint32_t pos)
 {
-  assert( numels > 0 );
+  gdcm_assert( numels > 0 );
   std::streampos start = is.tellg();
   is.seekg( pos );
   std::cout << "[";
   typedef char (string81)[81]; // 80'th byte == 0
-  assert( sizeof( string81 ) == 81 );
+  gdcm_assert( sizeof( string81 ) == 81 );
   switch( type )
     {
   case TYPE_FLOAT:
@@ -108,7 +115,7 @@ static void printvalue(std::istream &is, uint32_t type, uint32_t numels, uint32_
     printvaluet<uint32_t>(is, numels);
     break;
   default:
-    assert( 0 );
+    gdcm_assert( 0 );
     }
   std::cout << "]";
   std::cout << " # " << numels;
@@ -140,7 +147,7 @@ static void printbinary(std::istream &is, PDFElement const & pdfel )
   uint32_t type = pdfel.gettype();
   uint32_t numels = pdfel.getnumelems();
   //uint32_t dummy = pdfel.getdummy();
-  //assert( dummy == 0 ); (void)dummy;
+  //gdcm_assert( dummy == 0 ); (void)dummy;
   uint32_t offset = pdfel.getoffset();
   uint32_t pos = (uint32_t)(offset + is.tellg() - 4);
   printvalue(is, type, numels, pos);
@@ -159,28 +166,28 @@ static void ProcessSDSDataString( std::istream & is )
 #if 0
   int32_t v1;
   is.read( (char*)&v1,sizeof(v1));
-  assert( v1 == 0x1 );
+  gdcm_assert( v1 == 0x1 );
   uint32_t bla;
   is.read( (char*)&bla, sizeof(bla) );
   char name0[32];
   memset(name0,0,sizeof(name0));
-  assert( bla < sizeof(name0) );
+  gdcm_assert( bla < sizeof(name0) );
   is.read( name0, bla);
   size_t l = strlen(name0);
-  assert( l == bla );
+  gdcm_assert( l == bla );
   std::cerr << "name0:" << name0 << std::endl;
 
   is.read( (char*)&bla, sizeof(bla) );
-  assert( bla == 0x1 );
+  gdcm_assert( bla == 0x1 );
   is.read( (char*)&bla, sizeof(bla) );
   char value[32];
   memset(value,0,sizeof(value));
-  assert( bla < sizeof(value) );
+  gdcm_assert( bla < sizeof(value) );
   is.read( value, bla);
   is.read( (char*)&bla, sizeof(bla) );
-  assert( bla == 0 ); // trailing stuff ?
+  gdcm_assert( bla == 0 ); // trailing stuff ?
   is.read( (char*)&bla, sizeof(bla) );
-  assert( bla == 0 ); // trailing stuff ?
+  gdcm_assert( bla == 0 ); // trailing stuff ?
   const uint32_t cur = (uint32_t)is.tellg();
   std::cerr << "offset:" << cur << std::endl;
 #else
@@ -193,15 +200,15 @@ static void ProcessSDSData( std::istream & is )
   // haven't been able to figure out what was the begin meant for
   is.seekg( 0x20 - 8 );
   uint32_t version = 0;
-  assert( sizeof(uint32_t) == 4 );
+  gdcm_assert( sizeof(uint32_t) == 4 );
   is.read( (char*)&version, sizeof(version) );
-  assert( version == 8 );
+  gdcm_assert( version == 8 );
   uint32_t numel = 0;
   is.read( (char*)&numel, sizeof(numel) );
   for( uint32_t el = 0; el < numel; ++el )
     {
     PDFElement pdfel;
-    assert( sizeof(pdfel) == 50 );
+    gdcm_assert( sizeof(pdfel) == 50 );
     is.read( (char*)&pdfel, 50 );
     if( *pdfel.getname() )
       {
@@ -267,7 +274,7 @@ static int DumpPMS_MRSDS(const gdcm::DataSet & ds)
         else if( s1 == "COILSTATE " )
           ProcessSDSDataString( is );
         else
-          assert(0);
+          gdcm_assert(0);
       } else {
         ProcessSDSData( is );
       }
@@ -345,7 +352,7 @@ static bool DumpToshibaDTI( const char * input, size_t len )
   std::reverse( copy.begin(), copy.end() );
 
   std::istringstream is;
-  std::string dup( &copy[0], copy.size() );
+  std::string dup( copy.data(), copy.size() );
   is.str( dup );
 
   gdcm::File file;
@@ -355,6 +362,7 @@ static bool DumpToshibaDTI( const char * input, size_t len )
   ds.Read<gdcm::ExplicitDataElement,gdcm::SwapperNoOp>( is );
 
   gdcm::Printer p;
+  //gdcm::DictPrinter p;
   p.SetFile( file );
   p.SetColor( color != 0 );
   p.Print( std::cout );
@@ -368,7 +376,7 @@ static int DumpTOSHIBA_Reverse(const gdcm::DataSet & ds, const gdcm::PrivateTag 
   // (0029,0010) ?? (LO) [PMTF INFORMATION DATA ]                      # 22,1 Private Creator
   // (0029,1001) ?? (SQ) (Sequence with undefined length)              # u/l,1 ?
 
-  if( !ds.FindDataElement( tpmtf) ) return 1;
+  if( !ds.FindDataElement( tpmtf) ) return 0; // this is not an error at this point
   const gdcm::DataElement& pmtf = ds.GetDataElement( tpmtf );
   if ( pmtf.IsEmpty() ) return 1;
   gdcm::SmartPointer<gdcm::SequenceOfItems> seq = pmtf.GetValueAsSQ();
@@ -489,7 +497,7 @@ struct Data2
    os << "  UserAdress4: " << std::string(UserAdress4,32) << "\n";
    os << "  UserAdress5: " << std::string(UserAdress5,32) << "\n";
    os << "  RecDate: "     << std::string(RecDate,8) << "\n";
-   os << "  RecTime: "     << std::string(RecTime,64) << "\n";
+   os << "  RecTime: "     << std::string(RecTime,6) << "\n";
    os << "  RecPlace: "    << std::string(RecPlace,64) << "\n";
    os << "  RecSource: "   << std::string(RecSource,64) << "\n";
    os << "  DF1: "         << std::string(DF1,64) << "\n";
@@ -523,7 +531,7 @@ static bool ProcessData( const char *buf, size_t len )
 {
   Data2 data2;
   const size_t s = sizeof(data2);
-  assert( len >= s); (void)len;
+  gdcm_assert( len >= s); (void)len;
   // VIMDATA2 is generally 2048 bytes, while s = 1786
   // the end is filled with \0 bytes
   memcpy(&data2, buf, s);
@@ -591,7 +599,7 @@ struct el
     readastring( name, input );
     const char *p = input + 1+  name.size();
     memcpy( &pad, p, sizeof( pad ) );
-    //assert( pad == 1 || pad == 2 || pad == 3 || pad == 6 );
+    //gdcm_assert( pad == 1 || pad == 2 || pad == 3 || pad == 6 );
     values.resize( pad );
     const char *pp = p + sizeof(uint32_t);
     for( uint32_t pidx = 0; pidx < pad; ++pidx )
@@ -676,11 +684,11 @@ struct info
       // postcondition
       uint32_t fixme;
       memcpy( &fixme, in, sizeof(fixme) );
-      assert( fixme == 0x0006981A );
+      gdcm_assert( fixme == 0x0006981A );
       }
     else
       {
-      assert( 0 );
+      gdcm_assert( 0 );
       }
     return in - m;
     }
@@ -696,9 +704,29 @@ static int DumpEl2_new(const gdcm::DataSet & ds)
   const gdcm::ByteValue * bv = de01f7_26.GetByteValue();
 
   const char *begin = bv->GetPointer();
+  const size_t buf_len= bv->GetLength();
+
+  bool isgzip = false;
+  if( buf_len > (0x15f + 3) ) {
+    const unsigned char *sig = (const unsigned char*)begin + 0x15f;
+    isgzip = sig[0] == 0x1f && sig[1] == 0x8b && sig[2] == 0x08 /* DEFLATE */;
+  }
+
+  if( isgzip ) {
+    size_t offset = 0x15f;
+    size_t len = buf_len - 0x15f;
+    std::string str( begin + offset, begin + len );
+    std::istringstream is( str );
+  
+    zlib_stream::zip_istream gzis( is );
+    std::string out;
+    while( std::getline(gzis, out) ) {
+      std::cout << out << std::endl;
+    }
+  } else {
   uint32_t val0[3];
   memcpy( &val0, begin, sizeof( val0 ) );
-  assert( val0[0] == 0xF22D );
+  gdcm_assert( val0[0] == 0xF22D );
   begin += sizeof( val0 );
 
   // 1A 98 06 00 -> start element
@@ -708,13 +736,14 @@ static int DumpEl2_new(const gdcm::DataSet & ds)
   std::cout << "ELSCINT1 Dumping info from tag " << t01f7_26 << std::endl;
   info i;
   size_t o;
-  assert( val0[1] == 0x1 );
+  gdcm_assert( val0[1] == 0x1 );
   for( uint32_t idx = 0; idx < val0[2]; ++idx )
     {
     o = i.Read( begin );
     std::cout << std::endl;
     begin += o;
     }
+  }
 
   return 0;
 }
@@ -849,6 +878,38 @@ static int PrintCT3(const std::string & filename, bool verbose)
   return ret;
 }
 
+static int PrintMEC_MR3(const std::string & filename, bool verbose)
+{
+  (void)verbose;
+  gdcm::Reader reader;
+  reader.SetFileName( filename.c_str() );
+  if( !reader.Read() )
+    {
+    std::cerr << "Failed to read: " << filename << std::endl;
+    return 1;
+    }
+
+  const gdcm::DataSet& ds = reader.GetFile().GetDataSet();
+
+  // Original Data
+  const gdcm::PrivateTag tmecmr3(0x700d,0x08,"TOSHIBA_MEC_MR3");
+  if( !ds.FindDataElement( tmecmr3) ) return 1;
+  const gdcm::DataElement& mecmr3 = ds.GetDataElement( tmecmr3 );
+  if ( mecmr3.IsEmpty() ) return 1;
+  const gdcm::ByteValue * bv = mecmr3.GetByteValue();
+
+  const char *inbuffer = bv->GetPointer();
+  const size_t buf_len= bv->GetLength();
+
+  int ret = 0;
+  if (!gdcm::MEC_MR3::Print(inbuffer, buf_len))
+  {
+    ret = 1;
+  }
+
+  return ret;
+}
+
 static int PrintPMTF(const std::string & filename, bool verbose)
 {
   (void)verbose;
@@ -861,14 +922,61 @@ static int PrintPMTF(const std::string & filename, bool verbose)
     }
 
   const gdcm::DataSet& ds = reader.GetFile().GetDataSet();
+  int ret = 0;
+  {
   const gdcm::PrivateTag tpmtf(0x0029,0x1,"PMTF INFORMATION DATA");
-  const gdcm::PrivateTag tseq(0x0029,0x90,"PMTF INFORMATION DATA");
-  int ret = cleanup::DumpTOSHIBA_Reverse( ds, tpmtf, tseq );
+  static const gdcm::PrivateTag &tseq = gdcm::MEC_MR3::GetPMTFInformationDataTag();
+  ret += cleanup::DumpTOSHIBA_Reverse( ds, tpmtf, tseq );
+  }
+
+  {
+  const gdcm::PrivateTag tpmtf(0x0029,0x1,"CANON_MEC_MR3");
+  static const gdcm::PrivateTag &tseq = gdcm::MEC_MR3::GetCanonMECMR3Tag();
+  ret += cleanup::DumpTOSHIBA_Reverse( ds, tpmtf, tseq );
+
+  // PAS Reproduct Information
+  const gdcm::PrivateTag tpasri(0x700d,0x19,"CANON_MEC_MR3^10");
+  if( ds.FindDataElement( tpasri) ) {
+  const gdcm::DataElement& pasri = ds.GetDataElement( tpasri );
+  if (! pasri.IsEmpty() ) {
+  const gdcm::ByteValue * bv = pasri.GetByteValue();
+  std::string s(bv->GetPointer(), bv->GetLength() );
+  std::cout << std::endl;
+  std::cout << "PAS Reproduct Information (XML)" << std::endl;
+  // header states: 
+  // <?xml version="1.0" encoding="UTF-8"?>
+  // so simply dump without further cleanup:
+  std::cout << s.c_str() << std::endl;
+  }
+  }
+  }
+
+  {
+  const gdcm::PrivateTag tpmtf(0x0029,0x1,"TOSHIBA_MEC_MR3");
+  static const gdcm::PrivateTag &tseq = gdcm::MEC_MR3::GetToshibaMECMR3Tag();
+  ret += cleanup::DumpTOSHIBA_Reverse( ds, tpmtf, tseq );
+
+  const gdcm::PrivateTag tpmtf2(0x0029,0x2,"TOSHIBA_MEC_MR3");
+  ret += cleanup::DumpTOSHIBA_Reverse( ds, tpmtf2, tseq );
+  }
 
   return ret;
 }
 
-static int PrintMECMR3(const std::string & filename, bool verbose)
+static void print_utf8(std::string const& s)
+{
+  const char delim = 0;
+  auto start = 0U;
+  auto end = s.find(delim);
+  while (end != std::string::npos)
+  {
+      std::cout << s.substr(start, end - start) << std::endl;
+      start = end + 1;
+      end = s.find(delim, start);
+  }
+}
+
+static int PrintMedComHistory(const std::string & filename, bool verbose)
 {
   (void)verbose;
   gdcm::Reader reader;
@@ -880,17 +988,25 @@ static int PrintMECMR3(const std::string & filename, bool verbose)
     }
 
   const gdcm::DataSet& ds = reader.GetFile().GetDataSet();
-  const gdcm::PrivateTag tpmtf(0x0029,0x1,"TOSHIBA_MEC_MR3");
-  const gdcm::PrivateTag tseq(0x0029,0x90,"TOSHIBA_MEC_MR3");
-  int ret = cleanup::DumpTOSHIBA_Reverse( ds, tpmtf, tseq );
+  const gdcm::PrivateTag tmedcom(0x0029,0x20,"SIEMENS MEDCOM HEADER");
+  if( !ds.FindDataElement( tmedcom) ) return 1;
+  const gdcm::DataElement& medcom = ds.GetDataElement( tmedcom);
+  if ( medcom.IsEmpty() ) return 1;
+  const gdcm::ByteValue * bv = medcom.GetByteValue();
 
-  const gdcm::PrivateTag tpmtf2(0x0029,0x2,"TOSHIBA_MEC_MR3");
-  int ret2 = cleanup::DumpTOSHIBA_Reverse( ds, tpmtf2, tseq );
+  const size_t size = bv->GetLength();
+  std::u16string u16((size / 2) + 0, '\0');
+  bv->GetBuffer( (char*)u16.data(), size );
 
-  return ret +ret2;
+#ifdef GDCM_HAVE_CODECVT
+  std::string utf8 = std::wstring_convert<
+    std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(u16);
+  print_utf8(utf8);
+#else
+  std::cerr << "Missing GDCM_HAVE_CODECVT support" << std::endl;
+#endif
+  return 0;
 }
-
-
 
 static int PrintPDB(const std::string & filename, bool verbose)
 {
@@ -925,7 +1041,50 @@ static int PrintPDB(const std::string & filename, bool verbose)
   return ret;
 }
 
-static int PrintCSABase64(const std::string & filename, const char * name)
+static int PrintCSABase64Impl(gdcm::CSAHeader &csa, std::string const & csaname )
+{
+  const char *name = csaname.c_str();
+  if( csa.FindCSAElementByName(name) )
+  {
+    const gdcm::CSAElement & el = csa.GetCSAElementByName(name);
+    // this is not error if empty:
+    if( el.IsEmpty() ) return 0;
+    const gdcm::ByteValue* bv = el.GetByteValue();
+    std::string str( bv->GetPointer(), bv->GetLength() );
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+    size_t dl = gdcm::Base64::GetDecodeLength( str.c_str(), str.size() );
+    std::vector<char> buf;
+    buf.resize( dl );
+    size_t dl2 = gdcm::Base64::Decode( buf.data(), buf.size(), str.c_str(), str.size() );
+    if( dl != dl2 ) return 1;
+    std::stringstream ss;
+    ss.str( std::string(buf.data(), buf.size()) );
+    gdcm::File file;
+    gdcm::DataSet &ds2 = file.GetDataSet();
+    gdcm::DataElement xde;
+    try
+    {
+      while( xde.Read<gdcm::ExplicitDataElement,gdcm::SwapperNoOp>( ss ) )
+      {
+        ds2.Insert( xde );
+      }
+      gdcm_assert( ss.eof() );
+    }
+    catch(std::exception &)
+    {
+      return 1;
+    }
+    gdcm::Printer p;
+    //gdcm::DictPrinter p;
+    p.SetFile( file );
+    //p.SetColor( 1 );
+    std::cout << "--" << csaname << "--" << std::endl;
+    p.Print(std::cout);
+  }
+  return 0;
+}
+
+static int PrintCSABase64(const std::string & filename, std::vector<std::string> const & csanames )
 {
   gdcm::Reader reader;
   reader.SetFileName( filename.c_str() );
@@ -936,45 +1095,26 @@ static int PrintCSABase64(const std::string & filename, const char * name)
   }
   const gdcm::DataSet& ds = reader.GetFile().GetDataSet();
 
-  gdcm::CSAHeader csa;
-  const gdcm::PrivateTag &t1 = csa.GetCSAImageHeaderInfoTag();
-  if( !ds.FindDataElement( t1 ) ) return 1;
-  csa.LoadFromDataElement( ds.GetDataElement( t1 ) );
+  int ret = 0;
 
-  if( csa.FindCSAElementByName(name) )
-  {
-    const gdcm::CSAElement & el = csa.GetCSAElementByName(name);
-    if( el.IsEmpty() ) return 1;
-    const gdcm::ByteValue* bv = el.GetByteValue();
-    std::string str( bv->GetPointer(), bv->GetLength() );
-    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
-    size_t dl = gdcm::Base64::GetDecodeLength( str.c_str(), str.size() );
-    std::vector<char> buf;
-    buf.resize( dl );
-    size_t dl2 = gdcm::Base64::Decode( &buf[0], buf.size(), str.c_str(), str.size() );
-    if( dl != dl2 ) return 1;
-    std::stringstream ss;
-    ss.str( std::string(&buf[0], buf.size()) );
-    gdcm::File file;
-    gdcm::DataSet &ds2 = file.GetDataSet();
-    gdcm::DataElement xde;
-    try
-    {
-      while( xde.Read<gdcm::ExplicitDataElement,gdcm::SwapperNoOp>( ss ) )
-      {
-        ds2.Insert( xde );
+  gdcm::CSAHeader csa;
+  const gdcm::DataElement &csaEl1 = gdcm::SplitMosaicFilter::ComputeCSAImageHeaderInfo(ds);
+  if ( csa.LoadFromDataElement( csaEl1 ) ) {
+    for( std::vector<std::string>::const_iterator it = csanames.begin();
+                    it != csanames.end(); ++it ) {
+      ret += PrintCSABase64Impl(csa, *it );
       }
-      assert( ss.eof() );
-    }
-    catch(std::exception &)
-    {
-      return 1;
-    }
-    gdcm::Printer p;
-    p.SetFile( file );
-    p.Print(std::cout);
   }
-  return 0;
+
+  const gdcm::DataElement &csaEl2 = gdcm::SplitMosaicFilter::ComputeCSASeriesHeaderInfo(ds);
+  if( csa.LoadFromDataElement( csaEl2 ) ) {
+    for( std::vector<std::string>::const_iterator it = csanames.begin();
+                    it != csanames.end(); ++it ) {
+      ret += PrintCSABase64Impl(csa, *it );
+      }
+  }
+
+  return ret;
 }
 
 static int PrintCSA(const std::string & filename)
@@ -990,16 +1130,15 @@ static int PrintCSA(const std::string & filename)
   gdcm::CSAHeader csa;
   const gdcm::DataSet& ds = reader.GetFile().GetDataSet();
 
-  const gdcm::PrivateTag &t1 = csa.GetCSAImageHeaderInfoTag();
-  const gdcm::PrivateTag &t2 = csa.GetCSASeriesHeaderInfoTag();
   const gdcm::PrivateTag &t3 = csa.GetCSADataInfo();
 
   bool found = false;
   int ret = 0;
-  if( ds.FindDataElement( t1 ) )
     {
-    csa.LoadFromDataElement( ds.GetDataElement( t1 ) );
-    csa.Print( std::cout );
+    const gdcm::DataElement &csaEl1 = gdcm::SplitMosaicFilter::ComputeCSAImageHeaderInfo(ds);
+    if( csa.LoadFromDataElement( csaEl1 ) )
+      csa.Print( std::cout );
+    else ret = 1;
     found = true;
     if( csa.GetFormat() == gdcm::CSAHeader::ZEROED_OUT )
       {
@@ -1015,10 +1154,11 @@ static int PrintCSA(const std::string & filename)
       p.Print( std::cout );
       }
     }
-  if( ds.FindDataElement( t2 ) )
     {
-    csa.LoadFromDataElement( ds.GetDataElement( t2 ) );
-    csa.Print( std::cout );
+    const gdcm::DataElement &csaEl2 = gdcm::SplitMosaicFilter::ComputeCSASeriesHeaderInfo(ds);
+    if( csa.LoadFromDataElement( csaEl2 ) )
+      csa.Print( std::cout );
+    else ret = 1;
     found = true;
     if( csa.GetFormat() == gdcm::CSAHeader::ZEROED_OUT )
       {
@@ -1036,8 +1176,9 @@ static int PrintCSA(const std::string & filename)
     }
   if( ds.FindDataElement( t3 ) )
     {
-    csa.LoadFromDataElement( ds.GetDataElement( t3 ) );
-    csa.Print( std::cout );
+    if( csa.LoadFromDataElement( ds.GetDataElement( t3 ) ) )
+      csa.Print( std::cout );
+    else ret = 1;
     found = true;
     if( csa.GetFormat() == gdcm::CSAHeader::ZEROED_OUT )
       {
@@ -1156,7 +1297,9 @@ static void PrintHelp()
   std::cout << "  -C --csa            print SIEMENS CSA Header (0029,[12]0,SIEMENS CSA HEADER)." << std::endl;
   std::cout << "     --csa-asl        print decoded SIEMENS CSA MR_ASL (base64)." << std::endl;
   std::cout << "     --csa-diffusion  print decoded SIEMENS CSA MRDiffusion (base64)." << std::endl;
+  std::cout << "     --csa64          print decoded SIEMENS CSA FMRI/MR_ASL/MRDiffusion... (base64)." << std::endl;
   std::cout << "     --mrprotocol     print SIEMENS CSA MrProtocol only (within ASCCONV BEGIN/END)." << std::endl;
+  std::cout << "                      or Phoenix Meta Protocol (0021,19,SIEMENS MR SDS 01)." << std::endl;
   std::cout << "  -P --pdb            print GEMS Protocol Data Block (0025,1b,GEMS_SERS_01)." << std::endl;
   std::cout << "     --elscint        print ELSCINT Protocol Information (01f7,26,ELSCINT1)." << std::endl;
   std::cout << "     --vepro          print VEPRO Protocol Information (0055,20,VEPRO VIF 3.0 DATA)." << std::endl;
@@ -1164,7 +1307,10 @@ static void PrintHelp()
   std::cout << "     --sds            print Philips MR Series Data Storage (1.3.46.670589.11.0.0.12.2) Information (2005,32,Philips MR Imaging DD 002)." << std::endl;
   std::cout << "     --ct3            print CT Private Data 2 (7005,10,TOSHIBA_MEC_CT3)." << std::endl;
   std::cout << "     --pmtf           print PMTF INFORMATION DATA sub-sequences (0029,01,PMTF INFORMATION DATA)." << std::endl;
-  std::cout << "     --mecmr3         print TOSHIBA_MEC_MR3 sub-sequences (0029,01,TOSHIBA_MEC_MR3)." << std::endl;
+  std::cout << "                      or TOSHIBA_MEC_MR3 sub-sequences (0029,01,TOSHIBA_MEC_MR3)." << std::endl;
+  std::cout << "                      or CANON_MEC_MR3 sub-sequences (0029,01,CANON_MEC_MR3)." << std::endl;
+  std::cout << "     --medcom         print MedCom History Information as UTF-8 (0029,20,SIEMENS MEDCOM HEADER)." << std::endl;
+  std::cout << "     --mr3            print Original Data as UTF-8 (700d,08,TOSHIBA_MEC_MR3)." << std::endl;
   std::cout << "  -A --asn1           print encapsulated ASN1 structure >(0400,0520)." << std::endl;
   std::cout << "     --map-uid-names  map UID to names." << std::endl;
   std::cout << "General Options:" << std::endl;
@@ -1190,15 +1336,17 @@ int main (int argc, char *argv[])
   int printcsa = 0;
   int printmrprotocol = 0;
   int printcsabase64 = 0;
+  int printmedcom = 0; // MedCom History Information
   int printcsaasl = 0;
   int printcsadiffusion = 0;
+  int printcsa64 = 0;
   int printpdb = 0;
   int printelscint = 0;
   int printvepro = 0;
   int printsds = 0; // MR Series Data Storage
   int printct3 = 0; // TOSHIBA_MEC_CT3
-  int printpmtf = 0; // TOSHIBA / PMTF INFORMATION DATA
-  int printmecmr3 = 0; // TOSHIBA / TOSHIBA_MEC_MR3
+  int printmecmr3 = 0; // TOSHIBA_MEC_MR3
+  int printpmtf = 0; // TOSHIBA / PMTF INFORMATION DATA & TOSHIBA / TOSHIBA_MEC_MR3 & CANON_MEC_MR3
   int verbose = 0;
   int warning = 0;
   int debug = 0;
@@ -1243,9 +1391,12 @@ int main (int argc, char *argv[])
         {"ct3", 0, &printct3, 1},
         {"csa-asl", 0, &printcsaasl, 1},
         {"csa-diffusion", 0, &printcsadiffusion, 1},
+        {"csa64", 0, &printcsa64, 1},
         {"mrprotocol", 0, &printmrprotocol, 1},
         {"pmtf", 0, &printpmtf, 1},
-        {"mecmr3", 0, &printmecmr3, 1},
+        {"mecmr3", 0, &printpmtf, 1},
+        {"medcom", 0, &printmedcom, 1},
+        {"mr3", 0, &printmecmr3, 1},
         {nullptr, 0, nullptr, 0} // required
     };
     static const char short_options[] = "i:xrpdcCPAVWDEhvI";
@@ -1267,8 +1418,8 @@ int main (int argc, char *argv[])
           {
           if( option_index == 0 ) /* input */
             {
-            assert( strcmp(s, "input") == 0 );
-            assert( filename.empty() );
+            gdcm_assert( strcmp(s, "input") == 0 );
+            gdcm_assert( filename.empty() );
             filename = optarg;
             }
           //printf (" with arg %s", optarg);
@@ -1279,7 +1430,7 @@ int main (int argc, char *argv[])
 
     case 'i':
       //printf ("option i with value '%s'\n", optarg);
-      assert( filename.empty() );
+      gdcm_assert( filename.empty() );
       filename = optarg;
       break;
 
@@ -1417,16 +1568,26 @@ int main (int argc, char *argv[])
     std::cerr << "Not handled for now" << std::endl;
     }
 
-  const char * csaname = nullptr;
+  std::vector<std::string> csanames;
   if( printcsaasl )
   {
     printcsabase64 = 1;
-    csaname = "MR_ASL";
+    csanames.push_back( "MR_ASL" );
   }
   else if( printcsadiffusion )
   {
     printcsabase64 = 1;
-    csaname = "MRDiffusion";
+    csanames.push_back( "MRDiffusion" );
+  }
+  else if( printcsa64 )
+  {
+    printcsabase64 = 1;
+    // keep me sorted
+    csanames.push_back( "FmriAcquisitionDescriptionSequence" );
+    csanames.push_back( "FmriConditionsDataSequence" );
+    csanames.push_back( "FmriResultSequence" );
+    csanames.push_back( "MR_ASL" );
+    csanames.push_back( "MRDiffusion" );
   }
 
   // else
@@ -1469,7 +1630,11 @@ int main (int argc, char *argv[])
         }
       else if( printmecmr3 )
         {
-        res += PrintMECMR3(*it, verbose!= 0);
+        res += PrintMEC_MR3(*it, verbose!=0);
+        }
+      else if( printmedcom )
+        {
+        res += PrintMedComHistory(*it, verbose!=0);
         }
       else if( printelscint )
         {
@@ -1489,7 +1654,7 @@ int main (int argc, char *argv[])
         }
       else if( printcsabase64 )
         {
-        res += PrintCSABase64(*it, csaname);
+        res += PrintCSABase64(*it, csanames);
         }
       else if( dump )
         {
@@ -1505,7 +1670,7 @@ int main (int argc, char *argv[])
     }
   else
     {
-    assert( gdcm::System::FileExists(filename.c_str()) );
+    gdcm_assert( gdcm::System::FileExists(filename.c_str()) );
     if( printdict )
       {
       res += DoOperation<gdcm::DictPrinter>(filename);
@@ -1532,7 +1697,11 @@ int main (int argc, char *argv[])
       }
     else if( printmecmr3 )
       {
-      res += PrintMECMR3(filename, verbose!= 0);
+      res += PrintMEC_MR3(filename, verbose!= 0);
+      }
+    else if( printmedcom )
+      {
+      res += PrintMedComHistory(filename, verbose!= 0);
       }
     else if( printelscint )
       {
@@ -1552,7 +1721,7 @@ int main (int argc, char *argv[])
       }
     else if( printcsabase64 )
       {
-      res += PrintCSABase64(filename, csaname);
+      res += PrintCSABase64(filename, csanames);
       }
     else if( dump )
       {

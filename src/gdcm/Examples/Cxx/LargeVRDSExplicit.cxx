@@ -23,7 +23,7 @@
  *  gdcmConformanceTests/RTStruct_VRDSAsVRUN.dcm
  *
  * This is an advanced example. Its goal is to explain one dark corner of DICOM PS 3.10
- * file format. The idea is that when writting an Attribute in an Explicit Transfer
+ * file format. The idea is that when writing an Attribute in an Explicit Transfer
  * Syntax one, cannot always use V:DS for writing a VR:DS attribute since dong so
  * would imply using a VL:16bits.
  * This example shows that converting from Implicit to Explicit should preserver VR:UN
@@ -43,7 +43,7 @@ bool interpolate(const double * pts, size_t npts, std::vector<double> &out )
       {
       if( j != npts - 1 )
         {
-        assert( 3*j+5 < 3*npts );
+        gdcm_assert( 3*j+5 < 3*npts );
         const double midpointx = (pts[3*j+0] + pts[3*j+3]) / 2;
         const double midpointy = (pts[3*j+1] + pts[3*j+4]) / 2;
         const double midpointz = (pts[3*j+2] + pts[3*j+5]) / 2;
@@ -54,13 +54,13 @@ bool interpolate(const double * pts, size_t npts, std::vector<double> &out )
       }
     else
       {
-      assert( j < npts );
+      gdcm_assert( j < npts );
       out.push_back( pts[3*j+0] );
       out.push_back( pts[3*j+1] );
       out.push_back( pts[3*j+2] );
       }
     }
-  assert( out.size() == 2 * npts * 3 - 3 );
+  gdcm_assert( out.size() == 2 * npts * 3 - 3 );
   return true;
 }
 
@@ -140,22 +140,22 @@ int main(int argc, char *argv[])
   for( unsigned int i = 0; i < niter; ++i)
     {
     //bool b =
-    interpolate(&out[0], out.size() / 3, out2);
+    interpolate(out.data(), out.size() / 3, out2);
     //const double *pout = &out[0];
     out = out2;
     out2.clear();
     }
-  assert( out.size() % 3 == 0 );
+  gdcm_assert( out.size() % 3 == 0 );
 
   gdcm::Attribute<0x3006,0x0050> at_interpolate;
   at_interpolate.SetNumberOfValues( (unsigned int)(out.size() / 3) );
-  at_interpolate.SetValues( &out[0], (uint32_t)out.size() );
+  at_interpolate.SetValues( out.data(), (uint32_t)out.size() );
 
   ncontourpoints.SetValue( at_interpolate.GetNumberOfValues() / 3 );
   nestedds2.Replace( at_interpolate.GetAsDataElement() );
   nestedds2.Replace( ncontourpoints.GetAsDataElement() );
 
-  //assert(0);
+  //gdcm_assert(0);
 
   // Let's take item one and subdivide it
 

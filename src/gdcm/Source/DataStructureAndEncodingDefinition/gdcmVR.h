@@ -158,7 +158,7 @@ public:
     char vr[2];
     is.read(vr, 2);
     VRField = GetVRTypeFromFile(vr);
-    assert( VRField != VR::VR_END );
+    gdcm_assert( VRField != VR::VR_END );
     if( VRField == VR::INVALID )
     {
       // \0\2 Data/TheralysGDCM120Bug.dcm
@@ -178,9 +178,9 @@ public:
       // For some reason this seems slower on my linux box...
       is.seekg(2, std::ios::cur );
 #else
-      char dum[2];
-      is.read(dum, 2);
-      if( !(dum[0] == 0 && dum[1] == 0 ))
+      char dumb[2];
+      is.read(dumb, 2);
+      if( !(dumb[0] == 0 && dumb[1] == 0 ))
         {
         // JDDICOM_Sample4.dcm
         gdcmDebugMacro( "32bits VR contains non zero bytes. Skipped" );
@@ -199,14 +199,14 @@ public:
       //vrfield = VR::UN;
       }
     const char *vr = GetVRString(vrfield);
-    //assert( strlen( vr ) == 2 );
-    assert( vr[0] && vr[1] && vr[2] == 0 );
+    //gdcm_assert( strlen( vr ) == 2 );
+    gdcm_assert( vr[0] && vr[1] && vr[2] == 0 );
     os.write(vr, 2);
     // See PS 3.5, Data Element Structure With Explicit VR
     if( vrfield & VL32 )
       {
-      const char dum[2] = {0, 0};
-      os.write(dum,2);
+      const char dumb[2] = {0, 0};
+      os.write(dumb,2);
       }
     return os;
     }
@@ -369,7 +369,7 @@ inline unsigned int VR::GetSize() const
     case VR::VRALL:
     case VR::VR_END:
     default:
-       assert( 0 && "should not" );
+       gdcm_assert( 0 && "should not" );
   }
   return 0;
 }

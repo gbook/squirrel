@@ -16,13 +16,11 @@
 #include "gdcmDataSet.h"
 #include "gdcmTrace.h"
 
-#include "gdcmSwapper.h"
-#include "gdcmDataSet.h"
 #include "gdcmExplicitDataElement.h"
 #include "gdcmImplicitDataElement.h"
+#include "gdcmSwapper.h"
 #include "gdcmValue.h"
 
-#include "gdcmValue.h"
 #include "gdcmItem.h"
 #include "gdcmSequenceOfItems.h"
 #include "gdcmParseException.h"
@@ -101,7 +99,7 @@ bool Writer::Write()
     //gzostream gzos(os.rdbuf());
       try {
       zlib_stream::zip_ostream gzos( os );
-      assert( ts.GetNegociatedType() == TransferSyntax::Explicit );
+      gdcm_assert( ts.GetNegociatedType() == TransferSyntax::Explicit );
       DS.Write<ExplicitDataElement,SwapperNoOp>(gzos);
       //gzos.flush();
       } catch (...){
@@ -124,7 +122,7 @@ bool Writer::Write()
         }
       else
         {
-        assert( ts.GetNegociatedType() == TransferSyntax::Explicit );
+        gdcm_assert( ts.GetNegociatedType() == TransferSyntax::Explicit );
         DS.Write<ExplicitDataElement,SwapperDoOp>(os);
         }
       }
@@ -136,7 +134,7 @@ bool Writer::Write()
         }
       else
         {
-        assert( ts.GetNegociatedType() == TransferSyntax::Explicit );
+        gdcm_assert( ts.GetNegociatedType() == TransferSyntax::Explicit );
         DS.Write<ExplicitDataElement,SwapperNoOp>(os);
         }
       }
@@ -183,10 +181,7 @@ void Writer::SetFileName(const char *utf8path)
 #else
       Ofstream->open(utf8path, std::ios::out | std::ios::binary);
 #endif
-      assert(Ofstream->is_open());
-      assert(!Ofstream->fail());
-    }
-    //std::cerr << Stream.is_open() << std::endl;
+      }
     Stream = Ofstream;
   }
 

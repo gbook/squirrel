@@ -77,14 +77,14 @@ bool ImageChangePhotometricInterpretation::ChangeMonochrome()
   //Output->GetPixelFormat().SetSamplesPerPixel( 3 );
   //Output->SetPlanarConfiguration( 0 ); // FIXME OT-PAL-8-face.dcm has a PlanarConfiguration while being PALETTE COLOR...
   //const TransferSyntax &ts = image.GetTransferSyntax();
-  ////assert( ts == TransferSyntax::RLELossless );
+  ////gdcm_assert( ts == TransferSyntax::RLELossless );
   //if( ts.IsExplicit() )
   //  {
   //  Output->SetTransferSyntax( TransferSyntax::ExplicitVRLittleEndian );
   //  }
   //else
   //  {
-  //  assert( ts.IsImplicit() );
+  //  gdcm_assert( ts.IsImplicit() );
   //  Output->SetTransferSyntax( TransferSyntax::ImplicitVRLittleEndian );
   //  }
 
@@ -101,15 +101,16 @@ bool ImageChangePhotometricInterpretation::ChangeYBR2RGB()
   // mistake. just like Largest Image Pixel Value and other would be wrong
   const Bitmap &image = *Input;
   PhotometricInterpretation pi = image.GetPhotometricInterpretation();
-  //assert( pi == PhotometricInterpretation::MONOCHROME1 || pi == PhotometricInterpretation::MONOCHROME2 );
+  //gdcm_assert( pi == PhotometricInterpretation::MONOCHROME1 || pi == PhotometricInterpretation::MONOCHROME2 );
   if( pi == PI )
   {
     return true;
   }
 
+  // Note: allocate with malloc because it guarantees to align suitable for any type, unlike new.
   unsigned long len = image.GetBufferLength();
-  char *p8 = new char[len];
-  image.GetBuffer( p8 );
+  void *p8 = malloc (len);
+  image.GetBuffer( (char *)p8 );
 
   const PixelFormat &pf = image.GetPixelFormat();
   if( image.GetPlanarConfiguration() != 0 ) return false;
@@ -146,26 +147,26 @@ bool ImageChangePhotometricInterpretation::ChangeYBR2RGB()
   }
 
   DataElement &de = Output->GetDataElement();
-  de.SetByteValue( p8, len);
+  de.SetByteValue( (char *)p8, len);
   //Output->GetLUT().Clear();
   Output->SetPhotometricInterpretation( PI );
   //Output->GetPixelFormat().SetSamplesPerPixel( 3 );
   //Output->SetPlanarConfiguration( 0 ); // FIXME OT-PAL-8-face.dcm has a PlanarConfiguration while being PALETTE COLOR...
   //const TransferSyntax &ts = image.GetTransferSyntax();
-  ////assert( ts == TransferSyntax::RLELossless );
+  ////gdcm_assert( ts == TransferSyntax::RLELossless );
   //if( ts.IsExplicit() )
   //  {
   //  Output->SetTransferSyntax( TransferSyntax::ExplicitVRLittleEndian );
   //  }
   //else
   //  {
-  //  assert( ts.IsImplicit() );
+  //  gdcm_assert( ts.IsImplicit() );
   //  Output->SetTransferSyntax( TransferSyntax::ImplicitVRLittleEndian );
   //  }
 
 
   bool success = true;
-  delete[] p8;
+  free(p8);
   return success;
 }
 
@@ -177,15 +178,16 @@ bool ImageChangePhotometricInterpretation::ChangeRGB2YBR()
   // mistake. just like Largest Image Pixel Value and other would be wrong
   const Bitmap &image = *Input;
   PhotometricInterpretation pi = image.GetPhotometricInterpretation();
-  //assert( pi == PhotometricInterpretation::MONOCHROME1 || pi == PhotometricInterpretation::MONOCHROME2 );
+  //gdcm_assert( pi == PhotometricInterpretation::MONOCHROME1 || pi == PhotometricInterpretation::MONOCHROME2 );
   if( pi == PI )
   {
     return true;
   }
 
+  // Note: allocate with malloc because it guarantees to align suitable for any type, unlike new.
   unsigned long len = image.GetBufferLength();
-  char *p8 = new char[len];
-  image.GetBuffer( p8 );
+  void *p8 = malloc(len);
+  image.GetBuffer( (char *)p8 );
 
   const PixelFormat &pf = image.GetPixelFormat();
   if( image.GetPlanarConfiguration() != 0 ) return false;
@@ -222,26 +224,26 @@ bool ImageChangePhotometricInterpretation::ChangeRGB2YBR()
   }
 
   DataElement &de = Output->GetDataElement();
-  de.SetByteValue( p8, len);
+  de.SetByteValue( (char *)p8, len);
   //Output->GetLUT().Clear();
   Output->SetPhotometricInterpretation( PI );
   //Output->GetPixelFormat().SetSamplesPerPixel( 3 );
   //Output->SetPlanarConfiguration( 0 ); // FIXME OT-PAL-8-face.dcm has a PlanarConfiguration while being PALETTE COLOR...
   //const TransferSyntax &ts = image.GetTransferSyntax();
-  ////assert( ts == TransferSyntax::RLELossless );
+  ////gdcm_assert( ts == TransferSyntax::RLELossless );
   //if( ts.IsExplicit() )
   //  {
   //  Output->SetTransferSyntax( TransferSyntax::ExplicitVRLittleEndian );
   //  }
   //else
   //  {
-  //  assert( ts.IsImplicit() );
+  //  gdcm_assert( ts.IsImplicit() );
   //  Output->SetTransferSyntax( TransferSyntax::ImplicitVRLittleEndian );
   //  }
 
 
   bool success = true;
-  delete[] p8;
+  free(p8);
   return success;
 }
 

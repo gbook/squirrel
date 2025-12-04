@@ -16,8 +16,8 @@
 #include "gdcmSystem.h"
 #include "gdcmMD5.h"
 
-#include <string.h> // strcmp
-#include <stdlib.h> // malloc
+#include <cstdlib> // malloc
+#include <cstring> // strcmp
 
 
 namespace gdcm
@@ -27,14 +27,14 @@ namespace gdcm
 #error how did that happen ?
 #endif
 
-#include "gdcmDataFileNames.cxx"
-#include "gdcmMD5DataImages.cxx"
-#include "gdcmMD5DataBrokenImages.cxx"
-#include "gdcmMediaStorageDataFiles.cxx"
-#include "gdcmStreamOffsetDataFiles.cxx"
+#include "gdcmDataFileNames.cxx" // NOLINT(bugprone-suspicious-include)
+#include "gdcmMD5DataImages.cxx" // NOLINT(bugprone-suspicious-include)
+#include "gdcmMD5DataBrokenImages.cxx" // NOLINT(bugprone-suspicious-include)
+#include "gdcmMediaStorageDataFiles.cxx" // NOLINT(bugprone-suspicious-include)
+#include "gdcmStreamOffsetDataFiles.cxx" // NOLINT(bugprone-suspicious-include)
 // After gdcmStreamOffsetDataFiles:
-#include "gdcmSelectedTagsOffsetDataFiles.cxx"
-#include "gdcmSelectedPrivateGroupOffsetDataFiles.cxx"
+#include "gdcmSelectedTagsOffsetDataFiles.cxx" // NOLINT(bugprone-suspicious-include)
+#include "gdcmSelectedPrivateGroupOffsetDataFiles.cxx" // NOLINT(bugprone-suspicious-include)
 
 bool Testing::ComputeMD5(const char *buffer, size_t buf_len,
   char digest_str[33])
@@ -79,7 +79,7 @@ const char * const * Testing::GetMediaStorageDataFile(unsigned int file)
 {
   if( file < Testing::GetNumberOfMediaStorageDataFiles() ) return gdcmMediaStorageDataFiles[file];
   // else return the {0x0, 0x0} sentinel:
-  assert( *gdcmMediaStorageDataFiles[ Testing::GetNumberOfMediaStorageDataFiles() ] == nullptr );
+  gdcm_assert( *gdcmMediaStorageDataFiles[ Testing::GetNumberOfMediaStorageDataFiles() ] == nullptr );
   return gdcmMediaStorageDataFiles[ Testing::GetNumberOfMediaStorageDataFiles() ];
 }
 const char * Testing::GetMediaStorageFromFile(const char *filepath)
@@ -99,7 +99,7 @@ const char * Testing::GetMediaStorageFromFile(const char *filepath)
     p = mediastorages[i][0];
     }
   // \postcondition always valid (before sentinel)
-  assert( i <= GetNumberOfMediaStorageDataFiles() );
+  gdcm_assert( i <= GetNumberOfMediaStorageDataFiles() );
   return mediastorages[i][1];
 }
 
@@ -119,7 +119,7 @@ const char * const * Testing::GetMD5DataImage(unsigned int file)
 {
   if( file < Testing::GetNumberOfMD5DataImages() ) return gdcmMD5DataImages[file];
   // else return the {0x0, 0x0} sentinel:
-  assert( *gdcmMD5DataImages[ Testing::GetNumberOfMD5DataImages() ] == nullptr );
+  gdcm_assert( *gdcmMD5DataImages[ Testing::GetNumberOfMD5DataImages() ] == nullptr );
   return gdcmMD5DataImages[ Testing::GetNumberOfMD5DataImages() ];
 }
 
@@ -141,7 +141,7 @@ const char * Testing::GetMD5FromFile(const char *filepath)
     p = md5s[i][1];
     }
   // \postcondition always valid (before sentinel)
-  assert( i <= GetNumberOfMD5DataImages() );
+  gdcm_assert( i <= GetNumberOfMD5DataImages() );
   return md5s[i][0];
 }
 
@@ -451,6 +451,7 @@ static const LossyFile gdcmLossyFilenames[] = {
 { 0,"Bug_Siemens_PrivateIconNoItem.dcm" },
 { 0,"HardcopyColor_YBR_RCT_J2K_PC1.dcm" },
 { 0,"PET-GE-dicomwrite-PixelDataSQUNv2.dcm" },
+{ 0,"MEDILABValidCP246_EVRLESQasOB.dcm" },
 { 0, nullptr }
 };
 
@@ -470,7 +471,7 @@ int Testing::GetLossyFlagFromFile(const char *filename)
     std::cerr << "Error: No ref table for: " << filename << std::endl;
     return -1;
     }
-  assert( pfiles->filename ); // need to update ref table
+  gdcm_assert( pfiles->filename ); // need to update ref table
   return pfiles->lossyflag;
 }
 

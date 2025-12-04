@@ -201,7 +201,10 @@ static std::string getInfoDate(Dict *infoDict, const char *key)
   if (infoDict->lookup((char*)key, &obj)->isString())
 #endif
     {
-    const GooString* gs = obj.getString();
+#ifndef LIBPOPPLER_GOOSTRING_HAS_GETCSTRING
+    const
+#endif
+    GooString* gs = obj.getString();
 #ifdef LIBPOPPLER_GOOSTRING_HAS_GETCSTRING
     s = gs->getCString();
 #else
@@ -347,6 +350,7 @@ static void PrintHelp()
   std::cout << "     --force-rescale    force rescale." << std::endl;
   std::cout << "     --force-spacing    force spacing." << std::endl;
   std::cout << "     --mosaic           dump image information of MOSAIC." << std::endl;
+  std::cout << "     --scipm            Include Image Plane Module for Secondary Capture Image." << std::endl;
 
   std::cout << "General Options:" << std::endl;
   std::cout << "  -V --verbose   more verbose (warning+error)." << std::endl;
@@ -623,6 +627,7 @@ int main(int argc, char *argv[])
   std::string xmlpath;
   int forcerescale = 0;
   int forcespacing = 0;
+  int scipm = 0;
 
   int resourcespath = 0;
   int verbose = 0;
@@ -644,6 +649,7 @@ int main(int argc, char *argv[])
         {"force-rescale", 0, &forcerescale, 1},
         {"force-spacing", 0, &forcespacing, 1},
         {"mosaic", 0, &mosaic, 1},
+        {"scipm", 0, &scipm, 1},
 
         {"verbose", 0, &verbose, 1},
         {"warning", 0, &warning, 1},
@@ -672,14 +678,14 @@ int main(int argc, char *argv[])
           {
           if( option_index == 0 ) /* input */
             {
-            assert( strcmp(s, "input") == 0 );
-            assert( filename.empty() );
+            gdcm_assert( strcmp(s, "input") == 0 );
+            gdcm_assert( filename.empty() );
             filename = optarg;
             }
           else if( option_index == 3 ) /* resources-path */
             {
-            assert( strcmp(s, "resources-path") == 0 );
-            assert( xmlpath.empty() );
+            gdcm_assert( strcmp(s, "resources-path") == 0 );
+            gdcm_assert( xmlpath.empty() );
             xmlpath = optarg;
             }
           //printf (" with arg %s", optarg);
@@ -690,7 +696,7 @@ int main(int argc, char *argv[])
 
     case 'i':
       //printf ("option i with value '%s'\n", optarg);
-      assert( filename.empty() );
+      gdcm_assert( filename.empty() );
       filename = optarg;
       break;
 
@@ -766,6 +772,7 @@ int main(int argc, char *argv[])
 
   gdcm::ImageHelper::SetForceRescaleInterceptSlope(forcerescale ? true : false);
   gdcm::ImageHelper::SetForcePixelSpacing(forcespacing ? true : false);
+  gdcm::ImageHelper::SetSecondaryCaptureImagePlaneModule(scipm ? true : false);
 
   if( filename.empty() )
     {

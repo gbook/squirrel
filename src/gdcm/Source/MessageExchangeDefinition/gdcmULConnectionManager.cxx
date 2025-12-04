@@ -80,16 +80,13 @@ bool ULConnectionManager::EstablishConnection(const std::string& inAETitle,
     return false;
     }
 
-  if (mConnection != nullptr)
-    {
-    delete mConnection;
-    }
+  delete mConnection;
   mConnection = new ULConnection(connectInfo);
 
   mConnection->GetTimer().SetTimeout(inTimeout);
 
   // Warning PresentationContextID is important
-  // this is a sort of uniq key used by the recevier. Eg.
+  // this is a sort of uniq key used by the receiver. Eg.
   // if one push_pack
   //  (1, Secondary)
   //  (1, Verification)
@@ -199,7 +196,7 @@ bool ULConnectionManager::EstablishConnection(const std::string& inAETitle,
     for( std::vector<BasePDU*>::const_iterator itor
       = thePDUs.begin(); itor != thePDUs.end(); itor++)
       {
-      //assert(*itor);
+      //gdcm_assert(*itor);
       if (*itor == nullptr) continue; //can have a nulled pdu, apparently
       (*itor)->Print(Trace::GetErrorStream());
       }
@@ -210,7 +207,7 @@ bool ULConnectionManager::EstablishConnection(const std::string& inAETitle,
     for( std::vector<BasePDU*>::const_iterator itor
       = thePDUs.begin(); itor != thePDUs.end(); itor++)
       {
-      assert(*itor);
+      gdcm_assert(*itor);
       if (*itor == nullptr) continue; //can have a nulled pdu, apparently
       (*itor)->Print(Trace::GetDebugStream());
       }
@@ -274,7 +271,7 @@ bool ULConnectionManager::EstablishConnectionMove(const std::string& inAETitle,
 
 
   // Warning PresentationContextID is important
-  // this is a sort of uniq key used by the recevier. Eg.
+  // this is a sort of uniq key used by the receiver. Eg.
   // if one push_pack
   //  (1, Secondary)
   //  (1, Verification)
@@ -336,7 +333,7 @@ bool ULConnectionManager::EstablishConnectionMove(const std::string& inAETitle,
       std::vector<BasePDU*>::iterator itor;
       for (itor = thePDUs.begin(); itor != thePDUs.end(); itor++)
         {
-        if (*itor == NULL) continue; //can have a nulled pdu, apparently
+        if (*itor == nullptr) continue; //can have a nulled pdu, apparently
         (*itor)->Print(Trace::GetStream());
         }
     }
@@ -424,7 +421,7 @@ void ULConnectionManager::SendStore(const File & file, ULConnectionCallback* inC
 
   ULEvent theEvent(ePDATArequest, theDataPDU, pStream, dataSetOffset );
   EStateID theState = RunEventLoop(theEvent, mConnection, inCallback, false);
-  assert( theState == eSta6TransferReady || theState == eStaDoesNotExist ); (void)theState;
+  gdcm_assert( theState == eSta6TransferReady || theState == eStaDoesNotExist ); (void)theState;
 }
 
 std::vector<DataSet> ULConnectionManager::SendNEventReport	(const BaseQuery* inQuery)
@@ -565,7 +562,7 @@ void ULConnectionManager::BreakConnectionNow(){
 EStateID ULConnectionManager::RunMoveEventLoop(ULEvent& currentEvent, ULConnectionCallback* inCallback){
   gdcmDebugMacro( "Start RunMoveEventLoop" );
   EStateID theState = eStaDoesNotExist;
-  bool waitingForEvent;
+  bool waitingForEvent = false;
   EEventID raisedEvent;
 
   bool receivingData = false;
@@ -680,7 +677,7 @@ EStateID ULConnectionManager::RunMoveEventLoop(ULEvent& currentEvent, ULConnecti
             Attribute<0x0,0x0800> at;
             at.SetFromDataElement( de );
             unsigned short datasettype = at.GetValue();
-            assert( datasettype == 0x0101 || datasettype == 0x1 ); (void)datasettype;
+            gdcm_assert( datasettype == 0x0101 || datasettype == 0x1 ); (void)datasettype;
           }
           if (theRSP.FindDataElement(Tag(0x0, 0x0900))){
             DataElement const & de = theRSP.GetDataElement(Tag(0x0,0x0900));
@@ -1137,7 +1134,7 @@ EStateID ULConnectionManager::RunEventLoop(ULEvent& currentEvent, ULConnection* 
                     {
                     delete theData[i];
                     }
-                  assert(inCallback);
+                  gdcm_assert(inCallback);
                     {
                     inCallback->HandleDataSet(theCompleteFindResponse);
                     }

@@ -82,7 +82,7 @@ public:
   /// Index starts at 1 not 0
   bool RemoveItemByIndex( const SizeType index );
 
-  bool IsEmpty() const { return Items.empty(); };
+  bool IsEmpty() const { return Items.empty(); }
   SizeType GetNumberOfItems() const {  return Items.size(); }
   void SetNumberOfItems(SizeType n) {  Items.resize(n); }
 
@@ -111,11 +111,11 @@ public:
       while( item.Read<TDE,TSwap>(is) && item.GetTag() != seqDelItem )
         {
         //gdcmDebugMacro( "Item: " << item );
-        assert( item.GetTag() != seqDelItem );
+        gdcm_assert( item.GetTag() != seqDelItem );
         Items.push_back( item );
         item.Clear();
         }
-      //assert( item.GetTag() == seqDelItem && item.GetVL() == 0 );
+      //gdcm_assert( item.GetTag() == seqDelItem && item.GetVL() == 0 );
       }
     else
       {
@@ -148,9 +148,9 @@ public:
 #ifdef GDCM_SUPPORT_BROKEN_IMPLEMENTATION
         if( item.GetTag() == seqDelItem )
           {
-          gdcmWarningMacro( "SegDelItem found in defined length Sequence. Skipping" );
-          assert( item.GetVL() == 0 );
-          assert( item.GetNestedDataSet().Size() == 0 );
+          gdcmWarningMacro( "SeqDelItem found in defined length Sequence. Skipping" );
+          gdcm_assert( item.GetVL() == 0 );
+          gdcm_assert( item.GetNestedDataSet().Size() == 0 );
           // we need to pay attention that the length of the Sequence of Items will be wrong
           // this way. Indeed by not adding this item we are changing the size of this sqi
           }
@@ -169,7 +169,7 @@ public:
           gdcmDebugMacro( "Found: Length of Item larger than expected" );
           throw "Length of Item larger than expected";
           }
-        assert( l <= SequenceLengthField );
+        gdcm_assert( l <= SequenceLengthField );
         //std::cerr << "sqi debug len: " << is.tellg() << " " <<  l << " " <<  SequenceLengthField << std::endl;
 #ifdef GDCM_SUPPORT_BROKEN_IMPLEMENTATION
         // MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm
@@ -192,7 +192,7 @@ public:
           }
 #endif
         }
-      assert( l == SequenceLengthField );
+      gdcm_assert( l == SequenceLengthField );
       }
     return is;
     }

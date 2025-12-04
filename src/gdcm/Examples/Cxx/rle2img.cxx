@@ -55,7 +55,7 @@ void delta_decode(const char *inbuffer, size_t length, std::vector<unsigned shor
     if( inbuffer[i] == (char)0xa5 )
       {
       //unsigned char repeat = (unsigned char)inbuffer[i+1] + 1;
-      //assert( (unsigned char)inbuffer[i+1] != 255 );
+      //gdcm_assert( (unsigned char)inbuffer[i+1] != 255 );
       int repeat = (unsigned char)inbuffer[i+1] + 1;
       char value = inbuffer[i+2];
       while(repeat)
@@ -86,11 +86,11 @@ void delta_decode(const char *inbuffer, size_t length, std::vector<unsigned shor
       }
     else
       {
-      unsigned short value = (unsigned short)(temp[i] + delta);
+      unsigned short value = (unsigned short)((signed char)temp[i] + delta);
       output.push_back( value );
       delta = value;
       }
-    //assert( output[output.size()-1] == ref[output.size()-1] );
+    //gdcm_assert( output[output.size()-1] == ref[output.size()-1] );
     }
 
   if ( output.size() % 2 )
@@ -180,7 +180,7 @@ int main(int argc, char *argv [])
     {
     std::vector<unsigned short> buffer;
     delta_decode(bv2->GetPointer(), bv2->GetLength(), buffer);
-    pixeldata.SetByteValue( (char*)&buffer[0], (uint32_t)(buffer.size() * sizeof( unsigned short )) );
+    pixeldata.SetByteValue( (char*)buffer.data(), (uint32_t)(buffer.size() * sizeof( unsigned short )) );
     }
   // TODO we should check that decompress byte buffer match the expected size (row*col*...)
 

@@ -103,7 +103,7 @@ if(GDCM_DOCUMENTATION)
     find_program(SED_EXECUTABLE sed)
     find_package(LATEX REQUIRED)
     mark_as_advanced(PDFOPT_EXECUTABLE SED_EXECUTABLE)
-    # Let's customize the pdf tags a little usind sed:
+    # Let's customize the pdf tags a little using sed:
     # Apparently egrep is also needed...
     # BAD: there is a circular dependency where refman.tex depend on refman.tex in the sed steps...
     # hack our way in anyway by simply removing the dep...
@@ -163,7 +163,7 @@ if(GDCM_DOCUMENTATION)
     )
     add_dependencies(DoxygenDoc GDCMDoxygenPDF)
   else()
-    # make DoxygenDoc depends on the final tarball thus all file are garantee to be generated
+    # make DoxygenDoc depends on the final tarball thus all file are guarantee to be generated
     add_custom_target(GDCMDoxygenDoc
       DEPENDS ${GDCM_DOC_TARBALL}
       COMMENT  "GDCM: Executing GDCMDoxygenDoc"
@@ -225,13 +225,14 @@ if(GDCM_DOCUMENTATION)
   endif()
 endif()
 
-option(GDCM_BUILD_DOCBOOK_MANPAGES "Build man pages from XML docbook ?" ON)
+option(GDCM_BUILD_DOCBOOK_MANPAGES "Build man pages from XML docbook ?" OFF)
 mark_as_advanced(GDCM_BUILD_DOCBOOK_MANPAGES)
 if(GDCM_BUILD_DOCBOOK_MANPAGES)
 set(MANPAGES_XML
     gdcm2pnm
     gdcm2vtk
     gdcmanon
+    gdcmclean
     gdcmconv
     gdcmdiff
     gdcmdump

@@ -15,9 +15,9 @@
 
 #include "gdcmImage.h"
 
+#include <cstdlib> // abort
+#include <cstring> // memcpy
 #include <limits>
-#include <stdlib.h> // abort
-#include <string.h> // memcpy
 
 namespace gdcm
 {
@@ -44,7 +44,7 @@ void BitmapToBitmapFilter::SetInput(const Bitmap& image)
   else
     {
     Output = nullptr;
-    assert( 0 );
+    gdcm_assert( 0 );
     }
 }
 

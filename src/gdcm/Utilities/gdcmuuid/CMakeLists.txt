@@ -1,5 +1,5 @@
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  cmake_minimum_required(VERSION 2.8.7)
+  cmake_minimum_required(VERSION 2.8.7...${GDCM_MAX_VALIDATED_CMAKE_VERSION})
 endif()
 
 if(NOT UUID_NAMESPACE)
@@ -25,7 +25,9 @@ include_regular_expression("^.*$")
 
 set(UUID_SRCS
 compare.c
+copy.c
 gen_uuid.c
+isnull.c
 pack.c
 parse.c
 unpack.c

@@ -53,10 +53,6 @@ namespace gdcm
   {
     //nothing to do, really
   }
-  BaseRootQuery::~BaseRootQuery()
-  {
-    //nothing to do, really
-  }
 
   static const char *QueryLevelStrings[] = {
     "PATIENT ",
@@ -92,7 +88,7 @@ namespace gdcm
   {
     QueryBase* qb = nullptr;
     // Check no new extension:
-    assert( inRootType == ePatientRootType || inRootType == eStudyRootType );
+    gdcm_assert( inRootType == ePatientRootType || inRootType == eStudyRootType );
 
     if( qlevel == ePatient )
     {
@@ -128,7 +124,7 @@ namespace gdcm
       level = eStudy;
       break;
     }
-    assert( level == eStudy || level == ePatient );
+    gdcm_assert( level == eStudy || level == ePatient );
     return level;
   }
 

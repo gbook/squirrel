@@ -76,7 +76,7 @@ public:
     os << "TypeOfData                         :" << TypeOfData << std::endl;
     os << "CurveDescription                   :" << CurveDescription << std::endl;
     os << "DataValueRepresentation            :" << DataValueRepresentation << std::endl;
-    const unsigned short * p = (const unsigned short*)(const void*)&Data[0];
+    const unsigned short * p = (const unsigned short*)(const void*)Data.data();
     for(int i = 0; i < NumberOfPoints; i+=2)
       {
       os << p[i] << "," << p[i+1] << std::endl;
@@ -153,13 +153,13 @@ unsigned int Curve::GetNumberOfCurves(DataSet const & ds)
 
 void Curve::Update(const DataElement & de)
 {
-  assert( de.GetTag().IsPublic() );
+  gdcm_assert( de.GetTag().IsPublic() );
   const ByteValue* bv = de.GetByteValue();
   if( !bv ) return; // Discard any empty element (will default to another value)
-  assert( bv->GetPointer() && bv->GetLength() );
+  gdcm_assert( bv->GetPointer() && bv->GetLength() );
   std::string s( bv->GetPointer(), bv->GetLength() );
   // What if a \0 can be found before the end of string...
-  //assert( strlen( s.c_str() ) == s.size() );
+  //gdcm_assert( strlen( s.c_str() ) == s.size() );
 
   // First thing check consistency:
   if( !GetGroup() )
@@ -168,7 +168,7 @@ void Curve::Update(const DataElement & de)
     }
   else // check consistency
     {
-    assert( GetGroup() == de.GetTag().GetGroup() ); // programmer error
+    gdcm_assert( GetGroup() == de.GetTag().GetGroup() ); // programmer error
     }
 
   //std::cerr << "Tag: " << de.GetTag() << std::endl;
@@ -258,7 +258,7 @@ void Curve::Update(const DataElement & de)
     }
   else
     {
-    assert( 0 && "should not happen: Unknown curve tag" );
+    gdcm_assert( 0 && "should not happen: Unknown curve tag" );
     }
 
 }
@@ -345,15 +345,15 @@ void Curve::SetCurve(const char *array, unsigned int length)
   if( !array || length == 0 ) return;
   Internal->Data.resize( length );
   std::copy(array, array+length, Internal->Data.begin());
-  //assert( 8 * length == (unsigned int)Internal->Rows * Internal->Columns );
-  //assert( Internal->Data.size() == length );
+  //gdcm_assert( 8 * length == (unsigned int)Internal->Rows * Internal->Columns );
+  //gdcm_assert( Internal->Data.size() == length );
 }
 
 void Curve::Decode(std::istream &is, std::ostream &os)
 {
   (void)is;
   (void)os;
-  assert(0);
+  gdcm_assert(0);
 }
 
 /*
@@ -408,7 +408,7 @@ The data points of this dimension will be absent from Curve Data (50xx,3000).
 */
 double Curve::ComputeValueFromStartAndStep(unsigned int idx) const
 {
-  assert( !Internal->CurveDataDescriptor.empty() );
+  gdcm_assert( !Internal->CurveDataDescriptor.empty() );
   const double res = Internal->CoordinateStartValue +
     Internal->CoordinateStepValue * idx;
   return res;
@@ -416,49 +416,49 @@ double Curve::ComputeValueFromStartAndStep(unsigned int idx) const
 
 void Curve::GetAsPoints(float *array) const
 {
-  assert( getsizeofrep(Internal->DataValueRepresentation) );
+  gdcm_assert( getsizeofrep(Internal->DataValueRepresentation) );
   if( Internal->CurveDataDescriptor.empty() )
     {
-    assert( Internal->Data.size() == (uint32_t)Internal->NumberOfPoints *
+    gdcm_assert( Internal->Data.size() == (uint32_t)Internal->NumberOfPoints *
       Internal->Dimensions * getsizeofrep( Internal->DataValueRepresentation) );
     }
   else
     {
-    assert( Internal->Data.size() == (uint32_t)Internal->NumberOfPoints *
+    gdcm_assert( Internal->Data.size() == (uint32_t)Internal->NumberOfPoints *
       1 * getsizeofrep( Internal->DataValueRepresentation) );
     }
-  assert( Internal->Dimensions == 1 || Internal->Dimensions == 2 );
+  gdcm_assert( Internal->Dimensions == 1 || Internal->Dimensions == 2 );
 
   const int mult = Internal->Dimensions;
   int genidx = -1;
   if( !Internal->CurveDataDescriptor.empty() )
     {
-    assert( Internal->CurveDataDescriptor.size() == Internal->Dimensions );
-    assert( Internal->CurveDataDescriptor.size() == 2 ); // FIXME
+    gdcm_assert( Internal->CurveDataDescriptor.size() == Internal->Dimensions );
+    gdcm_assert( Internal->CurveDataDescriptor.size() == 2 ); // FIXME
     if( Internal->CurveDataDescriptor[0] == 0 )
       {
-      assert( Internal->CurveDataDescriptor[1] == 1 );
+      gdcm_assert( Internal->CurveDataDescriptor[1] == 1 );
       genidx = 0;
       }
     else if( Internal->CurveDataDescriptor[1] == 0 )
       {
-      assert( Internal->CurveDataDescriptor[0] == 1 );
+      gdcm_assert( Internal->CurveDataDescriptor[0] == 1 );
       genidx = 1;
       }
     else
       {
-      assert( 0 && "TODO" );
+      gdcm_assert( 0 && "TODO" );
       }
     }
-  const char * beg = &Internal->Data[0];
+  const char * beg = Internal->Data.data();
   const char * end = beg + Internal->Data.size();
   if( genidx == -1 )
     {
-    assert( end == beg + 2 * Internal->NumberOfPoints ); (void)beg;(void)end;
+    gdcm_assert( end == beg + 2 * Internal->NumberOfPoints ); (void)beg;(void)end;
     }
   else
     {
-    assert( end == beg + mult * Internal->NumberOfPoints ); (void)beg;(void)end;
+    gdcm_assert( end == beg + mult * Internal->NumberOfPoints ); (void)beg;(void)end;
     }
 
 
@@ -466,7 +466,7 @@ void Curve::GetAsPoints(float *array) const
     {
     // PS 3.3 - 2004
     // C.10.2.1.5 Curve data descriptor, coordinate start value, coordinate step value
-    uint16_t * p = (uint16_t*)(void*)&Internal->Data[0];
+    uint16_t * p = (uint16_t*)(void*)Internal->Data.data();
     // X
     if( genidx == 0 )
       for(int i = 0; i < Internal->NumberOfPoints; i++ )
@@ -502,7 +502,7 @@ void Curve::GetAsPoints(float *array) const
     }
   else if( Internal->DataValueRepresentation == 1 )
     {
-    int16_t * p = (int16_t*)(void*)&Internal->Data[0];
+    int16_t * p = (int16_t*)(void*)Internal->Data.data();
     for(int i = 0; i < Internal->NumberOfPoints; i++ )
       {
       array[3*i+0] = p[mult*i + 0];
@@ -515,7 +515,7 @@ void Curve::GetAsPoints(float *array) const
     }
   else if( Internal->DataValueRepresentation == 2 )
     {
-    float * p = (float*)(void*)&Internal->Data[0];
+    float * p = (float*)(void*)Internal->Data.data();
     for(int i = 0; i < Internal->NumberOfPoints; i++ )
       {
       array[3*i+0] = p[mult*i + 0];
@@ -528,7 +528,7 @@ void Curve::GetAsPoints(float *array) const
     }
   else if( Internal->DataValueRepresentation == 3 )
     {
-    double * p = (double*)(void*)&Internal->Data[0];
+    double * p = (double*)(void*)Internal->Data.data();
     for(int i = 0; i < Internal->NumberOfPoints; i++ )
       {
       array[3*i+0] = (float)p[mult*i + 0];
@@ -541,7 +541,7 @@ void Curve::GetAsPoints(float *array) const
     }
   else if( Internal->DataValueRepresentation == 4 )
     {
-    int32_t * p = (int32_t*)(void*)&Internal->Data[0];
+    int32_t * p = (int32_t*)(void*)Internal->Data.data();
     for(int i = 0; i < Internal->NumberOfPoints; i++ )
       {
       array[3*i+0] = (float)p[mult*i + 0];
@@ -554,7 +554,7 @@ void Curve::GetAsPoints(float *array) const
     }
   else
     {
-    assert( 0 );
+    gdcm_assert( 0 );
     }
 }
 

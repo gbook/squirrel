@@ -427,6 +427,89 @@ return true;
 }
 } // end namespace gdcm
 
+namespace {
+
+int change_transfersyntax(const std::string &filename, const std::string &outfilename, int explicitts, int implicit, int deflated, int raw, int changeprivatetags )
+{
+    if( explicitts && implicit ) return 1; // guard
+    if( explicitts && deflated ) return 1; // guard
+    if( implicit && deflated ) return 1; // guard
+    gdcm::Reader reader;
+    reader.SetFileName( filename.c_str() );
+    if( !reader.Read() )
+      {
+      std::cerr << "Could not read: " << filename << std::endl;
+      return 1;
+      }
+    gdcm::MediaStorage ms;
+    ms.SetFromFile( reader.GetFile() );
+    if( ms == gdcm::MediaStorage::MediaStorageDirectoryStorage )
+      {
+      std::cerr << "Sorry DICOMDIR is not supported" << std::endl;
+      return 1;
+      }
+
+    gdcm::Writer writer;
+    writer.SetFileName( outfilename.c_str() );
+    writer.SetFile( reader.GetFile() );
+    gdcm::File & file = writer.GetFile();
+    gdcm::FileMetaInformation &fmi = file.GetHeader();
+
+    const gdcm::TransferSyntax &orits = fmi.GetDataSetTransferSyntax();
+    if( orits != gdcm::TransferSyntax::ExplicitVRLittleEndian
+      && orits != gdcm::TransferSyntax::ImplicitVRLittleEndian
+      && orits != gdcm::TransferSyntax::DeflatedExplicitVRLittleEndian )
+      {
+      std::cerr << "Sorry input Transfer Syntax not supported for this conversion: " << orits << std::endl;
+      return 1;
+      }
+
+    gdcm::TransferSyntax ts = gdcm::TransferSyntax::ImplicitVRLittleEndian;
+    if( explicitts )
+      {
+      ts = gdcm::TransferSyntax::ExplicitVRLittleEndian;
+      }
+    else if( deflated )
+      {
+      ts = gdcm::TransferSyntax::DeflatedExplicitVRLittleEndian;
+      }
+    std::string tsuid = gdcm::TransferSyntax::GetTSString( ts );
+    if( tsuid.size() % 2 == 1 )
+      {
+      tsuid.push_back( 0 ); // 0 padding
+      }
+    gdcm::DataElement de( gdcm::Tag(0x0002,0x0010) );
+    de.SetByteValue( tsuid.data(), (uint32_t)tsuid.size() );
+    de.SetVR( gdcm::Attribute<0x0002, 0x0010>::GetVR() );
+    fmi.Clear();
+    fmi.Replace( de );
+
+    fmi.SetDataSetTransferSyntax(ts);
+
+    if( explicitts || deflated )
+      {
+      gdcm::FileExplicitFilter fef;
+      fef.SetChangePrivateTags( (changeprivatetags > 0 ? true: false));
+      fef.SetFile( reader.GetFile() );
+      if( !fef.Change() )
+        {
+        std::cerr << "Failed to change: " << filename << std::endl;
+        return 1;
+        }
+      }
+
+    if( !writer.Write() )
+      {
+      std::cerr << "Failed to write: " << outfilename << std::endl;
+      return 1;
+      }
+
+    return 0;
+
+}
+
+} // end anonymous namespace
+
 int main (int argc, char *argv[])
 {
   int c;
@@ -575,29 +658,29 @@ int main (int argc, char *argv[])
           {
           if( option_index == 0 ) /* input */
             {
-            assert( strcmp(s, "input") == 0 );
-            assert( filename.empty() );
+            gdcm_assert( strcmp(s, "input") == 0 );
+            gdcm_assert( filename.empty() );
             filename = optarg;
             }
           else if( option_index == 14 ) /* root-uid */
             {
-            assert( strcmp(s, "root-uid") == 0 );
-            assert( root.empty() );
+            gdcm_assert( strcmp(s, "root-uid") == 0 );
+            gdcm_assert( root.empty() );
             root = optarg;
             }
           else if( option_index == 28 ) /* split */
             {
-            assert( strcmp(s, "split") == 0 );
+            gdcm_assert( strcmp(s, "split") == 0 );
             fragmentsize = atoi(optarg);
             }
           else if( option_index == 29 ) /* planar conf*/
             {
-            assert( strcmp(s, "planar-configuration") == 0 );
+            gdcm_assert( strcmp(s, "planar-configuration") == 0 );
             planarconfval = atoi(optarg);
             }
           else if( option_index == 34 ) /* icon minmax*/
             {
-            assert( strcmp(s, "icon-minmax") == 0 );
+            gdcm_assert( strcmp(s, "icon-minmax") == 0 );
             std::stringstream ss;
             ss.str( optarg );
             ss >> iconmin;
@@ -607,33 +690,33 @@ int main (int argc, char *argv[])
             }
           else if( option_index == 40 ) /* photometricinterpretation */
             {
-            assert( strcmp(s, "photometric-interpretation") == 0 );
+            gdcm_assert( strcmp(s, "photometric-interpretation") == 0 );
             photometricinterpretation_str = optarg;
             }
           else if( option_index == 42 ) /* rate */
             {
-            assert( strcmp(s, "rate") == 0 );
+            gdcm_assert( strcmp(s, "rate") == 0 );
             readvector(rates, optarg);
             }
           else if( option_index == 43 ) /* quality */
             {
-            assert( strcmp(s, "quality") == 0 );
+            gdcm_assert( strcmp(s, "quality") == 0 );
             readvector(qualities, optarg);
             }
           else if( option_index == 44 ) /* tile */
             {
-            assert( strcmp(s, "tile") == 0 );
+            gdcm_assert( strcmp(s, "tile") == 0 );
             size_t n = readvector(tilesize, optarg);
-            assert( n == 2 ); (void)n;
+            gdcm_assert( n == 2 ); (void)n;
             }
           else if( option_index == 45 ) /* number of resolution */
             {
-            assert( strcmp(s, "number-resolution") == 0 );
+            gdcm_assert( strcmp(s, "number-resolution") == 0 );
             nresvalue = atoi(optarg);
             }
           else if( option_index == 47 ) /* JPEG-LS error */
             {
-            assert( strcmp(s, "allowed-error") == 0 );
+            gdcm_assert( strcmp(s, "allowed-error") == 0 );
             jpeglserror_value = atoi(optarg);
             }
           //printf (" with arg %s, index = %d", optarg, option_index);
@@ -644,13 +727,13 @@ int main (int argc, char *argv[])
 
     case 'i':
       //printf ("option i with value '%s'\n", optarg);
-      assert( filename.empty() );
+      gdcm_assert( filename.empty() );
       filename = optarg;
       break;
 
     case 'o':
       //printf ("option o with value '%s'\n", optarg);
-      assert( outfilename.empty() );
+      gdcm_assert( outfilename.empty() );
       outfilename = optarg;
       break;
 
@@ -928,80 +1011,7 @@ int main (int argc, char *argv[])
   // Handle here the general file (not required to be image)
   if ( !raw && (explicitts || implicit || deflated) )
     {
-    if( explicitts && implicit ) return 1; // guard
-    if( explicitts && deflated ) return 1; // guard
-    if( implicit && deflated ) return 1; // guard
-    gdcm::Reader reader;
-    reader.SetFileName( filename.c_str() );
-    if( !reader.Read() )
-      {
-      std::cerr << "Could not read: " << filename << std::endl;
-      return 1;
-      }
-    gdcm::MediaStorage ms;
-    ms.SetFromFile( reader.GetFile() );
-    if( ms == gdcm::MediaStorage::MediaStorageDirectoryStorage )
-      {
-      std::cerr << "Sorry DICOMDIR is not supported" << std::endl;
-      return 1;
-      }
-
-    gdcm::Writer writer;
-    writer.SetFileName( outfilename.c_str() );
-    writer.SetFile( reader.GetFile() );
-    gdcm::File & file = writer.GetFile();
-    gdcm::FileMetaInformation &fmi = file.GetHeader();
-
-    const gdcm::TransferSyntax &orits = fmi.GetDataSetTransferSyntax();
-    if( orits != gdcm::TransferSyntax::ExplicitVRLittleEndian
-      && orits != gdcm::TransferSyntax::ImplicitVRLittleEndian
-      && orits != gdcm::TransferSyntax::DeflatedExplicitVRLittleEndian )
-      {
-      std::cerr << "Sorry input Transfer Syntax not supported for this conversion: " << orits << std::endl;
-      return 1;
-      }
-
-    gdcm::TransferSyntax ts = gdcm::TransferSyntax::ImplicitVRLittleEndian;
-    if( explicitts )
-      {
-      ts = gdcm::TransferSyntax::ExplicitVRLittleEndian;
-      }
-    else if( deflated )
-      {
-      ts = gdcm::TransferSyntax::DeflatedExplicitVRLittleEndian;
-      }
-    std::string tsuid = gdcm::TransferSyntax::GetTSString( ts );
-    if( tsuid.size() % 2 == 1 )
-      {
-      tsuid.push_back( 0 ); // 0 padding
-      }
-    gdcm::DataElement de( gdcm::Tag(0x0002,0x0010) );
-    de.SetByteValue( &tsuid[0], (uint32_t)tsuid.size() );
-    de.SetVR( gdcm::Attribute<0x0002, 0x0010>::GetVR() );
-    fmi.Clear();
-    fmi.Replace( de );
-
-    fmi.SetDataSetTransferSyntax(ts);
-
-    if( explicitts || deflated )
-      {
-      gdcm::FileExplicitFilter fef;
-      fef.SetChangePrivateTags( (changeprivatetags > 0 ? true: false));
-      fef.SetFile( reader.GetFile() );
-      if( !fef.Change() )
-        {
-        std::cerr << "Failed to change: " << filename << std::endl;
-        return 1;
-        }
-      }
-
-    if( !writer.Write() )
-      {
-      std::cerr << "Failed to write: " << outfilename << std::endl;
-      return 1;
-      }
-
-    return 0;
+    return change_transfersyntax(filename, outfilename, raw, explicitts, implicit, deflated, changeprivatetags);
     }
 
   // split fragments
@@ -1141,6 +1151,12 @@ int main (int argc, char *argv[])
     reader.SetFileName( filename.c_str() );
     if( !reader.Read() )
       {
+      gdcm::MediaStorage ms;
+      ms.SetFromFile( reader.GetFile() );
+      // handle bulk decompression '--raw' on a set of file, which may contains a PDF
+      if( raw && ms == gdcm::MediaStorage::EncapsulatedPDFStorage ) 
+        return change_transfersyntax(filename, outfilename, raw, explicitts, implicit, deflated, changeprivatetags);
+      // else
       std::cerr << "Could not read (pixmap): " << filename << std::endl;
       return 1;
       }
@@ -1186,7 +1202,7 @@ int main (int argc, char *argv[])
         jpegcodec.SetLossless( false );
         if( quality )
           {
-          assert( qualities.size() == 1 );
+          gdcm_assert( qualities.size() == 1 );
           jpegcodec.SetQuality( static_cast<double>(qualities[0]) );
           }
         change.SetUserCodec( &jpegcodec );
@@ -1259,7 +1275,7 @@ int main (int argc, char *argv[])
         }
       const gdcm::TransferSyntax &ts = image.GetTransferSyntax();
 #ifdef GDCM_WORDS_BIGENDIAN
-	(void)ts;
+      (void)ts;
       change.SetTransferSyntax( gdcm::TransferSyntax::ExplicitVRBigEndian );
 #else
       if( ts.IsExplicit() )
@@ -1270,7 +1286,7 @@ int main (int argc, char *argv[])
         }
       else
         {
-        assert( ts.IsImplicit() );
+        gdcm_assert( ts.IsImplicit() );
         change.SetTransferSyntax( gdcm::TransferSyntax::ImplicitVRLittleEndian );
         if( explicitts )
         change.SetTransferSyntax( gdcm::TransferSyntax::ExplicitVRLittleEndian );
@@ -1389,7 +1405,7 @@ int main (int argc, char *argv[])
       }
     else
       {
-      assert( ts.IsImplicit() );
+      gdcm_assert( ts.IsImplicit() );
       image.SetTransferSyntax( gdcm::TransferSyntax::ImplicitVRLittleEndian );
       }
 
@@ -1408,11 +1424,11 @@ int main (int argc, char *argv[])
 */
 
     unsigned long len = ir.GetBufferLength();
-    //assert( len = ir.GetBufferLength() );
+    //gdcm_assert( len = ir.GetBufferLength() );
     std::vector<char> buffer;
     buffer.resize(len); // black image
 
-    ir.GetBuffer( &buffer[0] );
+    ir.GetBuffer( buffer.data() );
     gdcm::ByteValue *bv = new gdcm::ByteValue(buffer);
     gdcm::DataElement pixeldata( gdcm::Tag(0x7fe0,0x0010) );
     pixeldata.SetValue( *bv );

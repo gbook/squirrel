@@ -17,7 +17,7 @@
 #include <set>
 #include <vector>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 int TestUnpacker12Bits(int, char *[])
 {
@@ -69,15 +69,15 @@ int TestUnpacker12Bits(int, char *[])
   const unsigned char values[] = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab };
   const size_t len = sizeof(values) / sizeof(*values);
   const size_t outlen = 16 * len / 12;
-  char * output = new char[outlen];
-  bool b = gdcm::Unpacker12Bits::Unpack(output, (const char*)values, len);
+  void * output = malloc(outlen); // use malloc to get generous alignment, unlike new
+  bool b = gdcm::Unpacker12Bits::Unpack((char *)output, (const char*)values, len);
   if (!b) res = 1;
   if( b )
     {
     unsigned short * output_s = (unsigned short*)output;
     const unsigned short outputvalues[] = { 0x301, 0x452, 0x967, 0xab8 };
     const size_t outputlen = sizeof(outputvalues) / sizeof(*outputvalues);
-    assert( outlen / 2 == outputlen );
+    gdcm_assert( outlen / 2 == outputlen );
     for(size_t i = 0; i < outputlen; ++i)
       {
       if( outputvalues[i] != output_s[i] )
@@ -86,7 +86,7 @@ int TestUnpacker12Bits(int, char *[])
         }
       }
     }
-  delete[] output;
+  free(output);
 }
 
 {
@@ -102,7 +102,7 @@ int TestUnpacker12Bits(int, char *[])
     {
     if( values[i] != ref[i] )
       {
-      assert(0);
+      gdcm_assert(0);
       ++res;
       }
     }
@@ -114,11 +114,11 @@ int TestUnpacker12Bits(int, char *[])
     {
     v.push_back( val );
     }
-  assert( v.size() == 4096 );
-  assert( v[0] == 0 );
+  gdcm_assert( v.size() == 4096 );
+  gdcm_assert( v[0] == 0 );
   const size_t outsize = 4096 / 2 * 3;
   unsigned char outvalues[outsize] = {};
-  gdcm::Unpacker12Bits::Pack( (char*)outvalues, (char*)&v[0], 4096 * sizeof(unsigned short) );
+  gdcm::Unpacker12Bits::Pack( (char*)outvalues, (char*)v.data(), 4096 * sizeof(unsigned short) );
   unsigned short outvalues2[4096] = {};
   gdcm::Unpacker12Bits::Unpack( (char*)outvalues2, (char*)outvalues, outsize);
 

@@ -27,9 +27,6 @@ DictPrinter::DictPrinter()
 }
 
 //-----------------------------------------------------------------------------
-DictPrinter::~DictPrinter()
-= default;
-
 VM GuessVMType(DataElement const &de)
 {
   if( de.IsEmpty() ) return VM::VM1;
@@ -54,7 +51,7 @@ VM GuessVMType(DataElement const &de)
     }
   else
     {
-    assert( VR::IsASCII( vr ) || vr == VR::INVALID );
+    gdcm_assert( VR::IsASCII( vr ) || vr == VR::INVALID );
     switch(vr)
       {
     case VR::INVALID:
@@ -78,7 +75,7 @@ VM GuessVMType(DataElement const &de)
         vm = VM::VM1; // why not ?
         if(!de.IsEmpty())
           {
-          assert( bv && "not bv" );
+          gdcm_assert( bv && "not bv" );
           const char *array = bv->GetPointer();
           size_t c = VM::GetNumberOfElementsFromArray(array, vl);
           vm = VM::GetVMTypeFromLength( c, 1 );
@@ -87,7 +84,7 @@ VM GuessVMType(DataElement const &de)
       break;
     default:
       vm = VM::VM0;
-      assert( 0 ); // Impossible happen ! (someone added new VR and forgot this switch)
+      gdcm_assert( 0 ); // Impossible happen ! (someone added new VR and forgot this switch)
       }
     }
 
@@ -409,7 +406,7 @@ std::string GetVersion(std::string const &owner)
 //      {
 //      // HEY !
 //      std::cerr << "OWNER= \"" << p->owner << "\"" << std::endl;
-//      assert(0);
+//      gdcm_assert(0);
 //      }
 //#endif
     //if( owner == p->owner )
@@ -440,15 +437,19 @@ void DictPrinter::PrintDataElement2(std::ostream& os, const DataSet &ds, const D
   std::string strowner;
   const char *owner = nullptr;
   const Tag& t = de.GetTag();
-  if( t.IsPrivate() && !t.IsPrivateCreator() )
+  VR dict_vr = VR::UN;
+  if( t.IsPrivate() && !t.IsPrivateCreator() && !t.IsGroupLength())
     {
     strowner = ds.GetPrivateCreator(t);
     owner = strowner.c_str();
     }
-  const DictEntry &entry = dicts.GetDictEntry(t,owner);
-
-  if( de.GetTag().IsPrivate() && de.GetTag().GetElement() >= 0x0100 )
+  // illegal element do not have private creator:
+  if(owner && *owner)
     {
+    const DictEntry &entry = dicts.GetDictEntry(t,owner);
+    dict_vr = entry.GetVR();
+
+    gdcm_assert(t.GetElement() >= 0x0100 );
     //owner = GetOwner(ds,de);
     //version = GetVersion(owner);
 
@@ -466,24 +467,24 @@ void DictPrinter::PrintDataElement2(std::ostream& os, const DataSet &ds, const D
       }
     VM vm = GuessVMType(de);
 
-    if( PrintStyle == XML )
+    if( PrintStyle == XML /*&& pvr != VR::UN*/ )
     {
       os <<
         "<entry group=\"" << std::hex << std::setw(4) << std::setfill('0') <<
         t.GetGroup() << "\" element=\"" << std::setw(4) << ((uint16_t)(t.GetElement() << 8) >> 8) << "\" ";
       os <<  "vr=\"" << pvr << "\" vm=\"" << vm << "\" ";
-    if( de.GetTag().IsPrivate() )
+    if( t.IsPrivate() )
       {
-      os << R"(name="?" owner=")" << owner
-        << /*"\"  version=\"" << version << */ "\"/>\n";
+      gdcm_assert( owner && *owner );
+      os << R"(name="?" owner=")" << owner << "\"/>\n";
       }
     }
-    else if ( PrintStyle == CXX )
+    else if ( PrintStyle == CXX /*&& pvr != VR::UN*/ )
     {
       os <<
         "{0x" << std::hex << std::setw(4) << std::setfill('0') <<
         t.GetGroup() << ",0x" << std::setw(4) << ((uint16_t)(t.GetElement() << 8) >> 8) << ",";
-      if( de.GetTag().IsPrivate() )
+      if( t.IsPrivate() )
       {
         os << "\"" << owner
           << "\",";
@@ -492,21 +493,9 @@ void DictPrinter::PrintDataElement2(std::ostream& os, const DataSet &ds, const D
       std::replace( vm_str.begin(), vm_str.end(), '-', '_');
       os << "VR::" << pvr << ",VM::VM" << vm_str << ",\"??\",false},\n";
     }
-
-    //os << "\n  <description>?</description>\n";
-    //os << "</entry>\n";
-    //os << "/>\n";
-    //os << "  <description>Unknown ";
-    //os << (t.IsPrivate() ? "Private" : "Public");
-    //os << " Tag & Data</description>\n";
-    //os << "  <representations>\n";
-    //os << "    <representation vr=\"" << vr << "\" vm=\"" <<
-    //  VM::GetVMString(vm) << "\"/>\n";
-    //os << "  </representations>\n";
-    //os << "</entry>\n";
     }
 
-  if( entry.GetVR() == VR::SQ || true )
+  if( dict_vr == VR::SQ )
     {
     SmartPointer<SequenceOfItems> sqi = de.GetValueAsSQ();
     if( sqi )
@@ -537,7 +526,6 @@ void DictPrinter::Print(std::ostream& os)
 {
   const DataSet &ds = F->GetDataSet();
   PrintDataSet2(os, ds);
-  //os << "</dict>\n";
 }
 
 }

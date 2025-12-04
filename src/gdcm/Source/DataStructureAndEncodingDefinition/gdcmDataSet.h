@@ -69,7 +69,7 @@ public:
   DataElementSet &GetDES() { return DES; }
   void Clear() {
     DES.clear();
-    assert( DES.empty() );
+    gdcm_assert( DES.empty() );
   }
 
   SizeType Size() const {
@@ -79,7 +79,7 @@ public:
   void Print(std::ostream &os, std::string const &indent = "") const {
     // CT_Phillips_JPEG2K_Decompr_Problem.dcm has a SQ of length == 0
     //int s = DES.size();
-    //assert( s );
+    //gdcm_assert( s );
     //std::copy(DES.begin(), DES.end(),
     //  std::ostream_iterator<DataElement>(os, "\n"));
     ConstIterator it = DES.begin();
@@ -92,15 +92,15 @@ public:
   template <typename TDE>
   unsigned int ComputeGroupLength(Tag const &tag) const
     {
-    assert( tag.GetElement() == 0x0 );
+    gdcm_assert( tag.GetElement() == 0x0 );
     const DataElement r(tag);
     ConstIterator it = DES.find(r);
     unsigned int res = 0;
     for( ++it; it != DES.end()
       && it->GetTag().GetGroup() == tag.GetGroup(); ++it)
       {
-      assert( it->GetTag().GetElement() != 0x0 );
-      assert( it->GetTag().GetGroup() == tag.GetGroup() );
+      gdcm_assert( it->GetTag().GetElement() != 0x0 );
+      gdcm_assert( it->GetTag().GetGroup() == tag.GetGroup() );
       res += it->GetLength<TDE>();
       }
     return res;
@@ -109,13 +109,13 @@ public:
   template <typename TDE>
   VL GetLength() const {
     if( DES.empty() ) return 0;
-    assert( !DES.empty() );
+    gdcm_assert( !DES.empty() );
     VL ll = 0;
-    assert( ll == 0 );
+    gdcm_assert( ll == 0 );
     ConstIterator it = DES.begin();
     for( ; it != DES.end(); ++it)
       {
-      assert( !(it->GetLength<TDE>().IsUndefined()) );
+      gdcm_assert( !(it->GetLength<TDE>().IsUndefined()) );
       if ( it->GetTag() != Tag(0xfffe,0xe00d) )
         {
         ll += it->GetLength<TDE>();
@@ -171,7 +171,7 @@ public:
   /// Completely remove a dataelement from the dataset
   SizeType Remove(const Tag& tag) {
     DataElementSet::size_type count = DES.erase(tag);
-    assert( count == 0 || count == 1 );
+    gdcm_assert( count == 0 || count == 1 );
     return count;
   }
 
@@ -196,7 +196,11 @@ public:
   const DataElement& operator() (uint16_t group, uint16_t element) const { return GetDataElement( Tag(group,element) ); }
 
   /// Return the private creator of the private tag 't':
+  /// or an empty string when not found
   std::string GetPrivateCreator(const Tag &t) const;
+
+  /// Return the private tag of the private tag 't', private creator will be set to empty if not found
+  PrivateTag GetPrivateTag(const Tag &t) const;
 
   /// Look up if private tag 't' is present in the dataset:
   bool FindDataElement(const PrivateTag &t) const;
@@ -205,13 +209,9 @@ public:
 
   // DUMB: this only search within the level of the current DataSet
   bool FindDataElement(const Tag &t) const {
-    const DataElement r(t);
-    //ConstIterator it = DES.find(r);
-    if( DES.find(r) != DES.end() )
-      {
-      return true;
-      }
-    return false;
+    const auto it = GetDataElement(t);
+    // Return if tag is found
+    return it != GetDEEnd();
     }
 
   // WARNING:
@@ -225,23 +225,10 @@ public:
     }
 
   /// Returns if the dataset is empty
-  bool IsEmpty() const { return DES.empty(); };
+  bool IsEmpty() const { return DES.empty(); }
 
   DataSet& operator=(DataSet const &)
   = default;
-
-/*
-  template <typename TOperation>
-  void ExecuteOperation(TOperation & operation) {
-    assert( !DES.empty() );
-    DataElementSet::iterator it = Begin();
-    for( ; it != End(); ++it)
-      {
-      DataElement &de = (DataElement&)*it;
-      operation( de );
-      }
-  }
-*/
 
   template <typename TDE, typename TSwap>
   std::istream &ReadNested(std::istream &is);
@@ -296,7 +283,7 @@ protected:
 #else
     DES.insert(de);
 #endif
-    assert( de.IsEmpty() || de.GetVL() == de.GetValue().GetLength() );
+    gdcm_assert( de.IsEmpty() || de.GetVL() == de.GetValue().GetLength() );
     }
 
 protected:

@@ -18,6 +18,7 @@
 //
 #include <map>
 #include <algorithm>
+#include <cmath>
 #include <iterator>
 #include <vector>
 #include <deque>
@@ -87,7 +88,7 @@ namespace gdcm
                 double value_float
                     = static_cast<double>(y0)
                     + (static_cast<double>(i)/static_cast<double>(length)) * y01;
-                EntryType value_int = static_cast<EntryType>(value_float + 0.5);
+                EntryType value_int = static_cast<EntryType>(std::llround(value_float));
                 expanded.push_back(value_int);
             }
             return true;
@@ -123,7 +124,7 @@ namespace gdcm
             EntryType nNumCopies = *(this->_first + 1);
             typename SegmentMap::const_iterator ppSeg = ppHeadSeg;
             while ( std::distance(ppHeadSeg, ppSeg) <nNumCopies ) {
-                assert( ppSeg != instances.end() );
+                gdcm_assert( ppSeg != instances.end() );
                 ppSeg->second->Expand(instances, expanded);
                 ++ppSeg;
             }
@@ -180,7 +181,7 @@ void SegmentedPaletteColorLookupTable::SetLUT(LookupTableType type, const unsign
 {
   if( BitSample == 8 )
     {
-    assert(0); // TODO
+    gdcm_assert(0); // TODO
     }
   else if( BitSample == 16 )
     {
@@ -189,11 +190,11 @@ void SegmentedPaletteColorLookupTable::SetLUT(LookupTableType type, const unsign
     std::vector<uint16_t> palette;
     unsigned int num_entries = GetLUTLength(type);
     palette.reserve(num_entries);
-    assert( length % 2 == 0 );
+    gdcm_assert( length % 2 == 0 );
     // FIXME: inplace byteswapping (BAD!)
     SwapperNoOp::SwapArray(const_cast<uint16_t*>(segment_values),length/2);
     ExpandPalette(segment_values, length, palette);
-    LookupTable::SetLUT(type, (unsigned char*)&palette[0], (unsigned int)(palette.size() * 2));
+    LookupTable::SetLUT(type, (unsigned char*)palette.data(), (unsigned int)(palette.size() * 2));
     }
 }
 

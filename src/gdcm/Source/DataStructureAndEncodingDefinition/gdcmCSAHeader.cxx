@@ -910,16 +910,17 @@ bool check_mapping(uint32_t syngodt, const char *vr)
 {
   static const unsigned int max = sizeof(mapping) / sizeof(equ);
   const equ *p = mapping;
-  assert( syngodt <= mapping[max-1].syngodt ); (void)max;
+  if( syngodt > mapping[max-1].syngodt ) return false;
+  gdcm_assert( syngodt <= mapping[max-1].syngodt );
   while(p->syngodt < syngodt )
     {
     //std::cout << "mapping:" << p->vr << std::endl;
     ++p;
     }
-  assert( p->syngodt == syngodt ); // or else need to update mapping
+  gdcm_assert( p->syngodt == syngodt ); // or else need to update mapping
   const char* lvr = p->vr;
   int check = strcmp(vr, lvr) == 0;
-  assert( check ); (void)check;
+  gdcm_assert( check ); (void)check;
   return true;
 }
 
@@ -977,9 +978,9 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
   gdcmDebugMacro( "found type" );
 
   const ByteValue *bv = de.GetByteValue();
-  assert( bv );
+  gdcm_assert( bv );
   const char *p = bv->GetPointer();
-  assert( p );
+  gdcm_assert( p );
   std::string s( bv->GetPointer(), bv->GetLength() );
   std::stringstream ss;
   ss.str( s );
@@ -993,7 +994,7 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
   // Some silly software consider the tag to be OW, therefore they byteswap it !!! sigh
   if( strcmp( signature, "VS01" ) == 0 )
   {
-    SwapperDoOp::SwapArray( (unsigned short*)(void*)&s[0], (s.size() + 1) / 2 );
+    SwapperDoOp::SwapArray( (unsigned short*)(void*)s.data(), (s.size() + 1) / 2 );
     ss.str( s );
     ss.read(signature, 4);
   }
@@ -1034,10 +1035,10 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
           {
           ds.InsertDataElement( xde ); // Cannot use Insert since Group = 0x0 (< 0x8)
           //VR refvr = GetVRFromDataSetFormatDict( xde.GetTag() );
-          //assert( xde.GetVR() == refvr );
+          //gdcm_assert( xde.GetVR() == refvr );
           }
         //std::cout << ds << std::endl;
-        assert( ss.eof() );
+        gdcm_assert( ss.eof() );
         }
       catch(std::exception &)
         {
@@ -1048,7 +1049,7 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
       }
     else
       {
-      //assert(0);
+      //gdcm_assert(0);
       ss.seekg( 0, std::ios::beg );
       // No magic number for this one:
       // SIEMENS_Sonata-16-MONO2-Value_Multiplicity.dcm
@@ -1059,10 +1060,10 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
     {
     // NEW FORMAT !
     ss.read(signature, 4);
-    assert( strcmp( signature, "\4\3\2\1" ) == 0 );
+    gdcm_assert( strcmp( signature, "\4\3\2\1" ) == 0 );
     InternalType = SV10;
     }
-  assert( InternalType != UNKNOWN );
+  gdcm_assert( InternalType != UNKNOWN );
   gdcmDebugMacro( "Found Type: " << (int)InternalType );
 
   uint32_t n;
@@ -1076,7 +1077,7 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
     gdcmErrorMacro( "Must be a new format. Giving up" );
     return false;
     }
-  assert( unused == 77 ); // 'M' character...
+  gdcm_assert( unused == 77 ); // 'M' character...
 
   for(uint32_t i = 0; i < n; ++i)
     {
@@ -1093,12 +1094,17 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
     ss.read((char*)&vm, sizeof(vm));
     SwapperNoOp::SwapArray(&vm,1);
     csael.SetVM( VM::GetVMTypeFromLength(vm,1) );
-    //assert( csael.GetVM() != VM::VM0 );
+    //gdcm_assert( csael.GetVM() != VM::VM0 );
     //std::cout << "VM " << vm <<  ", ";
     char vr[4];
     ss.read(vr, 4);
     // In dataset without magic signature (OLD FORMAT) vr[3] is garbage...
-    assert( /*vr[3] == 0 &&*/ vr[2] == 0 );
+    if( vr[2] != 0 )
+    {
+      gdcmErrorMacro( "Garbage data. Stopping CSA parsing." );
+      return false;
+    }
+    gdcm_assert( /*vr[3] == 0 &&*/ vr[2] == 0 );
     csael.SetVR( VR::GetVRTypeFromFile(vr) );
     //std::cout << "VR " << vr << ", ";
     uint32_t syngodt;
@@ -1116,12 +1122,13 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
     ss.read((char*)&nitems, sizeof(nitems));
     SwapperNoOp::SwapArray(&nitems,1);
     csael.SetNoOfItems( nitems );
+    if( InternalType == SV10) { gdcm_assert( nitems % 6 == 0 );}
     //std::cout << "NoOfItems " << nitems << ", ";
     uint32_t xx;
     ss.read((char*)&xx, sizeof(xx));
     SwapperNoOp::SwapArray(&xx,1);
     //std::cout << "xx=" << xx<< std::endl;
-    assert( xx == 77 || xx == 205 );
+    gdcm_assert( xx == 77 || xx == 205 );
 
     //std::cout << "Data ";
     std::ostringstream os;
@@ -1130,9 +1137,11 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
       uint32_t item_xx[4];
       ss.read((char*)&item_xx, 4*sizeof(uint32_t));
       SwapperNoOp::SwapArray(item_xx,4);
-      assert( item_xx[2] == 77 || item_xx[2] == 205 );
+      if( item_xx[2] != 77 && item_xx[2] != 205 ) return false;
+      gdcm_assert( item_xx[2] == 77 || item_xx[2] == 205 );
       uint32_t len = item_xx[1]; // 2nd element
-      assert( item_xx[0] == item_xx[1] && item_xx[1] == item_xx[3] );
+      if( item_xx[0] != item_xx[1] || item_xx[1] != item_xx[3] ) return false;
+      gdcm_assert( item_xx[0] == item_xx[1] && item_xx[1] == item_xx[3] );
       if( len )
         {
         char *val = new char[len+1];
@@ -1155,7 +1164,7 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
         for(uint32_t d= 0; d < dummy_len; ++d)
           {
           // dummy[d]  is zero in the NEW format
-          //assert( dummy[d] == 0 );
+          //gdcm_assert( dummy[d] == 0 );
           //for the old format there appears to be some garbage:
           if( dummy[d] )
             {
@@ -1167,7 +1176,7 @@ bool CSAHeader::LoadFromDataElement(DataElement const &de)
       }
     std::string str = os.str();
     if( !str.empty() )
-      csael.SetByteValue( &str[0], (uint32_t)str.size());
+      csael.SetByteValue( str.data(), (uint32_t)str.size());
     //std::cout << std::endl;
     InternalCSADataSet.insert( csael );
     }
@@ -1194,7 +1203,7 @@ void CSAHeader::Print(std::ostream &os) const
 
   for(; it != InternalCSADataSet.end(); ++it)
     {
-    std::cout << *it << std::endl;
+    os << *it << std::endl;
     }
 }
 
@@ -1207,7 +1216,7 @@ const CSAElement &CSAHeader::GetCSAElementByName(const char *name)
     for(; it != InternalCSADataSet.end(); ++it)
       {
       const char *itname = it->GetName();
-      assert( itname );
+      gdcm_assert( itname );
       if( strcmp(name, itname) == 0 )
         {
         return *it;
@@ -1225,7 +1234,7 @@ bool CSAHeader::FindCSAElementByName(const char *name)
     for(; it != InternalCSADataSet.end(); ++it)
       {
       const char *itname = it->GetName();
-      assert( itname );
+      gdcm_assert( itname );
       if( strcmp(name, itname) == 0 )
         {
         return true;
@@ -1236,15 +1245,15 @@ bool CSAHeader::FindCSAElementByName(const char *name)
 }
 
 static const char csaheader[] = "SIEMENS CSA HEADER";
-static const gdcm::PrivateTag t1(0x0029,0x0010,csaheader); // CSA Image Header Info
-static const gdcm::PrivateTag t2(0x0029,0x0020,csaheader); // CSA Series Header Info
+static const gdcm::PrivateTag t1(0x0029,0x10,csaheader); // CSA Image Header Info
+static const gdcm::PrivateTag t2(0x0029,0x20,csaheader); // CSA Series Header Info
 
 //static const char csaheader2[] = "SIEMENS MEDCOM HEADER2";
 //static const gdcm::PrivateTag t4(0x0029,0x0010,csaheader2); // CSA Image Header Info
 //static const gdcm::PrivateTag t5(0x0029,0x0020,csaheader2); // CSA Series Header Info
 
 static const char csanonimage[] = "SIEMENS CSA NON-IMAGE";
-static const gdcm::PrivateTag t3(0x0029,0x0010,csanonimage); // CSA Data Info
+static const gdcm::PrivateTag t3(0x0029,0x10,csanonimage); // CSA Data Info
 
 const PrivateTag & CSAHeader::GetCSAImageHeaderInfoTag()
 {

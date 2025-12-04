@@ -12,10 +12,14 @@
 
 =========================================================================*/
 #include "gdcmFilename.h"
-#include <limits.h>
-#include <stdlib.h> // realpath
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <climits>
+#include <cstdlib> // realpath
+#include <cstring>
+
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__WATCOMC__) || defined(__BORLANDC__) || defined(__MINGW32__))
+#include <windows.h>
+#endif
 
 namespace gdcm
 {
@@ -28,7 +32,7 @@ const char *Filename::GetPath()
 {
   std::string fn = ToUnixSlashes();
 
-  std::string::size_type slash_pos = fn.rfind("/");
+  std::string::size_type slash_pos = fn.rfind('/');
   if(slash_pos != std::string::npos)
     {
     Path = fn.substr(0, slash_pos);
@@ -48,24 +52,24 @@ const char *Filename::GetPath()
 const char *Filename::GetName()
 {
   std::string filename = FileName;
-  assert( !filename.empty() );
+  gdcm_assert( !filename.empty() );
 #if defined(_WIN32)
   std::string::size_type slash_pos = filename.find_last_of("/\\");
 #else
-  std::string::size_type slash_pos = filename.find_last_of("/");
+  std::string::size_type slash_pos = filename.find_last_of('/');
 #endif
   if(slash_pos != std::string::npos)
     {
-    return &FileName[0] + slash_pos + 1;
+    return FileName.data() + slash_pos + 1;
     }
 
-  return &FileName[0];
+  return FileName.data();
 }
 
 const char *Filename::ToWindowsSlashes()
 {
   Conversion = FileName;
-  //assert( !Conversion.empty() );
+  //gdcm_assert( !Conversion.empty() );
   for (std::string::iterator it = Conversion.begin(); it != Conversion.end(); ++it )
     {
     if( *it == '/' )
@@ -82,13 +86,13 @@ const char *Filename::ToUnixSlashes()
 {
   Conversion = FileName;
   //std::string::size_type s = Conversion.find("\\");
-  //assert( s == std::string::npos );
-  assert( !Conversion.empty() );
+  //gdcm_assert( s == std::string::npos );
+  gdcm_assert( !Conversion.empty() );
   for (std::string::iterator it = Conversion.begin(); it != Conversion.end(); ++it )
     {
     if( *it == '\\' )
       {
-      assert( it+1 == Conversion.end() || *(it+1) != ' ' ); // is it an escaped space ?
+      gdcm_assert( it+1 == Conversion.end() || *(it+1) != ' ' ); // is it an escaped space ?
       *it = '/';
       }
     }
@@ -97,7 +101,6 @@ const char *Filename::ToUnixSlashes()
 }
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__WATCOMC__) || defined(__BORLANDC__) || defined(__MINGW32__))
-#include <windows.h>
 
 inline void Realpath(const char *path, std::string & resolved_path)
 {
@@ -142,7 +145,7 @@ inline void Realpath(const char *path, std::string & resolved_path)
 const char *Filename::GetExtension()
 {
   std::string name = GetName();
-  std::string::size_type dot_pos = name.rfind(".");
+  std::string::size_type dot_pos = name.rfind('.');
   if(dot_pos != std::string::npos)
     {
     return GetName() + dot_pos;

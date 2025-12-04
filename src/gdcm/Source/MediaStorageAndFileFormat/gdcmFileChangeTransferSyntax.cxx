@@ -124,14 +124,14 @@ bool FileChangeTransferSyntax::Change()
 
   Internals->Progress = 0;
   bool b = Internals->IC->StartEncode(os);
-  assert( b );
+  gdcm_assert(b);
   size_t len = 0; // actual size compressed:
   if( Internals->IC->IsRowEncoder() )
     {
     std::vector<char> vbuffer;
     vbuffer.resize( dims[0] * pixsize );
 
-    char *data = &vbuffer[0];
+    char *data = vbuffer.data();
     const size_t datalen = vbuffer.size();
 
     const size_t nscanlines = dims[2] * dims[1];
@@ -145,7 +145,7 @@ bool FileChangeTransferSyntax::Change()
       for( unsigned int y = 0; y < dims[1]; ++y )
         {
         is.read( data, datalen );
-        assert( is.good() );
+        gdcm_assert( is.good() );
         b = Internals->IC->CleanupUnusedBits(data, datalen);
         if( !b ) return false;
         b = Internals->IC->AppendRowEncode(os, data, datalen);
@@ -176,7 +176,7 @@ bool FileChangeTransferSyntax::Change()
     std::vector<char> vbuffer;
     vbuffer.resize( dims[0] * dims[1] * pixsize );
 
-    char *data = &vbuffer[0];
+    char *data = vbuffer.data();
     const size_t datalen = vbuffer.size();
 
     const size_t nscanlines = dims[2];
@@ -189,7 +189,7 @@ bool FileChangeTransferSyntax::Change()
       std::streampos start = os.tellp();
         {
         is.read( data, datalen );
-        assert( is.good() );
+        gdcm_assert( is.good() );
         b = Internals->IC->CleanupUnusedBits(data, datalen);
         if( !b ) return false;
         b = Internals->IC->AppendFrameEncode(os, data, datalen);
@@ -221,7 +221,7 @@ bool FileChangeTransferSyntax::Change()
     return false;
     }
   b = Internals->IC->StopEncode(os);
-  assert( b );
+  gdcm_assert(b);
 
   const Tag seqDelItem(0xfffe,0xe0dd);
   seqDelItem.Write<SwapperNoOp>(os);
@@ -287,7 +287,7 @@ void FileChangeTransferSyntax::SetTransferSyntax( TransferSyntax const & ts )
     &jpeg2000,
     &rle
   };
-  const int n = sizeof( codecs ) / sizeof( *codecs );
+  const int n = sizeof( codecs ) / sizeof( codecs[0] );
   for( int i = 0; i < n; ++i )
     {
     if( codecs[i]->CanCode( ts ) )
@@ -295,7 +295,7 @@ void FileChangeTransferSyntax::SetTransferSyntax( TransferSyntax const & ts )
       Internals->IC = codecs[i]->Clone();
       }
     }
-  assert( Internals->TS );
+  gdcm_assert( Internals->TS );
 }
 
 ImageCodec * FileChangeTransferSyntax::GetCodec()
@@ -454,6 +454,7 @@ bool FileChangeTransferSyntax::InitializeCopy()
         ISO_14495_1 = JPEG-LS Near-lossless Compression
         ISO_15444_1 = JPEG 2000 Irreversible Compression
         ISO_13818_2 = MPEG2 Compression
+        ISO_15444_15 = High-Throughput JPEG 2000 Irreversible Compression
          */
         Attribute<0x0028,0x2114> at3;
         const TransferSyntax ts_orig = Internals->TS;
@@ -465,6 +466,14 @@ bool FileChangeTransferSyntax::InitializeCopy()
         else if( ts_orig == TransferSyntax::JPEGLSNearLossless )
           {
           static const CSComp newvalues2[] = {"ISO_14495_1"};
+          at3.SetValues( newvalues2, 1 );
+          }
+        else if (
+          ts_orig == TransferSyntax::HTJ2KLossless ||
+          ts_orig == TransferSyntax::HTJ2KRPCLLossless ||
+          ts_orig == TransferSyntax::HTJ2K )
+          {
+          static const CSComp newvalues2[] = {"ISO_15444_15"};
           at3.SetValues( newvalues2, 1 );
           }
         else if (

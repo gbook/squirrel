@@ -1,5 +1,5 @@
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  cmake_minimum_required(VERSION 2.8.7)
+  cmake_minimum_required(VERSION 2.8.7...${GDCM_MAX_VALIDATED_CMAKE_VERSION})
 endif()
 
 if(NOT GETOPT_NAMESPACE)
@@ -39,7 +39,7 @@ set(GETOPT_LIBRARY_PROPERTIES ${GETOPT_LIBRARY_PROPERTIES}
 )
 
 # Only build this lib static. On most unix system
-# we will be using the standart getopt
+# we will be using the standard getopt
 # so this lib will be for the poor Win32 user (those
 # guys really need help)
 add_library(${GETOPT_LIBRARY_NAME} ${GETOPT_SRCS})

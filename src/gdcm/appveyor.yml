@@ -2,7 +2,7 @@
 # http://www.appveyor.com/docs/appveyor-yml
 
 # Set build version format here instead of in the admin panel.
-version: 3.0.0.{build}
+version: 3.2.0.{build}
 
 # http://www.appveyor.com/docs/build-cache#caching-chocolatey-packages
 # https://github.com/kvirc/KVIrc/blob/master/.appveyor.yml
@@ -171,7 +171,7 @@ deploy:
     artifact: nuget_package
   - provider: GitHub
     auth_token:
-      secure: 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
+      secure: Fn2cUcuBMVpvBXDzTQiUm2kqZ4AA39z4iyFUS3BsaPWjJEbJgFpmJYoJm2twjVpk
     release: $(appveyor_repo_tag_name)
     description: 'Release of GDCM $(appveyor_repo_tag_name)'
     # github automatically does source zip/tarball for us

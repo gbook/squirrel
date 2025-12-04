@@ -35,7 +35,7 @@ PythonFilter::~PythonFilter()
 
 void PythonFilter::SetDicts(const Dicts &dicts)
 {
-  assert(0); // FIXME
+  gdcm_assert(0); // FIXME
 }
 
 void PythonFilter::SetFile(const File& f) { F = f; }
@@ -163,7 +163,7 @@ const char *GetPythonTypeFromVR(VR const &vr)
       s = "s";
       break;
     default:
-      assert( 0 );
+      gdcm_assert( 0 );
       s = nullptr;
     }
   return s;
@@ -174,7 +174,7 @@ PyObject *DataElementToPyObject(DataElement const &de, VR const &vr)
 {
       const ByteValue *bv = de.GetByteValue();
       std::string s( bv->GetPointer(), bv->GetLength() );
-      s.resize( std::min( s.size(), strlen( s.c_str() ) ) ); // strlen is garantee to be lower or equal to ::size()
+      s.resize( std::min( s.size(), strlen( s.c_str() ) ) ); // strlen is guaranteed to be lower or equal to ::size()
       // http://www.python.org/doc/current/ext/buildValue.html
       // http://mail.python.org/pipermail/python-list/2002-April/137612.html
       unsigned int count;
@@ -233,7 +233,7 @@ PyObject *PythonFilter::ToPyObject(const Tag& t) const
     }
 
   const DataElement &de = ds.GetDataElement( t );
-  assert( de.GetTag().IsPublic() );
+  gdcm_assert( de.GetTag().IsPublic() );
   const DictEntry &entry = dicts.GetDictEntry(de.GetTag());
   if( entry.GetVR() == VR::INVALID )
     {
@@ -249,11 +249,11 @@ PyObject *PythonFilter::ToPyObject(const Tag& t) const
     {
     vr = de.GetVR();
     }
-  assert( vr != VR::UN && vr != VR::INVALID );
+  gdcm_assert( vr != VR::UN && vr != VR::INVALID );
   //std::cerr << "Found " << vr << " for " << de.GetTag() << std::endl;
   //if( VR::IsASCII( vr ) )
     {
-    //assert( vr & VR::VRASCII );
+    //gdcm_assert( vr & VR::VRASCII );
     if( de.IsEmpty() )
       {
       return nullptr;
