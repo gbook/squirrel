@@ -80,7 +80,7 @@ win32: {
     LIBS += -lbit7z
 
     # gdcm library
-    GDCMBIN = C:/squirrel/bin/gdcm-static
+    GDCMBIN = C:/squirrel/bin/gdcm
 
     GDCMSRC = ../gdcm/Source
     *msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release
