@@ -119,7 +119,7 @@ linux: {
     HEADERS += $$LZMAINCLUDE/bit7z.hpp
 
     # gdcm library
-    GDCMBIN = ../../bin/gdcm
+    GDCMBIN = ../../bin/gdcm-static
 
     GDCMSRC = ../gdcm/Source
     *msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
