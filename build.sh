@@ -92,7 +92,7 @@ make -B -j 16
 # try to copy the binaries to their final locations (this may fail because it requires sudo)
 cd $ORIGDIR
 echo -e "\nCopying libsquirrel to /lib"
-sudo cp -auv bin/squirrel/libsquirrel* /lib/
+sudo cp -auv bin/squirrel/libsquirrel* /lib64/
 
 echo -e "\nCopying squirrel to /usr/local/bin"
 sudo cp -uv bin/squirrel/squirrel /usr/local/bin/
