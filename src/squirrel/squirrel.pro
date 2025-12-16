@@ -80,35 +80,35 @@ win32: {
     LIBS += -lbit7z
 
     # gdcm library
-    GDCMBIN = C:/squirrel/bin/gdcm
+    #GDCMBIN = C:/squirrel/bin/gdcm
 
-    GDCMSRC = ../gdcm/Source
-    *msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release
-    else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug
-    INCLUDEPATH += $$GDCMSRC/Attribute
-    INCLUDEPATH += $$GDCMSRC/Common
-    INCLUDEPATH += $$GDCMSRC/DataDictionary
-    INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
-    INCLUDEPATH += $$GDCMSRC/InformationObjectDefinition
-    INCLUDEPATH += $$GDCMSRC/MediaStorageAndFileFormat
-    INCLUDEPATH += $$GDCMSRC/MessageExchangeDefinition
-    INCLUDEPATH += $$GDCMBIN/Source/Common # for gdcmConfigure.h
-    HEADERS += $$GDCMBIN/Source/Common/gdcmConfigure.h
+    #GDCMSRC = ../gdcm/Source
+    #*msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release
+    #else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug
+    #INCLUDEPATH += $$GDCMSRC/Attribute
+    #INCLUDEPATH += $$GDCMSRC/Common
+    #INCLUDEPATH += $$GDCMSRC/DataDictionary
+    #INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
+    #INCLUDEPATH += $$GDCMSRC/InformationObjectDefinition
+    #INCLUDEPATH += $$GDCMSRC/MediaStorageAndFileFormat
+    #INCLUDEPATH += $$GDCMSRC/MessageExchangeDefinition
+    #INCLUDEPATH += $$GDCMBIN/Source/Common # for gdcmConfigure.h
+    #HEADERS += $$GDCMBIN/Source/Common/gdcmConfigure.h
 
-    LIBS += -lgdcmMSFF \
-        -lgdcmCommon \
-	-lgdcmDICT \
-	-lgdcmDSED \
-	-lgdcmIOD \
-	-lgdcmMEXD \
-	-lgdcmcharls \
-	-lgdcmexpat \
-	-lgdcmjpeg12 \
-	-lgdcmjpeg16 \
-	-lgdcmjpeg8 \
-	-lgdcmopenjp2 \
-	-lgdcmzlib \
-	-lsocketxx
+    #LIBS += -lgdcmMSFF \
+    #    -lgdcmCommon \
+        #-lgdcmDICT \
+	#-lgdcmDSED \
+	#-lgdcmIOD \
+	#-lgdcmMEXD \
+	#-lgdcmcharls \
+	#-lgdcmexpat \
+	#-lgdcmjpeg12 \
+	#-lgdcmjpeg16 \
+	#-lgdcmjpeg8 \
+	#-lgdcmopenjp2 \
+	#-lgdcmzlib \
+	#-lsocketxx
 
 }
 linux: {
@@ -119,34 +119,34 @@ linux: {
     HEADERS += $$LZMAINCLUDE/bit7z.hpp
 
     # gdcm library
-    GDCMBIN = ../../bin/gdcm
+    #GDCMBIN = ../../bin/gdcm
 
-    GDCMSRC = ../gdcm/Source
-    *msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
-    else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug/
-    linux: LIBS += -L$$GDCMBIN/bin
-    INCLUDEPATH += $$GDCMSRC/Attribute
-    INCLUDEPATH += $$GDCMSRC/Common
-    INCLUDEPATH += $$GDCMSRC/DataDictionary
-    INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
-    INCLUDEPATH += $$GDCMSRC/InformationObjectDefinition
-    INCLUDEPATH += $$GDCMSRC/MediaStorageAndFileFormat
-    INCLUDEPATH += $$GDCMSRC/MessageExchangeDefinition
-    INCLUDEPATH += $$GDCMBIN/Source/Common # for gdcmConfigure.h
-    HEADERS += $$GDCMBIN/Source/Common/gdcmConfigure.h
+    #GDCMSRC = ../gdcm/Source
+    #*msvc*:CONFIG(release, debug|release): LIBS += -L$$GDCMBIN/bin/Release/
+    #else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug/
+    #linux: LIBS += -L$$GDCMBIN/bin
+    #INCLUDEPATH += $$GDCMSRC/Attribute
+    #INCLUDEPATH += $$GDCMSRC/Common
+    #INCLUDEPATH += $$GDCMSRC/DataDictionary
+    #INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
+    #INCLUDEPATH += $$GDCMSRC/InformationObjectDefinition
+    #INCLUDEPATH += $$GDCMSRC/MediaStorageAndFileFormat
+    #INCLUDEPATH += $$GDCMSRC/MessageExchangeDefinition
+    #INCLUDEPATH += $$GDCMBIN/Source/Common # for gdcmConfigure.h
+    #HEADERS += $$GDCMBIN/Source/Common/gdcmConfigure.h
 
-    LIBS += -lgdcmMSFF \
-        -lgdcmCommon \
-	-lgdcmDICT \
-	-lgdcmDSED \
-	-lgdcmIOD \
-	-lgdcmMEXD \
-	-lgdcmcharls \
-	-lgdcmexpat \
-	-lgdcmjpeg12 \
-	-lgdcmjpeg16 \
-	-lgdcmjpeg8 \
-	-lgdcmopenjp2 \
-	-lgdcmzlib \
-	-lsocketxx
+    #LIBS += -lgdcmMSFF \
+        #-lgdcmCommon \
+	#-lgdcmDICT \
+	#-lgdcmDSED \
+	#-lgdcmIOD \
+	#-lgdcmMEXD \
+	#-lgdcmcharls \
+	#-lgdcmexpat \
+	#-lgdcmjpeg12 \
+	#-lgdcmjpeg16 \
+	#-lgdcmjpeg8 \
+	#-lgdcmopenjp2 \
+	#-lgdcmzlib \
+	#-lsocketxx
 }
