@@ -41,11 +41,11 @@ mkdir -p $BUILDDIR
 command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x. Install using 'yum install cmake' or 'apt-get cmake'.\n"; exit 1; }
 
 # ----- build GDCM library -----
-echo -e "\n ----- Building gdcm -----\n"
-mkdir -p $BUILDDIR/gdcm
-cd $BUILDDIR/gdcm
-cmake -DGDCM_BUILD_APPLICATIONS:STRING=NO -DGDCM_BUILD_DOCBOOK_MANPAGES:BOOL=OFF -DGDCM_BUILD_SHARED_LIBS:STRING=YES -DGDCM_BUILD_TESTING:STRING=NO -DGDCM_BUILD_EXAMPLES:STRING=NO $SRCDIR/gdcm
-make -j 16
+#echo -e "\n ----- Building gdcm -----\n"
+#mkdir -p $BUILDDIR/gdcm
+#cd $BUILDDIR/gdcm
+#cmake -DGDCM_BUILD_APPLICATIONS:STRING=NO -DGDCM_BUILD_DOCBOOK_MANPAGES:BOOL=OFF -DGDCM_BUILD_SHARED_LIBS:STRING=YES -DGDCM_BUILD_TESTING:STRING=NO -DGDCM_BUILD_EXAMPLES:STRING=NO $SRCDIR/gdcm
+#make -j 16
 
 # ----- build bit7z library -----
 echo -e "\n ----- Building bit7z -----\n"
