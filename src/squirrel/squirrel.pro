@@ -79,22 +79,13 @@ win32: {
     HEADERS += $$LZMAINCLUDE/bit7z.hpp
     LIBS += -lbit7z
 
-    # gdcm library
+    # dcmtk library
     DCMTK = "C:/Program Files (x86)/DCMTK"
 
-    #GDCMSRC = ../gdcm/Source
     LIBS += -L$$DCMTK/lib
     #*msvc*:CONFIG(release, debug|release): LIBS += -L$$DCMTK/lib
     #else:*msvc*:CONFIG(debug, debug|release): LIBS += -L$$GDCMBIN/bin/Debug
     INCLUDEPATH += $$DCMTK/include/
-    #INCLUDEPATH += $$GDCMSRC/Common
-    #INCLUDEPATH += $$GDCMSRC/DataDictionary
-    #INCLUDEPATH += $$GDCMSRC/DataStructureAndEncodingDefinition
-    #INCLUDEPATH += $$GDCMSRC/InformationObjectDefinition
-    #INCLUDEPATH += $$GDCMSRC/MediaStorageAndFileFormat
-    #INCLUDEPATH += $$GDCMSRC/MessageExchangeDefinition
-    #INCLUDEPATH += $$GDCMBIN/Source/Common # for gdcmConfigure.h
-    #HEADERS += $$GDCMBIN/Source/Common/gdcmConfigure.h
 
     LIBS += -ldcmdata \
         -lcmr \

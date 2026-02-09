@@ -60,14 +60,14 @@ squirrelImageIO::~squirrelImageIO()
 
 
 /* ---------------------------------------------------------- */
-/* --------- RunExiftool ------------------------------------ */
+/* --------- Exiftool --------------------------------------- */
 /* ---------------------------------------------------------- */
 /**
  * @brief Run exiftool to get DICOM tags. Output should be terminated with {ready}, otherwise it is incomplete
  * @param arg The DICOM (or other type) file
  * @return The full output from exiftool
  */
-QString squirrelImageIO::RunExiftool(QString arg) {
+QString squirrelImageIO::Exiftool(QString arg) {
     QString str;
 
     QFileInfo fileInfo(arg);
@@ -418,7 +418,7 @@ bool squirrelImageIO::IsDICOMFile(QString f) {
     /* check if its really a dicom file... */
     /* try reading with exiftool */
     QHash<QString, QString> tags;
-    QString exifoutput = RunExiftool(f);
+    QString exifoutput = Exiftool(f);
     QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
 
     foreach (QString line, lines) {
@@ -594,7 +594,7 @@ bool squirrelImageIO::AnonymizeDicomDirInPlace(QString dir, int anonlevel, QStri
 QString squirrelImageIO::GetDicomModality(QString f)
 {
     QString modality = "NOTDICOM";
-    QString exifoutput = RunExiftool(f);
+    QString exifoutput = Exiftool(f);
     QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
 
     QHash<QString, QString> tags;
@@ -757,7 +757,7 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
         else {
             //msg += "GetImageFileTags() checkpoint D\n";
             /* unknown modality/filetype... so we'll try one last time to read with EXIF tool */
-            QString exifoutput = RunExiftool(f);
+            QString exifoutput = Exiftool(f);
             QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
 
             foreach (QString line, lines) {
@@ -927,7 +927,7 @@ void squirrelImageIO::GetFileType(QString f, QString &fileType, QString &fileMod
     fileModality = QString("");
 
     /* read file with EXIF tool */
-    QString exifoutput = RunExiftool(f);
+    QString exifoutput = Exiftool(f);
     QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
     QHash<QString, QString> tags;
     foreach (QString line, lines) {

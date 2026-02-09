@@ -64,16 +64,17 @@ public:
     QString GetDicomModality(QString f);
     void GetFileType(QString f, QString &fileType, QString &fileModality, QString &filePatientID, QString &fileProtocol);
     bool GetImageFileTags(QString f, QHash<QString, QString> &tags, QString &msg);
-
     bool GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags);
+
+private:
+    /* exiftool helper */
+    QString Exiftool(QString arg);
+
+    /* Siemens CSA header parser functions */
     QMap<QString, CsaElement> ParseSiemensCSA(const QByteArray& csa);
     QString csaToString(const QByteArray& v);
     double csaToDouble(const QByteArray& v);
     int csaToInteger(const QByteArray& v);
-
-private:
-    /* functions to allow exiftool to run 'interactively' */
-    QString RunExiftool(QString arg);
 
 };
 
