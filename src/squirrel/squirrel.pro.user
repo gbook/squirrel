@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 18.0.2, 2026-02-06T14:52:28. -->
+<!-- Written by QtCreator 18.0.2, 2026-02-06T15:40:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -245,7 +245,7 @@
      <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/squirrel/src/squirrel/squirrel.pro</value>
      <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
      <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId"></value>
-     <value type="QString" key="RunConfiguration.Arguments">dicom2squirrel D:/DICOM/S8497YGK1/1 d:/dcmtest.sqrl --dataformat orig --dirformat orig</value>
+     <value type="QString" key="RunConfiguration.Arguments">dicom2squirrel D:/problem d:/dcmtest.sqrl --dataformat orig --dirformat orig</value>
      <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
      <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
      <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
@@ -285,7 +285,7 @@
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/squirrel/src/squirrel/squirrel.pro</value>
     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId"></value>
-    <value type="QString" key="RunConfiguration.Arguments">dicom2squirrel D:/DICOM/S8497YGK1/1 d:/dcmtest.sqrl --dataformat orig --dirformat orig</value>
+    <value type="QString" key="RunConfiguration.Arguments">dicom2squirrel D:/problem d:/dcmtest.sqrl --dataformat orig --dirformat orig</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

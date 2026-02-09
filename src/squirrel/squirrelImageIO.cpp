@@ -25,6 +25,19 @@
 using namespace std;
 
 /* ---------------------------------------------------------- */
+/* --------- align4 ----------------------------------------- */
+/* ---------------------------------------------------------- */
+/**
+ * @brief align a number to 4
+ * @param x
+ * @return
+ */
+static int align4(int x)
+{
+    return (x + 3) & ~3;
+}
+
+/* ---------------------------------------------------------- */
 /* --------- squirrelImageIO -------------------------------- */
 /* ---------------------------------------------------------- */
 /**
@@ -102,7 +115,6 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
 
     DcmFileFormat fileformat;
     OFCondition status = fileformat.loadFileUntilTag(filename, EXS_Unknown, EGL_noChange, DCM_MaxReadLength, ERM_autoDetect, DcmTagKey(0x7FE0, 0x0010));
-    //std::cout << "Loaded file [" << filename << "]";
     if (status.good()) {
         tags["FileType"] = "DICOM";
         DcmStack stack;
@@ -110,7 +122,6 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
         while (dataset->nextObject(stack, OFTrue /*intoSub*/).good())
         {
             DcmObject *object = stack.top();
-            //std::cout << object->getTag() << " " << DcmTag(object->getTag()).getTagName();
             QString tagName = DcmTag(object->getTag()).getTagName();
             if (tagName.startsWith("Unknown")) {
                 int group = DcmTag(object->getTag()).getGroup();
@@ -128,16 +139,12 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
                         hexstr.remove('\\');
                         QByteArray bytes = QByteArray::fromHex(hexstr.toLatin1());
 
-                        QMap<QString, CsaElement> csaTags = parseSiemensCSA(bytes);
-                        //qDebug() << csaTags.size();
+                        QMap<QString, CsaElement> csaTags = ParseSiemensCSA(bytes);
                         for (auto i = csaTags.cbegin(), end = csaTags.cend(); i != end; ++i) {
-                            //std::cout << qPrintable(i.key()) << ": " << i.value() << std::endl;
                             CsaElement elem = i.value();
                             QString name = i.key();
                             QString vr = i.value().vr;
                             QString val;
-                            //qDebug() << name;
-                            //printf("%s, %s = %s\n", name.toStdString(), vr.toStdString(), val.toStdString());
                             if (elem.values.size() > 0) {
                                 if (vr == "LO" || vr == "SH" || vr == "ST" || vr == "LT" || vr == "AE" || vr == "CS" || vr == "UT" || vr == "DS" || vr == "IS") {
                                     val = csaToString(elem.values.first());
@@ -152,7 +159,6 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
                             else {
                                 //printf("Value appears to be empty\n");
                             }
-                            //printf("%s, %s = %s\n", name.toStdString(), vr.toStdString(), val.toStdString());
                             val.remove(QChar('\0'));
                             tags[name] = val.trimmed();
                         }
@@ -163,8 +169,6 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
                         hexstr.remove('\\');
                         QByteArray bytes = QByteArray::fromHex(hexstr.toLatin1());
                         QString text = QString::fromLatin1(bytes);
-                        //std::cout << "Found CSAImageHeaderInfo (0x1020) [" << text.size() << "] bytes" << std::endl;
-                        //std::cout << text.toStdString();
                         QStringList lines = text.split("\n");
                         foreach (QString line, lines) {
                             if (line.startsWith("sSliceArray.asSlice[0].dInPlaneRot") && (line.size() < 70)) {
@@ -182,15 +186,13 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
                     }
                     /* read all other tags */
                     else {
-                        //std::cout << " = " << strValue;
                         tags[tagName] = strValue.c_str();
                     }
                 }
                 else if (element->isLeaf()) {
-                    //std::cout << " {empty value}";
+                    tags[tagName] = "";
                 }
             }
-            //std::cout << OFendl;
         }
     }
     else {
@@ -202,20 +204,6 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
     tags["ParseMessages"] = msgs.join("\n");
 
     return true;
-}
-
-
-/* ---------------------------------------------------------- */
-/* --------- align4 ----------------------------------------- */
-/* ---------------------------------------------------------- */
-/**
- * @brief align a number to 4
- * @param x
- * @return
- */
-static int align4(int x)
-{
-    return (x + 3) & ~3;
 }
 
 
@@ -272,14 +260,14 @@ QString squirrelImageIO::csaToString(const QByteArray& v)
 
 
 /* ---------------------------------------------------------- */
-/* --------- parseSiemensCSA -------------------------------- */
+/* --------- ParseSiemensCSA -------------------------------- */
 /* ---------------------------------------------------------- */
 /**
  * @brief Parse an older style Siemens CSA header. This function was generated by ChatGPT...
- * @param csa -
- * @return
+ * @param csa - The byte array extracted from the DICOM header
+ * @return A list of found elements
  */
-QMap<QString, CsaElement> squirrelImageIO::parseSiemensCSA(const QByteArray& csa)
+QMap<QString, CsaElement> squirrelImageIO::ParseSiemensCSA(const QByteArray& csa)
 {
     QMap<QString, CsaElement> result;
 
@@ -289,7 +277,8 @@ QMap<QString, CsaElement> squirrelImageIO::parseSiemensCSA(const QByteArray& csa
     char header[4];
     stream.readRawData(header, 4);
 
-    if (memcmp(header, "SV10", 4) != 0)
+    /* check for SV10 or SV12 */
+    if (memcmp(header, "SV1", 3) != 0)
         return result;
 
     stream.skipRawData(4); // unused
@@ -651,72 +640,11 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
     tags["Modality"] = "Unknown";
     tags["FileType"] = "Unknown";
 
-    /* read file with EXIF tool */
-    //QString exifoutput = RunExiftool(f);
-    //QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
-    //foreach (QString line, lines) {
-    //    QString delimiter = ":";
-    //    qint64 index = line.indexOf(delimiter);
-
-    //    if (index != -1) {
-    //        QString firstPart = line.mid(0, index).replace(" ", "");
-    //        QString secondPart = line.mid(index + delimiter.length());
-    //        tags[firstPart.trimmed()] = secondPart.trimmed();
-    //    }
-    //}
-    //msg += "GetImageFileTags() checkpoint A\n";
     GetImageTagsDCMTK(f, tags);
 
     if (tags["FileType"] == "DICOM") {
-        msg += "dcmtk successfuly read file [" + f + "]\n";
         /* ---------- it's a readable DICOM file ---------- */
-
-        /* attempt to get the Siemens CSA header info, but not if this is a Siemens enhanced DICOM */
-        // tags["PhaseEncodeAngle"] = "";
-        // tags["PhaseEncodingDirectionPositive"] = "";
-
-        // if ((enablecsa) && (tags["SOPClassUID"] != "Enhanced MR Image Storage")) {
-        //     /* attempt to get the phase encode angle (In Plane Rotation) from the siemens CSA header */
-        //     QFile df(f);
-
-        //     /* open the dicom file as a text file, since part of the CSA header is stored as text, not binary */
-        //     if (df.open(QIODevice::ReadOnly | QIODevice::Text)) {
-
-        //         QTextStream in(&df);
-        //         while (!in.atEnd()) {
-        //             QString line = in.readLine();
-        //             if (line.startsWith("sSliceArray.asSlice[0].dInPlaneRot") && (line.size() < 70)) {
-        //                 /* make sure the line does not contain any non-printable ASCII control characters */
-        //                 if (!line.contains(QRegularExpression(QStringLiteral("[\\x00-\\x1F]")))) {
-        //                     qint64 idx = line.indexOf(".dInPlaneRot");
-        //                     line = line.mid(idx,23);
-        //                     QStringList vals = line.split(QRegularExpression("\\s+"));
-        //                     if (vals.size() > 0)
-        //                         tags["PhaseEncodeAngle"] = vals.last().trimmed();
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //         //WriteLog(QString("Found PhaseEncodeAngle of [%1]").arg(tags["PhaseEncodeAngle"]));
-        //         df.close();
-        //     }
-
-        //     /* get the other part of the CSA header, the PhaseEncodingDirectionPositive value */
-        //     QString systemstring = QString("%1/./gdcmdump -C %2 | grep PhaseEncodingDirectionPositive").arg(bindir).arg(f);
-        //     QString csaheader = utils::SystemCommand(systemstring, false);
-        //     QStringList parts = csaheader.split(",");
-        //     QString val;
-        //     if (parts.size() == 5) {
-        //         val = parts[4];
-        //         val.replace("Data '","",Qt::CaseInsensitive);
-        //         val.replace("'","");
-        //         if (val.trimmed() == "Data")
-        //             val = "";
-        //         tags["PhaseEncodingDirectionPositive"] = val.trimmed();
-        //     }
-        //     //WriteLog(QString("Found PhaseEncodingDirectionPositive of [%1]").arg(tags["PhaseEncodingDirectionPositive"]));
-        // }
-        // msg += "GetImageFileTags() checkpoint C\n";
+        msg += "dcmtk successfuly read file [" + f + "]\n";
     }
     else {
         /* ---------- not a DICOM file, so see what other type of file it may be ---------- */
@@ -827,9 +755,8 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
             }
         }
         else {
-            msg += "GetImageFileTags() checkpoint D\n";
-            /* unknown modality/filetype */
-            /* try one last time to read with EXIF tool */
+            //msg += "GetImageFileTags() checkpoint D\n";
+            /* unknown modality/filetype... so we'll try one last time to read with EXIF tool */
             QString exifoutput = RunExiftool(f);
             QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
 
@@ -843,22 +770,19 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
                     tags[firstPart.trimmed()] = secondPart.trimmed();
                 }
             }
-            msg += "GetImageFileTags() checkpoint E\n";
+            //msg += "GetImageFileTags() checkpoint E\n";
 
             if (tags["FileType"] != "DICOM")
                 return false;
         }
     }
 
-    msg += "GetImageFileTags() checkpoint F\n";
+    //msg += "GetImageFileTags() checkpoint F\n";
 
     /* fix some of the fields to be amenable to the DB */
     if (tags["Modality"] == "")
         tags["Modality"] = "OT";
     QString StudyDate = utils::ParseDate(tags["StudyDate"]);
-    //QString StudyTime = ParseTime(tags["StudyTime"]);
-    //QString SeriesDate = ParseDate(tags["SeriesDate"]);
-    //QString SeriesTime = ParseTime(tags["SeriesTime"]);
 
     /* fix the study date */
     tags["StudyDate"].replace(":", "-");
@@ -894,9 +818,7 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
             tags["StudyTime"] = tags["StudyTime"].left(8);
         }
         else if (((tags["StudyTime"].size() == 12) || (tags["StudyTime"].size() == 13)) && (tags["StudyTime"].contains("."))) {
-            //Print("StudyTime before [" + tags["StudyTime"] + "]");
             tags["StudyTime"] = tags["StudyTime"].left(6);
-            //Print("StudyTime after [" + tags["StudyTime"] + "]");
         }
         else {
             utils::Print("StudyTime is not 12, 13 or 15 characters [" + tags["StudyTime"] + "]");
@@ -912,15 +834,11 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
     if (tags["SeriesTime"] == "")
         tags["SeriesTime"] = tags["StudyTime"];
     else {
-        //Print("SeriesTime before [" + tags["SeriesTime"] + "]");
-
         if (tags["SeriesTime"].contains(":")) {
             tags["SeriesTime"] = tags["SeriesTime"].left(8);
         }
         else if (((tags["SeriesTime"].size() == 12) || (tags["SeriesTime"].size() == 13)) && (tags["SeriesTime"].contains("."))) {
-            //Print("SeriesTime before [" + tags["SeriesTime"] + "]");
             tags["SeriesTime"] = tags["SeriesTime"].left(6);
-            //Print("SeriesTime after [" + tags["SeriesTime"] + "]");
         }
         else if (((tags["SeriesTime"].size() == 14) || (tags["SeriesTime"].size() == 15)) && (tags["SeriesTime"].contains(":"))) {
             tags["SeriesTime"] = tags["SeriesTime"].left(8);
@@ -956,31 +874,11 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
         tags["SeriesNumber"] = timestamp;
     }
 
-    //tags["StudyDateTime"] = tags["StudyDate"] + " " + tags["StudyTime"];
-    //tags["SeriesDateTime"] = tags["SeriesDate"] + " " + tags["SeriesTime"];
-    //QStringList pix = tags["PixelSpacing"].split("\\");
-    //int pixelX(0);
-    //int pixelY(0);
-    //if (pix.size() == 2) {
-    //    pixelX = pix[0].toInt();
-    //    pixelY = pix[1].toInt();
-    //}
     QStringList amat = tags["AcquisitionMatrix"].split(" ");
-    //int mat1(0);
-    //int mat2(0);
-    //int mat3(0);
-    //int mat4(0);
     if (amat.size() == 4) {
         tags["mat1"] = amat[0];
-        //mat2 = amat[1].toInt();
-        //mat3 = amat[2].toInt();
         tags["mat4"] = amat[3];
     }
-    //if (SeriesNumber == 0) {
-    //    QString timestamp = SeriesTime;
-    //    timestamp.replace(":","").replace("-","").replace(" ","");
-    //    tags["SeriesNumber"] = timestamp.toInt();
-    //}
 
     /* fix patient birthdate */
     QString PatientBirthDate = utils::ParseDate(tags["PatientBirthDate"]);
@@ -1016,9 +914,6 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
     tags["UniqueSeriesString"] = uniqueseries;
 
     msg += uniqueseries + "\n";
-
-    //qDebug() << "Leaving GetImageFileTags()";
-    //Print(QString("tags[] contains %1 elements").arg(tags.size()));
 
     return true;
 }
