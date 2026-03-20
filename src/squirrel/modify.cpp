@@ -370,31 +370,30 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
             pipeline.ClusterNumberCores = vars["ClusterNumberCores"].toInt();
             pipeline.ClusterQueue = vars["ClusterQueue"];
             pipeline.ClusterSubmitHost = vars["ClusterSubmitHost"];
-            pipeline.ClusterType = vars["ClusterType"];
+            pipeline.ClusterEngine = vars["ClusterEngine"];
             pipeline.ClusterUser = vars["ClusterUser"];
-            pipeline.CompleteFiles = vars["CompleteFiles"].split(",");
-            pipeline.CreateDate = QDateTime::fromString(vars["CreateDate"], "yyyy-MM-dd HH:mm:ss");
-            pipeline.DataCopyMethod = vars["DataCopyMethod"];
-            //pipeline.dataSteps = vars["PipelineName"];
-            pipeline.DependencyDirectory = vars["DependencyDirectory"];
-            pipeline.DependencyLevel = vars["DependencyLevel"];
-            pipeline.DependencyLinkType = vars["DependencyLinkType"];
-            pipeline.Description = vars["Description"];
-            pipeline.Directory = vars["Directory"];
-            pipeline.DirectoryStructure = vars["DirectoryStructure"];
-            pipeline.Group = vars["Group"];
-            pipeline.GroupType = vars["GroupType"];
-            pipeline.Level = vars["Level"].toInt();
-            pipeline.Notes = vars["Notes"];
-            pipeline.NumberConcurrentAnalyses = vars["NumberConcurrentAnalyses"].toInt();
-            pipeline.ParentPipelines = vars["ParentPipelines"].split(",");
+            pipeline.PipelineCompleteFiles = vars["PipelineCompleteFiles"].split(",");
+            pipeline.PipelineCreateDate = QDateTime::fromString(vars["PipelineCreateDate"], "yyyy-MM-dd HH:mm:ss");
+            pipeline.SetupDataCopyMethod = vars["SetupDataCopyMethod"];
+            pipeline.SetupDependencyDirectory = vars["SetupDependencyDirectory"];
+            pipeline.SearchDependencyLevel = vars["SearchDependencyLevel"];
+            pipeline.SearchDependencyLinkType = vars["SearchDependencyLinkType"];
+            pipeline.PipelineDescription = vars["PipelineDescription"];
+            pipeline.PipelineDirectory = vars["PipelineDirectory"];
+            pipeline.PipelineDirectoryStructure = vars["PipelineDirectoryStructure"];
+            pipeline.SearchGroup = vars["SearchGroup"];
+            pipeline.SearchGroupType = vars["SearchGroupType"];
+            pipeline.PipelineAnalysisLevel = vars["PipelineAnalysisLevel"].toInt();
+            pipeline.PipelineNotes = vars["PipelineNotes"];
+            pipeline.ClusterNumberConcurrentAnalyses = vars["ClusterNumberConcurrentAnalyses"].toInt();
+            pipeline.SearchParentPipelines = vars["SearchParentPipelines"].split(",");
             pipeline.PipelineName = vars["PipelineName"];
-            pipeline.PrimaryScript = vars["PrimaryScript"];
-            pipeline.ResultScript = vars["ResultScript"];
-            pipeline.SecondaryScript = vars["SecondaryScript"];
-            pipeline.SubmitDelay = vars["SubmitDelay"].toInt();
-            pipeline.TempDirectory = vars["TempDirectory"];
-            pipeline.Version = vars["Version"].toInt();
+            pipeline.PipelinePrimaryScript = vars["PipelinePrimaryScript"];
+            pipeline.PipelineResultScript = vars["PipelineResultScript"];
+            pipeline.PipelineSecondaryScript = vars["PipelineSecondaryScript"];
+            pipeline.ClusterSubmitDelay = vars["ClusterSubmitDelay"].toInt();
+            pipeline.SetupTempDirectory = vars["SetupTempDirectory"];
+            pipeline.PipelineVersion = vars["PipelineVersion"].toInt();
             pipeline.stagedFiles = vars["StagedFiles"].split(",");
             pipeline.Store();
         }
@@ -687,6 +686,7 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
     qint64 totalSpaceRequired = unzippedSize * 3; /* 3x the unzipped size needed */
     if (totalSpaceRequired > sqrl->GetFreeDiskSpace()) {
         m = QString("Not enough free space on disk to perform this operation. %1 bytes free space needed, but only %2 bytes free").arg(totalSpaceRequired).arg(sqrl->GetFreeDiskSpace());
+        delete sqrl;
         return false;
     }
 
@@ -727,6 +727,7 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
     }
     else {
         utils::Print("Package contains no subjects. Nothing to split by modality...");
+        delete sqrl;
         return true;
     }
 
@@ -734,6 +735,7 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
     QStringList mods(modalities.begin(), modalities.end());
     if (mods.size() == 0) {
         sqrl->Log("Package contains no modalities (no studies). Nothing to do.");
+        delete sqrl;
         return true;
     }
     else if (mods.size() == 1) {
@@ -856,7 +858,6 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
 
     /* delete squirrel object(s) */
     delete sqrl;
-
     return true;
 }
 
@@ -1055,37 +1056,37 @@ void modify::PrintVariables(ObjectType object) {
     if (object == Pipeline) {
         data = {
             {"Variable","Type","Required","Description"},
-            {"ClusterType","string","","Compute cluster engine (sge or slurm)"},
-            {"ClusterUser","string","","Submit username"},
+            {"ClusterEngine","string","","Compute cluster engine (sge or slurm)"},
+            {"ClusterMemory","number","","Amount of memory in GB requested for a running job"},
+            {"ClusterNumberCores","number","1","Number of CPU cores requested for a running job"},
             {"ClusterQueue","string","","Queue to submit jobs"},
             {"ClusterSubmitHost","string","","Hostname to submit jobs"},
-            {"CompleteFiles","JSON array","","JSON array of complete files, with relative paths to analysisroot"},
-            {"CreateDate","datetime","*","Date the pipeline was created"},
+            {"ClusterUser","string","","Submit username"},
             {"DataCopyMethod","string","","How the data is copied to the analysis directory: cp, softlink, hardlink"},
             {"DependencyDirectory","string","",""},
             {"DependencyLevel","string","",""},
             {"DependencyLinkType","string","",""},
             {"Description","string","","Longer pipeline description"},
-            {"DirectoryStructure","string","",""},
             {"Directory","string","","Directory where the analyses for this pipeline will be stored. Leave blank to use the default location"},
+            {"DirectoryStructure","string","",""},
             {"Group","string","","ID or name of a group on which this pipeline will run"},
             {"GroupType","string","","Either subject or study"},
             {"Level","number","*","subject-level analysis (1) or group-level analysis (2)"},
             {"MaxWallTime","number","","Maximum allowed clock (wall) time in minutes for the analysis to run"},
-            {"ClusterMemory","number","","Amount of memory in GB requested for a running job"},
-            {"PipelineName","string","*","Pipeline name"},
             {"Notes","string","","Extended notes about the pipeline"},
             {"NumberConcurrentAnalyses","number","1","Number of analyses allowed to run at the same time. This number if managed by NiDB and is different than grid engine queue size"},
-            {"ClusterNumberCores","number","1","Number of CPU cores requested for a running job"},
             {"ParentPipelines","string","","Comma separated list of parent pipelines"},
+            {"PipelineCompleteFiles","JSON array","","JSON array of complete files, with relative paths to analysisroot"},
+            {"PipelineCreateDate","datetime","*","Date the pipeline was created"},
+            {"PipelineName","string","*","Pipeline name"},
+            {"PrimaryScript","string","*","See details of pipeline scripts"},
             {"ResultScript","string","","Executable script to be run at completion of the analysis to find and insert results back into NiDB"},
+            {"SecondaryScript","string","","See details of pipeline scripts"},
             {"SubmitDelay","number","","Delay in hours, after the study datetime, to submit to the cluster. Allows time to upload behavioral data"},
             {"TempDirectory","string","","The path to a temporary directory if it is used, on a compute node"},
             {"UseProfile","bool","","true if using the profile option, false otherwise"},
             {"UseTempDirectory","bool","","true if using a temporary directory, false otherwise"},
-            {"Version","number","1","Version of the pipeline"},
-            {"PrimaryScript","string","*","See details of pipeline scripts"},
-            {"SecondaryScript","string","","See details of pipeline scripts"}
+            {"Version","number","1","Version of the pipeline"}
         };
     }
 

@@ -117,6 +117,7 @@ squirrel::~squirrel()
         if (!utils::RemoveDir(workingDir, m))
             Log(QString("Error removing working directory [%1]. Message [%2]").arg(workingDir).arg(m));
     }
+    db.close();
 }
 
 
@@ -598,41 +599,41 @@ bool squirrel::Read() {
         QJsonObject jsonPipeline = v.toObject();
         squirrelPipeline sqrlPipeline(databaseUUID);
 
+        sqrlPipeline.ClusterEngine = jsonPipeline["ClusterEngine"].toString();
         sqrlPipeline.ClusterMaxWallTime = jsonPipeline["ClusterMaxWallTime"].toInt();
         sqrlPipeline.ClusterMemory = jsonPipeline["ClusterMemory"].toInt();
+        sqrlPipeline.ClusterNumberConcurrentAnalyses = jsonPipeline["ClusterNumberConcurrentAnalyses"].toInt();
         sqrlPipeline.ClusterNumberCores = jsonPipeline["ClusterNumberCores"].toInt();
         sqrlPipeline.ClusterQueue = jsonPipeline["ClusterQueue"].toString();
+        sqrlPipeline.ClusterSubmitDelay = jsonPipeline["ClusterSubmitDelay"].toInt();
         sqrlPipeline.ClusterSubmitHost = jsonPipeline["ClusterSubmitHost"].toString();
-        sqrlPipeline.ClusterType = jsonPipeline["ClusterType"].toString();
         sqrlPipeline.ClusterUser = jsonPipeline["ClusterUser"].toString();
-        sqrlPipeline.CreateDate = utils::StringToDatetime(jsonPipeline["CreateDate"].toString());
-        sqrlPipeline.DataCopyMethod = jsonPipeline["DataCopyMethod"].toString();
-        sqrlPipeline.DependencyDirectory = jsonPipeline["DependencyDirectory"].toString();
-        sqrlPipeline.DependencyLevel = jsonPipeline["DependencyLevel"].toString();
-        sqrlPipeline.DependencyLinkType = jsonPipeline["DependencyLinkType"].toString();
-        sqrlPipeline.Description = jsonPipeline["Description"].toString();
-        sqrlPipeline.Directory = jsonPipeline["Directory"].toString();
-        sqrlPipeline.DirectoryStructure = jsonPipeline["DirectoryStructure"].toString();
-        sqrlPipeline.Group = jsonPipeline["Group"].toString();
-        sqrlPipeline.GroupType = jsonPipeline["GroupType"].toString();
-        sqrlPipeline.Level = jsonPipeline["Level"].toInt();
-        sqrlPipeline.Notes = jsonPipeline["Notes"].toString();
-        sqrlPipeline.NumberConcurrentAnalyses = jsonPipeline["NumberConcurrentAnalyses"].toInt();
-        sqrlPipeline.ParentPipelines = jsonPipeline["ParentPipelines"].toString().split(",");
+        sqrlPipeline.PipelineAnalysisLevel = jsonPipeline["PipelineAnalysisLevel"].toInt();
+        sqrlPipeline.PipelineCreateDate = utils::StringToDatetime(jsonPipeline["PipelineCreateDate"].toString());
+        sqrlPipeline.PipelineDescription = jsonPipeline["PipelineDescription"].toString();
+        sqrlPipeline.PipelineDirectory = jsonPipeline["PipelineDirectory"].toString();
+        sqrlPipeline.PipelineDirectoryStructure = jsonPipeline["PipelineDirectoryStructure"].toString();
         sqrlPipeline.PipelineName = jsonPipeline["PipelineName"].toString();
-        sqrlPipeline.PrimaryScript = jsonPipeline["PrimaryScript"].toString();
-        sqrlPipeline.ResultScript = jsonPipeline["ResultScript"].toString();
-        sqrlPipeline.SecondaryScript = jsonPipeline["SecondaryScript"].toString();
-        sqrlPipeline.SubmitDelay = jsonPipeline["SubmitDelay"].toInt();
-        sqrlPipeline.TempDirectory = jsonPipeline["TempDir"].toString();
-        sqrlPipeline.Version = jsonPipeline["Version"].toInt();
-        sqrlPipeline.flags.UseProfile = jsonPipeline["UseProfile"].toBool();
-        sqrlPipeline.flags.UseTempDirectory = jsonPipeline["UseTempDirectory"].toBool();
+        sqrlPipeline.PipelineNotes = jsonPipeline["PipelineNotes"].toString();
+        sqrlPipeline.PipelinePrimaryScript = jsonPipeline["PipelinePrimaryScript"].toString();
+        sqrlPipeline.PipelineResultScript = jsonPipeline["PipelineResultScript"].toString();
+        sqrlPipeline.PipelineSecondaryScript = jsonPipeline["PipelineSecondaryScript"].toString();
+        sqrlPipeline.PipelineVersion = jsonPipeline["PipelineVersion"].toInt();
+        sqrlPipeline.SearchDependencyLevel = jsonPipeline["SearchDependencyLevel"].toString();
+        sqrlPipeline.SearchDependencyLinkType = jsonPipeline["SearchDependencyLinkType"].toString();
+        sqrlPipeline.SearchGroup = jsonPipeline["SearchGroup"].toString();
+        sqrlPipeline.SearchGroupType = jsonPipeline["SearchGroupType"].toString();
+        sqrlPipeline.SearchParentPipelines = jsonPipeline["SearchParentPipelines"].toString().split(",");
+        sqrlPipeline.SetupDataCopyMethod = jsonPipeline["SetupDataCopyMethod"].toString();
+        sqrlPipeline.SetupDependencyDirectory = jsonPipeline["SetupDependencyDirectory"].toString();
+        sqrlPipeline.SetupTempDirectory = jsonPipeline["SetupTempDirectory"].toString();
+        sqrlPipeline.flags.SetupUseProfile = jsonPipeline["SetupUseProfile"].toBool();
+        sqrlPipeline.flags.SetupUseTempDirectory = jsonPipeline["SetupUseTempDirectory"].toBool();
 
         QJsonArray jsonCompleteFiles;
-        jsonCompleteFiles = jsonPipeline["CompleteFiles"].toArray();
+        jsonCompleteFiles = jsonPipeline["PipelineCompleteFiles"].toArray();
         for (auto v : jsonCompleteFiles) {
-            sqrlPipeline.CompleteFiles.append(v.toString());
+            sqrlPipeline.PipelineCompleteFiles.append(v.toString());
         }
 
         /* read the pipeline data steps */
@@ -641,27 +642,27 @@ bool squirrel::Read() {
         for (auto v : jsonDataSteps) {
             QJsonObject jsonDataStep = v.toObject();
             dataStep ds;
-            ds.AssociationType = jsonDataStep["AssociationType"].toString();
-            ds.BehavioralDirectory = jsonDataStep["BehavioralDirectory"].toString();
-            ds.BehavioralFormat = jsonDataStep["BehavioralFormat"].toString();
-            ds.DataFormat = jsonDataStep["DataFormat"].toString();
-            ds.ImageType = jsonDataStep["ImageType"].toString();
-            ds.Datalevel = jsonDataStep["DataLevel"].toString();
-            ds.Location = jsonDataStep["Location"].toString();
-            ds.Modality = jsonDataStep["Modality"].toString();
-            ds.NumberBOLDreps = jsonDataStep["NumberBOLDreps"].toString();
-            ds.NumberImagesCriteria = jsonDataStep["NumberImagesCriteria"].toString();
-            ds.Order = jsonDataStep["Order"].toInt();
-            ds.Protocol = jsonDataStep["Protocol"].toString();
-            ds.SeriesCriteria = jsonDataStep["SeriesCriteria"].toString();
-            ds.Protocol = jsonDataStep["Protocol"].toString();
-            ds.flags.Enabled = jsonDataStep["Enabled"].toBool();
-            ds.flags.Optional = jsonDataStep["Optional"].toBool();
-            ds.flags.Gzip = jsonDataStep["Gzip"].toBool();
-            ds.flags.UsePhaseDirectory = jsonDataStep["UsePhaseDirectory"].toBool();
-            ds.flags.UseSeries = jsonDataStep["UseSeries"].toBool();
-            ds.flags.PreserveSeries = jsonDataStep["PreserveSeries"].toBool();
-            ds.flags.PrimaryProtocol = jsonDataStep["PrimaryProtocol"].toBool();
+            //ds.NumberImagesCriteria = jsonDataStep["NumberImagesCriteria"].toString();
+            ds.ExportBehavioralDirectoryFormat = jsonDataStep["ExportBehavioralDirectoryFormat"].toString();
+            ds.ExportBehavioralDirectoryName = jsonDataStep["ExportBehavioralDirectoryName"].toString();
+            ds.ExportDataFormat = jsonDataStep["ExportDataFormat"].toString();
+            ds.ExportSubDirectoryName = jsonDataStep["ExportSubDirectoryName"].toString();
+            ds.SearchAssociationType = jsonDataStep["SearchAssociationType"].toString();
+            ds.SearchDataLevel = jsonDataStep["SearchDataLevel"].toString();
+            ds.SearchImageType = jsonDataStep["SearchImageType"].toString();
+            ds.SearchModality = jsonDataStep["SearchModality"].toString();
+            ds.SearchNumberBOLDreps = jsonDataStep["SearchNumberBOLDreps"].toString();
+            ds.SearchProtocol = jsonDataStep["SearchProtocol"].toString();
+            ds.SearchProtocol = jsonDataStep["SearchProtocol"].toString();
+            ds.SearchSeriesCriteria = jsonDataStep["SearchSeriesCriteria"].toString();
+            ds.StepNumber = jsonDataStep["StepNumber"].toInt();
+            ds.flags.ExportGzip = jsonDataStep["FlagExportGzip"].toBool();
+            ds.flags.ExportPreserveSeriesNumber = jsonDataStep["FlagExportPreserveSeriesNumber"].toBool();
+            ds.flags.ExportWritePhaseDirectory = jsonDataStep["FlagExportWritePhaseDirectory"].toBool();
+            ds.flags.ExportWriteSeriesDirectory = jsonDataStep["FlagExportWriteSeriesDirectory"].toBool();
+            ds.flags.IsEnabled = jsonDataStep["FlagIsEnabled"].toBool();
+            ds.flags.IsOptional = jsonDataStep["FlagIsOptional"].toBool();
+            ds.flags.IsPrimaryProtocol = jsonDataStep["FlagIsPrimaryProtocol"].toBool();
             sqrlPipeline.dataSteps.append(ds);
         }
         sqrlPipeline.Store();

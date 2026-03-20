@@ -232,6 +232,9 @@ int main(int argc, char *argv[])
             sqrl->SetPackagePath(outputfile);
             sqrl->SetWriteLog(true);
             sqrl->Write();
+
+            delete bds;
+            delete sqrl;
         }
     }
     else if (command == "info") {
