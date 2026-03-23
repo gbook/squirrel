@@ -424,11 +424,11 @@ bool squirrel::Read() {
                 QJsonObject jsonSeries = c.toObject();
                 squirrelSeries sqrlSeries(databaseUUID);
 
-                sqrlSeries.BIDSEntity = jsonSeries["BIDSEntity"].toString();
-                sqrlSeries.BIDSPhaseEncodingDirection = jsonSeries["BIDSPhaseEncodingDirection"].toString();
-                sqrlSeries.BIDSRun = jsonSeries["BIDSRun"].toString();
-                sqrlSeries.BIDSSuffix = jsonSeries["BIDSSuffix"].toString();
-                sqrlSeries.BIDSTask = jsonSeries["BIDSTask"].toString();
+                sqrlSeries.BidsEntity = jsonSeries["BidsEntity"].toString();
+                sqrlSeries.BidsPhaseEncodingDirection = jsonSeries["BidsPhaseEncodingDirection"].toString();
+                sqrlSeries.BidsRun = jsonSeries["BidsRun"].toString();
+                sqrlSeries.BidsSuffix = jsonSeries["BidsSuffix"].toString();
+                sqrlSeries.BidsTask = jsonSeries["BidsTask"].toString();
                 sqrlSeries.BehavioralFileCount = jsonSeries["BehavioralFileCount"].toInteger();
                 sqrlSeries.BehavioralSize = jsonSeries["BehavioralSize"].toInteger();
                 //sqrlSeries.DateTime = utils::StringToDatetime(jsonSeries["SeriesDatetime"].toString());
@@ -489,7 +489,7 @@ bool squirrel::Read() {
                 sqrlAnalysis.DateStart = utils::StringToDatetime(jsonAnalysis["DateEnd"].toString());
                 sqrlAnalysis.DateStart = utils::StringToDatetime(jsonAnalysis["DateStart"].toString());
                 sqrlAnalysis.Hostname = jsonAnalysis["Hostname"].toString();
-                sqrlAnalysis.LastMessage = jsonAnalysis["StatusMessage"].toString();
+                sqrlAnalysis.StatusMessage = jsonAnalysis["StatusMessage"].toString();
                 sqrlAnalysis.PipelineName = jsonAnalysis["PipelineName"].toString();
                 sqrlAnalysis.PipelineVersion = jsonAnalysis["PipelineVersion"].toInt();
                 sqrlAnalysis.RunTime = jsonAnalysis["RunTime"].toInteger();
@@ -2557,7 +2557,7 @@ qint64 squirrel::FindStudyByUID(QString studyUID) {
 qint64 squirrel::FindSeries(QString subjectID, int studyNum, int seriesNum) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("select * from Series a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.SeriesNumber = :seriesnum and b.StudyNumber = :studynum and c.ID = :id");
+    q.prepare("select * from Series a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = c.SubjectRowID where a.SeriesNumber = :seriesnum and b.StudyNumber = :studynum and c.ID = :id");
     q.bindValue(":seriesnum", seriesNum);
     q.bindValue(":studynum", studyNum);
     q.bindValue(":id", subjectID);
@@ -2603,7 +2603,7 @@ qint64 squirrel::FindSeriesByUID(QString seriesUID) {
 qint64 squirrel::FindAnalysis(QString subjectID, int studyNum, QString analysisName) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("select AnalysisRowID from Analysis a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = b.SubjectRowID where a.AnalyisName = :analysisname and b.StudyNumber = :studynum and c.ID = :id");
+    q.prepare("select AnalysisRowID from Analysis a left join Study b on a.StudyRowID = b.StudyRowID left join Subject c on b.SubjectRowID = c.SubjectRowID where a.AnalysisName = :analysisname and b.StudyNumber = :studynum and c.ID = :id");
     q.bindValue(":analysisname", analysisName);
     q.bindValue(":studynum", studyNum);
     q.bindValue(":id", subjectID);
@@ -2694,6 +2694,42 @@ qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("DataDictionaryRowID").toLongLong();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindIntervention ------------------------------------- */
+/* ------------------------------------------------------------ */
+qint64 squirrel::FindIntervention(QString subjectID, QString interventionName, QDateTime dateStart) {
+    qint64 rowid(-1);
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    q.prepare("select InterventionRowID from Intervention a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.InterventionName = :InterventionName and b.ID = :SubjectID and a.DateStart = :DateStart");
+    q.bindValue(":InterventionName", interventionName);
+    q.bindValue(":SubjectID", subjectID);
+    q.bindValue(":DateStart", dateStart.toString("yyyy-MM-dd HH:mm:ss"));
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("InterventionRowID").toLongLong();
+    }
+    return rowid;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- FindObservation -------------------------------------- */
+/* ------------------------------------------------------------ */
+qint64 squirrel::FindObservation(QString subjectID, QString observationName, QDateTime dateStart) {
+    qint64 rowid(-1);
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    q.prepare("select ObservationRowID from Observation a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.ObservationName = :ObservationName and b.ID = :SubjectID and a.DateStart = :DateStart");
+    q.bindValue(":ObservationName", observationName);
+    q.bindValue(":SubjectID", subjectID);
+    q.bindValue(":DateStart", dateStart.toString("yyyy-MM-dd HH:mm:ss"));
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    if (q.next()) {
+        rowid = q.value("ObservationRowID").toLongLong();
     }
     return rowid;
 }
