@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PACKAGE=squirrel_2026.1.413
+PACKAGE=squirrel_2026.3.424
 LIBDIR=$PACKAGE/lib/x86_64-linux-gnu/
 BINDIR=$PACKAGE/usr/local/bin/
 DEBDIR=$PACKAGE/DEBIAN
@@ -18,7 +18,7 @@ cp -uv ~/Qt/6.9.3/gcc_64/lib/libicui18n.so.73 ~/Qt/6.9.3/gcc_64/lib/libicuuc.so.
 cp -uv bin/squirrel/squirrel $BINDIR
 
 echo "Package: squirrel
-Version: 2026.1.413
+Version: 2026.3.424
 Section: base
 Priority: optional
 Architecture: amd64
