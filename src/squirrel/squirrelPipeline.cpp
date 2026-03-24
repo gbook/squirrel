@@ -127,7 +127,73 @@ bool squirrelPipeline::Store() {
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Pipeline (PipelineName, PipelineDescription, PipelineCreateDate, PipelineAnalysisLevel, PipelinePrimaryScript, PipelineSecondaryScript, PipelineVersion, PipelineCompleteFiles, SetupDataCopyMethod, SetupDependencyDirectory, SearchDependencyLevel, SearchDependencyLinkType, PipelineDirectoryStructure, PipelineDirectory, SearchGroup, SearchGroupType, PipelineNotes, PipelineResultScript, SetupTempDirectory, FlagSetupUseProfile, FlagSetupUseTempDirectory, ClusterEngine, ClusterUser, ClusterQueue, ClusterSubmitHost, ClusterNumberConcurrentAnalyses, ClusterMaxWallTime, ClusterNumberCores, ClusterMemory, ClusterSubmitDelay, VirtualPath) values (:PipelineName, :PipelineDescription, :Datetime, :PipelineAnalysisLevel, :PipelinePrimaryScript, :PipelineSecondaryScript, :PipelineVersion, :PipelineCompleteFiles, :SetupDataCopyMethod, :SetupDependencyDirectory, :SearchDependencyLevel, :SearchDependencyLinkType, :PipelineDirectoryStructure, :PipelineDirectory, :SearchGroup, :SearchGroupType, :PipelineNotes, :PipelineResultScript, :SetupTempDirectory, :FlagSetupUseProfile, :FlagSetupUseTempDirectory, :ClusterEngine, :ClusterUser, :ClusterQueue, :ClusterSubmitHost, :ClusterNumberConcurrentAnalyses, :ClusterMaxWallTime, :ClusterNumberCores, :ClusterMemory, :ClusterSubmitDelay, :VirtualPath)");
+        q.prepare("insert into Pipeline ("
+                  "ClusterEngine, "
+                  "ClusterMaxWallTime, "
+                  "ClusterMemory, "
+                  "ClusterNumberConcurrentAnalyses, "
+                  "ClusterNumberCores, "
+                  "ClusterQueue, "
+                  "ClusterSubmitDelay, "
+                  "ClusterSubmitHost, "
+                  "ClusterUser, "
+                  "FlagSetupUseProfile, "
+                  "FlagSetupUseTempDirectory, "
+                  "PipelineAnalysisLevel, "
+                  "PipelineCompleteFiles, "
+                  "PipelineCreateDate, "
+                  "PipelineDescription, "
+                  "PipelineDirectory, "
+                  "PipelineDirectoryStructure, "
+                  "PipelineName, "
+                  "PipelineNotes, "
+                  "PipelinePrimaryScript, "
+                  "PipelineResultScript, "
+                  "PipelineSecondaryScript, "
+                  "PipelineVersion, "
+                  "SearchDependencyLevel, "
+                  "SearchDependencyLinkType, "
+                  "SearchGroup, "
+                  "SearchGroupType, "
+                  "SearchParentPipelines, "
+                  "SetupDataCopyMethod, "
+                  "SetupDependencyDirectory, "
+                  "SetupTempDirectory, "
+                  "VirtualPath"
+            ") values ("
+                  ":ClusterEngine, "
+                  ":ClusterMaxWallTime, "
+                  ":ClusterMemory, "
+                  ":ClusterNumberConcurrentAnalyses, "
+                  ":ClusterNumberCores, "
+                  ":ClusterQueue, "
+                  ":ClusterSubmitDelay, "
+                  ":ClusterSubmitHost, "
+                  ":ClusterUser, "
+                  ":FlagSetupUseProfile, "
+                  ":FlagSetupUseTempDirectory, "
+                  ":PipelineAnalysisLevel, "
+                  ":PipelineCompleteFiles, "
+                  ":PipelineCreateDate, "
+                  ":PipelineDescription, "
+                  ":PipelineDirectory, "
+                  ":PipelineDirectoryStructure, "
+                  ":PipelineName, "
+                  ":PipelineNotes, "
+                  ":PipelinePrimaryScript, "
+                  ":PipelineResultScript, "
+                  ":PipelineSecondaryScript, "
+                  ":PipelineVersion, "
+                  ":SearchDependencyLevel, "
+                  ":SearchDependencyLinkType, "
+                  ":SearchGroup, "
+                  ":SearchGroupType, "
+                  ":SearchParentPipelines, "
+                  ":SetupDataCopyMethod, "
+                  ":SetupDependencyDirectory, "
+                  ":SetupTempDirectory, "
+                  ":VirtualPath"
+                  ")");
         q.bindValue(":ClusterEngine", ClusterEngine);
         q.bindValue(":ClusterMaxWallTime", ClusterMaxWallTime);
         q.bindValue(":ClusterMemory", ClusterMemory);
@@ -155,6 +221,7 @@ bool squirrelPipeline::Store() {
         q.bindValue(":SearchDependencyLinkType", SearchDependencyLinkType);
         q.bindValue(":SearchGroup", SearchGroup);
         q.bindValue(":SearchGroupType", SearchGroupType);
+        q.bindValue(":SearchParentPipelines", SearchParentPipelines.join(","));
         q.bindValue(":SetupDataCopyMethod", SetupDataCopyMethod);
         q.bindValue(":SetupDependencyDirectory", SetupDependencyDirectory);
         q.bindValue(":SetupTempDirectory", SetupTempDirectory);
@@ -192,6 +259,7 @@ bool squirrelPipeline::Store() {
                   "SearchDependencyLinkType = :SearchDependencyLinkType, "
                   "SearchGroup = :SearchGroup, "
                   "SearchGroupType = :SearchGroupType, "
+                  "SearchParentPipelines = :SearchParentPipelines, "
                   "SetupDataCopyMethod = :SetupDataCopyMethod, "
                   "SetupDependencyDirectory = :SetupDependencyDirectory, "
                   "SetupTempDirectory = :SetupTempDirectory, "
@@ -225,6 +293,7 @@ bool squirrelPipeline::Store() {
         q.bindValue(":SearchDependencyLinkType", SearchDependencyLinkType);
         q.bindValue(":SearchGroup", SearchGroup);
         q.bindValue(":SearchGroupType", SearchGroupType);
+        q.bindValue(":SearchParentPipelines", SearchParentPipelines.join(","));
         q.bindValue(":SetupDataCopyMethod", SetupDataCopyMethod);
         q.bindValue(":SetupDependencyDirectory", SetupDependencyDirectory);
         q.bindValue(":SetupTempDirectory", SetupTempDirectory);

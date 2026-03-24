@@ -84,9 +84,6 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
 
     /* check if the user should have specified a path */
     if ((object == Series) || (object == Analysis) || (object == Experiment) || (object == Pipeline) || (object == GroupAnalysis)) {
-    }
-    else {
-
         /* check if that path is specified */
         if (dataPath == "") {
             m = "No datapath specified for this object type. A datapath must be specified.";
@@ -141,7 +138,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
             subject.GUID = vars["GUID"];
             subject.Gender = vars["Gender"];
             subject.Notes = vars["Notes"];
-            subject.Sex = vars["Gender"];
+            subject.Sex = vars["Sex"];
             subject.Store();
             /* resequence the newly added subject */
             sqrl->ResequenceSubjects();
@@ -191,7 +188,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
         if (seriesRowID < 0) {
             squirrelSeries series(sqrl->GetDatabaseUUID());
             sqrl->Log(QString("Creating squirrel Series [%1]").arg(vars["SeriesNumber"]));
-            series.SeriesNumber = vars["StudyNumber"].toInt();
+            series.SeriesNumber = vars["SeriesNumber"].toInt();
             series.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
             series.Description = vars["Description"];
             series.Protocol = vars["Protocol"];
@@ -314,6 +311,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
         qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
         qint64 analysisRowID = sqrl->FindAnalysis(subjectID, studyNum, vars["AnalysisName"]);
         if (analysisRowID < 0) {
+            /* TODO - resolve the pipelineRowID */
             squirrelAnalysis analysis(sqrl->GetDatabaseUUID());
             sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(vars["AnalysisName"]));
             analysis.AnalysisName = vars["AnalysisName"];
@@ -336,7 +334,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
             analysis.Store();
         }
         else {
-            m = QString("Series with SeriesNumber [%1] already exists for study [%2] and subject [%3] in package").arg(vars["SeriesNumber"]).arg(studyNum).arg(subjectID);
+            m = QString("Analysis with AnalysisName [%1] already exists for study [%2] and subject [%3] in package").arg(vars["AnalysisName"]).arg(studyNum).arg(subjectID);
             delete sqrl;
             return false;
         }
@@ -480,20 +478,20 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     /* ----- subject ----- */
     if (object == Subject) {
         qint64 subjectRowID = sqrl->FindSubject(objectID);
-        if (subjectRowID < 0) {
+        if (subjectRowID >= 0) {
+            sqrl->RemoveObject(Subject, subjectRowID);
+            sqrl->ResequenceSubjects();
+        }
+        else {
             m = QString("Subject with ID [%1] not found in package").arg(objectID);
             delete sqrl;
             return false;
-        }
-        else {
-            sqrl->RemoveObject(Subject, subjectRowID);
-            sqrl->ResequenceSubjects();
         }
     }
     else if (object == Study) {
         qint64 studyRowID = sqrl->FindStudy(subjectID, objectID.toInt());
         qint64 subjectRowID = sqrl->FindSubject(objectID);
-        if (studyRowID < 0) {
+        if (studyRowID >= 0) {
             sqrl->RemoveObject(Study, studyRowID);
             sqrl->ResequenceStudies(subjectRowID);
         }
@@ -506,7 +504,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     else if (object == Series) {
         qint64 seriesRowID = sqrl->FindSeries(subjectID, studyNum, objectID.toInt());
         qint64 studyRowID = sqrl->FindStudy(subjectID, studyNum);
-        if (seriesRowID < 0) {
+        if (seriesRowID >= 0) {
             sqrl->RemoveObject(Series, seriesRowID);
             sqrl->ResequenceSeries(studyRowID);
         }
@@ -518,7 +516,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     }
     else if (object == Experiment) {
         qint64 experimentRowID = sqrl->FindExperiment(objectID);
-        if (experimentRowID < 0) {
+        if (experimentRowID >= 0) {
             sqrl->RemoveObject(Experiment, experimentRowID);
         }
         else {
@@ -529,7 +527,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     }
     else if (object == Pipeline) {
         qint64 pipelineRowID = sqrl->FindPipeline(objectID);
-        if (pipelineRowID < 0) {
+        if (pipelineRowID >= 0) {
             sqrl->RemoveObject(Pipeline, pipelineRowID);
         }
         else {
@@ -540,7 +538,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     }
     else if (object == GroupAnalysis) {
         qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(objectID);
-        if (groupAnalysisRowID < 0) {
+        if (groupAnalysisRowID >= 0) {
             sqrl->RemoveObject(GroupAnalysis, groupAnalysisRowID);
         }
         else {
@@ -551,7 +549,7 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
     }
     else if (object == DataDictionary) {
         qint64 dataDictionaryRowID = sqrl->FindDataDictionary(objectID);
-        if (dataDictionaryRowID < 0) {
+        if (dataDictionaryRowID >= 0) {
             sqrl->RemoveObject(DataDictionary, dataDictionaryRowID);
         }
         else {
@@ -1145,7 +1143,7 @@ bool modify::RemovePHI(QString packagePath, QString dataPath, QString &m) {
     sqrl->Log("Removed intervention dates");
 
     /* remove observation dates */
-    q.prepare("update Intervention set DateStart = '0000-00-00 00:00:00', DateEnd = '0000-00-00 00:00:00', DateRecordCreate = '0000-00-00 00:00:00', DateRecordEntry = '0000-00-00 00:00:00', DateRecordModify = '0000-00-00 00:00:00'");
+    q.prepare("update Observation set DateStart = '0000-00-00 00:00:00', DateEnd = '0000-00-00 00:00:00', DateRecordCreate = '0000-00-00 00:00:00', DateRecordEntry = '0000-00-00 00:00:00', DateRecordModify = '0000-00-00 00:00:00'");
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     sqrl->Log("Removed observation dates");
 

@@ -195,8 +195,8 @@ bool squirrelStudy::Remove() {
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     /* delete the study */
-    q.prepare("delete from Study where SubjectRowID = :subjectid");
-    q.bindValue(":subjectid", objectID);
+    q.prepare("delete from Study where StudyRowID = :studyid");
+    q.bindValue(":studyid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     utils::RemoveStagedFileList(databaseUUID, objectID, Subject);
