@@ -38,3 +38,4 @@ src/squirrel/squirrel.pro.user
 *.user
 *.user
 src/squirrel/squirrel.pro.user
+/src/tests
