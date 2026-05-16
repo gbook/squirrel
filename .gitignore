@@ -39,3 +39,4 @@ src/squirrel/squirrel.pro.user
 *.user
 src/squirrel/squirrel.pro.user
 /src/tests
+src/squirrel/bin/squirrel/squirrel.pdb
