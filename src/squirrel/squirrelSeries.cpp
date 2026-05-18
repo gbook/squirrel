@@ -45,7 +45,8 @@ squirrelSeries::squirrelSeries(QString dbID)
 void squirrelSeries::Populate(const QSqlQuery &q) {
     objectID                   = q.value("SeriesRowID").toLongLong();
     studyRowID                 = q.value("StudyRowID").toLongLong();
-    subjectRowID               = q.value("SubjectRowID").toLongLong();
+    if (q.record().contains("SubjectRowID"))
+        subjectRowID           = q.value("SubjectRowID").toLongLong();
     BidsEntity                 = q.value("BidsEntity").toString();
     BidsSuffix                 = q.value("BidsSuffix").toString();
     BidsTask                   = q.value("BidsTask").toString();

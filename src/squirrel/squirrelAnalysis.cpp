@@ -54,7 +54,8 @@ void squirrelAnalysis::Populate(const QSqlQuery &q) {
     DateStart        = q.value("StartDate").toDateTime();
     Hostname         = q.value("Hostname").toString();
     StatusMessage    = q.value("StatusMessage").toString();
-    PipelineName     = q.value("PipelineName").toString();
+    if (q.record().contains("PipelineName"))
+        PipelineName = q.value("PipelineName").toString();
     PipelineVersion  = q.value("PipelineVersion").toInt();
     RunTime          = q.value("RunTime").toLongLong();
     SeriesCount      = q.value("NumSeries").toInt();
