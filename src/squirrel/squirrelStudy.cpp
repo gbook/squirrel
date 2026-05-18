@@ -49,18 +49,6 @@ squirrelStudy::squirrelStudy(QString dbID)
 }
 
 
-/* ------------------------------------------------------------ */
-/* ----- Get -------------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelStudy::Get
- * @return true if successful
- *
- * This function will attempt to load the study data from
- * the database. The studyRowID must be set before calling
- * this function. If the object exists in the DB, it will return true.
- * Otherwise it will return false.
- */
 void squirrelStudy::Populate(const QSqlQuery &q) {
     objectID       = q.value("StudyRowID").toLongLong();
     subjectRowID   = q.value("SubjectRowID").toLongLong();
@@ -82,6 +70,18 @@ void squirrelStudy::Populate(const QSqlQuery &q) {
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelStudy::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the study data from
+ * the database. The studyRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
 bool squirrelStudy::Get() {
     if (objectID < 0) {
         valid = false;

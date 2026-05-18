@@ -30,18 +30,7 @@ squirrelSeries::squirrelSeries(QString dbID)
     debug = false;
 }
 
-/* ------------------------------------------------------------ */
-/* ----- Get -------------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelSeries::Get
- * @return true if successful
- *
- * This function will attempt to load the series data from
- * the database. The seriesRowID must be set before calling
- * this function. If the object exists in the DB, it will return true.
- * Otherwise it will return false.
- */
+
 void squirrelSeries::Populate(const QSqlQuery &q) {
     objectID                   = q.value("SeriesRowID").toLongLong();
     studyRowID                 = q.value("StudyRowID").toLongLong();
@@ -69,6 +58,18 @@ void squirrelSeries::Populate(const QSqlQuery &q) {
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelSeries::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the series data from
+ * the database. The seriesRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
 bool squirrelSeries::Get() {
     if (objectID < 0) {
         valid = false;

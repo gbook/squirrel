@@ -30,18 +30,6 @@ squirrelObservation::squirrelObservation(QString dbID)
 }
 
 
-/* ------------------------------------------------------------ */
-/* ----- Get -------------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelObservation::Get
- * @return true if successful
- *
- * This function will attempt to load the observation data from
- * the database. The observationRowID must be set before calling
- * this function. If the object exists in the DB, it will return true.
- * Otherwise it will return false.
- */
 void squirrelObservation::Populate(const QSqlQuery &q) {
     objectID       = q.value("ObservationRowID").toLongLong();
     subjectRowID   = q.value("SubjectRowID").toLongLong();
@@ -61,6 +49,18 @@ void squirrelObservation::Populate(const QSqlQuery &q) {
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelObservation::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the observation data from
+ * the database. The observationRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
 bool squirrelObservation::Get() {
     if (objectID < 0) {
         valid = false;

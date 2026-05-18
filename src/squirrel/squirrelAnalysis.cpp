@@ -31,18 +31,6 @@ squirrelAnalysis::squirrelAnalysis(QString dbID)
 }
 
 
-/* ------------------------------------------------------------ */
-/* ----- Get -------------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelAnalysis::Get
- * @return true if successful
- *
- * This function will attempt to load the analysis data from
- * the database. The analysisRowID must be set before calling
- * this function. If the object exists in the DB, it will return true.
- * Otherwise it will return false.
- */
 void squirrelAnalysis::Populate(const QSqlQuery &q) {
     objectID         = q.value("AnalysisRowID").toLongLong();
     pipelineRowID    = q.value("PipelineRowID").toLongLong();
@@ -67,6 +55,18 @@ void squirrelAnalysis::Populate(const QSqlQuery &q) {
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelAnalysis::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the analysis data from
+ * the database. The analysisRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
 bool squirrelAnalysis::Get() {
     if (objectID < 0) {
         valid = false;

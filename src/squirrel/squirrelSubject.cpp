@@ -45,16 +45,6 @@ squirrelSubject::squirrelSubject(QString dbID)
 }
 
 
-/* ------------------------------------------------------------ */
-/* ----- Get -------------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelSubject::Get
- * @return true if successful
- *
- * Load the subject data from the database. The subjectRowID
- * must be set before calling this function.
- */
 void squirrelSubject::Populate(const QSqlQuery &q) {
     objectID         = q.value("SubjectRowID").toLongLong();
     AlternateIDs     = q.value("AltIDs").toString().split(",");
@@ -73,6 +63,16 @@ void squirrelSubject::Populate(const QSqlQuery &q) {
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelSubject::Get
+ * @return true if successful
+ *
+ * Load the subject data from the database. The subjectRowID
+ * must be set before calling this function.
+ */
 bool squirrelSubject::Get() {
     if (objectID < 0) {
         valid = false;

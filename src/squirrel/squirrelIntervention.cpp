@@ -29,18 +29,6 @@ squirrelIntervention::squirrelIntervention(QString dbID)
     databaseUUID = dbID;
 }
 
-/* ------------------------------------------------------------ */
-/* ----- Get -------------------------------------------------- */
-/* ------------------------------------------------------------ */
-/**
- * @brief squirrelIntervention::Get
- * @return true if successful
- *
- * This function will attempt to load the Intervention data from
- * the database. The InterventionRowID must be set before calling
- * this function. If the object exists in the DB, it will return true.
- * Otherwise it will return false.
- */
 void squirrelIntervention::Populate(const QSqlQuery &q) {
     objectID            = q.value("InterventionRowID").toLongLong();
     subjectRowID        = q.value("SubjectRowID").toLongLong();
@@ -64,6 +52,18 @@ void squirrelIntervention::Populate(const QSqlQuery &q) {
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Get -------------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief squirrelIntervention::Get
+ * @return true if successful
+ *
+ * This function will attempt to load the Intervention data from
+ * the database. The InterventionRowID must be set before calling
+ * this function. If the object exists in the DB, it will return true.
+ * Otherwise it will return false.
+ */
 bool squirrelIntervention::Get() {
     if (objectID < 0) {
         valid = false;
