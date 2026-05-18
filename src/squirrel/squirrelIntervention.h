@@ -44,6 +44,7 @@ public:
     QString PrintIntervention();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */
+    bool Store(QSqlQuery &q); /* insert using a pre-prepared query (bulk load) */
     bool isValid() { return valid; }
     QString Error() { return err; }
     qint64 GetObjectID() { return objectID; }

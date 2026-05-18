@@ -140,6 +140,29 @@ bool squirrelObservation::Store() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- Store (bulk insert) ---------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelObservation::Store(QSqlQuery &q) {
+    q.bindValue(":SubjectRowID", subjectRowID);
+    q.bindValue(":ObservationName", ObservationName);
+    q.bindValue(":DateStart", DateStart);
+    q.bindValue(":DateEnd", DateEnd);
+    q.bindValue(":InstrumentName", InstrumentName);
+    q.bindValue(":Rater", Rater);
+    q.bindValue(":Notes", Notes);
+    q.bindValue(":Value", Value);
+    q.bindValue(":Duration", Duration);
+    q.bindValue(":DateRecordCreate", DateRecordCreate);
+    q.bindValue(":DateRecordEntry", DateRecordEntry);
+    q.bindValue(":DateRecordModify", DateRecordModify);
+    q.bindValue(":Description", Description);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    objectID = q.lastInsertId().toInt();
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 QJsonObject squirrelObservation::ToJSON() {

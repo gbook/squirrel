@@ -52,6 +52,7 @@ public:
     bool Get();             /* gets the object data from the database */
     bool Remove();
     bool Store();           /* saves the object data from this object into the database */
+    bool Store(QSqlQuery &q); /* insert using a pre-prepared query (bulk load) */
     bool isValid() { return valid; }
     int GetNextSeriesNumber();
     qint64 GetObjectID() { return objectID; }

@@ -23,6 +23,7 @@
 #ifndef SQUIRRELSUBJECT_H
 #define SQUIRRELSUBJECT_H
 
+#include <QtSql>
 #include <QString>
 #include <QDate>
 #include <QJsonObject>
@@ -53,6 +54,7 @@ public:
     bool Get();             /* gets the object data from the database */
     bool Remove();          /* remove the subject (and all child studies and series) from the database */
     bool Store();           /* saves the object data from this object into the database */
+    bool Store(QSqlQuery &q); /* insert using a pre-prepared query (bulk load) */
     bool isValid() { return valid; }
     int GetNextStudyNumber();
     qint64 GetObjectID() { return objectID; }

@@ -153,6 +153,29 @@ bool squirrelSubject::Store() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- Store (bulk insert) ---------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelSubject::Store(QSqlQuery &q) {
+    q.bindValue(":ID", ID);
+    q.bindValue(":AltIDs", AlternateIDs.join(","));
+    q.bindValue(":GUID", GUID);
+    q.bindValue(":DateOfBirth", DateOfBirth);
+    q.bindValue(":Sex", Sex);
+    q.bindValue(":Gender", Gender);
+    q.bindValue(":Ethnicity1", Ethnicity1);
+    q.bindValue(":Ethnicity2", Ethnicity2);
+    q.bindValue(":EnrollmentGroup", EnrollmentGroup);
+    q.bindValue(":EnrollmentStatus", EnrollmentStatus);
+    q.bindValue(":Notes", Notes);
+    q.bindValue(":SequenceNumber", SequenceNumber);
+    q.bindValue(":VirtualPath", VirtualPath());
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    objectID = q.lastInsertId().toInt();
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintDetails ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**

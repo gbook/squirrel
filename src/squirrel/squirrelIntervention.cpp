@@ -153,6 +153,36 @@ bool squirrelIntervention::Store() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- Store (bulk insert) ---------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelIntervention::Store(QSqlQuery &q) {
+    q.bindValue(":SubjectRowID", subjectRowID);
+    q.bindValue(":InterventionName", InterventionName);
+    q.bindValue(":DateStart", DateStart);
+    q.bindValue(":DateEnd", DateEnd);
+    q.bindValue(":DateRecordCreate", DateRecordCreate);
+    q.bindValue(":DateRecordEntry", DateRecordEntry);
+    q.bindValue(":DateRecordModify", DateRecordModify);
+    q.bindValue(":DoseString", DoseString);
+    q.bindValue(":DoseAmount", DoseAmount);
+    q.bindValue(":DoseFrequency", DoseFrequency);
+    q.bindValue(":AdministrationRoute", AdministrationRoute);
+    q.bindValue(":InterventionClass", InterventionClass);
+    q.bindValue(":DoseKey", DoseKey);
+    q.bindValue(":DoseUnit", DoseUnit);
+    q.bindValue(":FrequencyModifier", QVariant());
+    q.bindValue(":FrequencyValue", QVariant());
+    q.bindValue(":FrequencyUnit", QVariant());
+    q.bindValue(":Description", Description);
+    q.bindValue(":Rater", Rater);
+    q.bindValue(":Notes", Notes);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    objectID = q.lastInsertId().toInt();
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 QJsonObject squirrelIntervention::ToJSON() {

@@ -184,6 +184,40 @@ bool squirrelSeries::Store() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- Store (bulk insert) ---------------------------------- */
+/* ------------------------------------------------------------ */
+bool squirrelSeries::Store(QSqlQuery &q) {
+    q.bindValue(":StudyRowID", studyRowID);
+    q.bindValue(":SeriesNumber", SeriesNumber);
+    q.bindValue(":Datetime", DateTime);
+    q.bindValue(":SeriesUID", SeriesUID);
+    q.bindValue(":Description", Description);
+    q.bindValue(":Protocol", Protocol);
+    q.bindValue(":BidsEntity", BidsEntity);
+    q.bindValue(":bidssuffix", BidsSuffix);
+    q.bindValue(":BidsTask", BidsTask);
+    q.bindValue(":BidsRun", BidsRun);
+    q.bindValue(":BidsPhaseEncodingDirection", BidsPhaseEncodingDirection);
+    q.bindValue(":Run", Run);
+    q.bindValue(":ExperimentRowID", experimentRowID);
+    q.bindValue(":Size", Size);
+    q.bindValue(":Files", files.join(","));
+    q.bindValue(":FileCount", FileCount);
+    q.bindValue(":BehavioralSize", BehavioralSize);
+    q.bindValue(":BehavioralFileCount", BehavioralFileCount);
+    q.bindValue(":SequenceNumber", SequenceNumber);
+    q.bindValue(":VirtualPath", VirtualPath());
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    objectID = q.lastInsertId().toInt();
+
+    if (!params.isEmpty())
+        utils::StoreParams(databaseUUID, objectID, params);
+
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- Remove ----------------------------------------------- */
 /* ------------------------------------------------------------ */
 bool squirrelSeries::Remove() {
