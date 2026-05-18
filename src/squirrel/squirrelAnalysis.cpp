@@ -111,6 +111,7 @@ bool squirrelAnalysis::Get() {
  */
 bool squirrelAnalysis::Store() {
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    bool isNewObject = (objectID < 0);
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
@@ -161,7 +162,7 @@ bool squirrelAnalysis::Store() {
     }
 
     /* store any staged files */
-    if (objectID >= 0) {
+    if ((objectID >= 0) && (!isNewObject || !stagedFiles.isEmpty())) {
         /* delete previously staged files from the database */
         q.prepare("delete from StagedFiles where ObjectRowID = :id and ObjectType = :type");
         q.bindValue(":id", objectID);

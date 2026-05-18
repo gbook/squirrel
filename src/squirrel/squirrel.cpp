@@ -306,15 +306,15 @@ bool squirrel::Read() {
     QElapsedTimer timer;
     timer.start();
 
-    QString jsonstr;
+    QByteArray jsonbytes;
     utils::Print("Extracting squirrel package header...");
-    if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonstr)) {
+    if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonbytes)) {
         Log(QString("Error reading squirrel package. Unable to find squirrel.json"));
         utils::Print(QString("Error reading squirrel package. Unable to find squirrel.json"));
         return false;
     }
     else {
-        Debug(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())), __FUNCTION__);
+        Debug(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonbytes.size())), __FUNCTION__);
     }
 
     double elapsedSec = static_cast<double>(timer.elapsed())/1000.0;
@@ -323,8 +323,15 @@ bool squirrel::Read() {
     timer.restart();
 
     /* get the JSON document and root object */
-    QJsonDocument d = QJsonDocument::fromJson(jsonstr.toUtf8());
+    QJsonDocument d = QJsonDocument::fromJson(jsonbytes);
     QJsonObject root = d.object();
+
+    QSqlDatabase dbconn = QSqlDatabase::database(databaseUUID);
+    if (!dbconn.transaction()) {
+        Log(QString("Error starting read transaction. Error [%1]").arg(dbconn.lastError().text()));
+        utils::Print(QString("Error starting read transaction. Error [%1]").arg(dbconn.lastError().text()));
+        return false;
+    }
 
     /* get the package info */
     QJsonObject pkgObj = root["package"].toObject();
@@ -506,10 +513,6 @@ bool squirrel::Read() {
         }
 
         /* read all observations */
-        QSqlQuery q1(QSqlDatabase::database(databaseUUID)); /* start a transaction to slightly improve SQL insert performance */
-        q1.prepare("begin transaction");
-        utils::SQLQuery(q1, __FUNCTION__, __FILE__, __LINE__);
-
         QJsonArray jsonObservations = jsonSubject["observations"].toArray();
         Debug(QString("Reading [%1] observations").arg(jsonObservations.size()), __FUNCTION__);
         QElapsedTimer timerA;
@@ -549,9 +552,6 @@ bool squirrel::Read() {
             sqrlObservation.Store();
             //utils::Print(QString("Checkpoint Q - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
         }
-
-        q1.prepare("commit");
-        utils::SQLQuery(q1, __FUNCTION__, __FILE__, __LINE__);
 
         /* read all Interventions */
         QJsonArray jsonInterventions = jsonSubject["Interventions"].toArray();
@@ -666,6 +666,13 @@ bool squirrel::Read() {
             sqrlPipeline.dataSteps.append(ds);
         }
         sqrlPipeline.Store();
+    }
+
+    if (!dbconn.commit()) {
+        Log(QString("Error committing read transaction. Error [%1]").arg(dbconn.lastError().text()));
+        utils::Print(QString("Error committing read transaction. Error [%1]").arg(dbconn.lastError().text()));
+        dbconn.rollback();
+        return false;
     }
 
     elapsedSec = static_cast<double>(timer.elapsed())/1000.0;
@@ -3151,10 +3158,10 @@ bool squirrel::RemoveObject(ObjectType object, qint64 objectRowID) {
  * @brief Extract a single file from an existing archive and return it as a string
  * @param archivePath Path to the archive
  * @param filePath File path within the archive
- * @param fileContents File contents as a QString
+ * @param fileContents File contents as a QByteArray
  * @return true if successful, false otherwise
  */
-bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath, QString &fileContents) {
+bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath, QByteArray &fileContents) {
     Debug(QString("Reading file [%1] from archive [%2]...").arg(filePath).arg(archivePath), __FUNCTION__);
     try {
         using namespace bit7z;
@@ -3174,18 +3181,39 @@ bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath,
             extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
             Debug(QString("After calling extractMatching() buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
         }
-        Debug(QString("Copying buffer to std::string. Buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
-        std::string str{buffer.begin(), buffer.end()};
-        Debug(QString("Copying std::string to QString. string size [%1] bytes").arg(str.size()), __FUNCTION__);
-        fileContents = QString::fromStdString(str);
+        Debug(QString("Copying buffer to QByteArray. Buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
+        fileContents = QByteArray(reinterpret_cast<const char*>(buffer.data()), static_cast<int>(buffer.size()));
         Debug(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
         return true;
     }
     catch ( const bit7z::BitException& ex ) {
         /* Do something with ex.what()...*/
-        fileContents = "Unable to extract file from archive using bit7z library [" + QString(ex.what()) + "]";
+        fileContents = QByteArray();
+        Debug("Unable to extract file from archive using bit7z library [" + QString(ex.what()) + "]", __FUNCTION__);
         return false;
     }
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ExtractArchiveFileToMemory --------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Extract a single file from an existing archive and return it as a string
+ * @param archivePath Path to the archive
+ * @param filePath File path within the archive
+ * @param fileContents File contents as a QString
+ * @return true if successful, false otherwise
+ */
+bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath, QString &fileContents) {
+    QByteArray bytes;
+    if (!ExtractArchiveFileToMemory(archivePath, filePath, bytes)) {
+        fileContents = "Unable to extract file from archive";
+        return false;
+    }
+
+    fileContents = QString::fromUtf8(bytes);
+    return true;
 }
 
 
@@ -3626,17 +3654,17 @@ QString squirrel::GetSystemTempDir() {
  */
 bool squirrel::GetJsonHeader(QJsonDocument &jdoc) {
 
-    QString jsonstr;
-    if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonstr)) {
+    QByteArray jsonbytes;
+    if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonbytes)) {
         Log("Error reading squirrel package. Unable to find squirrel.json");
         utils::Print("Error reading squirrel package. Unable to find squirrel.json");
         return false;
     }
     else {
-        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonstr.size())));
+        Log(QString("Extracted package header [%1]").arg(utils::HumanReadableSize(jsonbytes.size())));
     }
 
-    jdoc = QJsonDocument::fromJson(jsonstr.toUtf8());
+    jdoc = QJsonDocument::fromJson(jsonbytes);
     return true;
 }
 

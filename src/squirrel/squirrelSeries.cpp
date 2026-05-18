@@ -111,6 +111,7 @@ bool squirrelSeries::Get() {
 bool squirrelSeries::Store() {
 
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    bool isNewObject = (objectID < 0);
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
         q.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, BidsEntity, BidsSuffix, BidsTask, BidsRun, BidsPhaseEncodingDirection, Run, ExperimentRowID, Size, Files, FileCount, BehavioralSize, BehavioralFileCount, SequenceNumber, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :BidsEntity, :bidssuffix, :BidsTask, :BidsRun, :BidsPhaseEncodingDirection, :Run, :ExperimentRowID, :Size, :Files, :FileCount, :BehavioralSize, :BehavioralFileCount, :SequenceNumber, :VirtualPath)");
@@ -167,12 +168,15 @@ bool squirrelSeries::Store() {
     }
 
     /* store any params */
-    utils::StoreParams(databaseUUID, objectID, params);
+    if (!isNewObject || !params.isEmpty())
+        utils::StoreParams(databaseUUID, objectID, params);
 
     /* store any staged filepaths */
     //utils::Print(QString("Series contains [%1] files before calling StoreStagedFileList").arg(stagedFiles.size()));
-    utils::StoreStagedFileList(databaseUUID, objectID, Series, stagedFiles);
-    utils::StoreStagedFileList(databaseUUID, objectID, BehSeries, stagedBehFiles);
+    if (!isNewObject || !stagedFiles.isEmpty())
+        utils::StoreStagedFileList(databaseUUID, objectID, Series, stagedFiles);
+    if (!isNewObject || !stagedBehFiles.isEmpty())
+        utils::StoreStagedFileList(databaseUUID, objectID, BehSeries, stagedBehFiles);
     //utils::Print(QString("Series contains [%1] files AFTER calling StoreStagedFileList").arg(stagedFiles.size()));
 
     return true;
