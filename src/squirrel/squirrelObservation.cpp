@@ -42,6 +42,25 @@ squirrelObservation::squirrelObservation(QString dbID)
  * this function. If the object exists in the DB, it will return true.
  * Otherwise it will return false.
  */
+void squirrelObservation::Populate(const QSqlQuery &q) {
+    objectID       = q.value("ObservationRowID").toLongLong();
+    subjectRowID   = q.value("SubjectRowID").toLongLong();
+    ObservationName= q.value("ObservationName").toString();
+    DateStart      = q.value("DateStart").toDateTime();
+    DateEnd        = q.value("DateEnd").toDateTime();
+    InstrumentName = q.value("InstrumentName").toString();
+    Rater          = q.value("Rater").toString();
+    Notes          = q.value("Notes").toString();
+    Value          = q.value("Value").toString();
+    Description    = q.value("Description").toString();
+    Duration       = q.value("Duration").toLongLong();
+    DateRecordCreate = q.value("DateRecordCreate").toDateTime();
+    DateRecordEntry  = q.value("DateRecordEntry").toDateTime();
+    DateRecordModify = q.value("DateRecordModify").toDateTime();
+    valid = true;
+}
+
+
 bool squirrelObservation::Get() {
     if (objectID < 0) {
         valid = false;
@@ -53,24 +72,7 @@ bool squirrelObservation::Get() {
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
-
-        /* get the data */
-        objectID = q.value("ObservationRowID").toLongLong();
-        subjectRowID = q.value("SubjectRowID").toLongLong();
-        ObservationName = q.value("ObservationName").toString();
-        DateStart = q.value("DateStart").toDateTime();
-        DateEnd = q.value("DateEnd").toDateTime();
-        InstrumentName = q.value("InstrumentName").toString();
-        Rater = q.value("Rater").toString();
-        Notes = q.value("Notes").toString();
-        Value = q.value("Value").toString();
-        Description = q.value("Description").toString();
-        Duration = q.value("Duration").toLongLong();
-        DateRecordCreate = q.value("DateRecordCreate").toDateTime();
-        DateRecordEntry = q.value("DateRecordEntry").toDateTime();
-        DateRecordModify = q.value("DateRecordModify").toDateTime();
-
-        valid = true;
+        Populate(q);
         return true;
     }
     else {

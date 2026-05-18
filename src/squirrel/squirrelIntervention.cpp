@@ -41,6 +41,29 @@ squirrelIntervention::squirrelIntervention(QString dbID)
  * this function. If the object exists in the DB, it will return true.
  * Otherwise it will return false.
  */
+void squirrelIntervention::Populate(const QSqlQuery &q) {
+    objectID            = q.value("InterventionRowID").toLongLong();
+    subjectRowID        = q.value("SubjectRowID").toLongLong();
+    AdministrationRoute = q.value("AdministrationRoute").toString();
+    DateEnd             = q.value("DateEnd").toDateTime();
+    DateRecordCreate    = q.value("DateRecordCreate").toDateTime();
+    DateRecordEntry     = q.value("DateRecordEntry").toDateTime();
+    DateRecordModify    = q.value("DateRecordModify").toDateTime();
+    DateStart           = q.value("DateStart").toDateTime();
+    Description         = q.value("Description").toString();
+    DoseAmount          = q.value("DoseAmount").toDouble();
+    DoseFrequency       = q.value("DoseFrequency").toString();
+    DoseKey             = q.value("DoseKey").toString();
+    DoseString          = q.value("DoseString").toString();
+    DoseUnit            = q.value("DoseUnit").toString();
+    InterventionClass   = q.value("InterventionClass").toString();
+    InterventionName    = q.value("InterventionName").toString();
+    Notes               = q.value("Notes").toString();
+    Rater               = q.value("Rater").toString();
+    valid = true;
+}
+
+
 bool squirrelIntervention::Get() {
     if (objectID < 0) {
         valid = false;
@@ -52,28 +75,7 @@ bool squirrelIntervention::Get() {
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
-
-        /* get the data */
-        AdministrationRoute = q.value("AdministrationRoute").toString();
-        DateEnd = q.value("DateEnd").toDateTime();
-        DateRecordCreate = q.value("DateRecordCreate").toDateTime();
-        DateRecordEntry = q.value("DateRecordEntry").toDateTime();
-        DateRecordModify = q.value("DateRecordModify").toDateTime();
-        DateStart = q.value("DateStart").toDateTime();
-        Description = q.value("Description").toString();
-        DoseAmount = q.value("DoseAmount").toDouble();
-        DoseFrequency = q.value("DoseFrequency").toString();
-        DoseKey = q.value("DoseKey").toString();
-        DoseString = q.value("DoseString").toString();
-        DoseUnit = q.value("DoseUnit").toString();
-        InterventionClass = q.value("InterventionClass").toString();
-        InterventionName = q.value("InterventionName").toString();
-        Notes = q.value("Notes").toString();
-        Rater = q.value("Rater").toString();
-        objectID = q.value("InterventionRowID").toLongLong();
-        subjectRowID = q.value("SubjectRowID").toLongLong();
-
-        valid = true;
+        Populate(q);
         return true;
     }
     else {
