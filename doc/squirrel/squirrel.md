@@ -172,6 +172,10 @@ squirrel modify <package> --operation <op> --object <type> [options]
 | `--seriesnum <num>` | Parent series number. Required when updating a series (`--subjectid` and `--studynum` also required) |
 | `--objectdata <string>` | URL-encoded key=value string specifying object metadata (e.g. `SubjectID=S1234&Sex=M`) |
 | `--variablelist <type>` | Print all settable variable names for the given object type and exit |
+| `--digits <num>` | Number of digits in the renumbered ID (e.g. `4` → `0001`…`9999`). Default: auto-sized to fit the largest generated number. Used with `renumber` |
+| `--startnum <num>` | Starting number for renumbering. Default: `1`. Used with `renumber` |
+| `--prefix <string>` | Prefix prepended to renumbered IDs (e.g. `sub` → `sub0001`, `sub0002`). Used with `renumber` |
+| `--random` | Randomly assign new IDs instead of sorting subjects ascending before renumbering. Used with `renumber` |
 
 **Operations** (`--operation`)
 
@@ -182,6 +186,7 @@ squirrel modify <package> --operation <op> --object <type> [options]
 | `update` | Update fields of an existing object |
 | `splitbymodality` | Split the package into separate packages, one per imaging modality |
 | `removephi` | Strip Protected Health Information (dates, IDs) from the package |
+| `renumber` | Reassign subject IDs sequentially (1–N); original ID is moved to AlternateIDs |
 
 **Object types** (`--object`)
 
@@ -216,6 +221,15 @@ squirrel modify study.sqrl --operation splitbymodality
 
 # Remove PHI
 squirrel modify study.sqrl --operation removephi
+
+# Renumber subjects 1–N (sorted ascending, auto-sized IDs)
+squirrel modify study.sqrl --operation renumber
+
+# Renumber with 4-digit IDs starting at 1001 and a prefix
+squirrel modify study.sqrl --operation renumber --digits 4 --startnum 1001 --prefix sub
+
+# Renumber with random assignment
+squirrel modify study.sqrl --operation renumber --random
 
 # List settable variables for the study object
 squirrel modify study.sqrl --variablelist study

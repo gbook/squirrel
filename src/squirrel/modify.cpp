@@ -25,6 +25,7 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <QRandomGenerator>
 
 modify::modify() {
 }
@@ -33,7 +34,7 @@ modify::modify() {
 /* ---------------------------------------------------------------------------- */
 /* ----- DoModify ------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
-bool modify::DoModify(QString packagePath, QString operation, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, int seriesNum, QString &m) {
+bool modify::DoModify(QString packagePath, QString operation, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, int seriesNum, int digits, int startNum, QString prefix, bool randomize, QString &m) {
 
     //ObjectType object = squirrel::ObjectTypeToEnum(objectType);
 
@@ -63,6 +64,12 @@ bool modify::DoModify(QString packagePath, QString operation, ObjectType object,
     }
     else if (operation == "removephi") {
         if (RemovePHI(packagePath, dataPath, m))
+            return true;
+        else
+            return false;
+    }
+    else if (operation == "renumber") {
+        if (RenumberSubjects(packagePath, digits, startNum, prefix, randomize, m))
             return true;
         else
             return false;
@@ -1159,6 +1166,86 @@ bool modify::RemovePHI(QString packagePath, QString dataPath, QString &m) {
 
     sqrl->WriteUpdate();
 
+    return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- RenumberSubjects ----------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+bool modify::RenumberSubjects(QString packagePath, int digits, int startNum, QString prefix, bool randomize, QString &m) {
+
+    squirrel *sqrl = new squirrel();
+    sqrl->SetFileMode(FileMode::ExistingPackage);
+    sqrl->SetPackagePath(packagePath);
+    sqrl->SetQuickRead(true);
+
+    if (!sqrl->Read()) {
+        m = QString("Package unreadable [%1]").arg(packagePath);
+        delete sqrl;
+        return false;
+    }
+
+    /* collect subject rowIDs and current IDs, sorted ascending by ID */
+    QSqlQuery q(QSqlDatabase::database(sqrl->GetDatabaseUUID()));
+    q.prepare("select SubjectRowID, ID from Subject order by ID asc");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    QList<QPair<qint64, QString>> subjects;
+    while (q.next()) {
+        subjects.append(qMakePair(q.value("SubjectRowID").toLongLong(), q.value("ID").toString()));
+    }
+
+    int n = subjects.size();
+    if (n == 0) {
+        m = "Package contains no subjects";
+        delete sqrl;
+        return true;
+    }
+
+    /* optionally shuffle for random assignment */
+    if (randomize) {
+        for (int i = n - 1; i > 0; --i) {
+            int j = QRandomGenerator::global()->bounded(i + 1);
+            subjects.swapItemsAt(i, j);
+        }
+    }
+
+    /* auto-size digits if not specified */
+    if (digits <= 0) {
+        int maxNum = startNum + n - 1;
+        digits = QString::number(maxNum).length();
+    }
+
+    /* assign new IDs */
+    for (int i = 0; i < n; ++i) {
+        qint64 rowID = subjects[i].first;
+        QString oldID = subjects[i].second;
+        QString newID = prefix + QString("%1").arg(startNum + i, digits, 10, QChar('0'));
+
+        /* load the subject, prepend old ID to AlternateIDs, update ID */
+        squirrelSubject subj(sqrl->GetDatabaseUUID());
+        subj.SetObjectID(rowID);
+        if (!subj.Get()) {
+            m = QString("Unable to load subject rowID [%1]").arg(rowID);
+            delete sqrl;
+            return false;
+        }
+
+        if (!subj.AlternateIDs.contains(oldID))
+            subj.AlternateIDs.prepend(oldID);
+        subj.ID = newID;
+
+        if (!subj.Store()) {
+            m = QString("Unable to store updated subject [%1] -> [%2]").arg(oldID).arg(newID);
+            delete sqrl;
+            return false;
+        }
+    }
+
+    sqrl->WriteUpdate();
+
+    delete sqrl;
     return true;
 }
 

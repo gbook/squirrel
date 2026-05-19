@@ -211,7 +211,7 @@ Suppress header and progress output.
 .TP
 .BI \-\-operation " op"
 Operation to perform. Possible values:
-.BR add ", " remove ", " update ", " splitbymodality ", " removephi .
+.BR add ", " remove ", " update ", " splitbymodality ", " removephi ", " renumber .
 .TP
 .BI \-\-object " type"
 Object type to operate on. Possible values:
@@ -254,6 +254,34 @@ to see valid keys for each object type.
 .TP
 .BI \-\-variablelist " type"
 Print all settable variable names for the given object type and exit.
+.TP
+.BI \-\-digits " num"
+Number of digits in the renumbered subject ID (e.g.\&
+.B 4
+produces
+.BR 0001 \(en 9999 ).
+Default: auto-sized to fit the largest generated number.
+Used with
+.BR renumber .
+.TP
+.BI \-\-startnum " num"
+Starting number for renumbering. Default:
+.BR 1 .
+Used with
+.BR renumber .
+.TP
+.BI \-\-prefix " string"
+Prefix prepended to renumbered subject IDs (e.g.\&
+.B sub
+produces
+.BR sub0001 ", " sub0002 ", " \&... ).
+Used with
+.BR renumber .
+.TP
+.B \-\-random
+Randomly assign new IDs instead of sorting subjects ascending before
+renumbering. Used with
+.BR renumber .
 .RE
 .PP
 .B Examples
@@ -271,6 +299,13 @@ squirrel modify study.sqrl --operation remove --object series \\
 squirrel modify study.sqrl --operation splitbymodality
 
 squirrel modify study.sqrl --operation removephi
+
+squirrel modify study.sqrl --operation renumber
+
+squirrel modify study.sqrl --operation renumber \\
+    --digits 4 --startnum 1001 --prefix sub
+
+squirrel modify study.sqrl --operation renumber --random
 
 squirrel modify study.sqrl --variablelist study
 .EE

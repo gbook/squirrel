@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Quiet mode. No printing of headers and checks"));
-        p.addOption(QCommandLineOption(QStringList() << "operation", "Operation to perform on the package [add  remove  update  splitbymodality  removephi].", "operation"));
+        p.addOption(QCommandLineOption(QStringList() << "operation", "Operation to perform on the package [add  remove  update  splitbymodality  removephi  renumber].", "operation"));
         p.addOption(QCommandLineOption(QStringList() << "object", "Object type to perform operation on [package  subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "datapath", "Path to new object data. Can include wildcard: /path/*.dcm", "path"));
         //p.addOption(QCommandLineOption(QStringList() << "recursive", "Search the data path recursively"));
@@ -315,6 +315,10 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "seriesnum", "Parent series number. Used when updating a series object (subjectid and studynum also required).", "num"));
         p.addOption(QCommandLineOption(QStringList() << "objectdata", "URL-style string specifying the new object meta-data.", "string"));
         p.addOption(QCommandLineOption(QStringList() << "variablelist", "List the possible variables for the specified object (subject, study, series, analysis ...)", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "digits", "Number of digits for renumbered subject IDs (e.g. 4 produces 0001...9999). Default: auto-sized.", "num"));
+        p.addOption(QCommandLineOption(QStringList() << "startnum", "Starting number for renumbering (default: 1).", "num"));
+        p.addOption(QCommandLineOption(QStringList() << "prefix", "Prefix string prepended to renumbered subject IDs (e.g. 'sub' produces sub0001, sub0002, ...).", "string"));
+        p.addOption(QCommandLineOption(QStringList() << "random", "Randomly assign new subject IDs instead of sorting ascending."));
 
         p.process(a);
 
@@ -329,6 +333,10 @@ int main(int argc, char *argv[])
         ObjectType variableList = squirrel::ObjectTypeToEnum(p.value("variablelist").trimmed());
         int studyNum = p.value("studynum").toInt();
         int seriesNum = p.value("seriesnum").toInt();
+        int digits = p.value("digits").toInt();
+        int startNum = p.isSet("startnum") ? p.value("startnum").toInt() : 1;
+        QString prefix = p.value("prefix").trimmed();
+        bool randomize = p.isSet("random");
         //bool recursive = p.isSet("recursive");
 
         QString m;
@@ -336,7 +344,7 @@ int main(int argc, char *argv[])
         if (variableList != UnknownObjectType) {
             mod.PrintVariables(variableList);
         }
-        else if (!mod.DoModify(inputPath, operation, object, dataPath, objectData, objectID, subjectID, studyNum, seriesNum, m)) {
+        else if (!mod.DoModify(inputPath, operation, object, dataPath, objectData, objectID, subjectID, studyNum, seriesNum, digits, startNum, prefix, randomize, m)) {
             CommandLineError(p,m);
         }
     }
