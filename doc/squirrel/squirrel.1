@@ -1,0 +1,373 @@
+.TH SQUIRREL 1 "2026" "squirrel 1.0" "Squirrel Data Package Utilities"
+.\" ============================================================
+.\" This man page is generated from doc/squirrel/squirrel.md.
+.\" To regenerate after editing the markdown:
+.\"   make -C doc/squirrel man
+.\" (requires pandoc)
+.\" ============================================================
+.SH NAME
+squirrel \- command-line tools for squirrel neuroimaging data packages
+.SH SYNOPSIS
+.B squirrel
+.I command
+.RI [ options ]
+.RI [ arguments ]
+.SH DESCRIPTION
+.B squirrel
+creates, inspects, and modifies
+.B squirrel
+data packages
+.RI ( .sqrl
+files). A squirrel package is a self-contained archive that stores
+neuroimaging and associated data \(em subjects, studies, imaging series,
+analyses, pipelines, observations, interventions, experiments, and data
+dictionaries \(em together with a JSON manifest.
+.PP
+The following commands are available:
+.TP
+.B dicom2squirrel
+Convert a DICOM directory into a squirrel package.
+.TP
+.B bids2squirrel
+Convert a BIDS directory into a squirrel package.
+.TP
+.B info
+Display information about a package or its contents.
+.TP
+.B modify
+Add, remove, or update objects within a package.
+.TP
+.B extract
+Extract objects from a package to disk.
+.TP
+.B validate
+Check whether a package is valid and readable.
+.SH COMMANDS
+.SS dicom2squirrel
+Convert a directory of DICOM files into a squirrel package.
+.PP
+.B squirrel dicom2squirrel
+.I dicomdirectory package
+.RI [ options ]
+.PP
+.B Arguments
+.RS 4
+.TP
+.I dicomdirectory
+Path to the input directory containing DICOM files.
+.TP
+.I package
+Path to the output squirrel package
+.RI ( .sqrl
+extension added if omitted).
+.RE
+.PP
+.B Options
+.RS 4
+.TP
+.BR \-d ", " \-\-debug
+Enable debug logging.
+.TP
+.BR \-q ", " \-\-quiet
+Suppress header and progress output.
+.TP
+.BI \-\-dataformat " format"
+Output data format. Default:
+.BR nifti4dgz .
+Possible values:
+.BR anon " (anonymized DICOM),"
+.BR nifti4d ","
+.BR nifti4dgz ","
+.BR nifti3d ","
+.BR nifti3dgz ","
+.BR orig " (unmodified DICOM)."
+.TP
+.BI \-\-dirformat " format"
+Directory naming within the package.
+.B orig
+uses original subject IDs (default);
+.B seq
+uses sequential numbers.
+.RE
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel dicom2squirrel /data/dicoms /output/study.sqrl
+squirrel dicom2squirrel /data/dicoms /output/study.sqrl \\
+    --dataformat nifti4d --dirformat orig
+.EE
+.RE
+.SS bids2squirrel
+Convert a BIDS-formatted directory into a squirrel package.
+.PP
+.B squirrel bids2squirrel
+.I bidsdirectory package
+.RI [ options ]
+.PP
+.B Arguments
+.RS 4
+.TP
+.I bidsdirectory
+Path to the root BIDS directory.
+.TP
+.I package
+Path to the output squirrel package.
+.RE
+.PP
+.B Options
+.RS 4
+.TP
+.BR \-d ", " \-\-debug
+Enable debug logging.
+.TP
+.BR \-q ", " \-\-quiet
+Suppress header and progress output.
+.TP
+.B \-\-overwrite
+Overwrite an existing package at the output path.
+.TP
+.B \-\-debugsql
+Log all SQL statements (for troubleshooting).
+.RE
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel bids2squirrel /data/bids_study /output/study.sqrl
+squirrel bids2squirrel /data/bids_study /output/study.sqrl --overwrite
+.EE
+.RE
+.SS info
+Display information about a package or its contents.
+.PP
+.B squirrel info
+.I package
+.RI [ options ]
+.PP
+.B Options
+.RS 4
+.TP
+.BR \-d ", " \-\-debug
+Enable debug logging.
+.TP
+.BI \-\-object " type"
+Object type to display. Default:
+.BR package .
+Possible values:
+.BR all ", " package ", " subject ", " study ", " series ", " observation ", "
+.BR intervention ", " experiment ", " pipeline ", " groupanalysis ", " datadictionary .
+.TP
+.BI \-\-subjectid " id"
+Filter by subject ID.
+.TP
+.BI \-\-studynum " num"
+Filter by study number. Requires
+.BR \-\-subjectid .
+.TP
+.BI \-\-dataset " type"
+Amount of detail:
+.BR id ", " basic ", or " full .
+Default:
+.BR full .
+.TP
+.BI \-\-format " format"
+Output format:
+.B list
+or
+.BR csv .
+Default:
+.BR csv .
+.RE
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel info study.sqrl
+squirrel info study.sqrl --object subject --dataset full --format csv
+squirrel info study.sqrl --object study --subjectid S1234
+squirrel info study.sqrl --object series --subjectid S1234 --studynum 1
+.EE
+.RE
+.SS modify
+Add, remove, update, or otherwise transform objects within an existing package.
+.PP
+.B squirrel modify
+.I package
+.B \-\-operation
+.I op
+.B \-\-object
+.I type
+.RI [ options ]
+.PP
+.B Options
+.RS 4
+.TP
+.BR \-d ", " \-\-debug
+Enable debug logging.
+.TP
+.BR \-q ", " \-\-quiet
+Suppress header and progress output.
+.TP
+.BI \-\-operation " op"
+Operation to perform. Possible values:
+.BR add ", " remove ", " update ", " splitbymodality ", " removephi .
+.TP
+.BI \-\-object " type"
+Object type to operate on. Possible values:
+.BR package ", " subject ", " study ", " series ", " analysis ", "
+.BR intervention ", " observation ", " experiment ", " pipeline ", "
+.BR groupanalysis ", " datadictionary .
+.TP
+.BI \-\-datapath " path"
+Path to data for the new object. Wildcards supported
+(e.g.\&
+.IR /path/*.dcm ).
+.TP
+.BI \-\-objectid " id"
+ID, name, or number of the existing object to modify or remove.
+.TP
+.BI \-\-subjectid " id"
+Parent subject ID. Required when adding or removing a study, series,
+observation, intervention, or analysis.
+.TP
+.BI \-\-studynum " num"
+Parent study number. Required when adding or removing a series or analysis
+.RB ( \-\-subjectid
+also required).
+.TP
+.BI \-\-seriesnum " num"
+Parent series number. Required when updating a series
+.RB ( \-\-subjectid
+and
+.B \-\-studynum
+also required).
+.TP
+.BI \-\-objectdata " string"
+URL-encoded
+.IR key = value
+string specifying object metadata, pairs joined by
+.BR & .
+Use
+.B \-\-variablelist
+to see valid keys for each object type.
+.TP
+.BI \-\-variablelist " type"
+Print all settable variable names for the given object type and exit.
+.RE
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel modify study.sqrl --operation update --object subject \\
+    --objectid S1234 --objectdata 'DateOfBirth=1999-12-31&Sex=M'
+
+squirrel modify study.sqrl --operation add --object subject \\
+    --objectdata 'SubjectID=S9999&Sex=F&DateOfBirth=1985-06-15'
+
+squirrel modify study.sqrl --operation remove --object series \\
+    --subjectid S1234 --studynum 1 --objectid 3
+
+squirrel modify study.sqrl --operation splitbymodality
+
+squirrel modify study.sqrl --operation removephi
+
+squirrel modify study.sqrl --variablelist study
+.EE
+.RE
+.SS extract
+Extract one or more objects from a package to a directory on disk.
+.PP
+.B squirrel extract
+.I package
+.B \-\-object
+.I type
+.B \-\-objectid
+.I id
+.RI [ options ]
+.PP
+.B Options
+.RS 4
+.TP
+.BR \-d ", " \-\-debug
+Enable debug logging.
+.TP
+.BR \-q ", " \-\-quiet
+Suppress header and progress output.
+.TP
+.BI \-\-object " type"
+Object type to extract. Possible values:
+.BR subject ", " study ", " series ", " analysis ", " experiment ", "
+.BR pipeline ", " groupanalysis ", " datadictionary .
+.TP
+.BI \-\-outdir " path"
+Destination directory for extracted files.
+.TP
+.BI \-\-objectid " id"
+ID, name, or number of the object to extract.
+.TP
+.BI \-\-subjectid " id"
+Parent subject ID. Required when extracting a study, series, or analysis.
+.TP
+.BI \-\-studynum " num"
+Parent study number. Required when extracting a series or analysis
+.RB ( \-\-subjectid
+also required).
+.RE
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel extract study.sqrl --object subject \\
+    --objectid S1234ABC --outdir /tmp/out
+
+squirrel extract study.sqrl --object series --objectid 1 \\
+    --subjectid S1234ABC --studynum 1 --outdir /tmp/out
+
+squirrel extract study.sqrl --object experiment \\
+    --objectid MyExperiment --outdir /tmp/out
+.EE
+.RE
+.SS validate
+Check whether a squirrel package is readable and structurally valid.
+.PP
+.B squirrel validate
+.I package
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel validate study.sqrl
+.EE
+.RE
+.SH GLOBAL OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Show help text for the current command and exit.
+.TP
+.B \-\-version
+Show version information and exit.
+.SH OBJECT HIERARCHY
+A squirrel package organizes data in the following hierarchy:
+.PP
+.EX
+package
+\(lc\(em subject
+\(uc    \(lc\(em study
+\(uc    \(uc    \(lc\(em series
+\(uc    \(uc    \(lq\(em analysis
+\(uc    \(lc\(em observation
+\(uc    \(lq\(em intervention
+\(lc\(em experiment
+\(lc\(em pipeline
+\(lc\(em group-analysis
+\(lq\(em data-dictionary
+.EE
+.SH AUTHOR
+Gregory A Book <gregory.book@hhchealth.org>
+.br
+Olin Neuropsychiatry Research Center, Hartford Hospital
+.SH SEE ALSO
+Project home page and documentation:
+.UR https://github.com/gbook/squirrel
+.UE

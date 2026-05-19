@@ -7,15 +7,21 @@ The squirrel neuroimaging data sharing format was developed as part of the open-
 # Documentation
 https://docs.neuroinfodb.org/nidb/contribute/squirrel-data-sharing-format
 
-# Windows launcher
-If you want to run the Windows CLI from PowerShell without manually setting the Qt runtime `PATH`, use [run-squirrel.ps1](/C:/squirrel/run-squirrel.ps1).
+## Man page and web documentation
 
-Examples:
+The CLI reference is maintained in `doc/squirrel/squirrel.md`. This file is the single source of truth for both the man page and the web documentation page.
 
-```powershell
-powershell.exe -ExecutionPolicy Bypass -File C:\squirrel\run-squirrel.ps1 --help
+When CLI options change, update `squirrel.md` and regenerate the man page:
+
+```bash
+make -C doc/squirrel man
 ```
 
-```powershell
-powershell.exe -ExecutionPolicy Bypass -File C:\squirrel\run-squirrel.ps1 -Config Debug info
+This requires [pandoc](https://pandoc.org). Commit both `squirrel.md` and the regenerated `squirrel.1` so the man page can be installed without pandoc as a dependency.
+
+To preview the rendered man page locally:
+
+```bash
+make -C doc/squirrel view
 ```
+
