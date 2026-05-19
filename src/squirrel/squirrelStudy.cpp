@@ -227,8 +227,6 @@ bool squirrelStudy::Remove() {
     q.bindValue(":studyid", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
-    utils::RemoveStagedFileList(databaseUUID, objectID, Subject);
-
     /* in case anyone tries to use this object again */
     objectID = -1;
     valid = false;

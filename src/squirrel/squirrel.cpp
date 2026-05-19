@@ -499,8 +499,10 @@ bool squirrel::Read() {
             for (const auto &d : jsonAnalyses) {
                 QJsonObject jsonAnalysis = d.toObject();
                 squirrelAnalysis sqrlAnalysis(databaseUUID);
+                sqrlAnalysis.AnalysisName = jsonAnalysis["AnalysisName"].toString();
                 sqrlAnalysis.DateClusterEnd = utils::StringToDatetime(jsonAnalysis["DateClusterEnd"].toString());
                 sqrlAnalysis.DateClusterStart = utils::StringToDatetime(jsonAnalysis["DateClusterStart"].toString());
+                sqrlAnalysis.DateEnd = utils::StringToDatetime(jsonAnalysis["DateEnd"].toString());
                 sqrlAnalysis.DateStart = utils::StringToDatetime(jsonAnalysis["DateStart"].toString());
                 sqrlAnalysis.Hostname = jsonAnalysis["Hostname"].toString();
                 sqrlAnalysis.StatusMessage = jsonAnalysis["StatusMessage"].toString();
@@ -522,42 +524,23 @@ bool squirrel::Read() {
         /* read all observations */
         QJsonArray jsonObservations = jsonSubject["observations"].toArray();
         Debug(QString("Reading [%1] observations").arg(jsonObservations.size()), __FUNCTION__);
-        QElapsedTimer timerA;
-        timerA.start();
         for (const auto &e : jsonObservations) {
-            //utils::Print(QString("Checkpoint A - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             QJsonObject jsonObservation = e.toObject();
-            //utils::Print(QString("Checkpoint B - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             squirrelObservation sqrlObservation(databaseUUID);
-            //utils::Print(QString("Checkpoint C - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.DateEnd = utils::StringToDatetime(jsonObservation["DateEnd"].toString());
-            //utils::Print(QString("Checkpoint D - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.DateStart = utils::StringToDatetime(jsonObservation["DateStart"].toString());
-            //utils::Print(QString("Checkpoint E - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.DateRecordCreate = utils::StringToDatetime(jsonObservation["DateRecordCreate"].toString());
-            //utils::Print(QString("Checkpoint F - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.DateRecordEntry = utils::StringToDatetime(jsonObservation["DateRecordEntry"].toString());
-            //utils::Print(QString("Checkpoint G - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.DateRecordModify = utils::StringToDatetime(jsonObservation["DateRecordModify"].toString());
-            //utils::Print(QString("Checkpoint H - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.Description = jsonObservation["Description"].toString();
-            //utils::Print(QString("Checkpoint I - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.Duration = jsonObservation["Duration"].toDouble();
-            //utils::Print(QString("Checkpoint J - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.InstrumentName = jsonObservation["InstrumentName"].toString();
-            //utils::Print(QString("Checkpoint K - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.ObservationName = jsonObservation["ObservationName"].toString();
-            //utils::Print(QString("Checkpoint L - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.Notes = jsonObservation["Notes"].toString();
-            //utils::Print(QString("Checkpoint M - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.Rater = jsonObservation["Rater"].toString();
-            //utils::Print(QString("Checkpoint N - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.Value = jsonObservation["Value"].toString();
-            //utils::Print(QString("Checkpoint O - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.subjectRowID = subjectRowID;
-            //utils::Print(QString("Checkpoint P - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
             sqrlObservation.Store(qObservationInsert);
-            //utils::Print(QString("Checkpoint Q - %1").arg(static_cast<double>(timerA.nsecsElapsed())/100000000.0, 0, 'f', 6));
         }
 
         /* read all Interventions */
@@ -859,7 +842,7 @@ bool squirrel::Write() {
     pkgInfo["Description"] = Description;
     pkgInfo["License"] = License;
     pkgInfo["Notes"] = Notes;
-    pkgInfo["PackageFormat"] = DataFormat;
+    pkgInfo["PackageFormat"] = PackageFormat;
     pkgInfo["PackageName"] = PackageName;
     pkgInfo["Readme"] = Readme;
     pkgInfo["SeriesDirectoryFormat"] = SeriesDirFormat;
@@ -980,6 +963,7 @@ bool squirrel::Write() {
         if (!utils::WriteTextFile(jsonFilePath, j))
             Log("Error writing [" + jsonFilePath + "]");
 
+        lastupdate = 0;
         QString m;
         Log("Writing package...");
         if (CompressDirectoryToArchive(workingDir, GetPackagePath(), m)) {
@@ -1002,7 +986,7 @@ bool squirrel::Write() {
         for (int i=0; i<stagedFiles.size(); i++) {
             QStringPair file = stagedFiles.at(i);
             QString source = file.first;
-            QString dest = workingDir + "/" + file.first;
+            QString dest = workingDir + "/" + file.second;
             diskPaths.append(source);
             archivePaths.append(dest);
         }
@@ -1050,7 +1034,7 @@ bool squirrel::WriteUpdate() {
     pkgInfo["Description"] = Description;
     pkgInfo["License"] = License;
     pkgInfo["Notes"] = Notes;
-    pkgInfo["PackageFormat"] = DataFormat;
+    pkgInfo["PackageFormat"] = PackageFormat;
     pkgInfo["PackageName"] = PackageName;
     pkgInfo["Readme"] = Readme;
     pkgInfo["SeriesDirectoryFormat"] = SeriesDirFormat;
@@ -2960,7 +2944,7 @@ bool squirrel::RemoveObject(ObjectType object, qint64 objectRowID) {
 
         /* remove files from the archive */
         if (fileMode == FileMode::ExistingPackage) {
-            squirrelSubject sqrlStudy(databaseUUID);
+            squirrelStudy sqrlStudy(databaseUUID);
             sqrlStudy.SetObjectID(objectRowID);
             sqrlStudy.Get();
             QString studyArchivePath = sqrlStudy.VirtualPath();
@@ -3028,26 +3012,6 @@ bool squirrel::RemoveObject(ObjectType object, qint64 objectRowID) {
         q.prepare("delete from Observation where ObservationRowID = :observationRowID");
         q.bindValue(":observationRowID", objectRowID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        return true;
-    }
-    else if (object == Analysis) {
-        /* delete from database */
-        QSqlQuery q(QSqlDatabase::database(databaseUUID));
-        q.prepare("delete from Analysis where AnalysisRowID = :analysisRowID");
-        q.bindValue(":analysisRowID", objectRowID);
-        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-
-        /* remove files from archive */
-        if (fileMode == FileMode::ExistingPackage) {
-            squirrelAnalysis sqrlAnalysis(databaseUUID);
-            sqrlAnalysis.SetObjectID(objectRowID);
-            sqrlAnalysis.Get();
-            QString analysisArchivePath = sqrlAnalysis.VirtualPath();
-            QString m;
-            if (!RemoveDirectoryFromArchive(analysisArchivePath, packagePath, m))
-                return false;
-        }
-
         return true;
     }
     else if (object == Experiment) {

@@ -174,9 +174,10 @@ bool squirrelAnalysis::Store() {
 
         QString path;
         foreach (path, stagedFiles) {
-            q.prepare("insert into StagedFiles (ObjectRowID, ObjectType) values (:packageid, :id, :type)");
+            q.prepare("insert into StagedFiles (ObjectRowID, ObjectType, StagedPath) values (:id, :type, :path)");
             q.bindValue(":id", objectID);
             q.bindValue(":type", "analysis");
+            q.bindValue(":path", path);
             utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         }
     }

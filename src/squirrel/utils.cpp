@@ -664,10 +664,8 @@ namespace utils {
 
         /* fix patient age */
         if (PatientAge < 0.001) {
-            QDate studydate;
-            QDate dob;
-            studydate.fromString(StudyDate);
-            dob.fromString(PatientBirthDate);
+            QDate studydate = QDate::fromString(StudyDate);
+            QDate dob = QDate::fromString(PatientBirthDate);
 
             PatientAge = double(dob.daysTo(studydate))/365.25;
         }
@@ -725,8 +723,8 @@ namespace utils {
     /* ---------------------------------------------------------- */
     QString CleanString(QString s) {
         s.replace(QRegularExpression("[^a-zA-Z0-9 _-]", QRegularExpression::CaseInsensitiveOption), "");
-        s.simplified().remove(' ');
-        s.remove(" ");
+        s = s.simplified();
+        s.remove(' ');
         return s;
     }
 

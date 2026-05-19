@@ -254,7 +254,7 @@ QString squirrelSeries::PrintSeries(PrintFormat p) {
     QString str;
 
     if (p == BasicList) {
-        QString s = QString("%1\t%2\t%3\t%4\t%5").arg(SeriesNumber).arg(Protocol).arg(Description).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss").arg(FileCount));
+        QString s = QString("%1\t%2\t%3\t%4\t%5").arg(SeriesNumber).arg(Protocol).arg(Description).arg(DateTime.toString("yyyy-MM-dd HH:mm:ss")).arg(FileCount);
         str += utils::Print(s);
     }
     else if (p == FullList) {
