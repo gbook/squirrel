@@ -31,6 +31,9 @@ squirrelAnalysis::squirrelAnalysis(QString dbID)
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Populate --------------------------------------------- */
+/* ------------------------------------------------------------ */
 void squirrelAnalysis::Populate(const QSqlQuery &q) {
     objectID         = q.value("AnalysisRowID").toLongLong();
     pipelineRowID    = q.value("PipelineRowID").toLongLong();

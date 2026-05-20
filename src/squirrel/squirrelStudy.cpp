@@ -49,6 +49,9 @@ squirrelStudy::squirrelStudy(QString dbID)
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Populate --------------------------------------------- */
+/* ------------------------------------------------------------ */
 void squirrelStudy::Populate(const QSqlQuery &q) {
     objectID       = q.value("StudyRowID").toLongLong();
     subjectRowID   = q.value("SubjectRowID").toLongLong();

@@ -45,6 +45,9 @@ squirrelSubject::squirrelSubject(QString dbID)
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Populate --------------------------------------------- */
+/* ------------------------------------------------------------ */
 void squirrelSubject::Populate(const QSqlQuery &q) {
     objectID         = q.value("SubjectRowID").toLongLong();
     AlternateIDs     = q.value("AltIDs").toString().split(",");

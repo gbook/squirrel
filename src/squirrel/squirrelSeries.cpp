@@ -31,6 +31,9 @@ squirrelSeries::squirrelSeries(QString dbID)
 }
 
 
+/* ------------------------------------------------------------ */
+/* ----- Populate --------------------------------------------- */
+/* ------------------------------------------------------------ */
 void squirrelSeries::Populate(const QSqlQuery &q) {
     objectID                   = q.value("SeriesRowID").toLongLong();
     studyRowID                 = q.value("StudyRowID").toLongLong();
