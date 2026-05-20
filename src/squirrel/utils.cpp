@@ -1018,18 +1018,22 @@ namespace utils {
     /* --------- PrintTable ------------------------------------- */
     /* ---------------------------------------------------------- */
     /**
-     * @brief Print rows as an aligned table with firstKey as the leftmost column, separated by │
-     * @param keys all column keys
+     * @brief Print rows as an aligned table with pinnedKeys as left columns before a │ divider
+     * @param keys all column keys (will be sorted; pinnedKeys are moved to front in order)
      * @param rows data rows
-     * @param firstKey the key to place in the first column
+     * @param pinnedKeys keys to place before the │ divider, in the order given
      */
-    QString PrintTable(QStringList keys, QList<QStringHash> rows, QString firstKey) {
+    QString PrintTable(QStringList keys, QList<QStringHash> rows, QStringList pinnedKeys) {
         if (keys.isEmpty() || rows.isEmpty())
             return QString();
 
-        /* move firstKey to front, keep remaining keys in their existing (sorted) order */
-        keys.removeAll(firstKey);
-        keys.prepend(firstKey);
+        /* move pinnedKeys to front in order, keep remaining keys sorted */
+        for (const QString &pk : pinnedKeys)
+            keys.removeAll(pk);
+        for (int i = pinnedKeys.size() - 1; i >= 0; --i)
+            keys.prepend(pinnedKeys[i]);
+
+        int pinned = pinnedKeys.size();
 
         /* strip "Object." prefix from keys for display */
         QStringList headers;
@@ -1048,15 +1052,23 @@ namespace utils {
 
         QStringList lines;
 
-        /* header row */
-        QString header = headers[0].leftJustified(widths[0]) + " │";
-        for (int i = 1; i < keys.size(); ++i)
+        /* header row: pinned cols ... │ remaining cols ... */
+        QString header;
+        for (int i = 0; i < pinned; ++i) {
+            if (i > 0) header += " ";
+            header += headers[i].leftJustified(widths[i]);
+        }
+        header += " │";
+        for (int i = pinned; i < keys.size(); ++i)
             header += " " + headers[i].leftJustified(widths[i]);
         lines += header;
 
         /* separator: ────┼───────────... */
-        QString sep = QString("─").repeated(widths[0]) + "─┼─";
-        for (int i = 1; i < keys.size(); ++i) {
+        int pinnedWidth = 0;
+        for (int i = 0; i < pinned; ++i)
+            pinnedWidth += widths[i] + (i > 0 ? 1 : 0);
+        QString sep = QString("─").repeated(pinnedWidth) + "─┼─";
+        for (int i = pinned; i < keys.size(); ++i) {
             sep += QString("─").repeated(widths[i]);
             if (i < keys.size() - 1)
                 sep += "─"; /* accounts for the space before each column */
@@ -1065,8 +1077,13 @@ namespace utils {
 
         /* data rows */
         for (const auto &row : rows) {
-            QString line = row.value(keys[0]).leftJustified(widths[0]) + " │";
-            for (int i = 1; i < keys.size(); ++i)
+            QString line;
+            for (int i = 0; i < pinned; ++i) {
+                if (i > 0) line += " ";
+                line += row.value(keys[i]).leftJustified(widths[i]);
+            }
+            line += " │";
+            for (int i = pinned; i < keys.size(); ++i)
                 line += " " + row.value(keys[i]).leftJustified(widths[i]);
             lines += line;
         }

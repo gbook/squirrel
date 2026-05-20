@@ -1681,7 +1681,7 @@ QString squirrel::PrintSubjects(DatasetType dataType, PrintFormat printFormat) {
         keys.sort();
 
         if (printFormat == List)
-            str = utils::PrintTable(keys, rows, "Subject.ID");
+            str = utils::PrintTable(keys, rows, {"Subject.ID"});
         else
             str = utils::PrintData(printFormat, keys, rows);
     }
@@ -1729,7 +1729,10 @@ QString squirrel::PrintStudies(DatasetType dataType, PrintFormat printFormat, qi
         keys.removeDuplicates();
         keys.sort();
 
-        str = utils::PrintData(printFormat, keys, rows);
+        if (printFormat == List)
+            str = utils::PrintTable(keys, rows, {"Subject.ID", "Study.Number"});
+        else
+            str = utils::PrintData(printFormat, keys, rows);
     }
     else
         str = utils::Print("No studies found");
@@ -1782,10 +1785,13 @@ QString squirrel::PrintSeries(DatasetType dataType, PrintFormat printFormat, qin
         keys.removeDuplicates();
         keys.sort();
 
-        str = utils::PrintData(printFormat, keys, rows);
+        if (printFormat == List)
+            str = utils::PrintTable(keys, rows, {"Subject.ID", "Study.Number", "Series.Number"});
+        else
+            str = utils::PrintData(printFormat, keys, rows);
     }
     else
-        str = utils::Print("No studies found");
+        str = utils::Print("No series found");
 
     return str;
 }
@@ -1828,10 +1834,13 @@ QString squirrel::PrintObservations(DatasetType dataType, PrintFormat printForma
         keys.removeDuplicates();
         keys.sort();
 
-        str = utils::PrintData(printFormat, keys, rows);
+        if (printFormat == List)
+            str = utils::PrintTable(keys, rows, {"Subject.ID"});
+        else
+            str = utils::PrintData(printFormat, keys, rows);
     }
     else
-        str += utils::Print("No subjects in this package");
+        str += utils::Print("No observations found");
 
     return str;
 }
@@ -1874,10 +1883,13 @@ QString squirrel::PrintInterventions(DatasetType dataType, PrintFormat printForm
         keys.removeDuplicates();
         keys.sort();
 
-        str = utils::PrintData(printFormat, keys, rows);
+        if (printFormat == List)
+            str = utils::PrintTable(keys, rows, {"Subject.ID"});
+        else
+            str = utils::PrintData(printFormat, keys, rows);
     }
     else
-        str += utils::Print("No subjects in this package");
+        str += utils::Print("No interventions found");
 
     return str;
 

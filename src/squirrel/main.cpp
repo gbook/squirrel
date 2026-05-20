@@ -277,10 +277,10 @@ int main(int argc, char *argv[])
             else
                 query.dataset = DatasetFull;
 
-            if (format == "list")
-                query.printFormat = List;
-            else
+            if (format == "csv")
                 query.printFormat = CSV;
+            else
+                query.printFormat = List;
 
             if (query.object == UnknownObjectType)
                 query.object = Package;
