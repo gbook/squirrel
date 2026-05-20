@@ -1015,6 +1015,67 @@ namespace utils {
 
 
     /* ---------------------------------------------------------- */
+    /* --------- PrintTable ------------------------------------- */
+    /* ---------------------------------------------------------- */
+    /**
+     * @brief Print rows as an aligned table with firstKey as the leftmost column, separated by │
+     * @param keys all column keys
+     * @param rows data rows
+     * @param firstKey the key to place in the first column
+     */
+    QString PrintTable(QStringList keys, QList<QStringHash> rows, QString firstKey) {
+        if (keys.isEmpty() || rows.isEmpty())
+            return QString();
+
+        /* move firstKey to front, keep remaining keys in their existing (sorted) order */
+        keys.removeAll(firstKey);
+        keys.prepend(firstKey);
+
+        /* strip "Object." prefix from keys for display */
+        QStringList headers;
+        for (const QString &key : keys) {
+            int dot = key.indexOf('.');
+            headers.append(dot >= 0 ? key.mid(dot + 1) : key);
+        }
+
+        /* compute per-column widths from headers and data */
+        QVector<int> widths(keys.size());
+        for (int i = 0; i < keys.size(); ++i)
+            widths[i] = headers[i].length();
+        for (const auto &row : rows)
+            for (int i = 0; i < keys.size(); ++i)
+                widths[i] = qMax(widths[i], row.value(keys[i]).length());
+
+        QStringList lines;
+
+        /* header row */
+        QString header = headers[0].leftJustified(widths[0]) + " │";
+        for (int i = 1; i < keys.size(); ++i)
+            header += " " + headers[i].leftJustified(widths[i]);
+        lines += header;
+
+        /* separator: ────┼───────────... */
+        QString sep = QString("─").repeated(widths[0]) + "─┼─";
+        for (int i = 1; i < keys.size(); ++i) {
+            sep += QString("─").repeated(widths[i]);
+            if (i < keys.size() - 1)
+                sep += "─"; /* accounts for the space before each column */
+        }
+        lines += sep;
+
+        /* data rows */
+        for (const auto &row : rows) {
+            QString line = row.value(keys[0]).leftJustified(widths[0]) + " │";
+            for (int i = 1; i < keys.size(); ++i)
+                line += " " + row.value(keys[i]).leftJustified(widths[i]);
+            lines += line;
+        }
+
+        return utils::Print(lines.join("\n"));
+    }
+
+
+    /* ---------------------------------------------------------- */
     /* --------- MergeStringHash -------------------------------- */
     /* ---------------------------------------------------------- */
     QStringHash MergeStringHash(QStringHash hash1, QStringHash hash2) {

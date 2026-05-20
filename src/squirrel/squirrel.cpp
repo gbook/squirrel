@@ -1680,7 +1680,10 @@ QString squirrel::PrintSubjects(DatasetType dataType, PrintFormat printFormat) {
         keys.removeDuplicates();
         keys.sort();
 
-        str = utils::PrintData(printFormat, keys, rows);
+        if (printFormat == List)
+            str = utils::PrintTable(keys, rows, "Subject.ID");
+        else
+            str = utils::PrintData(printFormat, keys, rows);
     }
     else
         str += utils::Print("No subjects in this package");
