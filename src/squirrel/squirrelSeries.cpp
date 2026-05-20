@@ -34,6 +34,10 @@ squirrelSeries::squirrelSeries(QString dbID)
 /* ------------------------------------------------------------ */
 /* ----- Populate --------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Populate object fields from a database query result row
+ * @param q an executed QSqlQuery positioned at the row to read
+ */
 void squirrelSeries::Populate(const QSqlQuery &q) {
     objectID                   = q.value("SeriesRowID").toLongLong();
     studyRowID                 = q.value("StudyRowID").toLongLong();
@@ -193,6 +197,11 @@ bool squirrelSeries::Store() {
 /* ------------------------------------------------------------ */
 /* ----- Store (bulk insert) ---------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Bind this series' values to a pre-prepared bulk-insert query and execute it
+ * @param q a QSqlQuery prepared with the appropriate INSERT statement
+ * @return true if successful
+ */
 bool squirrelSeries::Store(QSqlQuery &q) {
     q.bindValue(":StudyRowID", studyRowID);
     q.bindValue(":SeriesNumber", SeriesNumber);
@@ -227,6 +236,10 @@ bool squirrelSeries::Store(QSqlQuery &q) {
 /* ------------------------------------------------------------ */
 /* ----- Remove ----------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Remove this series and its staged files from the database
+ * @return true if successful
+ */
 bool squirrelSeries::Remove() {
 
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
@@ -502,6 +515,11 @@ QList<QPair<QString,QString>> squirrelSeries::GetStagedFileList() {
 /* ------------------------------------------------------------ */
 /* ----- GetData ---------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return a key/value hash of series fields for the requested dataset level
+ * @param d the dataset detail level (DatasetID, DatasetBasic, or DatasetFull)
+ * @return hash of field names to string values
+ */
 QHash<QString, QString> squirrelSeries::GetData(DatasetType d) {
 
     QHash<QString, QString> data;

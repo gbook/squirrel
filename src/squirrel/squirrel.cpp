@@ -124,6 +124,10 @@ squirrel::~squirrel()
 /* ---------------------------------------------------------- */
 /* --------- Get7zipLibPath --------------------------------- */
 /* ---------------------------------------------------------- */
+/**
+ * @brief Locate the 7-zip shared library on disk and store its path
+ * @return true if the library was found, false otherwise
+ */
 bool squirrel::Get7zipLibPath() {
 #ifdef Q_OS_WINDOWS
     if (QFile::exists("C:/Program Files/7-Zip/7z.dll")) {
@@ -1133,6 +1137,12 @@ bool squirrel::WriteUpdate() {
 /* ------------------------------------------------------------ */
 /* ----- Extract ---------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Extract the entire package archive to a directory on disk
+ * @param destinationDir directory to extract the package into
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool squirrel::Extract(QString destinationDir, QString &m) {
     m = "Extracting [" + packagePath + "] to [" + destinationDir + "]";
     if (ExtractArchiveToDirectory(packagePath, destinationDir, m))
@@ -1161,6 +1171,10 @@ bool squirrel::Validate() {
 /* ------------------------------------------------------------ */
 /* ----- GetLogBuffer ----------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return and clear the accumulated log buffer since the last call
+ * @return log messages accumulated since the last call to GetLogBuffer()
+ */
 QString squirrel::GetLogBuffer() {
 
     QString ret = logBuffer;
@@ -1596,6 +1610,11 @@ void squirrel::Log(QString s) {
 /* ------------------------------------------------------------ */
 /* ----- Debug ------------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Append a debug message to the log (only when debug mode is enabled)
+ * @param s the message to log
+ * @param func the calling function name, typically passed via __FUNCTION__
+ */
 void squirrel::Debug(QString s, QString func) {
     if (debug) {
         if (s.trimmed() != "") {
@@ -2681,6 +2700,13 @@ qint64 squirrel::FindDataDictionary(QString dataDictionaryName) {
 /* ------------------------------------------------------------ */
 /* ----- FindIntervention ------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find an intervention by subject ID, name, and start date
+ * @param subjectID the subject's ID string
+ * @param interventionName the intervention name
+ * @param dateStart the start datetime of the intervention
+ * @return the InterventionRowID if found, or -1 if not found
+ */
 qint64 squirrel::FindIntervention(QString subjectID, QString interventionName, QDateTime dateStart) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
@@ -2699,6 +2725,13 @@ qint64 squirrel::FindIntervention(QString subjectID, QString interventionName, Q
 /* ------------------------------------------------------------ */
 /* ----- FindObservation -------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Find an observation by subject ID, name, and start date
+ * @param subjectID the subject's ID string
+ * @param observationName the observation name
+ * @param dateStart the start datetime of the observation
+ * @return the ObservationRowID if found, or -1 if not found
+ */
 qint64 squirrel::FindObservation(QString subjectID, QString observationName, QDateTime dateStart) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
@@ -3449,6 +3482,14 @@ bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinatio
 /* ------------------------------------------------------------ */
 /* ----- GetArchiveFileListing -------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Get a list of files within an archive that are under a given sub-directory
+ * @param archivePath path to the archive file (.zip or .7z)
+ * @param subDir path prefix to filter archive entries
+ * @param files output list of matching archive entry paths
+ * @param m output message on failure
+ * @return true if successful
+ */
 bool squirrel::GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m) {
     try {
         using namespace bit7z;
@@ -3641,6 +3682,14 @@ bool squirrel::UpdateJsonHeader(QString json) {
 /* ------------------------------------------------------------ */
 /* ----- ExtractArchiveFilesToDirectory ----------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Extract files matching a pattern from an archive to a directory
+ * @param archivePath path to the archive file (.zip or .7z)
+ * @param filePattern glob pattern to match archive entries (e.g. "data/S1234/1/2/*")
+ * @param outDir directory to extract matching files into
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m) {
     utils::Print(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir));
     try {

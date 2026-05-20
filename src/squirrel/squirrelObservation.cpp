@@ -144,6 +144,11 @@ bool squirrelObservation::Store() {
 /* ------------------------------------------------------------ */
 /* ----- Store (bulk insert) ---------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Bind this observation's values to a pre-prepared bulk-insert query and execute it
+ * @param q a QSqlQuery prepared with the appropriate INSERT statement
+ * @return true if successful
+ */
 bool squirrelObservation::Store(QSqlQuery &q) {
     q.bindValue(":SubjectRowID", subjectRowID);
     q.bindValue(":ObservationName", ObservationName);
@@ -167,6 +172,10 @@ bool squirrelObservation::Store(QSqlQuery &q) {
 /* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return a JSON object representing this observation
+ * @return QJsonObject containing all observation fields
+ */
 QJsonObject squirrelObservation::ToJSON() {
     QJsonObject json;
 
@@ -205,6 +214,11 @@ QString squirrelObservation::PrintObservation() {
 /* ------------------------------------------------------------ */
 /* ----- GetData ---------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return a key/value hash of observation fields for the requested dataset level
+ * @param d the dataset detail level (DatasetID, DatasetBasic, or DatasetFull)
+ * @return hash of field names to string values
+ */
 QHash<QString, QString> squirrelObservation::GetData(DatasetType d) {
 
     QHash<QString, QString> data;

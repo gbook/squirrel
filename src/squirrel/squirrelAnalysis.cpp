@@ -34,6 +34,10 @@ squirrelAnalysis::squirrelAnalysis(QString dbID)
 /* ------------------------------------------------------------ */
 /* ----- Populate --------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Populate object fields from a database query result row
+ * @param q an executed QSqlQuery positioned at the row to read
+ */
 void squirrelAnalysis::Populate(const QSqlQuery &q) {
     objectID         = q.value("AnalysisRowID").toLongLong();
     pipelineRowID    = q.value("PipelineRowID").toLongLong();
@@ -191,6 +195,10 @@ bool squirrelAnalysis::Store() {
 /* ------------------------------------------------------------ */
 /* ----- ToJSON ----------------------------------------------- */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return a JSON object representing this analysis
+ * @return QJsonObject containing all analysis fields
+ */
 QJsonObject squirrelAnalysis::ToJSON() {
     QJsonObject json;
 
@@ -250,6 +258,10 @@ QString squirrelAnalysis::PrintAnalysis() {
 /* ------------------------------------------------------------ */
 /* ----- VirtualPath ------------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return the analysis' virtual path within the squirrel package
+ * @return virtual path string (e.g. "data/S1234/1/PipelineName")
+ */
 QString squirrelAnalysis::VirtualPath() {
 
     QString subjectDir;
@@ -282,6 +294,10 @@ QString squirrelAnalysis::VirtualPath() {
 /* ------------------------------------------------------------ */
 /* ----- GetStagedFileList ------------------------------------ */
 /* ------------------------------------------------------------ */
+/**
+ * @brief Return all staged files as physical path / virtual path pairs
+ * @return list of pairs where first is the physical disk path and second is the virtual path in the package
+ */
 QList<QPair<QString,QString>> squirrelAnalysis::GetStagedFileList() {
 
     QList<QPair<QString,QString>> stagedList;

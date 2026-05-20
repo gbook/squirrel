@@ -34,6 +34,24 @@ modify::modify() {
 /* ---------------------------------------------------------------------------- */
 /* ----- DoModify ------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Dispatch a modify operation (add, remove, update, splitbymodality, removephi, renumber) on a squirrel package
+ * @param packagePath path to the squirrel package file
+ * @param operation the operation to perform
+ * @param object the object type to operate on
+ * @param dataPath optional path to a data directory or file
+ * @param objectData URL-query-encoded key=value metadata string
+ * @param objectID identifier of the target object
+ * @param subjectID subject ID for study/series scoped operations
+ * @param studyNum study number for series scoped operations
+ * @param seriesNum series number for series scoped operations
+ * @param digits number of digits for renumbering (0 = auto)
+ * @param startNum starting number for renumbering
+ * @param prefix string prefix for renumbered subject IDs
+ * @param randomize true to randomize assignment order during renumbering
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool modify::DoModify(QString packagePath, QString operation, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, int seriesNum, int digits, int startNum, QString prefix, bool randomize, QString &m) {
 
     //ObjectType object = squirrel::ObjectTypeToEnum(objectType);
@@ -84,6 +102,18 @@ bool modify::DoModify(QString packagePath, QString operation, ObjectType object,
 /* ---------------------------------------------------------------------------- */
 /* ----- AddObject ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Add a new object to an existing squirrel package
+ * @param packagePath path to the squirrel package file
+ * @param object the object type to add
+ * @param dataPath optional path to a data directory or file (required for series, analysis, experiment, pipeline, groupanalysis)
+ * @param objectData URL-query-encoded key=value metadata string for the new object
+ * @param objectID identifier of the new object
+ * @param subjectID subject ID for study/series scoped additions
+ * @param studyNum study number for series scoped additions
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     Q_UNUSED(objectID);
@@ -464,6 +494,18 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
 /* ---------------------------------------------------------------------------- */
 /* ----- RemoveObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Remove an object from an existing squirrel package
+ * @param packagePath path to the squirrel package file
+ * @param object the object type to remove
+ * @param dataPath unused
+ * @param objectData unused
+ * @param objectID identifier of the object to remove
+ * @param subjectID subject ID for study/series scoped removals
+ * @param studyNum study number for series scoped removals
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, QString &m) {
 
     Q_UNUSED(dataPath);
@@ -583,6 +625,19 @@ bool modify::RemoveObject(QString packagePath, ObjectType object, QString dataPa
 /* ---------------------------------------------------------------------------- */
 /* ----- UpdateObject --------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Update fields of an existing object in a squirrel package
+ * @param packagePath path to the squirrel package file
+ * @param object the object type to update
+ * @param dataPath unused
+ * @param objectData URL-query-encoded key=value string of fields to update
+ * @param objectID identifier of the object to update
+ * @param subjectID subject ID for study/series scoped updates
+ * @param studyNum study number for series scoped updates
+ * @param seriesNum series number for series scoped updates
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool modify::UpdateObject(QString packagePath, ObjectType object, QString dataPath, QString objectData, QString objectID, QString subjectID, int studyNum, int seriesNum, QString &m) {
 
     Q_UNUSED(dataPath);
@@ -1116,6 +1171,13 @@ bool modify::SplitByModality(QString packagePath, QString dataPath, QString obje
 /* ---------------------------------------------------------------------------- */
 /* ----- RemovePHI ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Remove all protected health information (dates, birthdates) from a squirrel package
+ * @param packagePath path to the squirrel package file
+ * @param dataPath unused
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool modify::RemovePHI(QString packagePath, QString dataPath, QString &m) {
 
     Q_UNUSED(dataPath);
@@ -1173,6 +1235,16 @@ bool modify::RemovePHI(QString packagePath, QString dataPath, QString &m) {
 /* ---------------------------------------------------------------------------- */
 /* ----- RenumberSubjects ----------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Assign new sequential IDs to all subjects, preserving original IDs as alternate IDs
+ * @param packagePath path to the squirrel package file
+ * @param digits number of zero-padded digits for the numeric portion (0 = auto-size)
+ * @param startNum starting integer for the new IDs
+ * @param prefix string to prepend to each new ID
+ * @param randomize true to shuffle subjects before assigning new IDs
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
 bool modify::RenumberSubjects(QString packagePath, int digits, int startNum, QString prefix, bool randomize, QString &m) {
 
     squirrel *sqrl = new squirrel();
@@ -1253,6 +1325,10 @@ bool modify::RenumberSubjects(QString packagePath, int digits, int startNum, QSt
 /* ---------------------------------------------------------------------------- */
 /* ----- PrintVariables ------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
+/**
+ * @brief Print a table of available metadata variables and their types for the given object type
+ * @param object the object type whose variables should be printed
+ */
 void modify::PrintVariables(ObjectType object) {
     using namespace std;
     vector<vector<string> > data;
