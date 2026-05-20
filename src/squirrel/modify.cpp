@@ -263,6 +263,7 @@ bool modify::AddObject(QString packagePath, ObjectType object, QString dataPath,
                 observation.Duration = vars["Duration"].toDouble();
                 observation.InstrumentName = vars["InstrumentName"];
                 observation.ObservationName = vars["ObservationName"];
+                observation.ObservationType = vars["ObservationType"];
                 observation.Notes = vars["Notes"];
                 observation.Rater = vars["Rater"];
                 observation.Value = vars["Value"];
@@ -885,6 +886,7 @@ bool modify::UpdateObject(QString packagePath, ObjectType object, QString dataPa
         if (queryObject.queryItemValue("Duration").trimmed() != "") observation.Duration = queryObject.queryItemValue("Duration").trimmed().toDouble();
         if (queryObject.queryItemValue("InstrumentName").trimmed() != "") observation.InstrumentName = queryObject.queryItemValue("InstrumentName").trimmed();
         if (queryObject.queryItemValue("ObservationName").trimmed() != "") observation.ObservationName = queryObject.queryItemValue("ObservationName").trimmed();
+        if (queryObject.queryItemValue("ObservationType").trimmed() != "") observation.ObservationType = queryObject.queryItemValue("ObservationType").trimmed();
         if (queryObject.queryItemValue("Notes").trimmed() != "") observation.Notes = queryObject.queryItemValue("Notes").trimmed();
         if (queryObject.queryItemValue("Rater").trimmed() != "") observation.Rater = queryObject.queryItemValue("Rater").trimmed();
         if (queryObject.queryItemValue("Value").trimmed() != "") observation.Value = queryObject.queryItemValue("Value").trimmed();
@@ -1431,6 +1433,7 @@ void modify::PrintVariables(ObjectType object) {
             {"Duration","number","","Duration of the measure in seconds, if known"},
             {"InstrumentName","string","","Name of the instrument associated with this measure"},
             {"ObservationName","string","*","Name of the observation"},
+            {"ObservationType","string","","Type hint for the value: 'int', 'double', 'string', or 'timeseries'"},
             {"Notes","string","","Detailed notes"},
             {"Rater","string","","Name of the rater"},
             {"Value","string","*","Value (string or number)"}

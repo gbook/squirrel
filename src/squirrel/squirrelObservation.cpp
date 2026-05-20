@@ -33,15 +33,16 @@ squirrelObservation::squirrelObservation(QString dbID)
 void squirrelObservation::Populate(const QSqlQuery &q) {
     objectID       = q.value("ObservationRowID").toLongLong();
     subjectRowID   = q.value("SubjectRowID").toLongLong();
-    ObservationName= q.value("ObservationName").toString();
-    DateStart      = q.value("DateStart").toDateTime();
-    DateEnd        = q.value("DateEnd").toDateTime();
-    InstrumentName = q.value("InstrumentName").toString();
-    Rater          = q.value("Rater").toString();
-    Notes          = q.value("Notes").toString();
-    Value          = q.value("Value").toString();
-    Description    = q.value("Description").toString();
-    Duration       = q.value("Duration").toLongLong();
+    ObservationName  = q.value("ObservationName").toString();
+    ObservationType  = q.value("ObservationType").toString();
+    DateStart        = q.value("DateStart").toDateTime();
+    DateEnd          = q.value("DateEnd").toDateTime();
+    InstrumentName   = q.value("InstrumentName").toString();
+    Rater            = q.value("Rater").toString();
+    Notes            = q.value("Notes").toString();
+    Value            = q.value("Value").toString();
+    Description      = q.value("Description").toString();
+    Duration         = q.value("Duration").toLongLong();
     DateRecordCreate = q.value("DateRecordCreate").toDateTime();
     DateRecordEntry  = q.value("DateRecordEntry").toDateTime();
     DateRecordModify = q.value("DateRecordModify").toDateTime();
@@ -100,9 +101,10 @@ bool squirrelObservation::Store() {
 
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into Observation (SubjectRowID, ObservationName, DateStart, DateEnd, InstrumentName, Rater, Notes, Value, Duration, DateRecordCreate, DateRecordEntry, DateRecordModify, Description) values (:SubjectRowID, :ObservationName, :DateStart, :DateEnd, :InstrumentName, :Rater, :Notes, :Value, :Duration, :DateRecordCreate, :DateRecordEntry, :DateRecordModify, :Description)");
+        q.prepare("insert into Observation (SubjectRowID, ObservationName, ObservationType, DateStart, DateEnd, InstrumentName, Rater, Notes, Value, Duration, DateRecordCreate, DateRecordEntry, DateRecordModify, Description) values (:SubjectRowID, :ObservationName, :ObservationType, :DateStart, :DateEnd, :InstrumentName, :Rater, :Notes, :Value, :Duration, :DateRecordCreate, :DateRecordEntry, :DateRecordModify, :Description)");
         q.bindValue(":SubjectRowID", subjectRowID);
         q.bindValue(":ObservationName", ObservationName);
+        q.bindValue(":ObservationType", ObservationType);
         q.bindValue(":DateStart", DateStart);
         q.bindValue(":DateEnd", DateEnd);
         q.bindValue(":InstrumentName", InstrumentName);
@@ -119,10 +121,11 @@ bool squirrelObservation::Store() {
     }
     /* ... otherwise update */
     else {
-        q.prepare("update Observation set SubjectRowID = :SubjectRowID, ObservationName = :ObservationName, DateStart = :DateStart, DateEnd = :DateEnd, InstrumentName = :InstrumentName, Rater = :Rater, Notes = :Notes, Value = :Value, Duration = :Duration, DateRecordCreate = :DateRecordCreate, DateRecordEntry = :DateRecordEntry, DateRecordModify = :DateRecordModify, Description = :Description where ObservationRowID = :id");
+        q.prepare("update Observation set SubjectRowID = :SubjectRowID, ObservationName = :ObservationName, ObservationType = :ObservationType, DateStart = :DateStart, DateEnd = :DateEnd, InstrumentName = :InstrumentName, Rater = :Rater, Notes = :Notes, Value = :Value, Duration = :Duration, DateRecordCreate = :DateRecordCreate, DateRecordEntry = :DateRecordEntry, DateRecordModify = :DateRecordModify, Description = :Description where ObservationRowID = :id");
         q.bindValue(":id", objectID);
         q.bindValue(":SubjectRowID", subjectRowID);
         q.bindValue(":ObservationName", ObservationName);
+        q.bindValue(":ObservationType", ObservationType);
         q.bindValue(":DateStart", DateStart);
         q.bindValue(":DateEnd", DateEnd);
         q.bindValue(":InstrumentName", InstrumentName);
@@ -152,6 +155,7 @@ bool squirrelObservation::Store() {
 bool squirrelObservation::Store(QSqlQuery &q) {
     q.bindValue(":SubjectRowID", subjectRowID);
     q.bindValue(":ObservationName", ObservationName);
+    q.bindValue(":ObservationType", ObservationType);
     q.bindValue(":DateStart", DateStart);
     q.bindValue(":DateEnd", DateEnd);
     q.bindValue(":InstrumentName", InstrumentName);
@@ -188,6 +192,7 @@ QJsonObject squirrelObservation::ToJSON() {
     json["Duration"] = Duration;
     json["InstrumentName"] = InstrumentName;
     json["ObservationName"] = ObservationName;
+    json["ObservationType"] = ObservationType;
     json["Notes"] = Notes;
     json["Rater"] = Rater;
     json["Value"] = Value;
@@ -205,7 +210,7 @@ QJsonObject squirrelObservation::ToJSON() {
 QString squirrelObservation::PrintObservation() {
     QString str;
 
-    str += utils::Print(QString("\t\t\tMEASURE\tName [%1]\tDateStart [%2]\tDateEnd [%3]\tInstrumentName [%4]\tRater [%5]\tNotes [%6]\tValue [%7]\tDescription [%8]").arg(ObservationName).arg(DateStart.toString()).arg(DateEnd.toString()).arg(InstrumentName).arg(Rater).arg(Notes).arg(Value).arg(Description));
+    str += utils::Print(QString("\t\t\tMEASURE\tName [%1]\tType [%2]\tDateStart [%3]\tDateEnd [%4]\tInstrumentName [%5]\tRater [%6]\tNotes [%7]\tValue [%8]\tDescription [%9]").arg(ObservationName).arg(ObservationType).arg(DateStart.toString()).arg(DateEnd.toString()).arg(InstrumentName).arg(Rater).arg(Notes).arg(Value).arg(Description));
 
     return str;
 }
@@ -233,6 +238,7 @@ QHash<QString, QString> squirrelObservation::GetData(DatasetType d) {
         data["Observation.Duration"] = QString("%1").arg(Duration);
         data["Observation.InstrumentName"] = InstrumentName;
         data["Observation.ObservationName"] = ObservationName;
+        data["Observation.ObservationType"] = ObservationType;
         data["Observation.Value"] = Value;
         break;
     case DatasetFull:
@@ -245,6 +251,7 @@ QHash<QString, QString> squirrelObservation::GetData(DatasetType d) {
         data["Observation.Duration"] = QString("%1").arg(Duration);
         data["Observation.InstrumentName"] = InstrumentName;
         data["Observation.ObservationName"] = ObservationName;
+        data["Observation.ObservationType"] = ObservationType;
         data["Observation.Notes"] = Notes;
         data["Observation.Rater"] = Rater;
         data["Observation.Value"] = Value;

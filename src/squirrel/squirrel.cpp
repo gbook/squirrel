@@ -383,7 +383,7 @@ bool squirrel::Read() {
     QSqlQuery qSeriesInsert(dbconn);
     qSeriesInsert.prepare("insert or ignore into Series (StudyRowID, SeriesNumber, Datetime, SeriesUID, Description, Protocol, BidsEntity, BidsSuffix, BidsTask, BidsRun, BidsPhaseEncodingDirection, Run, ExperimentRowID, Size, Files, FileCount, BehavioralSize, BehavioralFileCount, SequenceNumber, VirtualPath) values (:StudyRowID, :SeriesNumber, :Datetime, :SeriesUID, :Description, :Protocol, :BidsEntity, :bidssuffix, :BidsTask, :BidsRun, :BidsPhaseEncodingDirection, :Run, :ExperimentRowID, :Size, :Files, :FileCount, :BehavioralSize, :BehavioralFileCount, :SequenceNumber, :VirtualPath)");
     QSqlQuery qObservationInsert(dbconn);
-    qObservationInsert.prepare("insert into Observation (SubjectRowID, ObservationName, DateStart, DateEnd, InstrumentName, Rater, Notes, Value, Duration, DateRecordCreate, DateRecordEntry, DateRecordModify, Description) values (:SubjectRowID, :ObservationName, :DateStart, :DateEnd, :InstrumentName, :Rater, :Notes, :Value, :Duration, :DateRecordCreate, :DateRecordEntry, :DateRecordModify, :Description)");
+    qObservationInsert.prepare("insert into Observation (SubjectRowID, ObservationName, ObservationType, DateStart, DateEnd, InstrumentName, Rater, Notes, Value, Duration, DateRecordCreate, DateRecordEntry, DateRecordModify, Description) values (:SubjectRowID, :ObservationName, :ObservationType, :DateStart, :DateEnd, :InstrumentName, :Rater, :Notes, :Value, :Duration, :DateRecordCreate, :DateRecordEntry, :DateRecordModify, :Description)");
     QSqlQuery qInterventionInsert(dbconn);
     qInterventionInsert.prepare("insert into Intervention (SubjectRowID, InterventionName, DateStart, DateEnd, DateRecordCreate, DateRecordEntry, DateRecordModify, DoseString, DoseAmount, DoseFrequency, AdministrationRoute, InterventionClass, DoseKey, DoseUnit, FrequencyModifier, FrequencyValue, FrequencyUnit, Description, Rater, Notes) values (:SubjectRowID, :InterventionName, :DateStart, :DateEnd, :DateRecordCreate, :DateRecordEntry, :DateRecordModify, :DoseString, :DoseAmount, :DoseFrequency, :AdministrationRoute, :InterventionClass, :DoseKey, :DoseUnit, :FrequencyModifier, :FrequencyValue, :FrequencyUnit, :Description, :Rater, :Notes)");
 
@@ -540,6 +540,7 @@ bool squirrel::Read() {
             sqrlObservation.Duration = jsonObservation["Duration"].toDouble();
             sqrlObservation.InstrumentName = jsonObservation["InstrumentName"].toString();
             sqrlObservation.ObservationName = jsonObservation["ObservationName"].toString();
+            sqrlObservation.ObservationType = jsonObservation["ObservationType"].toString();
             sqrlObservation.Notes = jsonObservation["Notes"].toString();
             sqrlObservation.Rater = jsonObservation["Rater"].toString();
             sqrlObservation.Value = jsonObservation["Value"].toString();
