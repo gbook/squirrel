@@ -339,12 +339,26 @@ int main(int argc, char *argv[])
         bool randomize = p.isSet("random");
         //bool recursive = p.isSet("recursive");
 
+        modification mod;
+        mod.operation = operation;
+        mod.object = object;
+        mod.dataPath = dataPath;
+        mod.objectData = objectData;
+        mod.objectID = objectID;
+        mod.subjectID = subjectID;
+        mod.studyNumber = studyNum;
+        mod.seriesNumber = seriesNum;
+        mod.renumberDigits = digits;
+        mod.renumberStartNum = startNum;
+        mod.renumberPrefix = prefix;
+        mod.renumberRandomize = randomize;
+
         QString m;
-        modify mod;
+        modify modifier;
         if (variableList != UnknownObjectType) {
-            mod.PrintVariables(variableList);
+            modifier.PrintVariables(variableList);
         }
-        else if (!mod.DoModify(inputPath, operation, object, dataPath, objectData, objectID, subjectID, studyNum, seriesNum, digits, startNum, prefix, randomize, m)) {
+        else if (!modifier.DoModify(inputPath, mod, m)) {
             CommandLineError(p,m);
         }
     }
