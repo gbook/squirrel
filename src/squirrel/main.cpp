@@ -323,13 +323,11 @@ int main(int argc, char *argv[])
         p.process(a);
 
         QString operation = p.value("operation").trimmed();
-        //QString object = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
         ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
         QString dataPath = p.value("datapath").trimmed();
         QString objectData = p.value("objectdata").trimmed();
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
-        //QString variablelist = p.value("variablelist").trimmed();
         ObjectType variableList = squirrel::ObjectTypeToEnum(p.value("variablelist").trimmed());
         int studyNum = p.value("studynum").toInt();
         int seriesNum = p.value("seriesnum").toInt();
