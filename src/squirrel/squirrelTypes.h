@@ -28,6 +28,15 @@ typedef QPair<QString, QString> QStringPair;
 typedef QList<QStringPair> pairList;
 typedef QHash<QString, QString> QStringHash;
 
+struct infoQuery {
+    bool debug;
+    ObjectType object;
+    QString subjectID;
+    int studyNum;
+    DatasetType dataset;
+    PrintFormat printFormat;
+};
+
 struct modification {
     QString operation;        /* possible values: add, remove, update, splitbymodality, removephi, renumber */
     ObjectType object;

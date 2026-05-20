@@ -261,33 +261,33 @@ int main(int argc, char *argv[])
             PrintExampleUsageInfo();
         }
         else {
-            bool debug = p.isSet("d");
-            ObjectType object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
-            QString subjectID = p.value("subjectid").trimmed();
-            int studyNum = p.value("studynum").toInt();
             QString dataset = p.value("dataset").trimmed();
             QString format = p.value("format").trimmed();
 
-            DatasetType datasetType;
-            PrintFormat printType;
+            infoQuery query;
+            query.debug = p.isSet("d");
+            query.object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
+            query.subjectID = p.value("subjectid").trimmed();
+            query.studyNum = p.value("studynum").toInt();
+
             if (dataset == "id")
-                datasetType = DatasetID;
+                query.dataset = DatasetID;
             else if (dataset == "basic")
-                datasetType = DatasetBasic;
+                query.dataset = DatasetBasic;
             else
-                datasetType = DatasetFull;
+                query.dataset = DatasetFull;
 
             if (format == "list")
-                printType = List;
+                query.printFormat = List;
             else
-                printType = CSV;
+                query.printFormat = CSV;
 
-            if (object == UnknownObjectType)
-                object = Package;
+            if (query.object == UnknownObjectType)
+                query.object = Package;
 
             QString m;
             info information;
-            if (!information.DisplayInfo(inputPath, debug, object, subjectID, studyNum, datasetType, printType, m)) {
+            if (!information.DisplayInfo(inputPath, query, m)) {
                 CommandLineError(p,m);
             }
         }
