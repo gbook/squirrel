@@ -2030,21 +2030,38 @@ QString squirrel::PrintDataDictionary(PrintFormat printFormat) {
  * @param subjectID the subject ID to print studies for
  * @param details true to print details, false to print list of study numbers
  */
-QString squirrel::PrintAnalyses(qint64 studyRowID, PrintFormat printFormat) {
+QString squirrel::PrintAnalyses(DatasetType dataType, PrintFormat printFormat, qint64 studyRowID) {
     QString str;
 
-    QList <squirrelAnalysis> analyses = GetAnalysisList(studyRowID);
-    QStringList analysisDates;
-    foreach (squirrelAnalysis a, analyses) {
-        if (a.Get()) {
-            if (printFormat == PrintFormat::Details)
-                str += a.PrintAnalysis();
-            else if (printFormat == PrintFormat::List)
-                analysisDates.append(QString("%1").arg(a.DateStart.toString()));
+    QList<squirrelAnalysis> analyses = GetAnalysisList(studyRowID);
+    int count = analyses.size();
+    if (count > 0) {
+
+        /* get the data */
+        QList<QStringHash> rows;
+        QStringList keys;
+        foreach (squirrelAnalysis a, analyses) {
+            if (a.Get()) {
+                QStringHash row = a.GetData(dataType);
+
+                /* add parent subject and study identifiers */
+                row["Subject.ID"] = a.parentSubjectID;
+                row["Study.Number"] = QString("%1").arg(a.parentStudyNumber);
+
+                rows.append(row);
+                keys.append(row.keys());
+            }
         }
+        keys.removeDuplicates();
+        keys.sort();
+
+        if (printFormat == List)
+            str = utils::PrintTable(keys, rows, {"Subject.ID", "Study.Number", "Analysis.PipelineName"});
+        else
+            str = utils::PrintData(printFormat, keys, rows);
     }
-    if (printFormat == PrintFormat::List)
-        str += utils::Print("Analyses: " + analysisDates.join(" "));
+    else
+        str = utils::Print("No analyses found");
 
     return str;
 }
@@ -2200,8 +2217,12 @@ QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
 QList<squirrelAnalysis> squirrel::GetAnalysisList(qint64 studyRowID) {
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
     QList<squirrelAnalysis> list;
-    q.prepare("select a.*, b.PipelineName, c.StudyNumber as ParentStudyNumber, c.SequenceNumber as ParentStudySeqNum, c.SubjectRowID, d.ID as ParentSubjectID, d.SequenceNumber as ParentSubjectSeqNum from Analysis a left join Pipeline b on a.PipelineRowID = b.PipelineRowID left join Study c on a.StudyRowID = c.StudyRowID left join Subject d on c.SubjectRowID = d.SubjectRowID where a.StudyRowID = :id");
-    q.bindValue(":id", studyRowID);
+    if (studyRowID < 0) {
+        q.prepare("select a.*, b.PipelineName, c.StudyNumber as ParentStudyNumber, c.SequenceNumber as ParentStudySeqNum, c.SubjectRowID, d.ID as ParentSubjectID, d.SequenceNumber as ParentSubjectSeqNum from Analysis a left join Pipeline b on a.PipelineRowID = b.PipelineRowID left join Study c on a.StudyRowID = c.StudyRowID left join Subject d on c.SubjectRowID = d.SubjectRowID");
+    } else {
+        q.prepare("select a.*, b.PipelineName, c.StudyNumber as ParentStudyNumber, c.SequenceNumber as ParentStudySeqNum, c.SubjectRowID, d.ID as ParentSubjectID, d.SequenceNumber as ParentSubjectSeqNum from Analysis a left join Pipeline b on a.PipelineRowID = b.PipelineRowID left join Study c on a.StudyRowID = c.StudyRowID left join Subject d on c.SubjectRowID = d.SubjectRowID where a.StudyRowID = :id");
+        q.bindValue(":id", studyRowID);
+    }
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     while (q.next()) {
         squirrelAnalysis a(databaseUUID);

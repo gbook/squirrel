@@ -226,6 +226,53 @@ QJsonObject squirrelAnalysis::ToJSON() {
 /* ------------------------------------------------------------ */
 /* ----- PrintAnalysis ---------------------------------------- */
 /* ------------------------------------------------------------ */
+/* ----- GetData ---------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Return a key/value hash of analysis fields for the requested dataset level
+ * @param d the dataset detail level (DatasetID, DatasetBasic, or DatasetFull)
+ * @return hash of field names to string values
+ */
+QHash<QString, QString> squirrelAnalysis::GetData(DatasetType d) {
+    QHash<QString, QString> data;
+
+    switch (d) {
+        case DatasetID:
+            data["Analysis.PipelineName"] = PipelineName;
+            break;
+        case DatasetBasic:
+            data["Analysis.DateEnd"] = DateEnd.toString("yyyy-MM-dd HH:mm:ss");
+            data["Analysis.DateStart"] = DateStart.toString("yyyy-MM-dd HH:mm:ss");
+            data["Analysis.PipelineName"] = PipelineName;
+            data["Analysis.Status"] = Status;
+            data["Analysis.Successful"] = Successful ? "true" : "false";
+            break;
+        case DatasetFull:
+            data["Analysis.AnalysisName"] = AnalysisName;
+            data["Analysis.DateClusterEnd"] = DateClusterEnd.toString("yyyy-MM-dd HH:mm:ss");
+            data["Analysis.DateClusterStart"] = DateClusterStart.toString("yyyy-MM-dd HH:mm:ss");
+            data["Analysis.DateEnd"] = DateEnd.toString("yyyy-MM-dd HH:mm:ss");
+            data["Analysis.DateStart"] = DateStart.toString("yyyy-MM-dd HH:mm:ss");
+            data["Analysis.Hostname"] = Hostname;
+            data["Analysis.PipelineName"] = PipelineName;
+            data["Analysis.PipelineVersion"] = QString("%1").arg(PipelineVersion);
+            data["Analysis.RunTime"] = QString("%1").arg(RunTime);
+            data["Analysis.SeriesCount"] = QString("%1").arg(SeriesCount);
+            data["Analysis.SetupTime"] = QString("%1").arg(SetupTime);
+            data["Analysis.Size"] = QString("%1").arg(Size);
+            data["Analysis.Status"] = Status;
+            data["Analysis.StatusMessage"] = StatusMessage;
+            data["Analysis.Successful"] = Successful ? "true" : "false";
+            break;
+        default:
+            break;
+    }
+
+    return data;
+}
+
+
+/* ------------------------------------------------------------ */
 /**
  * @brief Print the analysis details
  */

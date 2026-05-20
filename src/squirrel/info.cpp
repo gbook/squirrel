@@ -103,7 +103,7 @@ bool info::DisplayInfo(QString packagePath, const infoQuery &query, QString &m) 
                 sqrl->PrintExperiments(query.printFormat);
             }
             else if (query.object == Analysis) {
-                sqrl->PrintAnalyses(query.printFormat);
+                sqrl->PrintAnalyses(query.dataset, query.printFormat);
             }
             else if (query.object == Pipeline) {
                 sqrl->PrintPipelines(query.printFormat);
