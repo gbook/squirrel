@@ -1,11 +1,15 @@
 #!/bin/sh
+# Creates an RPM installer from the local source code.
+# Must be run from the squirrel project root directory.
 
-cd ~
-rm -rfv main.zip squirrel-main rpmbuild
+SRCDIR=$(pwd)
+
+rm -rfv ~/rpmbuild
 rpmdev-setuptree
-wget https://github.com/gbook/squirrel/archive/main.zip
-unzip main.zip
-mv squirrel-main/* rpmbuild/SOURCES/
-cp -v rpmbuild/SOURCES/squirrel.el.spec rpmbuild/SPECS/
-cd rpmbuild/SPECS
+
+echo "Copying local source to rpmbuild/SOURCES..."
+cp -rv $SRCDIR/src $SRCDIR/build-rpm.sh $SRCDIR/squirrel.el.spec ~/rpmbuild/SOURCES/
+cp -v $SRCDIR/squirrel.el.spec ~/rpmbuild/SPECS/
+
+cd ~/rpmbuild/SPECS
 QA_RPATHS=$((0x0002|0x0010)) rpmbuild -bb squirrel.el.spec

@@ -120,7 +120,7 @@ win32: {
 
 }
 linux: {
-    LZMABIN = ../../bin/bit7z
+    LZMABIN = ../bit7z
     LZMAINCLUDE = ../bit7z/include/bit7z
     LIBS += -L$$LZMABIN -lbit7z64 -ldl
     INCLUDEPATH += $$LZMAINCLUDE
