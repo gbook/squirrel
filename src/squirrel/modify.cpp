@@ -250,7 +250,8 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
                         }
                     }
                     else {
-                        // unrecognized file extension
+                        m = QString("File containing observations [%1] has an unrecognized extension. Expected .csv or .tsv").arg(mod.dataPath);
+                        delete sqrl;
                         return false;
                     }
 
@@ -556,15 +557,18 @@ bool modify::RemoveObject(QString packagePath, const modification &mod, QString 
     }
     else {
         m = "Unknown object type";
+        delete sqrl;
         return false;
     }
 
     if (sqrl->Write()) {
         m = "Successfully removed object and wrote squirrel package";
+        delete sqrl;
         return true;
     }
     else {
         m = "Unable to write squirrel package";
+        delete sqrl;
         return false;
     }
 
@@ -1095,6 +1099,10 @@ bool modify::SplitByModality(QString packagePath, const modification &mod, QStri
         delete sqrl2;
     }
 
+    /* remove the temporary extraction directory */
+    if (!utils::RemoveDir(tmpDir, m2))
+        utils::Print(QString("Error removing temporary directory [%1]. Message [%2]").arg(tmpDir).arg(m2));
+
     /* delete squirrel object(s) */
     delete sqrl;
     return true;
@@ -1161,6 +1169,7 @@ bool modify::RemovePHI(QString packagePath, const modification &mod, QString &m)
 
     sqrl->WriteUpdate();
 
+    delete sqrl;
     return true;
 }
 

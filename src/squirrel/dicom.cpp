@@ -63,7 +63,7 @@ bool dicom::LoadToSquirrel(QString dir, squirrel *sqrl) {
     qint64 foundFileCount(0);
     QString m;
     QStringList files = utils::FindAllFiles(dir, "*", true);
-    //numFiles = files.size();
+    numFiles = files.size();
     foreach (QString f, files) {
         processedFileCount++;
 
@@ -114,9 +114,9 @@ bool dicom::LoadToSquirrel(QString dir, squirrel *sqrl) {
                     if (subjectRowID < 0) {
                         sqrl->Log(QString("Creating squirrel Subject [%1]").arg(tags["PatientID"]));
                         currSubject.DateOfBirth = QDate::fromString(tags["PatientBirthDate"], "yyyy-MM-dd");
-                        currSubject.Gender = tags["PatientSex"][0];
+                        currSubject.Gender = tags["PatientSex"].left(1);
                         currSubject.ID = tags["PatientID"];
-                        currSubject.Sex = tags["PatientSex"][0];
+                        currSubject.Sex = tags["PatientSex"].left(1);
                         currSubject.Store();
                         subjectRowID = currSubject.GetObjectID();
                         /* resequence the newly added subject */

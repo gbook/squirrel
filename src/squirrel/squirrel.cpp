@@ -118,6 +118,11 @@ squirrel::~squirrel()
             Log(QString("Error removing working directory [%1]. Message [%2]").arg(workingDir).arg(m));
     }
     db.close();
+    db = QSqlDatabase(); /* release the member handle so removeDatabase() doesn't warn about connections still in use */
+    QSqlDatabase::removeDatabase(databaseUUID);
+
+    if (debug)
+        QFile::remove(QDir::tempPath() + "/" + databaseUUID + "-sqlite.db");
 }
 
 
