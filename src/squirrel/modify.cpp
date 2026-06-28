@@ -22,6 +22,7 @@
 
 #include "modify.h"
 #include "utils.h"
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -952,7 +953,7 @@ bool modify::SplitByModality(QString packagePath, const modification &mod, QStri
         foreach (squirrelSubject subject, subjects) {
             if (subject.Get()) {
                 QList <squirrelStudy> studies = sqrl->GetStudyList(subject.GetObjectID());
-                int count = subjects.size();
+                int count = studies.size();
                 if (count > 0) {
                     foreach (squirrelStudy study, studies) {
                         if (study.Get()) {
@@ -1490,4 +1491,355 @@ void modify::PrintVariables(ObjectType object) {
         cout << endl;
     }
 
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- MergePackages -------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Merge N squirrel packages into one output package
+ * @param inputPaths list of input package paths
+ * @param outputPath path for the merged output package
+ * @param testOnly if true, detect collisions and print a plan without writing output
+ * @param renumberSubjects if true, sort all subjects globally and assign new sequential IDs
+ * @param digits number of digits for renumbered IDs (0 = auto-size)
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
+bool modify::MergePackages(QStringList inputPaths, QString outputPath, bool testOnly, bool renumberSubjects, int digits, QString &m) {
+
+    struct SubjectEntry {
+        squirrelSubject subject;
+        QString originalID;
+        int srcIdx;
+        qint64 srcSubjectRowID;
+    };
+
+    /* ---- 1. Open all input packages ---- */
+    QList<squirrel *> inputs;
+    for (const QString &path : inputPaths) {
+        squirrel *sq = new squirrel();
+        sq->SetFileMode(FileMode::ExistingPackage);
+        sq->SetPackagePath(path);
+        sq->SetQuickRead(false);
+        sq->SetCommandLineExecution(true);
+        if (!sq->Read()) {
+            m = QString("Unable to read input package [%1]. Log: %2").arg(path).arg(sq->GetLog());
+            qDeleteAll(inputs);
+            delete sq;
+            return false;
+        }
+        inputs.append(sq);
+        utils::Print(QString("Opened package [%1]").arg(path));
+    }
+
+    if (inputs.isEmpty()) {
+        m = "No input packages specified";
+        return false;
+    }
+
+    /* ---- 2. Collect all subjects, detect collisions ---- */
+    QList<SubjectEntry> allSubjects;
+    QMap<QString, int> seenIDs;
+    QStringList subjectCollisions;
+
+    for (int i = 0; i < inputs.size(); ++i) {
+        for (squirrelSubject subj : inputs[i]->GetSubjectList()) {
+            const QString id = subj.ID;
+            if (seenIDs.contains(id)) {
+                subjectCollisions.append(
+                    QString("  Subject [%1] exists in [%2] and [%3]")
+                    .arg(id).arg(inputPaths[seenIDs[id]]).arg(inputPaths[i]));
+            } else {
+                seenIDs[id] = i;
+            }
+            allSubjects.append({subj, id, i, subj.GetObjectID()});
+        }
+    }
+
+    if (!subjectCollisions.isEmpty() && !renumberSubjects) {
+        m = QString("Subject ID collision(s) detected. Use --renumbersubjects to resolve:\n")
+            + subjectCollisions.join("\n");
+        qDeleteAll(inputs);
+        return false;
+    }
+
+    /* ---- 3. Sort globally by original ID, then optionally renumber ---- */
+    std::sort(allSubjects.begin(), allSubjects.end(), [](const SubjectEntry &a, const SubjectEntry &b) {
+        return a.originalID < b.originalID;
+    });
+
+    if (renumberSubjects) {
+        int n = allSubjects.size();
+        int autoDigits = QString::number(n).length();
+        if (digits <= 0 || digits < autoDigits)
+            digits = autoDigits;
+        for (int i = 0; i < n; ++i) {
+            const QString oldID = allSubjects[i].originalID;
+            const QString newID = QString("%1").arg(i + 1, digits, 10, QChar('0'));
+            if (!allSubjects[i].subject.AlternateIDs.contains(oldID))
+                allSubjects[i].subject.AlternateIDs.prepend(oldID);
+            allSubjects[i].subject.ID = newID;
+        }
+    }
+
+    /* ---- 4. Test mode: report plan and exit ---- */
+    if (testOnly) {
+        utils::Print("=== TEST MODE: no output will be written ===\n");
+        if (!subjectCollisions.isEmpty()) {
+            utils::Print(QString("Subject collisions (%1):").arg(subjectCollisions.size()));
+            for (const QString &c : subjectCollisions)
+                utils::Print(c);
+        }
+        utils::Print(QString("\nSubjects in merged output (%1):").arg(allSubjects.size()));
+        for (const SubjectEntry &e : allSubjects)
+            utils::Print(QString("  [%1]  (from %2, original ID [%3])").arg(e.subject.ID).arg(inputPaths[e.srcIdx]).arg(e.originalID));
+        utils::Print("\nInput package summary:");
+        for (int i = 0; i < inputs.size(); ++i) {
+            utils::Print(QString("  [%1]").arg(inputPaths[i]));
+            utils::Print(QString("    Subjects:%1  Studies:%2  Series:%3  Observations:%4  Interventions:%5")
+                .arg(inputs[i]->GetObjectCount(Subject))
+                .arg(inputs[i]->GetObjectCount(Study))
+                .arg(inputs[i]->GetObjectCount(Series))
+                .arg(inputs[i]->GetObjectCount(Observation))
+                .arg(inputs[i]->GetObjectCount(Intervention)));
+        }
+        qDeleteAll(inputs);
+        return true;
+    }
+
+    /* ---- 5. Create output package ---- */
+    squirrel *out = new squirrel();
+    out->SetFileMode(FileMode::NewPackage);
+    out->SetPackagePath(outputPath);
+    out->SetOverwritePackage(true);
+    out->SetQuickRead(false);
+    out->SetWriteLog(true);
+    out->SetCommandLineExecution(true);
+    out->DataFormat      = inputs[0]->DataFormat;
+    out->SubjectDirFormat = inputs[0]->SubjectDirFormat;
+    out->StudyDirFormat   = inputs[0]->StudyDirFormat;
+    out->SeriesDirFormat  = inputs[0]->SeriesDirFormat;
+    const QString outDbID = out->GetDatabaseUUID();
+
+    QString tmpDir = QDir::tempPath() + "/squirrel-merge-" + utils::GenerateRandomString(10);
+    QString tmpMsg;
+    utils::MakePath(tmpDir, tmpMsg);
+
+    QStringList expCollisions, pipeCollisions, gaCollisions, ddCollisions;
+    QStringList studyCollisions, seriesCollisions, analysisCollisions, obsCollisions, intvCollisions;
+    QStringList errors;
+
+    /* ---- 6. Copy package-level objects from all inputs (first-wins) ---- */
+    for (squirrel *src : inputs) {
+        /* experiments */
+        for (const squirrelExperiment &exp : src->GetExperimentList()) {
+            if (out->FindExperiment(exp.ExperimentName) >= 0) {
+                expCollisions.append(QString("  Experiment [%1] (first-package wins)").arg(exp.ExperimentName));
+                continue;
+            }
+            squirrelExperiment newExp = exp;
+            newExp.SetDatabaseUUID(outDbID);
+            newExp.SetObjectID(-1);
+            newExp.Store();
+        }
+        /* pipelines */
+        for (const squirrelPipeline &pipe : src->GetPipelineList()) {
+            if (out->FindPipeline(pipe.PipelineName) >= 0) {
+                pipeCollisions.append(QString("  Pipeline [%1] v%2 (first-package wins)").arg(pipe.PipelineName).arg(pipe.PipelineVersion));
+                continue;
+            }
+            squirrelPipeline newPipe = pipe;
+            newPipe.SetDatabaseUUID(outDbID);
+            newPipe.SetObjectID(-1);
+            newPipe.Store();
+        }
+        /* group analyses */
+        for (const squirrelGroupAnalysis &ga : src->GetGroupAnalysisList()) {
+            if (out->FindGroupAnalysis(ga.GroupAnalysisName) >= 0) {
+                gaCollisions.append(QString("  GroupAnalysis [%1] (first-package wins)").arg(ga.GroupAnalysisName));
+                continue;
+            }
+            squirrelGroupAnalysis newGa = ga;
+            newGa.SetDatabaseUUID(outDbID);
+            newGa.SetObjectID(-1);
+            newGa.Store();
+        }
+        /* data dictionaries */
+        for (const squirrelDataDictionary &dd : src->GetDataDictionaryList()) {
+            if (out->FindDataDictionary(dd.DataDictionaryName) >= 0) {
+                ddCollisions.append(QString("  DataDictionary [%1] (first-package wins)").arg(dd.DataDictionaryName));
+                continue;
+            }
+            squirrelDataDictionary newDd = dd;
+            newDd.SetDatabaseUUID(outDbID);
+            newDd.SetObjectID(-1);
+            newDd.Store();
+        }
+    }
+
+    /* ---- 7. Copy subjects and their children ---- */
+    for (const SubjectEntry &entry : allSubjects) {
+        squirrel *src = inputs[entry.srcIdx];
+
+        squirrelSubject newSubj = entry.subject;
+        newSubj.SetDatabaseUUID(outDbID);
+        newSubj.SetObjectID(-1);
+        newSubj.SetDirFormat(out->SubjectDirFormat);
+        if (!newSubj.Store()) {
+            errors.append(QString("Error storing subject [%1]").arg(newSubj.ID));
+            continue;
+        }
+        const qint64 outSubjectRowID = newSubj.GetObjectID();
+
+        /* studies */
+        for (squirrelStudy study : src->GetStudyList(entry.srcSubjectRowID)) {
+            if (out->FindStudy(newSubj.ID, study.StudyNumber) >= 0) {
+                studyCollisions.append(QString("  Subject [%1] Study [%2] (first-package wins)").arg(newSubj.ID).arg(study.StudyNumber));
+                continue;
+            }
+            squirrelStudy newStudy = study;
+            newStudy.SetDatabaseUUID(outDbID);
+            newStudy.SetObjectID(-1);
+            newStudy.subjectRowID = outSubjectRowID;
+            newStudy.SetDirFormat(out->SubjectDirFormat, out->StudyDirFormat);
+            if (!newStudy.Store()) {
+                errors.append(QString("Error storing Subject [%1] Study [%2]").arg(newSubj.ID).arg(study.StudyNumber));
+                continue;
+            }
+            const qint64 outStudyRowID = newStudy.GetObjectID();
+
+            /* series */
+            for (squirrelSeries series : src->GetSeriesList(study.GetObjectID())) {
+                if (out->FindSeries(newSubj.ID, study.StudyNumber, series.SeriesNumber) >= 0) {
+                    seriesCollisions.append(QString("  Subject [%1] Study [%2] Series [%3] (first-package wins)").arg(newSubj.ID).arg(study.StudyNumber).arg(series.SeriesNumber));
+                    continue;
+                }
+                squirrelSeries newSeries = series;
+                newSeries.SetDatabaseUUID(outDbID);
+                newSeries.SetObjectID(-1);
+                newSeries.studyRowID = outStudyRowID;
+                newSeries.stagedFiles.clear();
+                newSeries.stagedBehFiles.clear();
+                newSeries.SetDirFormat(out->SubjectDirFormat, out->StudyDirFormat, out->SeriesDirFormat);
+                if (!newSeries.Store()) {
+                    errors.append(QString("Error storing Subject [%1] Study [%2] Series [%3]").arg(newSubj.ID).arg(study.StudyNumber).arg(series.SeriesNumber));
+                    continue;
+                }
+                const qint64 outSeriesRowID = newSeries.GetObjectID();
+
+                /* extract files from source archive using the original subject ID */
+                #ifdef Q_OS_WINDOWS
+                    const QString archivePattern = QString("data\\%1\\%2\\%3\\*").arg(entry.originalID).arg(study.StudyNumber).arg(series.SeriesNumber);
+                #else
+                    const QString archivePattern = QString("data/%1/%2/%3/*").arg(entry.originalID).arg(study.StudyNumber).arg(series.SeriesNumber);
+                #endif
+                const QString extractDir = QString("%1/data/%2/%3/%4").arg(tmpDir).arg(entry.originalID).arg(study.StudyNumber).arg(series.SeriesNumber);
+                QString extractMsg;
+                utils::MakePath(extractDir, extractMsg);
+                src->ExtractArchiveFilesToDirectory(src->GetPackagePath(), archivePattern, tmpDir, extractMsg);
+                const QStringList extractedFiles = utils::FindAllFiles(extractDir, "*");
+                if (!extractedFiles.isEmpty())
+                    out->AddStagedFiles(Series, outSeriesRowID, extractedFiles);
+            }
+
+            /* analyses */
+            for (squirrelAnalysis analysis : src->GetAnalysisList(study.GetObjectID())) {
+                if (out->FindAnalysis(newSubj.ID, study.StudyNumber, analysis.AnalysisName) >= 0) {
+                    analysisCollisions.append(QString("  Subject [%1] Study [%2] Analysis [%3] (first-package wins)").arg(newSubj.ID).arg(study.StudyNumber).arg(analysis.AnalysisName));
+                    continue;
+                }
+                squirrelAnalysis newAnalysis = analysis;
+                newAnalysis.SetDatabaseUUID(outDbID);
+                newAnalysis.SetObjectID(-1);
+                newAnalysis.studyRowID = outStudyRowID;
+                newAnalysis.pipelineRowID = out->FindPipeline(analysis.PipelineName);
+                newAnalysis.SetDirFormat(out->SubjectDirFormat, out->StudyDirFormat);
+                newAnalysis.Store();
+            }
+        }
+
+        /* observations */
+        for (const squirrelObservation &obs : src->GetObservationList(entry.srcSubjectRowID)) {
+            if (out->FindObservation(newSubj.ID, obs.ObservationName, obs.DateStart) >= 0) {
+                obsCollisions.append(QString("  Subject [%1] Observation [%2] (first-package wins)").arg(newSubj.ID).arg(obs.ObservationName));
+                continue;
+            }
+            squirrelObservation newObs = obs;
+            newObs.SetDatabaseUUID(outDbID);
+            newObs.SetObjectID(-1);
+            newObs.subjectRowID = outSubjectRowID;
+            newObs.Store();
+        }
+
+        /* interventions */
+        for (const squirrelIntervention &intv : src->GetInterventionList(entry.srcSubjectRowID)) {
+            if (out->FindIntervention(newSubj.ID, intv.InterventionName, intv.DateStart) >= 0) {
+                intvCollisions.append(QString("  Subject [%1] Intervention [%2] (first-package wins)").arg(newSubj.ID).arg(intv.InterventionName));
+                continue;
+            }
+            squirrelIntervention newIntv = intv;
+            newIntv.SetDatabaseUUID(outDbID);
+            newIntv.SetObjectID(-1);
+            newIntv.subjectRowID = outSubjectRowID;
+            newIntv.Store();
+        }
+    }
+
+    /* ---- 8. Write output and cleanup ---- */
+    out->Write();
+    utils::RemoveDir(tmpDir, tmpMsg);
+
+    /* ---- 9. Print summary ---- */
+    utils::Print("\n=== MERGE SUMMARY ===");
+    utils::Print(QString("\nInput packages (%1):").arg(inputs.size()));
+    for (int i = 0; i < inputs.size(); ++i) {
+        utils::Print(QString("  [%1]").arg(inputPaths[i]));
+        utils::Print(QString("    Subjects:%1  Studies:%2  Series:%3  Observations:%4  Interventions:%5  Experiments:%6  Pipelines:%7  GroupAnalyses:%8")
+            .arg(inputs[i]->GetObjectCount(Subject))
+            .arg(inputs[i]->GetObjectCount(Study))
+            .arg(inputs[i]->GetObjectCount(Series))
+            .arg(inputs[i]->GetObjectCount(Observation))
+            .arg(inputs[i]->GetObjectCount(Intervention))
+            .arg(inputs[i]->GetObjectCount(Experiment))
+            .arg(inputs[i]->GetObjectCount(Pipeline))
+            .arg(inputs[i]->GetObjectCount(GroupAnalysis)));
+    }
+    utils::Print(QString("\nOutput package [%1]:").arg(outputPath));
+    utils::Print(QString("    Subjects:%1  Studies:%2  Series:%3  Observations:%4  Interventions:%5  Experiments:%6  Pipelines:%7  GroupAnalyses:%8")
+        .arg(out->GetObjectCount(Subject))
+        .arg(out->GetObjectCount(Study))
+        .arg(out->GetObjectCount(Series))
+        .arg(out->GetObjectCount(Observation))
+        .arg(out->GetObjectCount(Intervention))
+        .arg(out->GetObjectCount(Experiment))
+        .arg(out->GetObjectCount(Pipeline))
+        .arg(out->GetObjectCount(GroupAnalysis)));
+
+    auto printList = [](const QString &label, const QStringList &lst) {
+        if (!lst.isEmpty()) {
+            utils::Print(QString("\n%1 (%2):").arg(label).arg(lst.size()));
+            for (const QString &s : lst)
+                utils::Print(s);
+        }
+    };
+    printList("Subject collisions (resolved by renumbering)", subjectCollisions);
+    printList("Study collisions", studyCollisions);
+    printList("Series collisions", seriesCollisions);
+    printList("Analysis collisions", analysisCollisions);
+    printList("Observation collisions", obsCollisions);
+    printList("Intervention collisions", intvCollisions);
+    printList("Experiment collisions", expCollisions);
+    printList("Pipeline collisions", pipeCollisions);
+    printList("GroupAnalysis collisions", gaCollisions);
+    printList("DataDictionary collisions", ddCollisions);
+    printList("Errors", errors);
+
+    qint64 peakMem = utils::GetPeakMemoryBytes();
+    utils::Print(QString("\nPeak memory usage: %1").arg(peakMem > 0 ? utils::HumanReadableSize(peakMem) : QString("N/A")));
+
+    delete out;
+    qDeleteAll(inputs);
+    return true;
 }

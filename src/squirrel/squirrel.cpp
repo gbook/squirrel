@@ -39,11 +39,12 @@ qint64 lastupdate(0);
 bool totalArchiveSizeCallback(qint64 val) {
     totalbytes = val;
     blocksize = (double)totalbytes/100.0;
+    lastupdate = 0;
     return true;
 }
 
 bool progressCallback(qint64 val) {
-    if (val > (lastupdate+blocksize)) {
+    if (totalbytes > 0 && val > (lastupdate+blocksize)) {
         double percent = ((double)val/(double)totalbytes)*100.0;
         utils::PrintProgress(percent/100.0);
         lastupdate = val;
@@ -154,6 +155,11 @@ bool squirrel::Get7zipLibPath() {
     else if (QFile::exists("/usr/lib/7zip/7z.so")) {
         p7zipLibPath = "/usr/lib/7zip/7z.so";
         Debug("Found 7zip library path /usr/lib/7zip/7z.so", __FUNCTION__);
+        return true;
+    }
+    else if (QFile::exists("/usr/lib/p7zip/7z.so")) {
+        p7zipLibPath = "/usr/lib/p7zip/7z.so";
+        Debug("Found 7zip library path /usr/lib/p7zip/7z.so", __FUNCTION__);
         return true;
     }
 #endif
@@ -973,7 +979,6 @@ bool squirrel::Write() {
         if (!utils::WriteTextFile(jsonFilePath, j))
             Log("Error writing [" + jsonFilePath + "]");
 
-        lastupdate = 0;
         QString m;
         Log("Writing package...");
         if (CompressDirectoryToArchive(workingDir, GetPackagePath(), m)) {
@@ -1275,7 +1280,7 @@ QString squirrel::Print(bool detail) {
             foreach (squirrelIntervention intervention, interventions)
                 str += intervention.PrintIntervention();
         else
-            str += QString("[%1 interventions]").arg(observations.size());
+            str += QString("[%1 interventions]").arg(interventions.size());
 
     }
 
@@ -1458,6 +1463,9 @@ QString squirrel::PrintPackage() {
     str += utils::Print(QString("  SquirrelBuild: %1").arg(SquirrelBuild));
     str += utils::Print(QString("  SquirrelVersion: %1").arg(SquirrelVersion));
     str += utils::Print(QString("  Objects:\n    +-- %1 subjects\n    |  +-- %4 observations\n    |  +-- %5 Interventions\n    |  +-- %2 studies\n    |  +---- %3 series\n    |  +---- %6 analyses\n    +-- %7 experiments\n    +-- %8 pipelines\n    +-- %9 group analyses\n    +-- %10 data dictionary").arg(numSubjects).arg(numStudies).arg(numSeries).arg(numObservations).arg(numInterventions).arg(numAnalyses).arg(numExperiments).arg(numPipelines).arg(numGroupAnalyses).arg(numDataDictionaries));
+
+    qint64 peakMem = utils::GetPeakMemoryBytes();
+    str += utils::Print(QString("  PeakMemory: %1").arg(peakMem > 0 ? utils::HumanReadableSize(peakMem) : QString("N/A")));
 
     return str;
 }

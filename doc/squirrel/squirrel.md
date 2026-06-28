@@ -17,6 +17,7 @@ The following commands are available:
 | `dicom2squirrel` | Convert a DICOM directory into a squirrel package |
 | `bids2squirrel` | Convert a BIDS directory into a squirrel package |
 | `info` | Display information about a package or its contents |
+| `merge` | Merge two or more packages into one output package |
 | `modify` | Add, remove, or update objects within a package |
 | `extract` | Extract objects from a package to disk |
 | `validate` | Check whether a package is valid and readable |
@@ -139,6 +140,57 @@ squirrel info study.sqrl
 squirrel info study.sqrl --object subject --dataset full --format csv
 squirrel info study.sqrl --object study --subjectid S1234
 squirrel info study.sqrl --object series --subjectid S1234 --studynum 1
+```
+
+---
+
+### merge
+
+Merge two or more squirrel packages into a single output package. Imaging data (series files) is extracted from each source archive and re-packaged. Non-subject object collisions (studies, series, experiments, pipelines, etc.) are resolved by first-package-wins.
+
+```
+squirrel merge <package1> <package2> [<package3> ...] --output <outputpackage> [options]
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `package1 package2 ...` | Two or more input squirrel packages to merge |
+
+**Options**
+
+| Option | Description |
+|---|---|
+| `--output <path>` | Path for the merged output package (required unless `--test` is used) |
+| `--test` | Detect and display collisions without writing any output |
+| `--renumbersubjects` | Sort all subjects globally across all input packages and assign new sequential IDs starting at `0001`. The original ID is prepended to the subject's AlternateIDs list |
+| `--digits <n>` | Number of digits for renumbered subject IDs (e.g. `4` → `0001`…`9999`). Auto-sized to fit the total subject count if omitted or too small |
+
+**Subject collision behavior**
+
+If the same subject ID appears in more than one input package and `--renumbersubjects` is **not** specified, the merge aborts with an error and no output is written.
+
+If `--renumbersubjects` is specified, all subjects from all packages are sorted together by their original ID, then assigned new sequential IDs. The digit width is auto-sized to fit the total number of subjects (e.g. 50 subjects → 2-digit IDs: `01`…`50`) unless overridden with `--digits`.
+
+**Non-subject collision behavior**
+
+For all other objects (studies, series, analyses, observations, interventions, experiments, pipelines, group analyses, data dictionaries), collisions are silently resolved by **first-package-wins**: the object from the first input package listed on the command line is kept.
+
+**Examples**
+
+```
+# Merge two packages; abort on any subject ID collision
+squirrel merge cohort_a.sqrl cohort_b.sqrl --output merged.sqrl
+
+# Preview collisions without writing output
+squirrel merge cohort_a.sqrl cohort_b.sqrl --output merged.sqrl --test
+
+# Merge three packages, renumbering all subjects globally
+squirrel merge site1.sqrl site2.sqrl site3.sqrl --output combined.sqrl --renumbersubjects
+
+# Merge and force 6-digit subject IDs
+squirrel merge site1.sqrl site2.sqrl --output combined.sqrl --renumbersubjects --digits 6
 ```
 
 ---

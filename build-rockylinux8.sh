@@ -60,4 +60,15 @@ cd $BUILDDIR/squirrel
 make -B -j 16
 
 cd $ORIGDIR
+
+# ----- install squirrel to /usr/local/bin -----
+SQUIRREL_BIN="$BUILDDIR/squirrel/squirrel"
+if [ -f "$SQUIRREL_BIN" ]; then
+    echo -e "\n ----- Installing squirrel to /usr/local/bin -----\n"
+    sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel
+    sudo ldconfig
+else
+    echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"
+fi
+
 echo -e "\nBuild complete. Output: $BUILDDIR\n"

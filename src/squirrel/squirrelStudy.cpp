@@ -152,7 +152,7 @@ bool squirrelStudy::Store() {
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        objectID = q.lastInsertId().toInt();
+        objectID = q.lastInsertId().toLongLong();
     }
     /* ... otherwise update */
     else {
@@ -207,7 +207,7 @@ bool squirrelStudy::Store(QSqlQuery &q) {
     q.bindValue(":SequenceNumber", SequenceNumber);
     q.bindValue(":VirtualPath", VirtualPath());
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    objectID = q.lastInsertId().toInt();
+    objectID = q.lastInsertId().toLongLong();
     return true;
 }
 

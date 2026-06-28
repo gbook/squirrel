@@ -45,8 +45,8 @@ command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x.
 echo -e "\n ----- Building bit7z -----\n"
 echo -e "\n ----- Created path $BUILDDIR/bit7z -----\n"
 mkdir -p $BUILDDIR/bit7z
-echo -e "\n ----- Running cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=OFF -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC -S $SRCDIR/bit7z -B $BUILDDIR/bit7z -----\n"
-cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=OFF -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC -S $SRCDIR/bit7z -B $BUILDDIR/bit7z
+echo -e "\n ----- Running cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC -S $SRCDIR/bit7z -B $BUILDDIR/bit7z -----\n"
+cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC -S $SRCDIR/bit7z -B $BUILDDIR/bit7z
 echo -e "\n ----- chdir to $BUILDDIR/bit7z -----\n"
 cd $BUILDDIR/bit7z
 echo -e "\n ----- Running cmake --build . --config Release -----\n"
@@ -83,4 +83,15 @@ cd $BUILDDIR/squirrel
 make -B -j 16
 
 cd $ORIGDIR
+
+# ----- install squirrel to /usr/local/bin -----
+SQUIRREL_BIN="$BUILDDIR/squirrel/squirrel"
+if [ -f "$SQUIRREL_BIN" ]; then
+    echo -e "\n ----- Installing squirrel to /usr/local/bin -----\n"
+    sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel
+    sudo ldconfig
+else
+    echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"
+fi
+
 echo -e "\nBuild complete. Output: $BUILDDIR\n"

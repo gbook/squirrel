@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     p.addVersionOption();
 
     /* setup and obtain the tool we're supposed to run */
-    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel - Converts BIDS to squirrel\n   dicom2squirrel - Convert DICOM to squirrel\n   info - Display information about a package or its contents\n   modify - Add/remove objects from a package\n   extract - Extract data from a package\n   validate - Check if a package is valid");
+    p.addPositionalArgument("tool", "Available tools:\n   bids2squirrel - Converts BIDS to squirrel\n   dicom2squirrel - Convert DICOM to squirrel\n   info - Display information about a package or its contents\n   merge - Merge two or more packages into one\n   modify - Add/remove objects from a package\n   extract - Extract data from a package\n   validate - Check if a package is valid");
     p.parse(QCoreApplication::arguments());
     const QStringList args = p.positionalArguments();
     const QString command = args.isEmpty() ? QString() : args.first();
@@ -401,6 +401,44 @@ int main(int argc, char *argv[])
                 CommandLineError(p,m);
             }
         }
+    }
+    else if (command == "merge") {
+        p.clearPositionalArguments();
+        p.addPositionalArgument("merge", "Merge two or more squirrel packages into one.", "merge [options]");
+        p.addPositionalArgument("packages", "Two or more input squirrel packages.", "package1 package2 [package3 ...]");
+        p.parse(QCoreApplication::arguments());
+
+        p.addOption(QCommandLineOption(QStringList() << "output", "Output squirrel package path (required).", "path"));
+        p.addOption(QCommandLineOption(QStringList() << "test", "Detect and display collisions without writing output."));
+        p.addOption(QCommandLineOption(QStringList() << "renumbersubjects", "Sort all subjects globally and assign new sequential IDs; append original ID to AlternateIDs."));
+        p.addOption(QCommandLineOption(QStringList() << "digits", "Number of digits for renumbered subject IDs (e.g. 4 produces 0001...9999). Auto-sized if omitted or too small.", "n"));
+
+        p.process(a);
+
+        QStringList positional = p.positionalArguments();
+        QStringList inputPaths;
+        for (int i = 1; i < positional.size(); ++i)
+            inputPaths.append(positional[i]);
+
+        const QString outputPath    = p.value("output").trimmed();
+        const bool testOnly         = p.isSet("test");
+        const bool renumberSubjects = p.isSet("renumbersubjects");
+        const int  digits           = p.value("digits").toInt();
+
+        if (inputPaths.size() < 2) {
+            CommandLineError(p, "At least two input packages are required.");
+            return 1;
+        }
+        if (outputPath.isEmpty() && !testOnly) {
+            CommandLineError(p, "Missing --output path. Specify an output package with --output <path>.");
+            return 1;
+        }
+
+        utils::PrintHeader();
+        QString mergeMsg;
+        modify merger;
+        if (!merger.MergePackages(inputPaths, outputPath, testOnly, renumberSubjects, digits, mergeMsg))
+            CommandLineError(p, mergeMsg);
     }
     else if (command == "validate") {
         p.clearPositionalArguments();

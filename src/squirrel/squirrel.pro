@@ -129,6 +129,7 @@ linux: {
     # dcmtk
     LIBS += -L/usr/local/lib/ -L/usr/local/lib64/
     INCLUDEPATH += /usr/local/include/
+    QMAKE_RPATHDIR += /usr/local/lib /usr/local/lib64
 
     LIBS += -Wl,--start-group \
 		-ldcmdata \

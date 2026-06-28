@@ -1,5 +1,5 @@
 Name:           squirrel
-Version:        2026.6.450
+Version:        2026.6.451
 Release:        1%{?dist}
 Summary:        Squirrel neuroimaging utilities
 

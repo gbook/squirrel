@@ -52,7 +52,7 @@ void squirrelSeries::Populate(const QSqlQuery &q) {
     BehavioralSize             = q.value("BehavioralSize").toLongLong();
     DateTime                   = q.value("Datetime").toDateTime();
     Description                = q.value("Description").toString();
-    files                      = q.value("Files").toString().split(",");
+    files                      = q.value("Files").toString().split(",", Qt::SkipEmptyParts);
     FileCount                  = q.value("FileCount").toLongLong();
     Protocol                   = q.value("Protocol").toString();
     Run                        = q.value("Run").toInt();
@@ -147,7 +147,7 @@ bool squirrelSeries::Store() {
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        objectID = q.lastInsertId().toInt();
+        objectID = q.lastInsertId().toLongLong();
         //utils::Print(QString("Added series with seriesRowID [%1]").arg(objectID));
     }
     /* ... otherwise update */
@@ -224,7 +224,7 @@ bool squirrelSeries::Store(QSqlQuery &q) {
     q.bindValue(":SequenceNumber", SequenceNumber);
     q.bindValue(":VirtualPath", VirtualPath());
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    objectID = q.lastInsertId().toInt();
+    objectID = q.lastInsertId().toLongLong();
 
     if (!params.isEmpty())
         utils::StoreParams(databaseUUID, objectID, params);

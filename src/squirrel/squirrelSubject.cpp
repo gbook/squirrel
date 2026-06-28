@@ -58,7 +58,7 @@ squirrelSubject::squirrelSubject(QString dbID)
  */
 void squirrelSubject::Populate(const QSqlQuery &q) {
     objectID         = q.value("SubjectRowID").toLongLong();
-    AlternateIDs     = q.value("AltIDs").toString().split(",");
+    AlternateIDs     = q.value("AltIDs").toString().split(",", Qt::SkipEmptyParts);
     DateOfBirth      = q.value("DateOfBirth").toDate();
     EnrollmentGroup  = q.value("EnrollmentGroup").toString();
     EnrollmentStatus = q.value("EnrollmentStatus").toString();
@@ -139,7 +139,7 @@ bool squirrelSubject::Store() {
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        objectID = q.lastInsertId().toInt();
+        objectID = q.lastInsertId().toLongLong();
     }
     /* ... otherwise update */
     else {
@@ -188,7 +188,7 @@ bool squirrelSubject::Store(QSqlQuery &q) {
     q.bindValue(":SequenceNumber", SequenceNumber);
     q.bindValue(":VirtualPath", VirtualPath());
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    objectID = q.lastInsertId().toInt();
+    objectID = q.lastInsertId().toLongLong();
     return true;
 }
 
