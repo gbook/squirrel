@@ -2688,15 +2688,23 @@ qint64 squirrel::FindExperiment(QString experimentName) {
 /* ----- FindPipeline ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Find a Pipeline by name
+ * @brief Find a Pipeline by name, and optionally by version
  * @param pipelineName Pipeline name to search for
+ * @param pipelineVersion Pipeline version to match. If <= 0, version is ignored and the first matching pipeline is returned
  * @return The database rowid
  */
-qint64 squirrel::FindPipeline(QString pipelineName) {
+qint64 squirrel::FindPipeline(QString pipelineName, int pipelineVersion) {
     qint64 rowid(-1);
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
-    q.prepare("select PipelineRowID from Pipeline where PipelineName = :pipelineName");
-    q.bindValue(":pipelineName", pipelineName);
+    if (pipelineVersion > 0) {
+        q.prepare("select PipelineRowID from Pipeline where PipelineName = :pipelineName and PipelineVersion = :pipelineVersion order by PipelineRowID asc");
+        q.bindValue(":pipelineName", pipelineName);
+        q.bindValue(":pipelineVersion", pipelineVersion);
+    }
+    else {
+        q.prepare("select PipelineRowID from Pipeline where PipelineName = :pipelineName order by PipelineRowID asc");
+        q.bindValue(":pipelineName", pipelineName);
+    }
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("PipelineRowID").toLongLong();

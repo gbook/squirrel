@@ -1646,7 +1646,7 @@ bool modify::MergePackages(QStringList inputPaths, QString outputPath, bool test
         }
         /* pipelines */
         for (const squirrelPipeline &pipe : src->GetPipelineList()) {
-            if (out->FindPipeline(pipe.PipelineName) >= 0) {
+            if (out->FindPipeline(pipe.PipelineName, pipe.PipelineVersion) >= 0) {
                 pipeCollisions.append(QString("  Pipeline [%1] v%2 (first-package wins)").arg(pipe.PipelineName).arg(pipe.PipelineVersion));
                 continue;
             }
@@ -1720,6 +1720,12 @@ bool modify::MergePackages(QStringList inputPaths, QString outputPath, bool test
                 newSeries.SetDatabaseUUID(outDbID);
                 newSeries.SetObjectID(-1);
                 newSeries.studyRowID = outStudyRowID;
+                /* remap the experiment link by name (source rowID is meaningless in the output package) */
+                newSeries.experimentRowID = -1;
+                if (series.experimentRowID > 0) {
+                    squirrelExperiment srcExp = src->GetExperiment(series.experimentRowID);
+                    newSeries.experimentRowID = out->FindExperiment(srcExp.ExperimentName);
+                }
                 newSeries.stagedFiles.clear();
                 newSeries.stagedBehFiles.clear();
                 newSeries.SetDirFormat(out->SubjectDirFormat, out->StudyDirFormat, out->SeriesDirFormat);
@@ -1754,7 +1760,7 @@ bool modify::MergePackages(QStringList inputPaths, QString outputPath, bool test
                 newAnalysis.SetDatabaseUUID(outDbID);
                 newAnalysis.SetObjectID(-1);
                 newAnalysis.studyRowID = outStudyRowID;
-                newAnalysis.pipelineRowID = out->FindPipeline(analysis.PipelineName);
+                newAnalysis.pipelineRowID = out->FindPipeline(analysis.PipelineName, analysis.PipelineVersion);
                 newAnalysis.SetDirFormat(out->SubjectDirFormat, out->StudyDirFormat);
                 newAnalysis.Store();
             }
@@ -1788,8 +1794,14 @@ bool modify::MergePackages(QStringList inputPaths, QString outputPath, bool test
     }
 
     /* ---- 8. Write output and cleanup ---- */
-    out->Write();
+    bool writeOK = out->Write();
     utils::RemoveDir(tmpDir, tmpMsg);
+    if (!writeOK) {
+        m = QString("Failed to write output package [%1]. Log: %2").arg(outputPath).arg(out->GetLog());
+        delete out;
+        qDeleteAll(inputs);
+        return false;
+    }
 
     /* ---- 9. Print summary ---- */
     utils::Print("\n=== MERGE SUMMARY ===");

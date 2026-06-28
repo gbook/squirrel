@@ -126,7 +126,7 @@ public:
     qint64 FindDataDictionary(QString dataDictionaryName);
     qint64 FindExperiment(QString experimentName);
     qint64 FindGroupAnalysis(QString groupAnalysisName);
-    qint64 FindPipeline(QString pipelineName);
+    qint64 FindPipeline(QString pipelineName, int pipelineVersion = -1);
     qint64 FindSeries(QString subjectID, int studyNum, int seriesNum);
     qint64 FindSeriesByUID(QString seriesUID);
     qint64 FindStudy(QString subjectID, int studyNum);
