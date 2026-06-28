@@ -14,8 +14,7 @@ The following commands are available:
 
 | Command | Description |
 |---|---|
-| `dicom2squirrel` | Convert a DICOM directory into a squirrel package |
-| `bids2squirrel` | Convert a BIDS directory into a squirrel package |
+| `convert` | Convert a DICOM or BIDS directory into a squirrel package |
 | `info` | Display information about a package or its contents |
 | `merge` | Merge two or more packages into one output package |
 | `modify` | Add, remove, or update objects within a package |
@@ -26,20 +25,20 @@ The following commands are available:
 
 ## Commands
 
-### dicom2squirrel
+### convert
 
-Convert a directory of DICOM files into a squirrel package.
+Convert an input dataset (DICOM or BIDS) into a squirrel package.
 
 ```
-squirrel dicom2squirrel <dicomdirectory> <package> [options]
+squirrel convert <inputdirectory> <package> --inputformat <format> [options]
 ```
 
 **Arguments**
 
 | Argument | Description |
 |---|---|
-| `dicomdirectory` | Path to the input directory containing DICOM files |
-| `package` | Path to the output squirrel package (`.sqrl` extension added if omitted) |
+| `inputdirectory` | Path to the input data directory (DICOM or BIDS) |
+| `package` | Path to the output squirrel package |
 
 **Options**
 
@@ -47,10 +46,27 @@ squirrel dicom2squirrel <dicomdirectory> <package> [options]
 |---|---|
 | `-d`, `--debug` | Enable debug logging |
 | `-q`, `--quiet` | Suppress header and progress output |
-| `--dataformat <format>` | Output data format (see below). Default: `nifti4dgz` |
+| `--inputformat <format>` | Input data format: `dicom` or `bids` (required) |
+| `--outputformat <format>` | Output data format: `squirrel`. Default: `squirrel` |
+| `--dataformat <format>` | Output data format for DICOM input (see below). Ignored for BIDS input. Default: `nifti4dgz` |
 | `--dirformat <format>` | Directory naming within the package. `orig` uses original subject IDs; `seq` uses sequential numbers. Default: `orig` |
+| `--overwrite` | Overwrite an existing package at the output path |
+| `--debugsql` | Log all SQL statements (for troubleshooting) |
 
-**Data formats** (`--dataformat`)
+**Input formats** (`--inputformat`)
+
+| Value | Description |
+|---|---|
+| `dicom` | A directory of DICOM files |
+| `bids` | A BIDS-formatted directory |
+
+**Output formats** (`--outputformat`)
+
+| Value | Description |
+|---|---|
+| `squirrel` | A squirrel package *(default)* |
+
+**Data formats** (`--dataformat`, DICOM input only)
 
 | Value | Description |
 |---|---|
@@ -64,42 +80,14 @@ squirrel dicom2squirrel <dicomdirectory> <package> [options]
 **Examples**
 
 ```
-squirrel dicom2squirrel /data/dicoms /output/study.sqrl
-squirrel dicom2squirrel /data/dicoms /output/study.sqrl --dataformat nifti4d --dirformat orig
-squirrel dicom2squirrel /data/dicoms /output/study.sqrl --dataformat anon -q
-```
+# Convert a DICOM directory
+squirrel convert /data/dicoms /output/study.sqrl --inputformat dicom
+squirrel convert /data/dicoms /output/study.sqrl --inputformat dicom --dataformat nifti4d --dirformat orig
+squirrel convert /data/dicoms /output/study.sqrl --inputformat dicom --dataformat anon -q
 
----
-
-### bids2squirrel
-
-Convert a BIDS-formatted directory into a squirrel package.
-
-```
-squirrel bids2squirrel <bidsdirectory> <package> [options]
-```
-
-**Arguments**
-
-| Argument | Description |
-|---|---|
-| `bidsdirectory` | Path to the root BIDS directory |
-| `package` | Path to the output squirrel package |
-
-**Options**
-
-| Option | Description |
-|---|---|
-| `-d`, `--debug` | Enable debug logging |
-| `-q`, `--quiet` | Suppress header and progress output |
-| `--overwrite` | Overwrite an existing package at the output path |
-| `--debugsql` | Log all SQL statements (for troubleshooting) |
-
-**Examples**
-
-```
-squirrel bids2squirrel /data/bids_study /output/study.sqrl
-squirrel bids2squirrel /data/bids_study /output/study.sqrl --overwrite
+# Convert a BIDS directory
+squirrel convert /data/bids_study /output/study.sqrl --inputformat bids
+squirrel convert /data/bids_study /output/study.sqrl --inputformat bids --overwrite
 ```
 
 ---

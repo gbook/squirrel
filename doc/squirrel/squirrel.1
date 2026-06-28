@@ -25,11 +25,8 @@ dictionaries \(em together with a JSON manifest.
 .PP
 The following commands are available:
 .TP
-.B dicom2squirrel
-Convert a DICOM directory into a squirrel package.
-.TP
-.B bids2squirrel
-Convert a BIDS directory into a squirrel package.
+.B convert
+Convert a DICOM or BIDS directory into a squirrel package.
 .TP
 .B info
 Display information about a package or its contents.
@@ -43,23 +40,23 @@ Extract objects from a package to disk.
 .B validate
 Check whether a package is valid and readable.
 .SH COMMANDS
-.SS dicom2squirrel
-Convert a directory of DICOM files into a squirrel package.
+.SS convert
+Convert an input dataset (DICOM or BIDS) into a squirrel package.
 .PP
-.B squirrel dicom2squirrel
-.I dicomdirectory package
+.B squirrel convert
+.I inputdirectory package
+.B \-\-inputformat
+.I format
 .RI [ options ]
 .PP
 .B Arguments
 .RS 4
 .TP
-.I dicomdirectory
-Path to the input directory containing DICOM files.
+.I inputdirectory
+Path to the input data directory (DICOM or BIDS).
 .TP
 .I package
-Path to the output squirrel package
-.RI ( .sqrl
-extension added if omitted).
+Path to the output squirrel package.
 .RE
 .PP
 .B Options
@@ -71,8 +68,17 @@ Enable debug logging.
 .BR \-q ", " \-\-quiet
 Suppress header and progress output.
 .TP
+.BI \-\-inputformat " format"
+Input data format (required):
+.BR dicom " or"
+.BR bids .
+.TP
+.BI \-\-outputformat " format"
+Output data format:
+.BR squirrel " (default)."
+.TP
 .BI \-\-dataformat " format"
-Output data format. Default:
+Output data format for DICOM input (ignored for BIDS). Default:
 .BR nifti4dgz .
 Possible values:
 .BR anon " (anonymized DICOM),"
@@ -88,41 +94,6 @@ Directory naming within the package.
 uses original subject IDs (default);
 .B seq
 uses sequential numbers.
-.RE
-.PP
-.B Examples
-.RS 4
-.EX
-squirrel dicom2squirrel /data/dicoms /output/study.sqrl
-squirrel dicom2squirrel /data/dicoms /output/study.sqrl \\
-    --dataformat nifti4d --dirformat orig
-.EE
-.RE
-.SS bids2squirrel
-Convert a BIDS-formatted directory into a squirrel package.
-.PP
-.B squirrel bids2squirrel
-.I bidsdirectory package
-.RI [ options ]
-.PP
-.B Arguments
-.RS 4
-.TP
-.I bidsdirectory
-Path to the root BIDS directory.
-.TP
-.I package
-Path to the output squirrel package.
-.RE
-.PP
-.B Options
-.RS 4
-.TP
-.BR \-d ", " \-\-debug
-Enable debug logging.
-.TP
-.BR \-q ", " \-\-quiet
-Suppress header and progress output.
 .TP
 .B \-\-overwrite
 Overwrite an existing package at the output path.
@@ -134,8 +105,11 @@ Log all SQL statements (for troubleshooting).
 .B Examples
 .RS 4
 .EX
-squirrel bids2squirrel /data/bids_study /output/study.sqrl
-squirrel bids2squirrel /data/bids_study /output/study.sqrl --overwrite
+squirrel convert /data/dicoms /output/study.sqrl --inputformat dicom
+squirrel convert /data/dicoms /output/study.sqrl --inputformat dicom \\
+    --dataformat nifti4d --dirformat orig
+squirrel convert /data/bids_study /output/study.sqrl --inputformat bids
+squirrel convert /data/bids_study /output/study.sqrl --inputformat bids --overwrite
 .EE
 .RE
 .SS info
