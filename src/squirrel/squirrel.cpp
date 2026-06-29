@@ -434,7 +434,7 @@ bool squirrel::Read() {
             squirrelStudy sqrlStudy(databaseUUID);
 
             sqrlStudy.AgeAtStudy = jsonStudy["AgeAtStudy"].toDouble();
-            sqrlStudy.DateTime = utils::StringToDatetime(jsonStudy["StudyDatetime"].toString());
+            sqrlStudy.DateTime = QDateTime::fromString(jsonStudy["StudyDatetime"].toString(), "yyyy-MM-dd hh:mm:ss");
             sqrlStudy.DayNumber = jsonStudy["DayNumber"].toInt();
             sqrlStudy.Description = jsonStudy["Description"].toString();
             sqrlStudy.Equipment = jsonStudy["Equipment"].toString();
