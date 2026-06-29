@@ -54,6 +54,11 @@ cmake --build . --config Release
 cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
 cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
 
+# ----- dcm2niix (DICOM -> Nifti) -----
+# No build step needed here: the dcm2niix sources are compiled directly into
+# squirrellib/squirrel via src/squirrel/dcm2niix.pri (shared by both .pro files),
+# so DICOM conversion is in-process and does not need an external dcm2niix binary.
+
 #echo -e "\n ----- Building bit7z -----\n"
 #mkdir -p $BIT7ZDIR/build
 #cd $BIT7ZDIR/build

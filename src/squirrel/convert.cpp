@@ -84,6 +84,7 @@ bool convert::DoConvert(QString inputPath, QString outputPath, QString inputForm
 
     /* create the squirrel object */
     squirrel *sqrl = new squirrel(debug, quiet);
+    sqrl->SetCommandLineExecution(true);
     sqrl->SetDebugSQL(debugSQL);
     sqrl->SetOverwritePackage(overwrite);
 

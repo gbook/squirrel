@@ -179,6 +179,9 @@ linux: {
 
     message($$LIBS)
 	message($$QMAKE_LIBDIR)
-	
-	
+
+
 }
+
+# dcm2niix in-process DICOM->Nifti conversion (Linux only; see dcm2niix.pri)
+include($$PWD/dcm2niix.pri)

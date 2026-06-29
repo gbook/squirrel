@@ -75,6 +75,7 @@ squirrel::squirrel(bool dbg, bool q)
     SubjectDirFormat = "orig";
 
     debug = dbg;
+    cmdLineExec = false;
     fileMode = FileMode::NewPackage;
     isOkToDelete = true;
     isValid = true;
