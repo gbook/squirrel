@@ -1308,42 +1308,18 @@ QString squirrel::Print(bool detail) {
  */
 qint64 squirrel::GetUnzipSize() {
 
-    qint64 unzipSize(0);
-
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
-
-    /* Analysis */
-    q.prepare("select sum(Size) 'Size' from Analysis");
+    q.prepare(
+        "select "
+        "(select coalesce(sum(Size),0) from Analysis) +"
+        "(select coalesce(sum(Size),0) from DataDictionary) +"
+        "(select coalesce(sum(Size),0) from Experiment) +"
+        "(select coalesce(sum(Size),0) from GroupAnalysis) +"
+        "(select coalesce(sum(Size),0) + coalesce(sum(BehavioralSize),0) from Series) as TotalSize"
+    );
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     q.first();
-    unzipSize += q.value("Size").toLongLong();
-
-    /* DataDictionary */
-    q.prepare("select sum(Size) 'Size' from DataDictionary");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    unzipSize += q.value("Size").toLongLong();
-
-    /* Experiment */
-    q.prepare("select sum(Size) 'Size' from Experiment");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    unzipSize += q.value("Size").toLongLong();
-
-    /* GroupAnalysis */
-    q.prepare("select sum(Size) 'Size' from GroupAnalysis");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    unzipSize += q.value("Size").toLongLong();
-
-    /* Series */
-    q.prepare("select sum(Size) 'Size', sum(BehavioralSize) 'BehavioralSize' from Series");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    unzipSize += q.value("Size").toLongLong();
-    unzipSize += q.value("BehavioralSize").toLongLong();
-
-    return unzipSize;
+    return q.value("TotalSize").toLongLong();
 }
 
 
@@ -1355,42 +1331,19 @@ qint64 squirrel::GetUnzipSize() {
  * @return total number of files in the package
  */
 qint64 squirrel::GetFileCount() {
-    qint64 total(0);
 
     QSqlQuery q(QSqlDatabase::database(databaseUUID));
-
-    /* Analysis */
-    q.prepare("select sum(FileCount) 'FileCount' from Analysis");
+    q.prepare(
+        "select "
+        "(select coalesce(sum(FileCount),0) from Analysis) +"
+        "(select coalesce(sum(FileCount),0) from DataDictionary) +"
+        "(select coalesce(sum(FileCount),0) from Experiment) +"
+        "(select coalesce(sum(FileCount),0) from GroupAnalysis) +"
+        "(select coalesce(sum(FileCount),0) + coalesce(sum(BehavioralFileCount),0) from Series) as TotalFileCount"
+    );
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     q.first();
-    total += q.value("FileCount").toLongLong();
-
-    /* DataDictionary */
-    q.prepare("select sum(FileCount) 'FileCount' from DataDictionary");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    total += q.value("FileCount").toLongLong();
-
-    /* Experiment */
-    q.prepare("select sum(FileCount) 'FileCount' from Experiment");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    total += q.value("FileCount").toLongLong();
-
-    /* GroupAnalysis */
-    q.prepare("select sum(FileCount) 'FileCount' from GroupAnalysis");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    total += q.value("FileCount").toLongLong();
-
-    /* Series */
-    q.prepare("select sum(FileCount) 'FileCount', sum(BehavioralFileCount) 'BehavioralFileCount' from Series");
-    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-    q.first();
-    total += q.value("FileCount").toLongLong();
-    total += q.value("BehavioralFileCount").toLongLong();
-
-    return total;
+    return q.value("TotalFileCount").toLongLong();
 }
 
 
@@ -2195,8 +2148,43 @@ QList<squirrelStudy> squirrel::GetStudyList(qint64 subjectRowID) {
  * @return list of series
  */
 QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
-    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    QSqlDatabase db = QSqlDatabase::database(databaseUUID);
     QList<squirrelSeries> list;
+
+    /* batch-load params for the entire study (or all series when studyRowID < 0) */
+    QHash<qint64, QHash<QString,QString>> batchParams;
+    {
+        QSqlQuery qp(db);
+        if (studyRowID < 0)
+            qp.prepare("select * from Params");
+        else
+            qp.prepare("select p.* from Params p join Series s on p.SeriesRowID = s.SeriesRowID where s.StudyRowID = :id");
+        if (studyRowID >= 0) qp.bindValue(":id", studyRowID);
+        utils::SQLQuery(qp, __FUNCTION__, __FILE__, __LINE__);
+        while (qp.next())
+            batchParams[qp.value("SeriesRowID").toLongLong()][qp.value("ParamKey").toString()] = qp.value("ParamValue").toString();
+    }
+
+    /* batch-load staged files (both Series and BehSeries) for the entire study */
+    QHash<qint64, QStringList> batchStaged, batchStagedBeh;
+    {
+        QSqlQuery qs(db);
+        if (studyRowID < 0)
+            qs.prepare("select * from StagedFiles where ObjectType = 'Series' or ObjectType = 'BehSeries'");
+        else
+            qs.prepare("select sf.* from StagedFiles sf join Series s on sf.ObjectRowID = s.SeriesRowID where s.StudyRowID = :id and (sf.ObjectType = 'Series' or sf.ObjectType = 'BehSeries')");
+        if (studyRowID >= 0) qs.bindValue(":id", studyRowID);
+        utils::SQLQuery(qs, __FUNCTION__, __FILE__, __LINE__);
+        while (qs.next()) {
+            qint64 sid = qs.value("ObjectRowID").toLongLong();
+            if (qs.value("ObjectType").toString() == "Series")
+                batchStaged[sid].append(qs.value("StagedPath").toString());
+            else
+                batchStagedBeh[sid].append(qs.value("StagedPath").toString());
+        }
+    }
+
+    QSqlQuery q(db);
     if (studyRowID < 0) {
         q.prepare("select Series.*, Study.SubjectRowID, Study.StudyNumber as ParentStudyNumber, Study.SequenceNumber as ParentStudySeqNum, Subject.ID as ParentSubjectID, Subject.SequenceNumber as ParentSubjectSeqNum from Series left join Study on Series.StudyRowID = Study.StudyRowID left join Subject on Study.SubjectRowID = Subject.SubjectRowID order by SeriesNumber asc, Series.SequenceNumber");
     }
@@ -2212,9 +2200,10 @@ QList<squirrelSeries> squirrel::GetSeriesList(qint64 studyRowID) {
         s.parentSubjectSeqNum = q.value("ParentSubjectSeqNum").toInt();
         s.parentStudyNumber = q.value("ParentStudyNumber").toInt();
         s.parentStudySeqNum = q.value("ParentStudySeqNum").toInt();
-        s.params = utils::GetParams(databaseUUID, s.GetObjectID());
-        s.stagedFiles = utils::GetStagedFileList(databaseUUID, s.GetObjectID(), Series);
-        s.stagedBehFiles = utils::GetStagedFileList(databaseUUID, s.GetObjectID(), BehSeries);
+        qint64 sid = s.GetObjectID();
+        s.params = batchParams.value(sid);
+        s.stagedFiles = batchStaged.value(sid);
+        s.stagedBehFiles = batchStagedBeh.value(sid);
         s.SetDirFormat(SubjectDirFormat, StudyDirFormat, SeriesDirFormat);
         list.append(s);
         Debug(QString("Found SeriesNumber [%1]").arg(s.SeriesNumber), __FUNCTION__);
