@@ -90,6 +90,10 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         return false;
     }
 
+    QSqlDatabase bidsDbconn = QSqlDatabase::database(sqrl->GetDatabaseUUID());
+    if (!bidsDbconn.transaction())
+        sqrl->Log(QString("Warning: could not start BIDS import transaction: %1").arg(bidsDbconn.lastError().text()));
+
     /* check for all .json files in the root directory */
     QStringList rootfiles = utils::FindAllFiles(dir, "*", false);
     sqrl->Debug(QString("Found [%1] root files matching '%2/*'").arg(rootfiles.size()).arg(dir), __FUNCTION__);
@@ -165,6 +169,9 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
      *   'phenotype' directory -> observations
      *   'logs' directory     -> logs
      */
+
+    if (!bidsDbconn.commit())
+        sqrl->Log(QString("Warning: could not commit BIDS import transaction: %1").arg(bidsDbconn.lastError().text()));
 
     return true;
 }

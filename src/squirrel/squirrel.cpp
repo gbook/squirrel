@@ -717,6 +717,9 @@ bool squirrel::Write() {
 
     /* ----- 1) Write data. And set the relative paths in the objects ----- */
     /* iterate through subjects */
+    QSqlDatabase writeDbconn = QSqlDatabase::database(databaseUUID);
+    if (!writeDbconn.transaction())
+        Log(QString("Warning: could not start write transaction: %1").arg(writeDbconn.lastError().text()));
     QList<squirrelSubject> subjects = GetSubjectList();
     for (auto &subject : subjects) {
         qint64 subjectRowID = subject.GetObjectID();
@@ -846,6 +849,8 @@ bool squirrel::Write() {
             }
         }
     }
+    if (!writeDbconn.commit())
+        Log(QString("Warning: could not commit write transaction: %1").arg(writeDbconn.lastError().text()));
 
     /* ----- 2) write .json file ----- */
     Debug("Creating header file...");
@@ -874,9 +879,8 @@ bool squirrel::Write() {
     QJsonArray JSONsubjects;
 
     /* add subjects to JSON */
-    QList<squirrelSubject> subjectses = GetSubjectList();
-    Log(QString("Adding %1 subjects").arg(subjectses.size()));
-    for (auto &subject : subjectses) {
+    Log(QString("Adding %1 subjects").arg(subjects.size()));
+    for (auto &subject : subjects) {
         JSONsubjects.append(subject.ToJSON());
     }
 

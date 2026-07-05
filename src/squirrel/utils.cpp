@@ -935,10 +935,10 @@ namespace utils {
             q.bindValue(":type", squirrel::ObjectTypeToString(object));
             utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
+            q.prepare("insert into StagedFiles (ObjectRowID, ObjectType, StagedPath) values (:id, :type, :path)");
+            q.bindValue(":id", objectID);
+            q.bindValue(":type", squirrel::ObjectTypeToString(object));
             foreach (QString path, paths) {
-                q.prepare("insert into StagedFiles (ObjectRowID, ObjectType, StagedPath) values (:id, :type, :path)");
-                q.bindValue(":id", objectID);
-                q.bindValue(":type", squirrel::ObjectTypeToString(object));
                 q.bindValue(":path", path);
                 utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
             }
@@ -990,13 +990,13 @@ namespace utils {
             q.bindValue(":id", seriesRowID);
             utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
+            q.prepare("insert into Params (SeriesRowID, ParamKey, ParamValue) values (:id, :key, :value)");
+            q.bindValue(":id", seriesRowID);
             for(QHash<QString, QString>::iterator a = params.begin(); a != params.end(); ++a) {
                 QString key = a.key().trimmed();
                 QString value = a.value().trimmed();
 
                 if (key != "") {
-                    q.prepare("insert into Params (SeriesRowID, ParamKey, ParamValue) values (:id, :key, :value)");
-                    q.bindValue(":id", seriesRowID);
                     q.bindValue(":key", key);
                     q.bindValue(":value", value);
                     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
