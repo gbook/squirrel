@@ -54,6 +54,9 @@ void PrintExampleUsageConvert() {
 void PrintExampleModifyUsage() {
     printf("\nExample modify usage: \n");
     printf("    squirrel modify <package> --operation update --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
+    printf("    squirrel modify <package> --operation add --object series --subjectid S1234 --studynum 1 --objectdata 'SeriesNumber=3' --datapath /path/to/dicom/\n");
+    printf("    squirrel modify <package> --operation add --object series --subjectid S1234 --studynum 1 --seriesnum 3 --datapath /more/files/*.dcm\n");
+    printf("    squirrel modify <package> --operation add --object experiment --objectid MyExperiment --datapath /path/to/files/ --recursive\n");
 }
 
 void PrintExampleUsageInfo() {
@@ -228,8 +231,8 @@ int main(int argc, char *argv[])
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Quiet mode. No printing of headers and checks"));
         p.addOption(QCommandLineOption(QStringList() << "operation", "Operation to perform on the package [add  remove  update  splitbymodality  removephi  renumber].", "operation"));
         p.addOption(QCommandLineOption(QStringList() << "object", "Object type to perform operation on [package  subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
-        p.addOption(QCommandLineOption(QStringList() << "datapath", "Path to new object data. Can include wildcard: /path/*.dcm", "path"));
-        //p.addOption(QCommandLineOption(QStringList() << "recursive", "Search the data path recursively"));
+        p.addOption(QCommandLineOption(QStringList() << "datapath", "Path to files to add. May be a directory, a single file, or a glob pattern (e.g. /path/*.dcm)", "path"));
+        p.addOption(QCommandLineOption(QStringList() << "recursive", "Search the datapath directory recursively for files"));
         p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to modify.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when adding a study, series, observation, intervention, or analysis object.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when adding a series or analysis object (subjectid also required).", "num"));
@@ -256,7 +259,7 @@ int main(int argc, char *argv[])
         int startNum = p.isSet("startnum") ? p.value("startnum").toInt() : 1;
         QString prefix = p.value("prefix").trimmed();
         bool randomize = p.isSet("random");
-        //bool recursive = p.isSet("recursive");
+        bool recursive = p.isSet("recursive");
 
         modification mod;
         mod.operation = operation;
@@ -271,6 +274,7 @@ int main(int argc, char *argv[])
         mod.renumberStartNum = startNum;
         mod.renumberPrefix = prefix;
         mod.renumberRandomize = randomize;
+        mod.recursive = recursive;
 
         QString m;
         modify modifier;

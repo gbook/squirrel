@@ -64,10 +64,50 @@ bool modify::DoModify(QString packagePath, const modification &mod, QString &m) 
 
 
 /* ---------------------------------------------------------------------------- */
+/* ----- CollectFiles --------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Resolve mod.dataPath to a list of absolute file paths.
+ *
+ * mod.dataPath may be:
+ *   - a single file              → returns that file
+ *   - a directory                → returns all files in the directory (recursive if mod.recursive)
+ *   - a glob pattern (/p/*.dcm)  → returns matching files in the parent directory
+ *
+ * @param mod the modification struct
+ * @return list of absolute file paths (may be empty if dataPath is empty or matches nothing)
+ */
+static QStringList CollectFiles(const modification &mod) {
+    QStringList files;
+    if (mod.dataPath.isEmpty())
+        return files;
+
+    QFileInfo fi(mod.dataPath);
+    if (fi.isFile()) {
+        files << fi.absoluteFilePath();
+    } else if (fi.isDir()) {
+        files = utils::FindAllFiles(mod.dataPath, "*", mod.recursive);
+    } else {
+        /* treat as a glob: parent dir + filename pattern */
+        QFileInfo dirInfo(fi.absolutePath());
+        if (dirInfo.isDir())
+            files = utils::FindAllFiles(fi.absolutePath(), fi.fileName(), mod.recursive);
+    }
+    return files;
+}
+
+
+/* ---------------------------------------------------------------------------- */
 /* ----- AddObject ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
 /**
- * @brief Add a new object to an existing squirrel package
+ * @brief Add a new object (or files to an existing object) in a squirrel package.
+ *
+ * For file-bearing object types (Series, Analysis, Experiment, Pipeline,
+ * GroupAnalysis, DataDictionary) the --datapath is resolved to a file list and
+ * staged onto the object.  If the target object already exists the files are
+ * appended to its staged list rather than returning an error.
+ *
  * @param packagePath path to the squirrel package file
  * @param mod struct containing all operation parameters
  * @param m output message describing success or failure
@@ -75,31 +115,34 @@ bool modify::DoModify(QString packagePath, const modification &mod, QString &m) 
  */
 bool modify::AddObject(QString packagePath, const modification &mod, QString &m) {
 
-    /* check if the user should have specified a path */
-    if ((mod.object == Series) || (mod.object == Analysis) || (mod.object == Experiment) || (mod.object == Pipeline) || (mod.object == GroupAnalysis)) {
-        /* check if that path is specified */
-        if (mod.dataPath == "") {
-            m = "No datapath specified for this object type. A datapath must be specified.";
-            return false;
-        }
+    /* collect files from dataPath (empty list when dataPath is not set) */
+    QStringList dataFiles = CollectFiles(mod);
 
-        /* check if the specified path exists */
-        if (!utils::DirectoryExists(mod.dataPath)) {
-            m = QString("Specified datapath [%1] does not exist").arg(mod.dataPath);
-            return false;
-        }
+    /* for file-bearing types, require a non-empty dataPath that resolves to at least one file */
+    bool needsFiles = (mod.object == Series || mod.object == Analysis ||
+                       mod.object == Experiment || mod.object == Pipeline ||
+                       mod.object == GroupAnalysis || mod.object == DataDictionary);
+    if (needsFiles && mod.dataPath.isEmpty()) {
+        m = "No --datapath specified. A datapath is required when adding files to this object type.";
+        return false;
+    }
+    if (needsFiles && dataFiles.isEmpty()) {
+        m = QString("No files found at --datapath [%1]").arg(mod.dataPath);
+        return false;
     }
 
-    /* get the object data */
+    /* get the object metadata (URL key=value& pairs) */
     QHash<QString, QString> vars;
-    QStringList metadata = mod.objectData.split("&");
-    foreach (QString keyvalue, metadata) {
-        QStringList keyVal = keyvalue.split("=");
-        if (keyVal.count() == 2)
-            vars[keyVal[0]] = keyVal[1];
-        else {
-            m = QString("Malformed subject metadata string [%1]. Inconsistent key/value pair count").arg(mod.objectData);
-            return false;
+    if (!mod.objectData.isEmpty()) {
+        QStringList metadata = mod.objectData.split("&");
+        foreach (QString keyvalue, metadata) {
+            QStringList keyVal = keyvalue.split("=");
+            if (keyVal.count() == 2)
+                vars[keyVal[0]] = keyVal[1];
+            else {
+                m = QString("Malformed objectdata string [%1]. Expected key=value pairs separated by &").arg(mod.objectData);
+                return false;
+            }
         }
     }
 
@@ -177,26 +220,36 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
     /* ----- series ----- */
     else if (mod.object == Series) {
         qint64 studyRowID = sqrl->FindStudy(mod.subjectID, mod.studyNumber);
-        qint64 seriesRowID = sqrl->FindSeries(mod.subjectID, mod.studyNumber, vars["SeriesNumber"].toInt());
-        if (seriesRowID < 0) {
-            squirrelSeries series(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Series [%1]").arg(vars["SeriesNumber"]));
-            series.SeriesNumber = vars["SeriesNumber"].toInt();
-            series.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
-            series.Description = vars["Description"];
-            series.Protocol = vars["Protocol"];
-            series.SeriesUID = vars["SeriesUID"];
-            series.stagedBehFiles = vars["StagedBehFiles"].split(",");
-            series.stagedFiles = vars["StagedFiles"].split(",");
-            series.studyRowID = studyRowID;
-            series.Store();
-            /* resequence the newly added subject */
-            sqrl->ResequenceSeries(studyRowID);
-        }
-        else {
-            m = QString("Series with SeriesNumber [%1] already exists for study [%2] and subject [%3] in package").arg(vars["SeriesNumber"]).arg(mod.studyNumber).arg(mod.subjectID);
+        if (studyRowID < 0) {
+            m = QString("Study [%1] not found for subject [%2]").arg(mod.studyNumber).arg(mod.subjectID);
             delete sqrl;
             return false;
+        }
+        /* resolve series number: prefer --seriesnum, then objectid, then objectdata SeriesNumber */
+        int seriesNum = (mod.seriesNumber > 0) ? mod.seriesNumber
+                      : (!mod.objectID.isEmpty()) ? mod.objectID.toInt()
+                      : vars.value("SeriesNumber").toInt();
+        qint64 seriesRowID = sqrl->FindSeries(mod.subjectID, mod.studyNumber, seriesNum);
+        if (seriesRowID < 0) {
+            /* series doesn't exist yet — create it */
+            squirrelSeries series(sqrl->GetDatabaseUUID());
+            sqrl->Log(QString("Creating squirrel Series [%1]").arg(seriesNum));
+            series.SeriesNumber = seriesNum;
+            series.DateTime = QDateTime::fromString(vars.value("Datetime"), "yyyy-MM-dd HH:mm:ss");
+            series.Description = vars.value("Description");
+            series.Protocol = vars.value("Protocol");
+            series.SeriesUID = vars.value("SeriesUID");
+            series.stagedFiles = dataFiles;
+            series.studyRowID = studyRowID;
+            series.Store();
+            sqrl->ResequenceSeries(studyRowID);
+            utils::Print(QString("Created series [%1] and staged [%2] file(s)").arg(seriesNum).arg(dataFiles.size()));
+        }
+        else {
+            /* series already exists — append files */
+            sqrl->Log(QString("Appending [%1] file(s) to existing series [%2]").arg(dataFiles.size()).arg(seriesNum));
+            sqrl->AddStagedFiles(Series, seriesRowID, dataFiles);
+            utils::Print(QString("Appended [%1] file(s) to series [%2]").arg(dataFiles.size()).arg(seriesNum));
         }
     }
     /* ----- observation ----- */
@@ -304,135 +357,151 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
     /* ----- analysis ----- */
     else if (mod.object == Analysis) {
         qint64 studyRowID = sqrl->FindStudy(mod.subjectID, mod.studyNumber);
-        qint64 analysisRowID = sqrl->FindAnalysis(mod.subjectID, mod.studyNumber, vars["AnalysisName"]);
-        if (analysisRowID < 0) {
-            /* TODO - resolve the pipelineRowID */
-            squirrelAnalysis analysis(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(vars["AnalysisName"]));
-            analysis.AnalysisName = vars["AnalysisName"];
-            analysis.DateClusterEnd = QDateTime::fromString(vars["DateClusterEnd"], "yyyy-MM-dd HH:mm:ss");
-            analysis.DateClusterStart = QDateTime::fromString(vars["DateClusterStart"], "yyyy-MM-dd HH:mm:ss");
-            analysis.DateEnd = QDateTime::fromString(vars["DateEnd"], "yyyy-MM-dd HH:mm:ss");
-            analysis.DateStart = QDateTime::fromString(vars["DateStart"], "yyyy-MM-dd HH:mm:ss");
-            analysis.Hostname = vars["Hostname"];
-            analysis.StatusMessage = vars["StatusMessage"];
-            analysis.PipelineName = vars["PipelineName"];
-            analysis.PipelineVersion = vars["PipelineVersion"].toInt();
-            analysis.RunTime = vars["RunTime"].toInt();
-            analysis.SeriesCount = vars["SeriesCount"].toInt();
-            analysis.SetupTime = vars["SetupTime"].toInt();
-            analysis.Size = vars["Size"].toInt();
-            analysis.Status = vars["Status"];
-            analysis.Successful = vars["Successful"].toInt();
-            analysis.stagedFiles = vars["StagedFiles"].split(",");
-            analysis.studyRowID = studyRowID;
-            analysis.Store();
-        }
-        else {
-            m = QString("Analysis with AnalysisName [%1] already exists for study [%2] and subject [%3] in package").arg(vars["AnalysisName"]).arg(mod.studyNumber).arg(mod.subjectID);
+        if (studyRowID < 0) {
+            m = QString("Study [%1] not found for subject [%2]").arg(mod.studyNumber).arg(mod.subjectID);
             delete sqrl;
             return false;
+        }
+        QString analysisName = mod.objectID.isEmpty() ? vars.value("AnalysisName") : mod.objectID;
+        qint64 analysisRowID = sqrl->FindAnalysis(mod.subjectID, mod.studyNumber, analysisName);
+        if (analysisRowID < 0) {
+            squirrelAnalysis analysis(sqrl->GetDatabaseUUID());
+            sqrl->Log(QString("Creating squirrel Analysis [%1]").arg(analysisName));
+            analysis.AnalysisName = analysisName;
+            analysis.DateClusterEnd = QDateTime::fromString(vars.value("DateClusterEnd"), "yyyy-MM-dd HH:mm:ss");
+            analysis.DateClusterStart = QDateTime::fromString(vars.value("DateClusterStart"), "yyyy-MM-dd HH:mm:ss");
+            analysis.DateEnd = QDateTime::fromString(vars.value("DateEnd"), "yyyy-MM-dd HH:mm:ss");
+            analysis.DateStart = QDateTime::fromString(vars.value("DateStart"), "yyyy-MM-dd HH:mm:ss");
+            analysis.Hostname = vars.value("Hostname");
+            analysis.StatusMessage = vars.value("StatusMessage");
+            analysis.PipelineName = vars.value("PipelineName");
+            analysis.PipelineVersion = vars.value("PipelineVersion").toInt();
+            analysis.RunTime = vars.value("RunTime").toInt();
+            analysis.SeriesCount = vars.value("SeriesCount").toInt();
+            analysis.SetupTime = vars.value("SetupTime").toInt();
+            analysis.Size = vars.value("Size").toInt();
+            analysis.Status = vars.value("Status");
+            analysis.Successful = vars.value("Successful").toInt();
+            analysis.stagedFiles = dataFiles;
+            analysis.studyRowID = studyRowID;
+            analysis.Store();
+            utils::Print(QString("Created analysis [%1] and staged [%2] file(s)").arg(analysisName).arg(dataFiles.size()));
+        }
+        else {
+            /* analysis exists — append files */
+            sqrl->Log(QString("Appending [%1] file(s) to existing analysis [%2]").arg(dataFiles.size()).arg(analysisName));
+            sqrl->AddStagedFiles(Analysis, analysisRowID, dataFiles);
+            utils::Print(QString("Appended [%1] file(s) to analysis [%2]").arg(dataFiles.size()).arg(analysisName));
         }
     }
     /* ----- experiment ----- */
     else if (mod.object == Experiment) {
-        qint64 experimentRowID = sqrl->FindExperiment(vars["ExperimentName"]);
+        QString experimentName = mod.objectID.isEmpty() ? vars.value("ExperimentName") : mod.objectID;
+        qint64 experimentRowID = sqrl->FindExperiment(experimentName);
         if (experimentRowID < 0) {
             squirrelExperiment experiment(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Experiment [%1]").arg(vars["ExperimentName"]));
-            experiment.ExperimentName = vars["ExperimentName"];
-            experiment.FileCount = vars["FileCount"].toLongLong();
-            experiment.Size = vars["Size"].toLongLong();
-            experiment.stagedFiles = vars["StagedFiles"].split(",");
+            sqrl->Log(QString("Creating squirrel Experiment [%1]").arg(experimentName));
+            experiment.ExperimentName = experimentName;
+            experiment.FileCount = vars.value("FileCount").toLongLong();
+            experiment.Size = vars.value("Size").toLongLong();
+            experiment.stagedFiles = dataFiles;
             experiment.Store();
+            utils::Print(QString("Created experiment [%1] and staged [%2] file(s)").arg(experimentName).arg(dataFiles.size()));
         }
         else {
-            m = QString("Experiment [%1] already exists in this package").arg(vars["ExperimentName"]);
-            delete sqrl;
-            return false;
+            /* experiment exists — append files */
+            sqrl->Log(QString("Appending [%1] file(s) to existing experiment [%2]").arg(dataFiles.size()).arg(experimentName));
+            sqrl->AddStagedFiles(Experiment, experimentRowID, dataFiles);
+            utils::Print(QString("Appended [%1] file(s) to experiment [%2]").arg(dataFiles.size()).arg(experimentName));
         }
     }
     /* ----- pipeline ----- */
     else if (mod.object == Pipeline) {
-        qint64 pipelineRowID = sqrl->FindPipeline(vars["PipelineName"]);
+        QString pipelineName = mod.objectID.isEmpty() ? vars.value("PipelineName") : mod.objectID;
+        qint64 pipelineRowID = sqrl->FindPipeline(pipelineName);
         if (pipelineRowID < 0) {
             squirrelPipeline pipeline(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Pipeline [%1]").arg(vars["PipelineName"]));
-            pipeline.ClusterMaxWallTime = vars["ClusterMaxWallTime"].toInt();
-            pipeline.ClusterMemory = vars["ClusterMemory"].toInt();
-            pipeline.ClusterNumberCores = vars["ClusterNumberCores"].toInt();
-            pipeline.ClusterQueue = vars["ClusterQueue"];
-            pipeline.ClusterSubmitHost = vars["ClusterSubmitHost"];
-            pipeline.ClusterEngine = vars["ClusterEngine"];
-            pipeline.ClusterUser = vars["ClusterUser"];
-            pipeline.PipelineCompleteFiles = vars["PipelineCompleteFiles"].split(",");
-            pipeline.PipelineCreateDate = QDateTime::fromString(vars["PipelineCreateDate"], "yyyy-MM-dd HH:mm:ss");
-            pipeline.SetupDataCopyMethod = vars["SetupDataCopyMethod"];
-            pipeline.SetupDependencyDirectory = vars["SetupDependencyDirectory"];
-            pipeline.SearchDependencyLevel = vars["SearchDependencyLevel"];
-            pipeline.SearchDependencyLinkType = vars["SearchDependencyLinkType"];
-            pipeline.PipelineDescription = vars["PipelineDescription"];
-            pipeline.PipelineDirectory = vars["PipelineDirectory"];
-            pipeline.PipelineDirectoryStructure = vars["PipelineDirectoryStructure"];
-            pipeline.SearchGroup = vars["SearchGroup"];
-            pipeline.SearchGroupType = vars["SearchGroupType"];
-            pipeline.PipelineAnalysisLevel = vars["PipelineAnalysisLevel"].toInt();
-            pipeline.PipelineNotes = vars["PipelineNotes"];
-            pipeline.ClusterNumberConcurrentAnalyses = vars["ClusterNumberConcurrentAnalyses"].toInt();
-            pipeline.SearchParentPipelines = vars["SearchParentPipelines"].split(",");
-            pipeline.PipelineName = vars["PipelineName"];
-            pipeline.PipelinePrimaryScript = vars["PipelinePrimaryScript"];
-            pipeline.PipelineResultScript = vars["PipelineResultScript"];
-            pipeline.PipelineSecondaryScript = vars["PipelineSecondaryScript"];
-            pipeline.ClusterSubmitDelay = vars["ClusterSubmitDelay"].toInt();
-            pipeline.SetupTempDirectory = vars["SetupTempDirectory"];
-            pipeline.PipelineVersion = vars["PipelineVersion"].toInt();
-            pipeline.stagedFiles = vars["StagedFiles"].split(",");
+            sqrl->Log(QString("Creating squirrel Pipeline [%1]").arg(pipelineName));
+            pipeline.ClusterMaxWallTime = vars.value("ClusterMaxWallTime").toInt();
+            pipeline.ClusterMemory = vars.value("ClusterMemory").toInt();
+            pipeline.ClusterNumberCores = vars.value("ClusterNumberCores").toInt();
+            pipeline.ClusterQueue = vars.value("ClusterQueue");
+            pipeline.ClusterSubmitHost = vars.value("ClusterSubmitHost");
+            pipeline.ClusterEngine = vars.value("ClusterEngine");
+            pipeline.ClusterUser = vars.value("ClusterUser");
+            pipeline.PipelineCompleteFiles = vars.value("PipelineCompleteFiles").split(",");
+            pipeline.PipelineCreateDate = QDateTime::fromString(vars.value("PipelineCreateDate"), "yyyy-MM-dd HH:mm:ss");
+            pipeline.SetupDataCopyMethod = vars.value("SetupDataCopyMethod");
+            pipeline.SetupDependencyDirectory = vars.value("SetupDependencyDirectory");
+            pipeline.SearchDependencyLevel = vars.value("SearchDependencyLevel");
+            pipeline.SearchDependencyLinkType = vars.value("SearchDependencyLinkType");
+            pipeline.PipelineDescription = vars.value("PipelineDescription");
+            pipeline.PipelineDirectory = vars.value("PipelineDirectory");
+            pipeline.PipelineDirectoryStructure = vars.value("PipelineDirectoryStructure");
+            pipeline.SearchGroup = vars.value("SearchGroup");
+            pipeline.SearchGroupType = vars.value("SearchGroupType");
+            pipeline.PipelineAnalysisLevel = vars.value("PipelineAnalysisLevel").toInt();
+            pipeline.PipelineNotes = vars.value("PipelineNotes");
+            pipeline.ClusterNumberConcurrentAnalyses = vars.value("ClusterNumberConcurrentAnalyses").toInt();
+            pipeline.SearchParentPipelines = vars.value("SearchParentPipelines").split(",");
+            pipeline.PipelineName = pipelineName;
+            pipeline.PipelinePrimaryScript = vars.value("PipelinePrimaryScript");
+            pipeline.PipelineResultScript = vars.value("PipelineResultScript");
+            pipeline.PipelineSecondaryScript = vars.value("PipelineSecondaryScript");
+            pipeline.ClusterSubmitDelay = vars.value("ClusterSubmitDelay").toInt();
+            pipeline.SetupTempDirectory = vars.value("SetupTempDirectory");
+            pipeline.PipelineVersion = vars.value("PipelineVersion").toInt();
+            pipeline.stagedFiles = dataFiles;
             pipeline.Store();
+            utils::Print(QString("Created pipeline [%1] and staged [%2] file(s)").arg(pipelineName).arg(dataFiles.size()));
         }
         else {
-            m = QString("Pipeline [%1] already exists in this package").arg(vars["PipelineName"]);
-            delete sqrl;
-            return false;
+            sqrl->Log(QString("Appending [%1] file(s) to existing pipeline [%2]").arg(dataFiles.size()).arg(pipelineName));
+            sqrl->AddStagedFiles(Pipeline, pipelineRowID, dataFiles);
+            utils::Print(QString("Appended [%1] file(s) to pipeline [%2]").arg(dataFiles.size()).arg(pipelineName));
         }
     }
     /* ----- groupanalysis ----- */
     else if (mod.object == GroupAnalysis) {
-        qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(vars["GroupAnalysisName"]);
+        QString groupAnalysisName = mod.objectID.isEmpty() ? vars.value("GroupAnalysisName") : mod.objectID;
+        qint64 groupAnalysisRowID = sqrl->FindGroupAnalysis(groupAnalysisName);
         if (groupAnalysisRowID < 0) {
             squirrelGroupAnalysis groupAnalysis(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel GroupAnalysis [%1]").arg(vars["GroupAnalysisName"]));
-            groupAnalysis.DateTime = QDateTime::fromString(vars["DateTime"], "yyyy-MM-dd HH:mm:ss");
-            groupAnalysis.Description = vars["Description"];
-            groupAnalysis.Notes = vars["Notes"];
-            groupAnalysis.GroupAnalysisName = vars["GroupAnalysisName"];
-            groupAnalysis.FileCount = vars["FileCount"].toLongLong();
-            groupAnalysis.Size = vars["Size"].toLongLong();
-            groupAnalysis.stagedFiles = vars["StagedFiles"].split(",");
+            sqrl->Log(QString("Creating squirrel GroupAnalysis [%1]").arg(groupAnalysisName));
+            groupAnalysis.DateTime = QDateTime::fromString(vars.value("DateTime"), "yyyy-MM-dd HH:mm:ss");
+            groupAnalysis.Description = vars.value("Description");
+            groupAnalysis.Notes = vars.value("Notes");
+            groupAnalysis.GroupAnalysisName = groupAnalysisName;
+            groupAnalysis.FileCount = vars.value("FileCount").toLongLong();
+            groupAnalysis.Size = vars.value("Size").toLongLong();
+            groupAnalysis.stagedFiles = dataFiles;
             groupAnalysis.Store();
+            utils::Print(QString("Created group analysis [%1] and staged [%2] file(s)").arg(groupAnalysisName).arg(dataFiles.size()));
         }
         else {
-            m = QString("GroupAnalysis [%1] already exists in this package").arg(vars["GroupAnalysisName"]);
-            delete sqrl;
-            return false;
+            sqrl->Log(QString("Appending [%1] file(s) to existing group analysis [%2]").arg(dataFiles.size()).arg(groupAnalysisName));
+            sqrl->AddStagedFiles(GroupAnalysis, groupAnalysisRowID, dataFiles);
+            utils::Print(QString("Appended [%1] file(s) to group analysis [%2]").arg(dataFiles.size()).arg(groupAnalysisName));
         }
     }
     /* ----- datadictionary ----- */
     else if (mod.object == DataDictionary) {
-        qint64 dataDictionaryRowID = sqrl->FindDataDictionary(vars["DataDictionaryName"]);
+        QString dataDictionaryName = mod.objectID.isEmpty() ? vars.value("DataDictionaryName") : mod.objectID;
+        qint64 dataDictionaryRowID = sqrl->FindDataDictionary(dataDictionaryName);
         if (dataDictionaryRowID < 0) {
             squirrelDataDictionary dataDictionary(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(vars["DataDictionaryName"]));
-            dataDictionary.DataDictionaryName = vars["DataDictionaryName"];
-            dataDictionary.FileCount = vars["FileCount"].toLongLong();
-            dataDictionary.Size = vars["Size"].toLongLong();
-            dataDictionary.stagedFiles = vars["StagedFiles"].split(",");
+            sqrl->Log(QString("Creating squirrel DataDictionary [%1]").arg(dataDictionaryName));
+            dataDictionary.DataDictionaryName = dataDictionaryName;
+            dataDictionary.FileCount = vars.value("FileCount").toLongLong();
+            dataDictionary.Size = vars.value("Size").toLongLong();
+            dataDictionary.stagedFiles = dataFiles;
             dataDictionary.Store();
+            utils::Print(QString("Created data dictionary [%1] and staged [%2] file(s)").arg(dataDictionaryName).arg(dataFiles.size()));
         }
         else {
-            m = QString("DataDictionary [%1] already exists in this package").arg(vars["DataDictionaryName"]);
-            delete sqrl;
-            return false;
+            sqrl->Log(QString("Appending [%1] file(s) to existing data dictionary [%2]").arg(dataFiles.size()).arg(dataDictionaryName));
+            sqrl->AddStagedFiles(DataDictionary, dataDictionaryRowID, dataFiles);
+            utils::Print(QString("Appended [%1] file(s) to data dictionary [%2]").arg(dataFiles.size()).arg(dataDictionaryName));
         }
     }
     /* ----- unknown ----- */
@@ -442,8 +511,12 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
         return false;
     }
 
-    /* write the squirrel object */
-    sqrl->Write();
+    /* write the updated package */
+    if (!sqrl->Write()) {
+        m = "Failed to write squirrel package after add operation";
+        delete sqrl;
+        return false;
+    }
 
     delete sqrl;
     return true;
