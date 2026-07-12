@@ -116,7 +116,8 @@ bool squirrelImageIO::GetImageTagsDCMTK(QString f, QHash<QString, QString> &tags
 
     tags["FilePath"] = f;
 
-    const char* filename = f.toLatin1();
+    QByteArray filenameBA = f.toLatin1();
+    const char* filename = filenameBA.constData();
 
     DcmFileFormat fileformat;
     OFCondition status = fileformat.loadFileUntilTag(filename, EXS_Unknown, EGL_noChange, DCM_MaxReadLength, ERM_autoDetect, DcmTagKey(0x7FE0, 0x0010));
@@ -849,11 +850,11 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
         if (tags["StudyTime"].contains(":")) {
             tags["StudyTime"] = tags["StudyTime"].left(8);
         }
-        else if (((tags["StudyTime"].size() == 12) || (tags["StudyTime"].size() == 13)) && (tags["StudyTime"].contains("."))) {
+        else if (tags["StudyTime"].contains(".")) {
             tags["StudyTime"] = tags["StudyTime"].left(6);
         }
         else {
-            utils::Print("StudyTime is not 12, 13 or 15 characters [" + tags["StudyTime"] + "]");
+            utils::Print("StudyTime is not a recognized format [" + tags["StudyTime"] + "]");
         }
 
         if (tags["StudyTime"].size() == 6) {
@@ -869,14 +870,11 @@ bool squirrelImageIO::GetImageFileTags(QString f, QHash<QString, QString> &tags,
         if (tags["SeriesTime"].contains(":")) {
             tags["SeriesTime"] = tags["SeriesTime"].left(8);
         }
-        else if (((tags["SeriesTime"].size() == 12) || (tags["SeriesTime"].size() == 13)) && (tags["SeriesTime"].contains("."))) {
+        else if (tags["SeriesTime"].contains(".")) {
             tags["SeriesTime"] = tags["SeriesTime"].left(6);
         }
-        else if (((tags["SeriesTime"].size() == 14) || (tags["SeriesTime"].size() == 15)) && (tags["SeriesTime"].contains(":"))) {
-            tags["SeriesTime"] = tags["SeriesTime"].left(8);
-        }
         else {
-            utils::Print("SeriesTime is not 12, 13 or 15 characters [" + tags["SeriesTime"] + "]");
+            utils::Print("SeriesTime is not a recognized format [" + tags["SeriesTime"] + "]");
         }
 
         if (tags["SeriesTime"].size() == 6) {

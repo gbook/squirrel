@@ -13,15 +13,26 @@ fi
 
 case "$ID" in
     ubuntu)
-        exec bash "$SCRIPT_DIR/build-ubuntu24.sh" "$@" ;;
-    debian)
-        exec bash "$SCRIPT_DIR/build-debian12.sh" "$@" ;;
-    rhel|rocky|almalinux)
         case "$VERSION_ID" in
-            8*) exec bash "$SCRIPT_DIR/build-rockylinux8.sh" "$@" ;;
-            9*) exec bash "$SCRIPT_DIR/build-rockylinux9.sh" "$@" ;;
-            *)  echo "Unsupported RHEL-family version: $VERSION_ID ($PRETTY_NAME)"; exit 1 ;;
+            22*) exec bash "$SCRIPT_DIR/build-ubuntu22.sh" "$@" ;;
+            *)   exec bash "$SCRIPT_DIR/build-ubuntu24.sh" "$@" ;;
         esac ;;
+    debian)
+        case "$VERSION_ID" in
+            12) exec bash "$SCRIPT_DIR/build-debian12.sh" "$@" ;;
+            13) exec bash "$SCRIPT_DIR/build-debian13.sh" "$@" ;;
+            *)  echo "Unsupported Debian version: $VERSION_ID ($PRETTY_NAME)"; exit 1 ;;
+        esac ;;
+    almalinux)
+        case "$VERSION_ID" in
+            8*) exec bash "$SCRIPT_DIR/build-almalinux8.sh" "$@" ;;
+            9*) exec bash "$SCRIPT_DIR/build-almalinux9.sh" "$@" ;;
+            10*) exec bash "$SCRIPT_DIR/build-almalinux10.sh" "$@" ;;
+            *)  echo "Unsupported AlmaLinux version: $VERSION_ID ($PRETTY_NAME)"; exit 1 ;;
+        esac ;;
+    rocky)
+        echo "RockyLinux is no longer supported. Please use AlmaLinux."
+        exit 1 ;;
     *)
         echo "Unsupported distro: $PRETTY_NAME"
         exit 1 ;;
