@@ -195,6 +195,8 @@ public:
     static ObjectType ObjectTypeToEnum(QString object);
 
 private:
+    void ResequenceTable(QString table, QString pkCol, QString parentCol, qint64 parentRowID, QString orderBy);
+
     bool DatabaseConnect();
     bool DeleteTempDir(QString dir);
     bool InitializeDatabase();

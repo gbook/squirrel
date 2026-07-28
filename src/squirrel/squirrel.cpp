@@ -2910,13 +2910,7 @@ bool squirrel::ExtractObject(ObjectType object, qint64 objectRowID, QString outD
  */
 void squirrel::ResequenceSubjects() {
 
-    QList<squirrelSubject> subjects = GetSubjectList();
-    int i = 1;
-    foreach (squirrelSubject subject, subjects) {
-        subject.SequenceNumber = i;
-        subject.Store();
-        i++;
-    }
+    ResequenceTable("Subject", "SubjectRowID", "", -1, "ID asc, SequenceNumber asc");
 }
 
 
@@ -2929,13 +2923,7 @@ void squirrel::ResequenceSubjects() {
  */
 void squirrel::ResequenceStudies(qint64 subjectRowID) {
 
-    QList<squirrelStudy> studies = GetStudyList(subjectRowID);
-    int i = 1;
-    foreach (squirrelStudy study, studies) {
-        study.SequenceNumber = i;
-        study.Store();
-        i++;
-    }
+    ResequenceTable("Study", "StudyRowID", "SubjectRowID", subjectRowID, "StudyNumber asc, SequenceNumber asc");
 }
 
 
@@ -2948,13 +2936,58 @@ void squirrel::ResequenceStudies(qint64 subjectRowID) {
  */
 void squirrel::ResequenceSeries(qint64 studyRowID) {
 
-    QList<squirrelSeries> serieses = GetSeriesList(studyRowID);
+    ResequenceTable("Series", "SeriesRowID", "StudyRowID", studyRowID, "SeriesNumber asc, SequenceNumber asc");
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ResequenceTable -------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Renumber the SequenceNumber column of a table, in place
+ * @param table Table to renumber, ex `Series`
+ * @param pkCol Primary key column of the table, ex `SeriesRowID`
+ * @param parentCol Column pointing at the parent object, ex `StudyRowID`. Leave blank to renumber the whole table
+ * @param parentRowID rowID of the parent object. Ignored if parentCol is blank
+ * @param orderBy `order by` clause determining the new sequence
+ *
+ * This only touches the SequenceNumber column. It deliberately avoids
+ * loading and re-Store()ing each object, because an object Store() also
+ * rewrites that object's params and staged file lists. Resequencing after
+ * every added object then costs O(n^2) in rows written, which is enough
+ * to stall a large package export for hours.
+ */
+void squirrel::ResequenceTable(QString table, QString pkCol, QString parentCol, qint64 parentRowID, QString orderBy) {
+
+    QSqlDatabase resequenceDb = QSqlDatabase::database(databaseUUID);
+
+    /* get the rowIDs in their new sequence order */
+    QSqlQuery q(resequenceDb);
+    if (parentCol.isEmpty() || (parentRowID < 0)) {
+        q.prepare(QString("select %1 from %2 order by %3").arg(pkCol).arg(table).arg(orderBy));
+    }
+    else {
+        q.prepare(QString("select %1 from %2 where %3 = :parentid order by %4").arg(pkCol).arg(table).arg(parentCol).arg(orderBy));
+        q.bindValue(":parentid", parentRowID);
+    }
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+
+    QList<qint64> rowIDs;
+    while (q.next())
+        rowIDs.append(q.value(0).toLongLong());
+
+    /* ... and renumber them */
+    QSqlQuery u(resequenceDb);
+    u.prepare(QString("update %1 set SequenceNumber = :seq where %2 = :id").arg(table).arg(pkCol));
     int i = 1;
-    foreach (squirrelSeries series, serieses) {
-        series.SequenceNumber = i;
-        series.Store();
+    foreach (qint64 rowID, rowIDs) {
+        u.bindValue(":seq", i);
+        u.bindValue(":id", rowID);
+        utils::SQLQuery(u, __FUNCTION__, __FILE__, __LINE__);
         i++;
     }
+
+    Debug(QString("Resequenced [%1] rows in table [%2]").arg(rowIDs.size()).arg(table), __FUNCTION__);
 }
 
 

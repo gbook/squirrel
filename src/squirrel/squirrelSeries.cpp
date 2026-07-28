@@ -147,7 +147,28 @@ bool squirrelSeries::Store() {
         q.bindValue(":SequenceNumber", SequenceNumber);
         q.bindValue(":VirtualPath", VirtualPath());
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
-        objectID = q.lastInsertId().toLongLong();
+        if (q.numRowsAffected() > 0) {
+            objectID = q.lastInsertId().toLongLong();
+        }
+        else {
+            /* the insert was ignored, meaning a series with this StudyRowID/SeriesNumber
+               already exists. lastInsertId() would return an unrelated rowID here, so look
+               up the existing row instead */
+            QSqlQuery q2(QSqlDatabase::database(databaseUUID));
+            q2.prepare("select SeriesRowID from Series where StudyRowID = :StudyRowID and SeriesNumber = :SeriesNumber");
+            q2.bindValue(":StudyRowID", studyRowID);
+            q2.bindValue(":SeriesNumber", SeriesNumber);
+            utils::SQLQuery(q2, __FUNCTION__, __FILE__, __LINE__);
+            if (q2.next()) {
+                objectID = q2.value("SeriesRowID").toLongLong();
+                err = QString("Series [%1] already exists in study [%2]").arg(SeriesNumber).arg(studyRowID);
+            }
+            else {
+                valid = false;
+                err = QString("Unable to insert or find series [%1] in study [%2]").arg(SeriesNumber).arg(studyRowID);
+                return false;
+            }
+        }
         //utils::Print(QString("Added series with seriesRowID [%1]").arg(objectID));
     }
     /* ... otherwise update */
@@ -210,7 +231,7 @@ bool squirrelSeries::Store(QSqlQuery &q) {
     q.bindValue(":Description", Description);
     q.bindValue(":Protocol", Protocol);
     q.bindValue(":BidsEntity", BidsEntity);
-    q.bindValue(":bidssuffix", BidsSuffix);
+    q.bindValue(":BidsSuffix", BidsSuffix);
     q.bindValue(":BidsTask", BidsTask);
     q.bindValue(":BidsRun", BidsRun);
     q.bindValue(":BidsPhaseEncodingDirection", BidsPhaseEncodingDirection);
