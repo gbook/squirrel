@@ -1,102 +1,94 @@
+/* ------------------------------------------------------------------------------
+  Squirrel GUI mainwindow.h
+  Copyright (C) 2004 - 2026
+  Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
+  Olin Neuropsychiatry Research Center, Hartford Hospital
+  ------------------------------------------------------------------------------
+  GPLv3 License:
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ------------------------------------------------------------------------------ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTreeWidgetItem>
-#include <squirrel.h>
+#include <QStringList>
+#include "squirrelModel.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+class QLabel;
+class QProgressBar;
+class QThread;
+class QTreeWidgetItem;
+class squirrelWorker;
 
-class MainWindow : public QMainWindow
+namespace Ui { class mainWindow; }
+
+class mainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit mainWindow(QWidget *parent = nullptr);
+    ~mainWindow();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+signals:
+    /* queued to squirrelWorker on the worker thread */
+    void RequestOpen(QString packagePath);
+    void RequestClose();
+    void RequestValidate();
+    void RequestMerge(QStringList inputPaths, QString outputPath, bool testOnly, bool renumberSubjects, int digits);
 
 private slots:
-    void on_btnAddSubject_clicked();
+    /* menu/toolbar actions */
+    void OpenPackage();
+    void ClosePackage();
+    void ValidatePackage();
+    void MergePackages();
+    void About();
 
-    void on_actionE_xit_triggered();
+    /* worker responses */
+    void PackageLoaded(guiPackage pkg);
+    void OperationStarted(QString description);
+    void OperationFinished(bool success, QString message);
+    void AppendLog(QString message);
 
-    void on_btnAddStudy_clicked();
-
-    void on_btnAddSeries_clicked();
-
-    void on_action_New_package_triggered();
-
-    void on_actionOpen_triggered();
-
-    void on_btnNewPackage_clicked();
-
-    void on_btnEditPackageDetails_clicked();
-
-    void on_btnAddAnalysis_clicked();
-
-    void on_btnAddDrug_clicked();
-
-    void on_btnAddMeasure_clicked();
-
-    void on_btnAddExperiment_clicked();
-
-    void on_btnAddPipeline_clicked();
-
-    void on_btnAddDICOM_clicked();
-
-    void on_action_Save_package_triggered();
-
-    void on_action_Help_triggered();
-
-    void on_action_About_triggered();
-
-    void on_actionValidate_triggered();
-
-    void on_actionClose_triggered();
-
-	void on_btnOpenPackage_clicked();
-
-	void on_btnClosePackage_clicked();
-
-    void on_subjectTree_itemClicked(QTreeWidgetItem *item, int column);
-
-    void on_subjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-
-    void on_subjectTree_itemChanged(QTreeWidgetItem *item, int column);
+    /* tree -> details pane */
+    void TreeSelectionChanged();
 
 private:
-    Ui::MainWindow *ui;
+    void PopulateTree(const guiPackage &pkg);
+    void ShowDetails(const QVector<guiDetail> &details);
+    void SetBusy(bool busy, const QString &description = QString());
+    void UpdateActionStates();
 
-    /* the main squirrel object */
-	squirrel *sqrl;
-    bool sqrlValid = false;
+    Ui::mainWindow *ui;
 
-	void OpenPackage();
-	bool NewPackage();
-    bool ClosePackage();
-    bool EditPackageDetails();
+    QThread *workerThread = nullptr;
+    squirrelWorker *worker = nullptr;
 
-    void DisplaySubjectDetails(QString ID);
-    void DisplayStudyDetails(QString subjectID, int studyNum);
-    void DisplaySeriesDetails(QString subjectID, int studyNum, int seriesNum);
+    QLabel *statusLabel = nullptr;
+    QProgressBar *progressBar = nullptr;
 
-    void AddDICOM();
-    void AddSubject();
-    void AddStudy();
-    void AddSeries();
-    void AddDrug();
-    void AddMeasure();
-    void AddAnalysis();
-    void AddExperiment();
-    void AddPipeline();
+    /* the GUI thread's copy of the open package. The worker keeps the real
+       squirrel object; this is display data only */
+    guiPackage package;
 
-    void RefreshSubjectInfoTable();
-    void RefreshSubjectsTable();
-    void RefreshExperimentsTable();
-    void RefreshPipelinesTable();
-    void RefreshPackageDetails();
-    void EnableDisableSubjectButtons();
+    bool busy = false;
 };
+
 #endif // MAINWINDOW_H

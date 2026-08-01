@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------
-  Squirrel GUI main.cpp
+  Squirrel GUI mergeDialog.h
   Copyright (C) 2004 - 2026
   Gregory A Book <gregory.book@hhchealth.org> <gregory.a.book@gmail.com>
   Olin Neuropsychiatry Research Center, Hartford Hospital
@@ -20,26 +20,47 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ------------------------------------------------------------------------------ */
 
-#include <QApplication>
-#include "mainwindow.h"
-#include "squirrelModel.h"
-#include "squirrelVersion.h"
+#ifndef MERGEDIALOG_H
+#define MERGEDIALOG_H
 
-int main(int argc, char *argv[]) {
+#include <QDialog>
+#include <QStringList>
 
-    QApplication a(argc, argv);
+namespace Ui { class mergeDialog; }
 
-    QCoreApplication::setOrganizationName("Olin Neuropsychiatry Research Center");
-    QCoreApplication::setApplicationName("squirrel-gui");
-    QCoreApplication::setApplicationVersion(QString("%1.%2.%3").arg(UTIL_VERSION_MAJ).arg(UTIL_VERSION_MIN).arg(UTIL_BUILD_NUM));
+/* ------------------------------------------------------------------------------
+   mergeDialog
 
-    /* guiPackage crosses from the worker thread to the GUI thread through a
-       queued signal, and Qt can only copy it into the event queue if the type is
-       registered first */
-    qRegisterMetaType<guiPackage>("guiPackage");
+   Collects the arguments for modify::MergePackages(). It only gathers and
+   validates input - the merge itself is run by squirrelWorker on its own thread.
+   ------------------------------------------------------------------------------ */
+class mergeDialog : public QDialog
+{
+    Q_OBJECT
 
-    mainWindow w;
-    w.show();
+public:
+    explicit mergeDialog(QWidget *parent = nullptr);
+    ~mergeDialog();
 
-    return a.exec();
-}
+    QStringList InputPaths() const;
+    QString OutputPath() const;
+    bool TestOnly() const;
+    bool RenumberSubjects() const;
+    int Digits() const;
+
+protected:
+    void accept() override;
+
+private slots:
+    void AddPackages();
+    void RemoveSelected();
+    void MoveUp();
+    void MoveDown();
+    void BrowseOutput();
+    void UpdateWidgetStates();
+
+private:
+    Ui::mergeDialog *ui;
+};
+
+#endif // MERGEDIALOG_H

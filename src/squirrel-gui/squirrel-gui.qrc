@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>squirrel.ico</file>
+        <file>open-file.ico</file>
+        <file>new-file.ico</file>
+    </qresource>
+</RCC>
