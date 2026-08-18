@@ -27,34 +27,47 @@ the one running `Write()`.
 
 2. **Set a temp directory in library mode.** When squirrel is used as a library
    (not the CLI), call `SetSystemTempDir()` before `Write()`. Without it,
-   `Write()` stages files at the filesystem root and fails. The CLI does not need
-   this because it runs with command-line mode enabled.
+   `Write()` stages files at the filesystem root and fails. The bundled `squirrel`
+   command-line tool does not need this because it enables command-line mode
+   (`SetCommandLineExecution(true)`); an application that *embeds* the library
+   does need it, even when that application is itself a command-line program.
 
-## Example (Qt: worker `QObject` + `QThread` + polling `QTimer`)
+## Example (single-threaded Qt command-line app)
 
-The worker builds and writes the package on its own thread and reports when it is
-done. The GUI thread never touches the squirrel object except through the
-thread-safe log/progress accessors, which it reads on a timer.
+A command-line program built on `QCoreApplication` normally does everything on the
+main thread. To keep printing progress while the package is written, offload just
+the squirrel work to a background thread and poll the accessors from `main()`.
+
+The cleanest way in Qt is `QtConcurrent::run`, which runs a task on the global
+thread pool and hands back a `QFuture`. No event loop (`app.exec()`) is required —
+`main()` stays a simple procedural function and polls in a plain loop. Add
+`QT += concurrent` to your `.pro`.
+
+The squirrel object is created *inside* the task, so it lives entirely on the
+worker thread (rule 1). The task publishes a pointer to it through a `std::atomic`
+so the main thread can reach the thread-safe accessors while `Write()` runs.
 
 ```cpp
-// ---- worker.h ----
-#include <QObject>
+#include <QCoreApplication>
+#include <QtConcurrent>
+#include <QFuture>
+#include <QThread>
 #include <atomic>
+#include <cstdio>
 #include "squirrel.h"
 
-class PackageWorker : public QObject {
-    Q_OBJECT
-public:
-    // sqrl is created here but NOT used yet; it is only touched inside run(),
-    // which executes on the worker thread. The atomic pointer lets the GUI
-    // thread reach the log/progress accessors safely once run() publishes it.
+int main(int argc, char *argv[]) {
+    QCoreApplication app(argc, argv);
+
     std::atomic<squirrel*> live{nullptr};
 
-public slots:
-    void run() {
-        squirrel sqrl;                       // constructed on the worker thread
+    // Run the whole squirrel lifecycle on a pool thread. Quiet mode (the second
+    // constructor argument) stops the library from writing to stdout itself, so
+    // the only console output is what we print from the polling loop below.
+    QFuture<bool> future = QtConcurrent::run([&live]() -> bool {
+        squirrel sqrl(false, true /* quiet */);
         sqrl.SetPackagePath("/data/out.sqrl");
-        sqrl.SetSystemTempDir("/var/tmp");   // required in library mode
+        sqrl.SetSystemTempDir("/var/tmp");   // required when embedding the library
         sqrl.SetOverwritePackage(true);
         sqrl.DataFormat = "orig";
 
@@ -63,49 +76,32 @@ public slots:
         live = &sqrl;                        // publish for the poller
         bool ok = sqrl.Write();              // the long call
         live = nullptr;                      // retract before sqrl is destroyed
-        emit finished(ok);
+        return ok;
+    });
+
+    // Main thread: poll until the task finishes. Still single-threaded control
+    // flow - we just sleep and print. No event loop needed.
+    while (!future.isFinished()) {
+        QThread::msleep(250);
+        squirrel *s = live.load();
+        if (!s) continue;                    // not published yet / already retracted
+
+        QString chunk = s->GetLogBuffer();   // thread-safe: log lines since last call
+        if (!chunk.isEmpty())
+            fputs(chunk.toLocal8Bit().constData(), stdout);
+
+        printf("\rprogress: %3.0f%%", s->GetProgress());  // thread-safe: 0-100
+        fflush(stdout);
     }
 
-signals:
-    void finished(bool ok);
-};
+    bool ok = future.result();               // waits for the task and returns its value
+    printf("\nWrite() %s\n", ok ? "succeeded" : "failed");
+    return ok ? 0 : 1;
+}
 ```
 
-```cpp
-// ---- starting it from the GUI ----
-auto *thread = new QThread(this);
-auto *worker = new PackageWorker;
-worker->moveToThread(thread);
-
-connect(thread, &QThread::started, worker, &PackageWorker::run);
-connect(worker, &PackageWorker::finished, this, [=](bool ok) {
-    // drain nothing here; final lines were already polled below
-    thread->quit();
-});
-connect(thread, &QThread::finished, worker, &QObject::deleteLater);
-connect(thread, &QThread::finished, thread, &QObject::deleteLater);
-
-// Poll every 250 ms from the GUI thread while the worker runs.
-auto *poll = new QTimer(this);
-connect(poll, &QTimer::timeout, this, [=]() {
-    squirrel *s = worker->live.load();
-    if (!s) return;                          // not started yet, or already finished
-    QString chunk = s->GetLogBuffer();       // thread-safe: new log lines
-    if (!chunk.isEmpty())
-        appendToLogView(chunk);              // your UI update
-    setProgressBar(s->GetProgress());        // thread-safe: 0–100
-});
-connect(worker, &PackageWorker::finished, poll, &QTimer::stop);
-
-poll->start(250);
-thread->start();
-```
-
-## Example (plain `std::thread`)
-
-The same shape without Qt's threading classes. The worker publishes a pointer to
-its stack-local squirrel object; the polling loop reads the thread-safe accessors
-until the worker signals completion.
+If you would rather not link `QtConcurrent`, a raw `std::thread` gives the same
+result with an explicit `done` flag instead of a `QFuture`:
 
 ```cpp
 #include <thread>
@@ -116,17 +112,17 @@ std::atomic<bool>      result{false};
 std::atomic<squirrel*> live{nullptr};
 
 std::thread worker([&]() {
-    squirrel sqrl;
+    squirrel sqrl(false, true /* quiet */);
     sqrl.SetPackagePath("/data/out.sqrl");
     sqrl.SetSystemTempDir("/var/tmp");
     sqrl.SetOverwritePackage(true);
     sqrl.DataFormat = "orig";
     // ... add subjects / studies / series ...
 
-    live = &sqrl;
+    live   = &sqrl;
     result = sqrl.Write();
-    live = nullptr;               // retract BEFORE sqrl leaves scope
-    done  = true;                 // signal only after retracting
+    live   = nullptr;             // retract BEFORE sqrl leaves scope
+    done   = true;                // signal only after retracting
 });
 
 while (!done.load()) {
@@ -136,14 +132,16 @@ while (!done.load()) {
     QString chunk = s->GetLogBuffer();
     if (!chunk.isEmpty())
         fputs(chunk.toLocal8Bit().constData(), stdout);
-    printf("progress: %.0f%%\n", s->GetProgress());
+    printf("\rprogress: %3.0f%%", s->GetProgress());
+    fflush(stdout);
 }
 worker.join();
 ```
 
 Note the ordering in the worker: retract `live` **before** the squirrel object
-goes out of scope, and set `done` **after** retracting, so the poller can never
-dereference the object while it is being destroyed.
+goes out of scope, and (in the `std::thread` version) set `done` **after**
+retracting, so the main thread can never dereference the object while it is being
+destroyed.
 
 ## What you will see
 
