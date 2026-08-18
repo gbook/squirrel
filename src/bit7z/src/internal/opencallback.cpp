@@ -3,16 +3,21 @@
 
 /*
  * bit7z - A C++ static library to interface with the 7-zip shared libraries.
- * Copyright (c) 2014-2023 Riccardo Ostani - All Rights Reserved.
+ * Copyright (c) Riccardo Ostani - All Rights Reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "bitexception.hpp"
-#include "internal/cfileinstream.hpp"
 #include "internal/opencallback.hpp"
+
+#include "bitabstractarchivehandler.hpp"
+#include "bitexception.hpp"
+#include "bitpropvariant.hpp"
+#include "internal/callback.hpp"
+#include "internal/cfileinstream.hpp"
+#include "internal/fsutil.hpp"
 #include "internal/stringutil.hpp"
 #include "internal/util.hpp"
 
@@ -40,13 +45,13 @@ COM_DECLSPEC_NOTHROW
 STDMETHODIMP OpenCallback::GetProperty( PROPID property, PROPVARIANT* value ) noexcept try {
     BitPropVariant prop;
     if ( property == kpidName ) {
-        prop = mSubArchiveMode ? mSubArchiveName : path_to_wide_string( mArchivePath.filename() );
+        prop = mSubArchiveMode ? mSubArchiveName : pathToSevenzipString( mArchivePath.filename() );
     }
     *value = prop;
     prop.bstrVal = nullptr; // NOLINT(*-pro-type-union-access)
     return S_OK;
-} catch ( const BitException& ex ) {
-    return ex.hresultCode();
+} catch ( const BitException& exception ) {
+    return exception.hresultCode();
 }
 
 COM_DECLSPEC_NOTHROW
@@ -60,17 +65,18 @@ STDMETHODIMP OpenCallback::GetStream( const wchar_t* name, IInStream** inStream 
         if ( name != nullptr ) {
             streamPath = streamPath.parent_path();
             streamPath.append( name );
-            const auto streamStatus = fs::status( streamPath );
-            if ( !fs::exists( streamStatus ) || fs::is_directory( streamStatus ) ) {  // avoid exceptions using status
+            std::error_code error;
+            const auto streamStatus = fs::status( streamPath, error );
+            if ( error || !fs::exists( streamStatus ) || fs::is_directory( streamStatus ) ) {
                 return S_FALSE;
             }
         }
 
         try {
-            auto inStreamTemp = bit7z::make_com< CFileInStream >( streamPath );
+            auto inStreamTemp = bit7z::make_com< CFileInStream >( streamPath.native() );
             *inStream = inStreamTemp.Detach();
-        } catch ( const BitException& ex ) {
-            return ex.nativeCode();
+        } catch ( const BitException& exception ) {
+            return exception.nativeCode();
         }
         return S_OK;
     } catch ( ... ) {
@@ -109,7 +115,7 @@ STDMETHODIMP OpenCallback::CryptoGetTextPassword( BSTR* password ) noexcept {
     return StringToBstr( pass.c_str(), password );
 }
 
-auto OpenCallback::passwordWasAsked() const -> bool {
+auto OpenCallback::passwordWasAsked() const noexcept -> bool {
     return mPasswordWasAsked;
 }
 

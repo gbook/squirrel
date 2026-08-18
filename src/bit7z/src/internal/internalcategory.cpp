@@ -3,15 +3,19 @@
 
 /*
  * bit7z - A C++ static library to interface with the 7-zip shared libraries.
- * Copyright (c) 2014-2023 Riccardo Ostani - All Rights Reserved.
+ * Copyright (c) Riccardo Ostani - All Rights Reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "biterror.hpp"
 #include "internal/internalcategory.hpp"
+
+#include "biterror.hpp"
+
+#include <string>
+#include <system_error>
 
 namespace bit7z {
 
@@ -31,6 +35,8 @@ auto InternalCategory::message( int errorValue ) const -> std::string {
             return "No indices specified.";
         case BitError::InvalidArchivePath:
             return "Invalid archive path.";
+        case BitError::InvalidDirectoryPath:
+            return "Invalid directory path.";
         case BitError::InvalidOutputBufferSize:
             return "Invalid output buffer size.";
         case BitError::InvalidCompressionMethod:
@@ -47,6 +53,8 @@ auto InternalCategory::message( int errorValue ) const -> std::string {
             return "The item is marked as deleted.";
         case BitError::NoMatchingItems:
             return "No matching item was found in the archive.";
+        case BitError::NoMatchingFile:
+            return "No matching file was found in the archive.";
         case BitError::NoMatchingSignature:
             return "No known signature found.";
         case BitError::NonEmptyOutputBuffer:
@@ -63,8 +71,14 @@ auto InternalCategory::message( int errorValue ) const -> std::string {
             return "Wrong update mode.";
         case BitError::InvalidZipPassword:
             return "7-Zip only supports printable ASCII characters for passwords when creating Zip archives.";
+        case BitError::ItemPathOutsideOutputDirectory:
+            return "The extracted item path would be outside the output directory";
+        case BitError::ItemHasAbsolutePath:
+            return "The item has an absolute path.";
+        case BitError::InvalidItemPath:
+            return "The item has an invalid path.";
         default:
-            return "Unknown error.";
+            return "Unknown internal error (code " + std::to_string( errorValue ) + ").";
     }
 }
 
@@ -74,6 +88,7 @@ auto InternalCategory::default_error_condition( int errorValue ) const noexcept 
         case BitError::FormatFeatureNotSupported:
         case BitError::IndicesNotSpecified:
         case BitError::InvalidArchivePath:
+        case BitError::InvalidDirectoryPath:
         case BitError::InvalidOutputBufferSize:
         case BitError::InvalidCompressionMethod:
         case BitError::InvalidDictionarySize:
@@ -85,6 +100,7 @@ auto InternalCategory::default_error_condition( int errorValue ) const noexcept 
         case BitError::InvalidZipPassword:
             return std::make_error_condition( std::errc::invalid_argument );
         case BitError::NoMatchingItems:
+        case BitError::NoMatchingFile:
             return std::make_error_condition( std::errc::no_such_file_or_directory );
         case BitError::RequestedWrongVariantType:
         case BitError::UnsupportedOperation:
@@ -92,13 +108,16 @@ auto InternalCategory::default_error_condition( int errorValue ) const noexcept 
             return std::make_error_condition( std::errc::not_supported );
         case BitError::ItemMarkedAsDeleted:
         case BitError::WrongUpdateMode:
+        case BitError::ItemPathOutsideOutputDirectory:
+        case BitError::ItemHasAbsolutePath:
+        case BitError::InvalidItemPath:
             return std::make_error_condition( std::errc::operation_not_permitted );
         default:
             return error_category::default_error_condition( errorValue );
     }
 }
 
-auto internal_category() noexcept -> const std::error_category& {
+auto internalCategory() noexcept -> const std::error_category& {
     static const InternalCategory instance{};
     return instance;
 }
