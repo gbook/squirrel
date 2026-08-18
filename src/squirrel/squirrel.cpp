@@ -1193,10 +1193,92 @@ bool squirrel::Validate() {
  */
 QString squirrel::GetLogBuffer() {
 
+    QMutexLocker locker(&logMutex);
     QString ret = logBuffer;
     logBuffer = "";
 
     return ret;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetLog ----------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Return the entire log accumulated so far
+ * @return the full log
+ *
+ * Thread-safe: may be called from a different thread than the one running a
+ * long operation.
+ */
+QString squirrel::GetLog() {
+    QMutexLocker locker(&logMutex);
+    return log;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetProgress ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Return the progress (0-100) of the current long operation
+ * @return progress percentage, 0.0 to 100.0
+ *
+ * Currently driven by the archive compression phase of Write(). Thread-safe:
+ * intended to be polled from a different thread while Write() runs.
+ */
+double squirrel::GetProgress() {
+    QMutexLocker locker(&logMutex);
+    return progress;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- ResetProgress ---------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Reset progress to 0 at the start of a long operation
+ */
+void squirrel::ResetProgress() {
+    QMutexLocker locker(&logMutex);
+    progress = 0.0;
+    lastLoggedProgressPct = -1;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- SetProgress ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Update the progress of the current long operation
+ * @param pct progress percentage, clamped to 0.0 - 100.0
+ *
+ * Updates the pollable progress value and, whenever the whole-number percent
+ * changes, appends a throttled "Compressing..." line to the log buffer so a
+ * polling parent sees textual progress too. Called from the bit7z compression
+ * callback, which may fire thousands of times; the whole-percent throttle keeps
+ * the log from being flooded. Thread-safe.
+ */
+void squirrel::SetProgress(double pct) {
+    if (pct < 0.0) pct = 0.0;
+    if (pct > 100.0) pct = 100.0;
+
+    QString line;
+    {
+        QMutexLocker locker(&logMutex);
+        progress = pct;
+        int p = (int)pct;
+        if (p != lastLoggedProgressPct) {
+            lastLoggedProgressPct = p;
+            line = QString("Compressing package... %1%\n").arg(p);
+            log.append(line);
+            logBuffer.append(line);
+        }
+    }
+
+    /* redraw the console progress bar (CLI use) only when the percent changed */
+    if (!line.isEmpty() && !quiet)
+        utils::PrintProgress(pct / 100.0);
 }
 
 
@@ -1570,8 +1652,11 @@ QString squirrel::GetTempDir() {
  */
 void squirrel::Log(QString s) {
     if (s.trimmed() != "") {
-        log.append(QString("%1\n").arg(s));
-        logBuffer.append(QString("%1\n").arg(s));
+        {
+            QMutexLocker locker(&logMutex);
+            log.append(QString("%1\n").arg(s));
+            logBuffer.append(QString("%1\n").arg(s));
+        }
         if (!quiet) {
             utils::Print(s);
         }
@@ -1590,8 +1675,11 @@ void squirrel::Log(QString s) {
 void squirrel::Debug(QString s, QString func) {
     if (debug) {
         if (s.trimmed() != "") {
-            log.append(QString("Debug %1() %2\n").arg(func).arg(s));
-            logBuffer.append(QString("Debug %1() %2\n").arg(func).arg(s));
+            {
+                QMutexLocker locker(&logMutex);
+                log.append(QString("Debug %1() %2\n").arg(func).arg(s));
+                logBuffer.append(QString("Debug %1() %2\n").arg(func).arg(s));
+            }
             utils::Print(QString("Debug %1() %2").arg(func).arg(s));
         }
     }
@@ -3300,9 +3388,26 @@ bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath,
 bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QString &m) {
     Debug(QString("Compressing directory [%1] to archive [%2]...").arg(dir).arg(archivePath));
 
+    ResetProgress();
+
     try {
         using namespace bit7z;
         Bit7zLibrary lib(p7zipLibPath.toStdString());
+
+        /* Feed bit7z's compression progress into the instance so a parent polling
+           GetProgress()/GetLogBuffer() on another thread can watch this long phase.
+           archiveTotalBytes is a local captured by reference; both callbacks and
+           compressTo() run synchronously within this scope, so the reference stays
+           valid. */
+        quint64 archiveTotalBytes = 0;
+        std::function<void(uint64_t)> totalCb = [&archiveTotalBytes](uint64_t total) {
+            archiveTotalBytes = total;
+        };
+        std::function<bool(uint64_t)> progressCb = [this, &archiveTotalBytes](uint64_t done) {
+            if (archiveTotalBytes > 0)
+                SetProgress((double)done / (double)archiveTotalBytes * 100.0);
+            return true;
+        };
 
         if (overwritePackage) {
             if (QFile::exists(archivePath) && (archivePath != "")) {
@@ -3316,8 +3421,8 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
             archive.setUpdateMode(UpdateMode::Update);
             archive.setCompressionLevel(BitCompressionLevel::Fastest);
             archive.setRetainDirectories(true);
-            archive.setProgressCallback(progressCallback);
-            archive.setTotalCallback(totalArchiveSizeCallback);
+            archive.setProgressCallback(progressCb);
+            archive.setTotalCallback(totalCb);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
         }
@@ -3327,11 +3432,12 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
             archive.setCompressionLevel(BitCompressionLevel::Fastest);
             archive.setRetainDirectories(true);
             archive.setSolidMode(false);
-            archive.setProgressCallback(progressCallback);
-            archive.setTotalCallback(totalArchiveSizeCallback);
+            archive.setProgressCallback(progressCb);
+            archive.setTotalCallback(totalCb);
             archive.addFiles(dir.toStdString(), "*", true); // instead of addDirectory
             archive.compressTo(archivePath.toStdString());
         }
+        SetProgress(100.0);
         m = "Successfully compressed directory [" + dir + "] to archive [" + archivePath + "]";
         return true;
     }
@@ -3355,14 +3461,28 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
  * @return true if successful, false otherwise
  */
 bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m) {
+    ResetProgress();
+
     try {
         using namespace bit7z;
         Bit7zLibrary lib(p7zipLibPath.toStdString());
+
+        /* route bit7z progress into the instance (see CompressDirectoryToArchive) */
+        quint64 archiveTotalBytes = 0;
+        std::function<void(uint64_t)> totalCb = [&archiveTotalBytes](uint64_t total) {
+            archiveTotalBytes = total;
+        };
+        std::function<bool(uint64_t)> progressCb = [this, &archiveTotalBytes](uint64_t done) {
+            if (archiveTotalBytes > 0)
+                SetProgress((double)done / (double)archiveTotalBytes * 100.0);
+            return true;
+        };
+
         if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::Zip);
             editor.setUpdateMode(UpdateMode::Update);
-            editor.setProgressCallback(progressCallback);
-            editor.setTotalCallback(totalArchiveSizeCallback);
+            editor.setProgressCallback(progressCb);
+            editor.setTotalCallback(totalCb);
             for (int i=0; i<filePaths.size(); i++) {
                 std::string filePath = filePaths.at(i).toStdString();
                 std::string compressedPath = compressedFilePaths.at(i).toStdString();
@@ -3374,8 +3494,8 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
             bit7z::BitArchiveEditor editor(lib, archivePath.toStdString(), bit7z::BitFormat::SevenZip);
             editor.setUpdateMode(UpdateMode::Update);
             editor.setSolidMode(false);
-            editor.setProgressCallback(progressCallback);
-            editor.setTotalCallback(totalArchiveSizeCallback);
+            editor.setProgressCallback(progressCb);
+            editor.setTotalCallback(totalCb);
             for (int i=0; i<filePaths.size(); i++) {
                 std::string filePath = filePaths.at(i).toStdString();
                 std::string compressedPath = compressedFilePaths.at(i).toStdString();
@@ -3383,6 +3503,7 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
             }
             editor.applyChanges();
         }
+        SetProgress(100.0);
         m = "Successfully added/updated file(s) to archive [" + archivePath + "]";
         return true;
     }
