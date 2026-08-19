@@ -85,6 +85,13 @@ squirrel::squirrel(bool dbg, bool q)
     databaseUUID = QUuid::createUuid().toString(QUuid::WithoutBraces);
     Log(QString("Generated UUID [%1]").arg(databaseUUID));
 
+    /* Writing a large package can hold more than the default 1024 file descriptors
+       open at once (bit7z opens many files while compressing), so raise the soft
+       limit up to the hard limit. This is process-wide and affects an embedding
+       application too, which is intended. */
+    long nofile = utils::RaiseOpenFileLimit();
+    Debug(QString("Open file limit (RLIMIT_NOFILE soft) is [%1]").arg(nofile), __FUNCTION__);
+
     if (!DatabaseConnect()) {
         Log("Error connecting to database. Unable to initilize squirrel library");
         isValid = false;
@@ -3350,6 +3357,14 @@ bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath,
         Debug("Unable to extract file from archive using bit7z library [" + QString(ex.what()) + "]", __FUNCTION__);
         return false;
     }
+    catch ( const std::exception& ex ) {
+        /* bit7z can let non-bit7z exceptions through - notably std::filesystem_error
+           when the process runs out of file descriptors. Catch them here so the
+           library returns an error instead of terminating the whole application. */
+        fileContents = QByteArray();
+        Debug("Unable to extract file from archive [" + QString(ex.what()) + "]", __FUNCTION__);
+        return false;
+    }
 }
 
 
@@ -3446,6 +3461,15 @@ bool squirrel::CompressDirectoryToArchive(QString dir, QString archivePath, QStr
         m = "Unable to compress directory into archive using bit7z library. Error [" + QString(ex.what()) + "]";
         return false;
     }
+    catch ( const std::exception& ex ) {
+        /* bit7z's addFiles() walks the directory with a std::filesystem
+           recursive_directory_iterator, which throws std::filesystem_error (not a
+           bit7z::BitException) when the process is out of file descriptors. Catch
+           it here so a package write fails cleanly instead of terminating the
+           whole application. */
+        m = "Unable to compress directory into archive [" + QString(ex.what()) + "]";
+        return false;
+    }
 }
 
 
@@ -3512,6 +3536,12 @@ bool squirrel::AddFilesToArchive(QStringList filePaths, QStringList compressedFi
         m = "Unable to add/update files into archive using bit7z library [" + QString(ex.what()) + "]";
         return false;
     }
+    catch ( const std::exception& ex ) {
+        /* catch std::filesystem_error etc. (e.g. out of file descriptors) so the
+           library returns an error instead of terminating the application */
+        m = "Unable to add/update files into archive [" + QString(ex.what()) + "]";
+        return false;
+    }
 }
 
 
@@ -3576,6 +3606,12 @@ bool squirrel::RemoveDirectoryFromArchive(QString compressedDirPath, QString arc
         m = "Unable to remove files from archive using bit7z library [" + QString(ex.what()) + "]";
         return false;
     }
+    catch ( const std::exception& ex ) {
+        /* catch std::filesystem_error etc. (e.g. out of file descriptors) so the
+           library returns an error instead of terminating the application */
+        m = "Unable to remove files from archive [" + QString(ex.what()) + "]";
+        return false;
+    }
 }
 
 
@@ -3620,6 +3656,12 @@ bool squirrel::UpdateMemoryFileToArchive(QString file, QString compressedFilePat
     catch ( const bit7z::BitException& ex ) {
         /* Do something with ex.what()...*/
         m = "Unable to compress directory into archive using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+    catch ( const std::exception& ex ) {
+        /* catch std::filesystem_error etc. (e.g. out of file descriptors) so the
+           library returns an error instead of terminating the application */
+        m = "Unable to compress directory into archive [" + QString(ex.what()) + "]";
         return false;
     }
 }
@@ -3725,6 +3767,12 @@ bool squirrel::GetArchiveFileListing(QString archivePath, QString subDir, QStrin
     catch ( const bit7z::BitException& ex ) {
         /* Do something with ex.what()...*/
         m = "Unable to get subdirectory listing using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+    catch ( const std::exception& ex ) {
+        /* catch std::filesystem_error etc. (e.g. out of file descriptors) so the
+           library returns an error instead of terminating the application */
+        m = "Unable to get subdirectory listing [" + QString(ex.what()) + "]";
         return false;
     }
 }
@@ -3921,6 +3969,12 @@ bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString fileP
     catch ( const bit7z::BitException& ex ) {
         /* Do something with ex.what()...*/
         m = "Unable to extract files from archive using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+    catch ( const std::exception& ex ) {
+        /* catch std::filesystem_error etc. (e.g. out of file descriptors) so the
+           library returns an error instead of terminating the application */
+        m = "Unable to extract files from archive [" + QString(ex.what()) + "]";
         return false;
     }
 }
