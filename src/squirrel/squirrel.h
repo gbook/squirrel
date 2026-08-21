@@ -224,6 +224,7 @@ private:
     bool ExtractArchiveFileToMemory(QString archivePath, QString filePath, QString &fileContents);
     bool Get7zipLibPath();
     bool GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m);
+    bool PreloadArchiveForRead(QHash<QString, QByteArray> &paramsByPath, QHash<QString, QStringList> &filesBySeriesDir, QString &m);
     bool RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m);
     bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
 

@@ -406,6 +406,19 @@ bool squirrel::Read() {
     QSqlQuery qInterventionInsert(dbconn);
     qInterventionInsert.prepare("insert into Intervention (SubjectRowID, InterventionName, DateStart, DateEnd, DateRecordCreate, DateRecordEntry, DateRecordModify, DoseString, DoseAmount, DoseFrequency, AdministrationRoute, InterventionClass, DoseKey, DoseUnit, FrequencyModifier, FrequencyValue, FrequencyUnit, Description, Rater, Notes) values (:SubjectRowID, :InterventionName, :DateStart, :DateEnd, :DateRecordCreate, :DateRecordEntry, :DateRecordModify, :DoseString, :DoseAmount, :DoseFrequency, :AdministrationRoute, :InterventionClass, :DoseKey, :DoseUnit, :FrequencyModifier, :FrequencyValue, :FrequencyUnit, :Description, :Rater, :Notes)");
 
+    /* For a full (non-quick) read, open the archive ONCE and cache every params.json
+       and the per-series file listing. Doing this per series re-opens the archive
+       thousands of times, which is O(N^2) and can take tens of minutes on a large
+       package (see PreloadArchiveForRead). */
+    QHash<QString, QByteArray> preloadedParams;
+    QHash<QString, QStringList> preloadedSeriesFiles;
+    if (!quickRead) {
+        QString pm;
+        utils::Print("Indexing package contents...");
+        if (!PreloadArchiveForRead(preloadedParams, preloadedSeriesFiles, pm))
+            Log("Warning: unable to preload archive contents [" + pm + "]");
+    }
+
     /* loop through and read any subjects */
     utils::Print(QString("\nReading %1 subjects...").arg(jsonSubjects.size()));
     qint64 i(0);
@@ -496,7 +509,8 @@ bool squirrel::Read() {
                         seriesPath = QString("data/%1/%2/%3").arg(sqrlSubject.ID).arg(sqrlStudy.StudyNumber).arg(sqrlSeries.SeriesNumber);
                         paramsfilepath = seriesPath + "/params.json";
                     #endif
-                    if (ExtractArchiveFileToMemory(GetPackagePath(), paramsfilepath, parms)) {
+                    if (preloadedParams.contains(paramsfilepath)) {
+                        parms = QString::fromUtf8(preloadedParams.value(paramsfilepath));
                         sqrlSeries.params = ReadParamsFile(parms);
                         Debug(QString("Read params file [%1]. series.params contains [%2] items").arg(paramsfilepath).arg(sqrlSeries.params.size()));
                     }
@@ -504,11 +518,8 @@ bool squirrel::Read() {
                         Log("Unable to read params file [" + paramsfilepath + "]");
                     }
 
-                    /* get file listing */
-
-                    QStringList files;
-                    QString m;
-                    GetArchiveFileListing(GetPackagePath(), seriesPath, files, m);
+                    /* get file listing (from the single preloaded archive index) */
+                    QStringList files = preloadedSeriesFiles.value(seriesPath);
                     Debug(QString("archiveSeriesPath [%1] found [%2] files [%3]").arg(seriesPath).arg(files.size()).arg(files.join(",")));
                     sqrlSeries.files = files;
                     sqrlSeries.FileCount = files.size();
@@ -3330,23 +3341,32 @@ bool squirrel::ExtractArchiveFileToMemory(QString archivePath, QString filePath,
     Debug(QString("Reading file [%1] from archive [%2]...").arg(filePath).arg(archivePath), __FUNCTION__);
     try {
         using namespace bit7z;
-        std::vector<unsigned char> buffer;
         Bit7zLibrary lib(p7zipLibPath.toStdString());
-        if (archivePath.endsWith(".zip", Qt::CaseInsensitive)) {
-            BitFileExtractor extractor(lib, BitFormat::Zip);
-            extractor.setProgressCallback(progressCallback);
-            extractor.setTotalCallback(totalArchiveSizeCallback);
-            extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
+        const bit7z::BitInOutFormat &fmt = archivePath.endsWith(".zip", Qt::CaseInsensitive) ? BitFormat::Zip : BitFormat::SevenZip;
+        BitArchiveReader reader(lib, archivePath.toStdString(), fmt);
+
+        /* Locate the item by its exact path and extract it by index. This
+           deliberately avoids BitFileExtractor::extractMatching(), which reads
+           through the ENTIRE archive (cost proportional to the archive's size, not
+           the target file's) - on a multi-GB package that is tens of minutes just
+           to pull one small file. Extract-by-index seeks straight to the item. */
+        bool found = false;
+        uint32_t index = 0;
+        for (const auto &item : reader.items()) {
+            if (QString::fromStdString(item.path()) == filePath) {
+                index = item.index();
+                found = true;
+                break;
+            }
         }
-        else {
-            BitFileExtractor extractor(lib, BitFormat::SevenZip);
-            extractor.setProgressCallback(progressCallback);
-            extractor.setTotalCallback(totalArchiveSizeCallback);
-            Debug("Before calling extractMatching()", __FUNCTION__);
-            extractor.extractMatching(archivePath.toStdString(), filePath.toStdString(), buffer);
-            Debug(QString("After calling extractMatching() buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
+        if (!found) {
+            fileContents = QByteArray();
+            Debug(QString("File [%1] not found in archive [%2]").arg(filePath).arg(archivePath), __FUNCTION__);
+            return false;
         }
-        Debug(QString("Copying buffer to QByteArray. Buffer size [%1] bytes").arg(buffer.size()), __FUNCTION__);
+
+        std::vector<unsigned char> buffer;
+        reader.extractTo(buffer, index);
         fileContents = QByteArray(reinterpret_cast<const char*>(buffer.data()), static_cast<int>(buffer.size()));
         Debug(QString("Extracted file [%1]. File is [%2] bytes in length").arg(filePath).arg(fileContents.size()), __FUNCTION__);
         return true;
@@ -3724,6 +3744,85 @@ bool squirrel::ExtractArchiveToDirectory(QString archivePath, QString destinatio
     //    m = "Unable to extract archive to directory using bit7z library [" + QString(ex.what()) + "]";
     //    return false;
     //}
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- SeriesDirOfArchivePath ------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Return the series directory (data/<subject>/<study>/<series>) of an archive path
+ * @param path an archive entry path, e.g. "data/S001/1/2/params.json"
+ * @return the first four path components, or "" if the path has fewer than four
+ */
+static QString SeriesDirOfArchivePath(const QString &path) {
+    int slashes = 0;
+    for (int i = 0; i < path.size(); i++) {
+        if (path.at(i) == '/') {
+            if (++slashes == 4)
+                return path.left(i);
+        }
+    }
+    return QString();
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- PreloadArchiveForRead -------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Open the package archive once and cache everything Read() needs per series
+ * @param paramsByPath filled with the contents of every params.json, keyed by archive path
+ * @param filesBySeriesDir filled with the files under each series directory
+ *        (data/<subject>/<study>/<series>), keyed by that directory
+ * @param m output message on failure
+ * @return true if successful
+ *
+ * For every series, Read() needs that series' params.json and the list of files
+ * under its directory. Fetching those per series re-opens the archive each time,
+ * and opening a 7z parses metadata for every entry - O(entries) per open - so a
+ * package with N series costs O(N^2) and a large package can take tens of minutes.
+ * This opens the archive a SINGLE time and gathers all of it in one pass, so the
+ * per-series work in Read() becomes hash lookups.
+ */
+bool squirrel::PreloadArchiveForRead(QHash<QString, QByteArray> &paramsByPath, QHash<QString, QStringList> &filesBySeriesDir, QString &m) {
+    try {
+        using namespace bit7z;
+        Bit7zLibrary lib(p7zipLibPath.toStdString());
+        const bit7z::BitInOutFormat &fmt = GetPackagePath().endsWith(".zip", Qt::CaseInsensitive) ? BitFormat::Zip : BitFormat::SevenZip;
+        BitArchiveReader reader(lib, GetPackagePath().toStdString(), fmt);
+
+        /* one metadata pass: group files by series dir, and note the params.json indices */
+        QList<QPair<QString, quint32>> paramItems;
+        for (const auto &item : reader) {
+            if (item.isDir())
+                continue;
+            QString path = QString::fromStdString(item.path());
+
+            QString seriesDir = SeriesDirOfArchivePath(path);
+            if (!seriesDir.isEmpty())
+                filesBySeriesDir[seriesDir].append(path);
+
+            if (path.endsWith("/params.json"))
+                paramItems.append(qMakePair(path, item.index()));
+        }
+
+        /* extract every params.json from the same open reader, by index */
+        for (const auto &pi : paramItems) {
+            std::vector<unsigned char> buffer;
+            reader.extractTo(buffer, pi.second);
+            paramsByPath[pi.first] = QByteArray(reinterpret_cast<const char*>(buffer.data()), static_cast<int>(buffer.size()));
+        }
+        return true;
+    }
+    catch ( const bit7z::BitException& ex ) {
+        m = "Unable to preload archive for reading using bit7z library [" + QString(ex.what()) + "]";
+        return false;
+    }
+    catch ( const std::exception& ex ) {
+        m = "Unable to preload archive for reading [" + QString(ex.what()) + "]";
+        return false;
+    }
 }
 
 
