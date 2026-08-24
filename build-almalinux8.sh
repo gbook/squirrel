@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+SKIP_GUI=1
+
 echo "AlmaLinux 8 detected. Enabling gcc-toolset-13"
 source /opt/rh/gcc-toolset-13/enable
 

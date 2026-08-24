@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+SKIP_GUI=1
+
 # global build variables
 if [ -z "$1" ]; then
 	QMAKEBIN=~/Qt/6.9.3/gcc_64/bin/qmake

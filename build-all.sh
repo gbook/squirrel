@@ -8,7 +8,7 @@
 
 SRCDIR="$(pwd)"
 SHARED=/mnt/wsl/squirrel-build
-WSL_DISTROS=(AlmaLinux-8 AlmaLinux-9 AlmaLinux-10 Ubuntu-22.04 Debian-12 Debian-13)
+WSL_DISTROS=(AlmaLinux-8 AlmaLinux-9 AlmaLinux-10 Ubuntu-20.04 Ubuntu-22.04 Debian)
 declare -A RESULTS
 
 echo "Mounting source at $SHARED (shared across all WSL2 distros)..."
@@ -22,9 +22,9 @@ echo "  Building on Ubuntu 24 (local)"
 echo "=========================================="
 bash build.sh
 if [ $? -eq 0 ]; then
-    RESULTS[Ubuntu-24]="SUCCESS"
+    RESULTS[Ubuntu]="SUCCESS"
 else
-    RESULTS[Ubuntu-24]="FAILED"
+    RESULTS[Ubuntu]="FAILED"
 fi
 
 # Build on each WSL distro
@@ -50,7 +50,7 @@ sudo umount $SHARED
 
 echo ""
 echo "========== Build Summary =========="
-printf "  %-20s %s\n" "Ubuntu-24" "${RESULTS[Ubuntu-24]}"
+printf "  %-20s %s\n" "Ubuntu-24" "${RESULTS[Ubuntu]}"
 for DISTRO in "${WSL_DISTROS[@]}"; do
     printf "  %-20s %s\n" "$DISTRO" "${RESULTS[$DISTRO]}"
 done
