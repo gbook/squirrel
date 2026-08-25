@@ -4038,7 +4038,7 @@ bool squirrel::UpdateJsonHeader(QString json) {
 /**
  * @brief Extract files matching a pattern from an archive to a directory
  * @param archivePath path to the archive file (.zip or .7z)
- * @param filePattern glob pattern to match archive entries (e.g. "data/S1234/1/2/*")
+ * @param filePattern glob pattern to match archive entries (e.g. "data/S1234/1/2/ *")
  * @param outDir directory to extract matching files into
  * @param m output message describing success or failure
  * @return true if successful

@@ -72,7 +72,7 @@ bool modify::DoModify(QString packagePath, const modification &mod, QString &m) 
  * mod.dataPath may be:
  *   - a single file              → returns that file
  *   - a directory                → returns all files in the directory (recursive if mod.recursive)
- *   - a glob pattern (/p/*.dcm)  → returns matching files in the parent directory
+ *   - a glob pattern (/p/ *.dcm)  → returns matching files in the parent directory
  *
  * @param mod the modification struct
  * @return list of absolute file paths (may be empty if dataPath is empty or matches nothing)
