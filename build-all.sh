@@ -8,7 +8,9 @@
 
 SRCDIR="$(pwd)"
 SHARED=/mnt/wsl/squirrel-build
-WSL_DISTROS=(AlmaLinux-8 AlmaLinux-9 AlmaLinux-10 Ubuntu-20.04 Ubuntu-22.04 Debian)
+# Ubuntu 20.04 is intentionally excluded: Qt 6.9.3's prebuilt gcc_64 binaries
+# require Ubuntu 22.04+, and build.sh now rejects it explicitly.
+WSL_DISTROS=(AlmaLinux-8 AlmaLinux-9 AlmaLinux-10 Ubuntu-22.04 Debian)
 declare -A RESULTS
 
 echo "Mounting source at $SHARED (shared across all WSL2 distros)..."
@@ -33,7 +35,13 @@ for DISTRO in "${WSL_DISTROS[@]}"; do
     echo "=========================================="
     echo "  Building on $DISTRO"
     echo "=========================================="
-    wsl.exe -d "$DISTRO" -- bash -c "cd $SHARED && bash build.sh"
+    # Force a clean Linux PATH. WSL appends the Windows PATH by default, which
+    # pulls in entries containing spaces (e.g. ".../Program Files/..."). On
+    # AlmaLinux 8 the gcc-toolset 'enable' step re-exports PATH, and those
+    # space-containing entries then get word-split during later steps (the
+    # 'sudo cp' install), producing "env: 'Files': No such file or directory"
+    # and failing the distro build even though the compile succeeded.
+    wsl.exe -d "$DISTRO" -- bash -c "cd $SHARED && PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin bash build.sh"
     if [ $? -eq 0 ]; then
         RESULTS[$DISTRO]="SUCCESS"
     else

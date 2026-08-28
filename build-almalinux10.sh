@@ -33,11 +33,27 @@ mkdir -p $BUILDDIR
 # ----- build bit7z library -----
 echo -e "\n ----- Building bit7z -----\n"
 mkdir -p $BUILDDIR/bit7z
+# CMakeCache.txt stores absolute source/binary paths. build-all.sh configures the
+# local host from the real path but the WSL distros via the /mnt/wsl bind mount, so
+# a cache written under a different path spelling makes cmake abort ("CMakeCache.txt
+# directory ... is different"). Drop a stale/mismatched cache so configure re-runs clean.
+if [ -f "$BUILDDIR/bit7z/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/bit7z" "$BUILDDIR/bit7z/CMakeCache.txt"; then
+	echo "Removing stale bit7z CMake cache in $BUILDDIR/bit7z"
+	rm -rf "$BUILDDIR/bit7z"
+	mkdir -p "$BUILDDIR/bit7z"
+fi
 cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC -S $SRCDIR/bit7z -B $BUILDDIR/bit7z
 cd $BUILDDIR/bit7z
+# bit7z (cmake/OutputOptions.cmake) forces its archive into the SHARED source
+# tree ($SRCDIR/bit7z/lib/x64), which build-all.sh bind-mounts across every
+# distro. Delete any archive left by another distro/toolchain so the build below
+# relinks libbit7z64.a from THIS distro's objects. Otherwise e.g. AlmaLinux 8
+# (gcc-toolset-10) links a lib built by Ubuntu 24 (GCC 13) and fails on missing
+# GCC12/glibc2.32 symbols (exception_ptr::_M_release, __libc_single_threaded, ...).
+rm -f "$SRCDIR/bit7z/lib/x64/"*.a "$SRCDIR/bit7z/"*.a 2>/dev/null || true
 cmake --build . --config Release
-cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
-cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
+cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
+cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
 
 # ----- dcm2niix (DICOM -> Nifti) -----
 # No build step needed here: the dcm2niix sources are compiled directly into
@@ -85,8 +101,8 @@ cd $ORIGDIR
 SQUIRREL_BIN="$BUILDDIR/squirrel/squirrel"
 if [ -f "$SQUIRREL_BIN" ]; then
     echo -e "\n ----- Installing squirrel to /usr/local/bin -----\n"
-    sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel
-    sudo ldconfig
+    sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel || echo "WARNING: could not install squirrel to /usr/local/bin (compile succeeded; install skipped)"
+    sudo ldconfig || true
 else
     echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"
 fi
@@ -95,7 +111,7 @@ fi
 SQUIRREL_GUI_BIN="$BUILDDIR/squirrel-gui/squirrel-gui"
 if [ -f "$SQUIRREL_GUI_BIN" ]; then
     echo -e "\n ----- Installing squirrel-gui to /usr/local/bin -----\n"
-    sudo cp -v "$SQUIRREL_GUI_BIN" /usr/local/bin/squirrel-gui
+    sudo cp -v "$SQUIRREL_GUI_BIN" /usr/local/bin/squirrel-gui || echo "WARNING: could not install squirrel-gui to /usr/local/bin"
 fi
 
 echo -e "\nBuild complete. Output: $BUILDDIR\n"

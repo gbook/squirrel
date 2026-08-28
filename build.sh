@@ -15,7 +15,8 @@ case "$ID" in
     ubuntu)
         case "$VERSION_ID" in
             22*) exec bash "$SCRIPT_DIR/build-ubuntu22.sh" "$@" ;;
-            *)   exec bash "$SCRIPT_DIR/build-ubuntu24.sh" "$@" ;;
+            24*) exec bash "$SCRIPT_DIR/build-ubuntu24.sh" "$@" ;;
+            *)   echo "Unsupported Ubuntu version: $VERSION_ID ($PRETTY_NAME). Supported: 22.04, 24.04 (Qt 6.9.3 requires Ubuntu 22.04+)."; exit 1 ;;
         esac ;;
     debian)
         case "$VERSION_ID" in

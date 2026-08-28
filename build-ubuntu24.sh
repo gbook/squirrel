@@ -47,6 +47,15 @@ command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x.
 echo -e "\n ----- Building bit7z -----\n"
 echo -e "\n ----- Created path $BUILDDIR/bit7z -----\n"
 mkdir -p $BUILDDIR/bit7z
+# CMakeCache.txt stores absolute source/binary paths. build-all.sh configures the
+# local host from the real path but the WSL distros via the /mnt/wsl bind mount, so
+# a cache written under a different path spelling makes cmake abort ("CMakeCache.txt
+# directory ... is different"). Drop a stale/mismatched cache so configure re-runs clean.
+if [ -f "$BUILDDIR/bit7z/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/bit7z" "$BUILDDIR/bit7z/CMakeCache.txt"; then
+	echo "Removing stale bit7z CMake cache in $BUILDDIR/bit7z"
+	rm -rf "$BUILDDIR/bit7z"
+	mkdir -p "$BUILDDIR/bit7z"
+fi
 # NOTE: BIT7Z_USE_LEGACY_IUNKNOWN must match the installed 7-Zip generation. It is
 # ON only for the legacy p7zip IUnknown ABI (7-Zip <= ~16.02). Ubuntu 24.04 ships
 # modern 7-Zip (23.01, /usr/lib/7zip/7z.so), whose IUnknown ABI changed, so this
@@ -59,9 +68,16 @@ cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=OFF -DBIT7Z_GENERA
 echo -e "\n ----- chdir to $BUILDDIR/bit7z -----\n"
 cd $BUILDDIR/bit7z
 echo -e "\n ----- Running cmake --build . --config Release -----\n"
+# bit7z (cmake/OutputOptions.cmake) forces its archive into the SHARED source
+# tree ($SRCDIR/bit7z/lib/x64), which build-all.sh bind-mounts across every
+# distro. Delete any archive left by another distro/toolchain so the build below
+# relinks libbit7z64.a from THIS distro's objects. Otherwise e.g. AlmaLinux 8
+# (gcc-toolset-10) links a lib built by Ubuntu 24 (GCC 13) and fails on missing
+# GCC12/glibc2.32 symbols (exception_ptr::_M_release, __libc_single_threaded, ...).
+rm -f "$SRCDIR/bit7z/lib/x64/"*.a "$SRCDIR/bit7z/"*.a 2>/dev/null || true
 cmake --build . --config Release
-cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
-cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
+cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
+cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
 
 # ----- dcm2niix (DICOM -> Nifti) -----
 # No build step needed here: the dcm2niix sources are compiled directly into
@@ -78,9 +94,9 @@ cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
 #make -j 16
 #echo -e "\nCopying bit7z library to $BUILDDIR\n"
 #mkdir -pv $BUILDDIR/../bit7z/lib/x64
-#cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/../bit7z/lib/x64
+#cp -v $SRCDIR/bit7z/lib/x64/* $BUILDDIR/../bit7z/lib/x64
 #mkdir -pv $BUILDDIR/bit7z
-#cp -uv $SRCDIR/bit7z/lib/x64/* $BUILDDIR/bit7z/
+#cp -v $SRCDIR/bit7z/lib/x64/* $BUILDDIR/bit7z/
 
 # ----- build squirrel library -----
 echo -e "\n ----- Building squirrel library -----\n"
@@ -125,8 +141,8 @@ cd $ORIGDIR
 SQUIRREL_BIN="$BUILDDIR/squirrel/squirrel"
 if [ -f "$SQUIRREL_BIN" ]; then
     echo -e "\n ----- Installing squirrel to /usr/local/bin -----\n"
-    sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel
-    sudo ldconfig
+    sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel || echo "WARNING: could not install squirrel to /usr/local/bin (compile succeeded; install skipped)"
+    sudo ldconfig || true
 else
     echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"
 fi
@@ -135,7 +151,7 @@ fi
 SQUIRREL_GUI_BIN="$BUILDDIR/squirrel-gui/squirrel-gui"
 if [ -f "$SQUIRREL_GUI_BIN" ]; then
     echo -e "\n ----- Installing squirrel-gui to /usr/local/bin -----\n"
-    sudo cp -v "$SQUIRREL_GUI_BIN" /usr/local/bin/squirrel-gui
+    sudo cp -v "$SQUIRREL_GUI_BIN" /usr/local/bin/squirrel-gui || echo "WARNING: could not install squirrel-gui to /usr/local/bin"
 fi
 
 echo -e "\nBuild complete. Output: $BUILDDIR\n"
