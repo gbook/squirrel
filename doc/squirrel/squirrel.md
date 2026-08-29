@@ -115,7 +115,7 @@ squirrel info <package> [options]
 | `--subjectid <id>` | Filter by subject ID |
 | `--studynum <num>` | Filter by study number (requires `--subjectid`) |
 | `--dataset <type>` | Amount of detail: `id`, `basic`, or `full`. Default: `full` |
-| `--format <format>` | Output format: `list` or `csv`. Default: `csv` |
+| `--format <format>` | Output format: `list` or `csv`. Default: `list` |
 
 **Object types** (`--object`)
 
@@ -205,7 +205,8 @@ squirrel modify <package> --operation <op> --object <type> [options]
 | `-q`, `--quiet` | Suppress header and progress output |
 | `--operation <op>` | Operation to perform (see below) |
 | `--object <type>` | Object type to operate on (see below) |
-| `--datapath <path>` | Path to data for the new object. Wildcards supported (e.g. `/path/*.dcm`) |
+| `--datapath <path>` | Path to data for the new object. May be a directory, a single file, or a glob pattern (e.g. `/path/*.dcm`) |
+| `--recursive` | Search the `--datapath` directory recursively for files |
 | `--objectid <id>` | ID, name, or number of the existing object to modify or remove |
 | `--subjectid <id>` | Parent subject ID. Required when adding or removing a study, series, observation, intervention, or analysis |
 | `--studynum <num>` | Parent study number. Required when adding or removing a series or analysis (`--subjectid` also required) |
@@ -251,6 +252,10 @@ squirrel modify study.sqrl --operation update --object subject \
 # Add a new subject
 squirrel modify study.sqrl --operation add --object subject \
     --objectdata 'SubjectID=S9999&Sex=F&DateOfBirth=1985-06-15'
+
+# Add an experiment, recursively collecting files from a directory
+squirrel modify study.sqrl --operation add --object experiment \
+    --objectid MyExperiment --datapath /path/to/files/ --recursive
 
 # Remove a series
 squirrel modify study.sqrl --operation remove --object series \
@@ -305,7 +310,7 @@ squirrel extract <package> --object <type> --objectid <id> [options]
 
 **Object types** (`--object`)
 
-`subject`  `study`  `series`  `analysis`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
+`package`  `subject`  `study`  `series`  `analysis`  `intervention`  `observation`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
 
 **Examples**
 

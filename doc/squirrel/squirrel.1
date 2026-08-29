@@ -31,6 +31,9 @@ Convert a DICOM or BIDS directory into a squirrel package.
 .B info
 Display information about a package or its contents.
 .TP
+.B merge
+Merge two or more packages into one output package.
+.TP
 .B modify
 Add, remove, or update objects within a package.
 .TP
@@ -151,7 +154,7 @@ Output format:
 or
 .BR csv .
 Default:
-.BR csv .
+.BR list .
 .RE
 .PP
 .B Examples
@@ -161,6 +164,71 @@ squirrel info study.sqrl
 squirrel info study.sqrl --object subject --dataset full --format csv
 squirrel info study.sqrl --object study --subjectid S1234
 squirrel info study.sqrl --object series --subjectid S1234 --studynum 1
+.EE
+.RE
+.SS merge
+Merge two or more squirrel packages into a single output package. Imaging data
+is extracted from each source archive and re-packaged. Non-subject object
+collisions (studies, series, experiments, pipelines, etc.) are resolved by
+first-package-wins.
+.PP
+.B squirrel merge
+.I package1 package2
+.RI [ package3 ...]
+.B \-\-output
+.I path
+.RI [ options ]
+.PP
+.B Arguments
+.RS 4
+.TP
+.I package1 package2 ...
+Two or more input squirrel packages to merge.
+.RE
+.PP
+.B Options
+.RS 4
+.TP
+.BI \-\-output " path"
+Path for the merged output package (required unless
+.B \-\-test
+is used).
+.TP
+.B \-\-test
+Detect and display collisions without writing any output.
+.TP
+.B \-\-renumbersubjects
+Sort all subjects globally across all input packages and assign new sequential
+IDs; the original ID is appended to the subject's AlternateIDs list.
+.TP
+.BI \-\-digits " n"
+Number of digits for renumbered subject IDs (e.g.\&
+.B 4
+produces
+.BR 0001 \(en 9999 ).
+Auto-sized to fit the total subject count if omitted or too small.
+.RE
+.PP
+.B Collision behavior
+.RS 4
+If the same subject ID appears in more than one input package and
+.B \-\-renumbersubjects
+is not specified, the merge aborts with an error and no output is written. For
+all other object types, collisions are silently resolved by first-package-wins.
+.RE
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel merge cohort_a.sqrl cohort_b.sqrl --output merged.sqrl
+
+squirrel merge cohort_a.sqrl cohort_b.sqrl --output merged.sqrl --test
+
+squirrel merge site1.sqrl site2.sqrl site3.sqrl \\
+    --output combined.sqrl --renumbersubjects
+
+squirrel merge site1.sqrl site2.sqrl \\
+    --output combined.sqrl --renumbersubjects --digits 6
 .EE
 .RE
 .SS modify
@@ -194,9 +262,14 @@ Object type to operate on. Possible values:
 .BR groupanalysis ", " datadictionary .
 .TP
 .BI \-\-datapath " path"
-Path to data for the new object. Wildcards supported
-(e.g.\&
+Path to data for the new object. May be a directory, a single file, or a glob
+pattern (e.g.\&
 .IR /path/*.dcm ).
+.TP
+.B \-\-recursive
+Search the
+.B \-\-datapath
+directory recursively for files.
 .TP
 .BI \-\-objectid " id"
 ID, name, or number of the existing object to modify or remove.
@@ -267,6 +340,9 @@ squirrel modify study.sqrl --operation update --object subject \\
 squirrel modify study.sqrl --operation add --object subject \\
     --objectdata 'SubjectID=S9999&Sex=F&DateOfBirth=1985-06-15'
 
+squirrel modify study.sqrl --operation add --object experiment \\
+    --objectid MyExperiment --datapath /path/to/files/ --recursive
+
 squirrel modify study.sqrl --operation remove --object series \\
     --subjectid S1234 --studynum 1 --objectid 3
 
@@ -306,8 +382,9 @@ Suppress header and progress output.
 .TP
 .BI \-\-object " type"
 Object type to extract. Possible values:
-.BR subject ", " study ", " series ", " analysis ", " experiment ", "
-.BR pipeline ", " groupanalysis ", " datadictionary .
+.BR package ", " subject ", " study ", " series ", " analysis ", "
+.BR intervention ", " observation ", " experiment ", " pipeline ", "
+.BR groupanalysis ", " datadictionary .
 .TP
 .BI \-\-outdir " path"
 Destination directory for extracted files.
