@@ -23,7 +23,9 @@ mkdir -p %{buildroot}/usr/lib
 mkdir -p %{buildroot}/usr/local/bin/sqldrivers
 
 cp -f %{_builddir}/bin/squirrel/squirrel %{buildroot}/usr/local/bin/ # copy squirrel util binary
-cp -f %{_builddir}/bin/squirrel/libsquirrel.so.1 %{buildroot}/usr/lib/ # copy squirrel lib
+# NOTE: squirrellib.pro builds libsquirrel as a STATIC lib on Linux (CONFIG +=
+# staticlib), so it is linked directly into the squirrel binary above - there is
+# no libsquirrel.so.1 to ship. (Do not re-add it; the file does not exist.)
 #cp -f %{_builddir}/bin/gdcm/bin/libgdcmMSFF.so.3.0 %{buildroot}/usr/lib/ # copy GDCM libs
 #cp -f %{_builddir}/bin/gdcm/bin/libgdcmopenjp2.so.7 %{buildroot}/usr/lib/ # copy GDCM libs
 #cp -f %{_builddir}/bin/gdcm/bin/libgdcmuuid.so.3.0 %{buildroot}/usr/lib/ # copy GDCM libs
