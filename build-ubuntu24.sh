@@ -79,6 +79,23 @@ cmake --build . --config Release
 cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
 cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
 
+# ----- build FTXUI library (static; for the interactive 'squirrel explore' shell) -----
+# FTXUI is built as static libs and linked into the CLI via ftxui.pri (same
+# pattern as bit7z). Unlike bit7z it writes its .a files into the build dir (not
+# the shared source tree), so no cross-distro archive cleanup is needed. The
+# stale-cache guard mirrors bit7z: under build-all the WSL distros configure via
+# the /mnt/wsl bind-mount path, so a cache written under a different path
+# spelling would make cmake abort.
+echo -e "\n ----- Building FTXUI -----\n"
+mkdir -p $BUILDDIR/ftxui
+if [ -f "$BUILDDIR/ftxui/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/ftxui" "$BUILDDIR/ftxui/CMakeCache.txt"; then
+	echo "Removing stale FTXUI CMake cache in $BUILDDIR/ftxui"
+	rm -rf "$BUILDDIR/ftxui"
+	mkdir -p "$BUILDDIR/ftxui"
+fi
+cmake -S $SRCDIR/ftxui -B $BUILDDIR/ftxui -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DFTXUI_BUILD_EXAMPLES=OFF -DFTXUI_BUILD_TESTS=OFF -DFTXUI_BUILD_DOCS=OFF -DFTXUI_ENABLE_INSTALL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+cmake --build $BUILDDIR/ftxui --config Release -j 16
+
 # ----- dcm2niix (DICOM -> Nifti) -----
 # No build step needed here: the dcm2niix sources are compiled directly into
 # squirrellib/squirrel via src/squirrel/dcm2niix.pri (shared by both .pro files),

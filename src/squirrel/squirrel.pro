@@ -20,8 +20,10 @@ SOURCES += $$PWD/main.cpp
 SOURCES += $$PWD/explore.cpp
 HEADERS += $$PWD/explore.h
 
-# replxx line editor for the interactive 'squirrel explore' shell (CLI only)
-include($$PWD/replxx.pri)
+# FTXUI terminal UI for the interactive 'squirrel explore' shell (CLI only).
+# Built as static libs via CMake in build-<distro>.sh (like bit7z); this just
+# links them.
+include($$PWD/ftxui.pri)
 
 # bit7z (LZMA) + DCMTK, shared with squirrellib.pro and squirrel-gui.pro
 include($$PWD/squirrel-deps.pri)
