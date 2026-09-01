@@ -33,14 +33,14 @@ sudo dnf install epel-release
 Install the `.deb` matching your distribution:
 
 ```bash
-# Ubuntu 22.04
-sudo apt install ./squirrel_2026.8.482_Ubuntu-22.04.deb
+# Ubuntu 22
+sudo apt install ./squirrel_2026.8.482_ubuntu22.deb
 
-# Ubuntu 24.04
+# Ubuntu 24
 sudo apt install ./squirrel_2026.8.482_ubuntu24.deb
 
-# Debian
-sudo apt install ./squirrel_2026.8.482_Debian.deb
+# Debian 12
+sudo apt install ./squirrel_2026.8.482_debian12.deb
 ```
 
 Once installed, verify with:
