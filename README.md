@@ -4,6 +4,51 @@ squirrel is a neuroimaging data format to share every step of a neuroimaging ana
 # Background
 The squirrel neuroimaging data sharing format was developed as part of the open-source [Neuroinformatics Database](http://docs.neuroinfodb.org/docs). The squirrel format specification is also open-source and freely available to include in open-source and commercial projects.
 
+# Installation
+Pre-built packages are provided for common Linux distributions. Download the
+package matching your distribution, then install it with your package manager.
+
+## RHEL / AlmaLinux / Rocky (RHEL 8, 9, 10)
+Install the `.rpm` matching your major release (`el8`, `el9`, or `el10`):
+
+```bash
+# RHEL 8
+sudo dnf install ./squirrel-2026.8.482-1.el8.x86_64.rpm
+
+# RHEL 9
+sudo dnf install ./squirrel-2026.8.482-1.el9.x86_64.rpm
+
+# RHEL 10
+sudo dnf install ./squirrel-2026.8.482-1.el10.x86_64.rpm
+```
+
+Dependencies (`openssl`, `p7zip`, `p7zip-plugins`) are resolved automatically.
+The `p7zip` packages are in the EPEL repository, so enable it first if needed:
+
+```bash
+sudo dnf install epel-release
+```
+
+## Ubuntu / Debian
+Install the `.deb` matching your distribution:
+
+```bash
+# Ubuntu 22.04
+sudo apt install ./squirrel_2026.8.482_Ubuntu-22.04.deb
+
+# Ubuntu 24.04
+sudo apt install ./squirrel_2026.8.482_ubuntu24.deb
+
+# Debian
+sudo apt install ./squirrel_2026.8.482_Debian.deb
+```
+
+Once installed, verify with:
+
+```bash
+squirrel --version
+```
+
 # Documentation
 https://docs.neuroinfodb.org/nidb/contribute/squirrel-data-sharing-format
 
