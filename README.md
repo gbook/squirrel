@@ -5,8 +5,9 @@ squirrel is a neuroimaging data format to share every step of a neuroimaging ana
 The squirrel neuroimaging data sharing format was developed as part of the open-source [Neuroinformatics Database](http://docs.neuroinfodb.org/docs). The squirrel format specification is also open-source and freely available to include in open-source and commercial projects.
 
 # Installation
-Pre-built packages are provided for common Linux distributions. Download the
-package matching your distribution, then install it with your package manager.
+Pre-built packages are provided for common Linux distributions. Download the package matching your distribution, then install it with your package manager.
+
+Releases are available here https://github.com/gbook/squirrel/releases
 
 ## RHEL / AlmaLinux / Rocky (RHEL 8, 9, 10)
 Install the `.rpm` matching your major release (`el8`, `el9`, or `el10`):
