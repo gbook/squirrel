@@ -30,6 +30,7 @@
 #include "modify.h"
 #include "extract.h"
 #include "info.h"
+#include "explore.h"
 #include "squirrel.h"
 #include "squirrelTypes.h"
 
@@ -91,7 +92,7 @@ int main(int argc, char *argv[])
     p.addVersionOption();
 
     /* setup and obtain the tool we're supposed to run */
-    p.addPositionalArgument("tool", "Available tools:\n   convert - Convert DICOM or BIDS data into a squirrel package\n   info - Display information about a package or its contents\n   merge - Merge two or more packages into one\n   modify - Add/remove objects from a package\n   extract - Extract data from a package\n   validate - Check if a package is valid");
+    p.addPositionalArgument("tool", "Available tools:\n   convert - Convert DICOM or BIDS data into a squirrel package\n   info - Display information about a package or its contents\n   explore - Interactively browse a package in a shell\n   merge - Merge two or more packages into one\n   modify - Add/remove objects from a package\n   extract - Extract data from a package\n   validate - Check if a package is valid");
     p.parse(QCoreApplication::arguments());
     const QStringList args = p.positionalArguments();
     const QString command = args.isEmpty() ? QString() : args.first();
@@ -326,6 +327,24 @@ int main(int argc, char *argv[])
                 CommandLineError(p,m);
             }
         }
+    }
+    else if (command == "explore") {
+        p.clearPositionalArguments();
+        p.addPositionalArgument("explore", "Interactively browse a squirrel package.", "explore [package]");
+        p.addPositionalArgument("package", "The squirrel package to open.", "package");
+        p.process(a);
+        QStringList args = p.positionalArguments();
+        QString inputPath;
+        if (args.size() > 1)
+            inputPath = args[1];
+
+        if (inputPath == "") {
+            CommandLineError(p, "Missing package. Usage: squirrel explore <package>");
+            return 0;
+        }
+
+        explore ex;
+        return ex.Run(inputPath);
     }
     else if (command == "merge") {
         p.clearPositionalArguments();

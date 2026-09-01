@@ -17,6 +17,11 @@ CONFIG += silent
 include($$PWD/squirrel-sources.pri)
 
 SOURCES += $$PWD/main.cpp
+SOURCES += $$PWD/explore.cpp
+HEADERS += $$PWD/explore.h
+
+# replxx line editor for the interactive 'squirrel explore' shell (CLI only)
+include($$PWD/replxx.pri)
 
 # bit7z (LZMA) + DCMTK, shared with squirrellib.pro and squirrel-gui.pro
 include($$PWD/squirrel-deps.pri)
