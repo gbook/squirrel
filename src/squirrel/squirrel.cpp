@@ -2083,17 +2083,15 @@ QString squirrel::PrintDataDictionary(PrintFormat printFormat) {
     QString str;
 
     QList <squirrelDataDictionary> dataDictionaries = GetDataDictionaryList();
-    QStringList dataDictionaryNames;
-    foreach (squirrelDataDictionary d, dataDictionaries) {
-        if (d.Get()) {
-            if (printFormat == PrintFormat::Details)
+    if (dataDictionaries.size() > 0) {
+        /* always print the dictionary along with its child DataDictionaryItems */
+        foreach (squirrelDataDictionary d, dataDictionaries) {
+            if (d.Get())
                 str += d.PrintDataDictionary();
-            else if (printFormat == PrintFormat::List)
-                dataDictionaryNames.append(d.DataDictionaryName);
         }
     }
-    if (printFormat == PrintFormat::List)
-        str += utils::Print("DataDictionary: " + dataDictionaryNames.join(" "));
+    else
+        str += utils::Print("No data dictionaries found");
 
     return str;
 }

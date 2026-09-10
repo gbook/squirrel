@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
-        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [all  package  subject  study  series  observation  intervention  experiment  pipeline  groupanalysis  datadictionary].", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [all  package  subject  study  series  observation  intervention  experiment  analysis  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  --subjectid must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "dataset", "Dataset type [id  basic  full]", "dataset"));
