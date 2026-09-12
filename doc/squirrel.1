@@ -31,6 +31,9 @@ Convert a DICOM or BIDS directory into a squirrel package.
 .B info
 Display information about a package or its contents.
 .TP
+.B explore
+Interactively browse a package in a shell.
+.TP
 .B merge
 Merge two or more packages into one output package.
 .TP
@@ -133,7 +136,7 @@ Object type to display. Default:
 .BR package .
 Possible values:
 .BR all ", " package ", " subject ", " study ", " series ", " observation ", "
-.BR intervention ", " experiment ", " pipeline ", " groupanalysis ", " datadictionary .
+.BR intervention ", " experiment ", " analysis ", " pipeline ", " groupanalysis ", " datadictionary .
 .TP
 .BI \-\-subjectid " id"
 Filter by subject ID.
@@ -164,6 +167,61 @@ squirrel info study.sqrl
 squirrel info study.sqrl --object subject --dataset full --format csv
 squirrel info study.sqrl --object study --subjectid S1234
 squirrel info study.sqrl --object series --subjectid S1234 --studynum 1
+.EE
+.RE
+.SS explore
+Interactively browse a package's contents in a full-screen shell. The
+package's metadata manifest is read once at startup \(em the large data files
+are not extracted \(em so navigation is instant.
+.PP
+.B squirrel explore
+.I package
+.PP
+.B Arguments
+.RS 4
+.TP
+.I package
+Path to the squirrel package to open.
+.RE
+.PP
+.B Shell commands
+.RS 4
+.TP
+.B ls
+List all subjects.
+.TP
+.BI ls " subjectID"
+List studies for a subject.
+.TP
+.BI ls " subjectID studyNum"
+List series for a study.
+.TP
+.B info
+Show package summary.
+.TP
+.BI info " subjectID"
+Show subject detail.
+.TP
+.BI info " subjectID studyNum"
+Show study detail.
+.TP
+.BI info " subjectID studyNum seriesNum"
+Show series detail.
+.TP
+.B help
+Show the command list.
+.TP
+.BR quit ", " exit
+Leave the shell (Ctrl-D also works).
+.RE
+.PP
+Command history is available with the Up/Down arrow keys; the transcript pane
+can be scrolled with the mouse wheel, Ctrl+Up/Down, or PageUp/PageDown.
+.PP
+.B Examples
+.RS 4
+.EX
+squirrel explore study.sqrl
 .EE
 .RE
 .SS merge
@@ -199,7 +257,7 @@ Detect and display collisions without writing any output.
 .TP
 .B \-\-renumbersubjects
 Sort all subjects globally across all input packages and assign new sequential
-IDs; the original ID is appended to the subject's AlternateIDs list.
+IDs; the original ID is prepended to the subject's AlternateIDs list.
 .TP
 .BI \-\-digits " n"
 Number of digits for renumbered subject IDs (e.g.\&
@@ -383,8 +441,7 @@ Suppress header and progress output.
 .BI \-\-object " type"
 Object type to extract. Possible values:
 .BR package ", " subject ", " study ", " series ", " analysis ", "
-.BR intervention ", " observation ", " experiment ", " pipeline ", "
-.BR groupanalysis ", " datadictionary .
+.BR experiment ", " pipeline ", " groupanalysis ", " datadictionary .
 .TP
 .BI \-\-outdir " path"
 Destination directory for extracted files.

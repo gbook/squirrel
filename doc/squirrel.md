@@ -16,6 +16,7 @@ The following commands are available:
 |---|---|
 | `convert` | Convert a DICOM or BIDS directory into a squirrel package |
 | `info` | Display information about a package or its contents |
+| `explore` | Interactively browse a package in a shell |
 | `merge` | Merge two or more packages into one output package |
 | `modify` | Add, remove, or update objects within a package |
 | `extract` | Extract objects from a package to disk |
@@ -119,7 +120,7 @@ squirrel info <package> [options]
 
 **Object types** (`--object`)
 
-`all`  `package`  `subject`  `study`  `series`  `observation`  `intervention`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
+`all`  `package`  `subject`  `study`  `series`  `observation`  `intervention`  `experiment`  `analysis`  `pipeline`  `groupanalysis`  `datadictionary`
 
 **Examples**
 
@@ -128,6 +129,44 @@ squirrel info study.sqrl
 squirrel info study.sqrl --object subject --dataset full --format csv
 squirrel info study.sqrl --object study --subjectid S1234
 squirrel info study.sqrl --object series --subjectid S1234 --studynum 1
+```
+
+---
+
+### explore
+
+Interactively browse a package's contents in a full-screen shell. The package's metadata manifest is read once at startup — the large data files are not extracted — so navigation is instant.
+
+```
+squirrel explore <package>
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `package` | Path to the squirrel package to open |
+
+**Shell commands**
+
+| Command | Description |
+|---|---|
+| `ls` | List all subjects |
+| `ls <subjectID>` | List studies for a subject |
+| `ls <subjectID> <studyNum>` | List series for a study |
+| `info` | Show package summary |
+| `info <subjectID>` | Show subject detail |
+| `info <subjectID> <studyNum>` | Show study detail |
+| `info <subjectID> <studyNum> <seriesNum>` | Show series detail |
+| `help` | Show the command list |
+| `quit`, `exit` | Leave the shell (Ctrl-D also works) |
+
+Command history is available with the Up/Down arrow keys; the transcript pane can be scrolled with the mouse wheel, Ctrl+Up/Down, or PageUp/PageDown.
+
+**Examples**
+
+```
+squirrel explore study.sqrl
 ```
 
 ---
@@ -310,7 +349,7 @@ squirrel extract <package> --object <type> --objectid <id> [options]
 
 **Object types** (`--object`)
 
-`package`  `subject`  `study`  `series`  `analysis`  `intervention`  `observation`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
+`package`  `subject`  `study`  `series`  `analysis`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
 
 **Examples**
 
