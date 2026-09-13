@@ -155,7 +155,9 @@ const QString tablePackage = QString("CREATE TABLE IF NOT EXISTS Package ("
     "Notes TEXT,"
     "PackageFormat TEXT,"
     "SquirrelBuild TEXT,"
-    "SquirrelVersion TEXT)");
+    "SquirrelVersion TEXT,"
+    "JsonHash TEXT,"
+    "FullRead INTEGER DEFAULT 0)");
 
 const QString tableParams = QString("CREATE TABLE IF NOT EXISTS Params ("
     "ParamRowID INTEGER PRIMARY KEY AUTOINCREMENT,"

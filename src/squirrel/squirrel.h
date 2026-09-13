@@ -65,15 +65,14 @@ public:
     bool WriteUpdate();
     bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
-    /* Embed a ready-to-use copy of the in-memory database as "squirrel.db" in
-       the package, so a later Read() can load it directly instead of
-       re-parsing squirrel.json and re-inserting every row. Write() and
-       WriteUpdate() call this automatically after writing squirrel.json, so
-       squirrel.db is always kept in sync; call it directly only to backfill an
-       older package that was never rewritten since this existed. When called
-       directly, the caller must have done a full (non-quick) Read() first, so
-       every table - including Params/StagedFiles, which a quick read skips -
-       is complete. */
+    /* Embed a copy of the in-memory database as "squirrel.db" in the package,
+       so a later Read() can load it directly instead of re-parsing
+       squirrel.json and re-inserting every row. Write() and WriteUpdate() call
+       this automatically after writing squirrel.json. The copy is stamped with
+       a hash of the archive's squirrel.json (Read() ignores it if the JSON has
+       since changed) and with whether this object's data came from a full
+       read (full reads ignore a copy made from a quick read). PHI params and
+       StagedFiles are scrubbed from the copy; the live database is untouched. */
     bool WriteEmbeddedDatabase(QString &m);
 
     /* get/set options */
@@ -89,6 +88,7 @@ public:
     void SetOverwritePackage(bool o);
     void SetPackagePath(QString p) { packagePath = p; } /*!< Set the package path */
     void SetQuickRead(bool q);
+    void SetUseEmbeddedDatabase(bool u) { useEmbeddedDb = u; } /*!< false forces Read() to parse squirrel.json, ignoring any squirrel.db */
     void SetSystemTempDir(QString tmpdir);
     void SetWriteLog(bool w) { writeLog = w; }
 
@@ -235,11 +235,13 @@ private:
     bool MakeTempDir(QString &dir);
 
     /* Read() helper - loads "squirrel.db" (see WriteEmbeddedDatabase()) when
-       the package has one, skipping JSON parsing and per-row insertion.
-       Returns false (leaving the database untouched) if there is no embedded
-       database or loading it fails, so the caller falls back to the normal
-       JSON-based read. */
+       the package has one that is current (its JSON hash matches the archive's
+       squirrel.json) and complete enough (made from a full read, if this is a
+       full read), skipping JSON parsing and per-row insertion. Returns false
+       if there is no usable embedded database or loading it fails, so the
+       caller falls back to the normal JSON-based read. */
     bool ReadEmbeddedDatabase();
+    QString GetArchiveJsonHash(); /* SHA-256 of the archive's squirrel.json, empty if unreadable */
 
     /* 7zip archive functions */
     bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
@@ -283,6 +285,8 @@ private:
     bool isValid;
     bool overwritePackage;
     bool quickRead; /* set true to skip reading of the params.json files */
+    bool useEmbeddedDb = true; /* false to make Read() ignore squirrel.db */
+    bool dbFromFullRead = false; /* true if the live database holds a complete (non-quick) read of the package */
     bool writeLog;
 };
 

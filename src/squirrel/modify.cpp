@@ -1189,10 +1189,10 @@ bool modify::SplitByModality(QString packagePath, const modification &mod, QStri
 /* ----- EmbedDatabase ---------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
- * @brief Backfill "squirrel.db" into a package written before every write path
- * kept it in sync automatically (see squirrel::WriteEmbeddedDatabase(), called
- * from Write()/WriteUpdate() on every convert/modify/merge). Re-running this on
- * an up-to-date package is harmless - it just rewrites the same squirrel.db.
+ * @brief Rebuild "squirrel.db" from a full read of squirrel.json (see
+ * squirrel::WriteEmbeddedDatabase()). Backfills packages that have no
+ * squirrel.db, or whose squirrel.db is stale or came from a quick read. Any
+ * existing squirrel.db is ignored and replaced.
  * @param packagePath path to the squirrel package file
  * @param mod struct containing all operation parameters (unused)
  * @param m output message describing success or failure
@@ -1205,9 +1205,11 @@ bool modify::EmbedDatabase(QString packagePath, const modification &mod, QString
     squirrel *sqrl = new squirrel();
     sqrl->SetFileMode(FileMode::ExistingPackage);
     sqrl->SetPackagePath(packagePath);
-    /* must be a full read (not quick), so Params/StagedFiles - which a quick
-       read skips - end up in the embedded database too */
+    /* must be a full read (not quick), so Params and file lists - which a
+       quick read skips - end up in the embedded database, marked as complete */
     sqrl->SetQuickRead(false);
+    /* always rebuild from squirrel.json, never from an existing squirrel.db */
+    sqrl->SetUseEmbeddedDatabase(false);
 
     if (!sqrl->Read()) {
         m = QString("Package unreadable [%1]").arg(packagePath);

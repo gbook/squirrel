@@ -30,6 +30,7 @@
 #include "bitfileextractor.hpp"
 #include "squirrelVersion.h"
 #include "squirrelTypes.h"
+#include <QCryptographicHash>
 
 /* ----- bit7z progress callbacks ----- */
 qint64 totalbytes(0);
@@ -315,10 +316,11 @@ QString squirrel::GetPackagePath() {
  * live database, bypassing squirrel.json entirely.
  *
  * Rather than swap out the already-open :memory: connection, the extracted
- * file is ATTACHed alongside it and every table is bulk-copied with one
- * "insert into main.X select * from src.X" per table - a handful of SQL
- * statements instead of walking every JSON object and Store()-ing it
- * individually.
+ * file is ATTACHed alongside it and every table is bulk-copied, in one
+ * transaction, with one "insert into main.X (cols) select cols from src.X" per
+ * table - a handful of SQL statements instead of walking every JSON object and
+ * Store()-ing it individually. Columns are matched by name, and any table
+ * whose columns differ between the two databases rejects the whole copy.
  *
  * @return true if squirrel.db was present and loaded successfully; false if
  * there is no embedded database, or loading it failed for any reason (in
@@ -362,21 +364,121 @@ bool squirrel::ReadEmbeddedDatabase() {
         "Intervention", "Experiment", "Pipeline", "PipelineDataStep",
         "GroupAnalysis", "DataDictionary", "DataDictionaryItem", "Params", "StagedFiles"
     };
-    bool copyOk = true;
+
+    /* column names of a table in the given schema ("main" or "src"), in order */
+    auto columnsOf = [&dbconn](const QString &schema, const QString &table) {
+        QStringList cols;
+        QSqlQuery q(dbconn);
+        if (q.exec(QString("PRAGMA %1.table_info(%2)").arg(schema, table)))
+            while (q.next())
+                cols << q.value("name").toString();
+        return cols;
+    };
+
+    QString rejectReason;
+    bool dbFullRead = false;
+    QHash<QString, QString> columnLists; /* table -> quoted, comma-separated column list */
+
+    /* Only trust squirrel.db if it was built from the squirrel.json currently in
+       the archive. Anything that rewrote squirrel.json without also re-embedding
+       the database (UpdateJsonHeader(), a failed WriteEmbeddedDatabase(), an
+       older squirrel build) changes the hash, and the JSON is read instead. A
+       full read also requires a database made from a full read, since a quick
+       read has no Params, file lists, or file counts. A squirrel.db without
+       these columns predates the checks and is never trusted. */
+    {
+        QSqlQuery qv(dbconn);
+        qv.prepare("select JsonHash, FullRead from src.Package limit 1");
+        if (!qv.exec() || !qv.next()) {
+            rejectReason = "no JSON hash (built by an older version)";
+        }
+        else {
+            const QString dbHash = qv.value("JsonHash").toString();
+            dbFullRead = qv.value("FullRead").toInt() == 1;
+            const QString jsonHash = GetArchiveJsonHash();
+            if (dbHash.isEmpty() || jsonHash.isEmpty() || dbHash != jsonHash)
+                rejectReason = "out of date with squirrel.json";
+            else if (!quickRead && !dbFullRead)
+                rejectReason = "built from a quick read, but a full read was requested";
+        }
+    }
+
+    /* Every table must have exactly the same columns (by name) in both
+       databases, so rows are never copied into the wrong columns after a schema
+       change. Checked for all tables before anything is copied. The copy below
+       names its columns explicitly, so column order doesn't matter. Also refuse
+       to load into a live database that already holds rows: the embedded copy
+       brings its own row IDs, and the failure cleanup below would erase them. */
     for (const QString &t : tables) {
-        QSqlQuery qc(dbconn);
-        qc.prepare(QString("insert into main.%1 select * from src.%1").arg(t));
-        /* Not utils::SQLQuery(): an older squirrel.db (built before some
-           schema change added/removed a column) fails here with an ordinary
-           column-count mismatch - an expected, handled condition, not a real
-           error. Failing quietly and falling back to JSON avoids printing a
-           scary-looking SQL error for something that just means "old cache,
-           regenerate it on the next write". */
-        if (!qc.exec()) {
-            Log("Error copying table [" + t + "] from embedded database. Error [" + qc.lastError().text() + "]");
-            copyOk = false;
+        if (!rejectReason.isEmpty())
+            break;
+        const QStringList mainCols = columnsOf("main", t);
+        const QStringList srcCols = columnsOf("src", t);
+        QStringList mainSorted = mainCols, srcSorted = srcCols;
+        for (QString &c : mainSorted) c = c.toLower();
+        for (QString &c : srcSorted) c = c.toLower();
+        mainSorted.sort();
+        srcSorted.sort();
+        if (mainCols.isEmpty() || mainSorted != srcSorted) {
+            rejectReason = QString("table [%1] has a different schema than this version expects").arg(t);
             break;
         }
+        QSqlQuery qe(dbconn);
+        if (!qe.exec(QString("select exists(select 1 from main.%1)").arg(t)) || !qe.next() || qe.value(0).toInt() != 0) {
+            rejectReason = QString("the live database already contains data (table [%1])").arg(t);
+            break;
+        }
+        QStringList quoted;
+        for (const QString &c : mainCols)
+            quoted << "\"" + QString(c).replace("\"", "\"\"") + "\"";
+        columnLists[t] = quoted.join(",");
+    }
+
+    if (!rejectReason.isEmpty()) {
+        Log("Ignoring embedded database [squirrel.db]: " + rejectReason + ". Reading squirrel.json instead");
+        QSqlQuery qd(dbconn);
+        qd.prepare("DETACH DATABASE src");
+        utils::SQLQuery(qd, __FUNCTION__, __FILE__, __LINE__);
+        QFile::remove(tempDbPath);
+        return false;
+    }
+
+    /* Copy everything in one transaction. Not utils::SQLQuery(): a failure here
+       is handled by falling back to the JSON read, so it's logged rather than
+       printed as a SQL error. */
+    bool copyOk = dbconn.transaction();
+    if (!copyOk)
+        Log("Unable to start transaction to load embedded database. Error [" + dbconn.lastError().text() + "]");
+    for (const QString &t : tables) {
+        if (!copyOk)
+            break;
+        QSqlQuery qc(dbconn);
+        const QString &cols = columnLists[t];
+        if (!qc.exec(QString("insert into main.%1 (%2) select %2 from src.%1").arg(t, cols))) {
+            Log("Error copying table [" + t + "] from embedded database. Error [" + qc.lastError().text() + "]");
+            copyOk = false;
+        }
+    }
+    if (copyOk && !dbconn.commit()) {
+        Log("Error committing embedded database load. Error [" + dbconn.lastError().text() + "]");
+        copyOk = false;
+    }
+
+    if (!copyOk) {
+        /* Leave nothing half-loaded for the JSON fallback to build on top of.
+           The rollback alone isn't enough: InitializeDatabase() sets
+           journal_mode=OFF, under which SQLite's ROLLBACK is undefined. So
+           every table is emptied explicitly (the checks above guarantee they
+           were empty before the copy), and AUTOINCREMENT counters are reset so
+           the JSON read assigns the same row IDs it would have otherwise. */
+        dbconn.rollback();
+        for (const QString &t : tables) {
+            QSqlQuery qdel(dbconn);
+            if (!qdel.exec(QString("delete from main.%1").arg(t)))
+                Log("Error clearing table [" + t + "] after failed embedded database load. Error [" + qdel.lastError().text() + "]");
+        }
+        QSqlQuery qseq(dbconn);
+        qseq.exec("delete from main.sqlite_sequence");
     }
 
     QSqlQuery qd(dbconn);
@@ -384,11 +486,10 @@ bool squirrel::ReadEmbeddedDatabase() {
     utils::SQLQuery(qd, __FUNCTION__, __FILE__, __LINE__);
     QFile::remove(tempDbPath);
 
-    if (!copyOk) {
-        /* leave nothing half-loaded for the JSON fallback to build on top of */
-        InitializeDatabase();
+    if (!copyOk)
         return false;
-    }
+
+    dbFromFullRead = dbFullRead;
 
     double loadSec = static_cast<double>(timer.elapsed()) / 1000.0;
     utils::Print(QString("Loaded embedded database in %1 sec").arg(loadSec, 0, 'f', 2));
@@ -451,7 +552,7 @@ bool squirrel::Read() {
        JSON-based read below when squirrel.db is absent (older packages, not
        yet rewritten since this existed) or anything about loading it goes
        wrong. */
-    if (ReadEmbeddedDatabase())
+    if (useEmbeddedDb && ReadEmbeddedDatabase())
         return true;
 
     QByteArray jsonbytes;
@@ -823,6 +924,8 @@ bool squirrel::Read() {
         dbconn.rollback();
         return false;
     }
+
+    dbFromFullRead = !quickRead;
 
     elapsedSec = static_cast<double>(timer.elapsed())/1000.0;
     utils::Print(QString("Reading package took %1 sec").arg(elapsedSec, 0, 'f', 2));
@@ -1316,12 +1419,18 @@ bool squirrel::WriteUpdate() {
  * re-parsing squirrel.json and re-inserting every row.
  *
  * Called automatically by Write() and WriteUpdate() right after they write
- * squirrel.json, so the two stay in sync on every convert/modify/merge. Call
- * it directly only to backfill a package written before this existed - in
- * that case the caller must have done a full (non-quick) Read() of the same
- * package first, so every table is complete. squirrel.json remains the
- * package's human-readable record and is left untouched; squirrel.db is
- * purely a derived read cache.
+ * squirrel.json. squirrel.json remains the package's record of truth;
+ * squirrel.db is a derived read cache, and ReadEmbeddedDatabase() only uses it
+ * when it is still consistent with squirrel.json. To make that checkable, the
+ * embedded Package row carries:
+ *   JsonHash - SHA-256 of the squirrel.json in the archive right now
+ *   FullRead - 1 if this object's data came from a full (non-quick) read
+ *
+ * The live database is serialized to a temp file and all changes are made to
+ * that copy only, so the caller's database is left exactly as it was. The copy
+ * is scrubbed of data that must not be distributed in the package: StagedFiles
+ * (absolute source paths on the writing machine) and the PHI series params
+ * that params.json also omits (see squirrelSeries::AnonymizedParamKeys()).
  *
  * @param m output message describing success or failure
  * @return true if successful
@@ -1329,36 +1438,9 @@ bool squirrel::WriteUpdate() {
 bool squirrel::WriteEmbeddedDatabase(QString &m) {
     QSqlDatabase dbconn = QSqlDatabase::database(databaseUUID);
 
-    /* the Package table exists in the schema but Read() never populates it
-       from squirrel.json (package-level fields live only as members on this
-       object) - fill it in here so the embedded database is self-contained.
-       Cleared first so this stays idempotent: a package whose database was
-       itself loaded from a previous squirrel.db (via ReadEmbeddedDatabase())
-       already carries a Package row here, which would otherwise collide with
-       Name's UNIQUE constraint on the next write. */
-    QSqlQuery qclear(dbconn);
-    qclear.prepare("delete from Package");
-    utils::SQLQuery(qclear, __FUNCTION__, __FILE__, __LINE__);
-
-    QSqlQuery qp(dbconn);
-    qp.prepare("insert into Package (Name, Description, Datetime, SubjectDirFormat, StudyDirFormat, SeriesDirFormat, PackageDataFormat, License, Readme, Changes, Notes, PackageFormat, SquirrelBuild, SquirrelVersion) "
-               "values (:Name, :Description, :Datetime, :SubjectDirFormat, :StudyDirFormat, :SeriesDirFormat, :PackageDataFormat, :License, :Readme, :Changes, :Notes, :PackageFormat, :SquirrelBuild, :SquirrelVersion)");
-    qp.bindValue(":Name", PackageName);
-    qp.bindValue(":Description", Description);
-    qp.bindValue(":Datetime", Datetime.toString("yyyy-MM-dd HH:mm:ss"));
-    qp.bindValue(":SubjectDirFormat", SubjectDirFormat);
-    qp.bindValue(":StudyDirFormat", StudyDirFormat);
-    qp.bindValue(":SeriesDirFormat", SeriesDirFormat);
-    qp.bindValue(":PackageDataFormat", DataFormat);
-    qp.bindValue(":License", License);
-    qp.bindValue(":Readme", Readme);
-    qp.bindValue(":Changes", Changes);
-    qp.bindValue(":Notes", Notes);
-    qp.bindValue(":PackageFormat", PackageFormat);
-    qp.bindValue(":SquirrelBuild", SquirrelBuild);
-    qp.bindValue(":SquirrelVersion", SquirrelVersion);
-    if (!utils::SQLQuery(qp, __FUNCTION__, __FILE__, __LINE__)) {
-        m = "Unable to write Package row to embedded database";
+    const QString jsonHash = GetArchiveJsonHash();
+    if (jsonHash.isEmpty()) {
+        m = "Unable to read squirrel.json from package to compute its hash";
         return false;
     }
 
@@ -1372,12 +1454,111 @@ bool squirrel::WriteEmbeddedDatabase(QString &m) {
     qv.prepare(QString("VACUUM INTO '%1'").arg(QString(tempDbPath).replace("'", "''")));
     if (!utils::SQLQuery(qv, __FUNCTION__, __FILE__, __LINE__)) {
         m = "Unable to serialize database to file [" + tempDbPath + "]. Error [" + dbconn.lastError().text() + "]";
+        QFile::remove(tempDbPath);
+        return false;
+    }
+
+    /* scrub and stamp the copy through its own connection */
+    const QString embedConnName = databaseUUID + "-embed";
+    bool prepOk = true;
+    {
+        QSqlDatabase edb = QSqlDatabase::addDatabase("QSQLITE", embedConnName);
+        edb.setDatabaseName(tempDbPath);
+        if (!edb.open()) {
+            m = "Unable to open serialized database [" + tempDbPath + "]. Error [" + edb.lastError().text() + "]";
+            prepOk = false;
+        }
+        else {
+            auto exec = [&](QSqlQuery &q, const QString &what) {
+                if (prepOk && !utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__)) {
+                    m = "Unable to " + what + " in embedded database. Error [" + q.lastError().text() + "]";
+                    prepOk = false;
+                }
+                q.finish(); /* VACUUM fails while any statement is still active */
+            };
+
+            /* zero deleted content, so scrubbed values don't survive in free pages */
+            QSqlQuery qs(edb);
+            qs.prepare("PRAGMA secure_delete=ON");
+            exec(qs, "enable secure_delete");
+
+            QSqlQuery qsf(edb);
+            qsf.prepare("delete from StagedFiles");
+            exec(qsf, "clear StagedFiles");
+
+            const QStringList phiKeys = squirrelSeries::AnonymizedParamKeys();
+            QStringList placeholders;
+            for (int i = 0; i < phiKeys.size(); i++)
+                placeholders << "?";
+            QSqlQuery qparams(edb);
+            qparams.prepare("delete from Params where ParamKey in (" + placeholders.join(",") + ")");
+            for (int i = 0; i < phiKeys.size(); i++)
+                qparams.bindValue(i, phiKeys.at(i));
+            exec(qparams, "remove PHI params");
+
+            /* the Package table is never populated from squirrel.json (package
+               fields live only as members on this object), so write it here.
+               Cleared first: a database loaded from a previous squirrel.db
+               already carries a Package row. */
+            QSqlQuery qclear(edb);
+            qclear.prepare("delete from Package");
+            exec(qclear, "clear Package");
+
+            QSqlQuery qp(edb);
+            qp.prepare("insert into Package (Name, Description, Datetime, SubjectDirFormat, StudyDirFormat, SeriesDirFormat, PackageDataFormat, License, Readme, Changes, Notes, PackageFormat, SquirrelBuild, SquirrelVersion, JsonHash, FullRead) "
+                       "values (:Name, :Description, :Datetime, :SubjectDirFormat, :StudyDirFormat, :SeriesDirFormat, :PackageDataFormat, :License, :Readme, :Changes, :Notes, :PackageFormat, :SquirrelBuild, :SquirrelVersion, :JsonHash, :FullRead)");
+            qp.bindValue(":Name", PackageName);
+            qp.bindValue(":Description", Description);
+            qp.bindValue(":Datetime", Datetime.toString("yyyy-MM-dd HH:mm:ss"));
+            qp.bindValue(":SubjectDirFormat", SubjectDirFormat);
+            qp.bindValue(":StudyDirFormat", StudyDirFormat);
+            qp.bindValue(":SeriesDirFormat", SeriesDirFormat);
+            qp.bindValue(":PackageDataFormat", DataFormat);
+            qp.bindValue(":License", License);
+            qp.bindValue(":Readme", Readme);
+            qp.bindValue(":Changes", Changes);
+            qp.bindValue(":Notes", Notes);
+            qp.bindValue(":PackageFormat", PackageFormat);
+            qp.bindValue(":SquirrelBuild", SquirrelBuild);
+            qp.bindValue(":SquirrelVersion", SquirrelVersion);
+            qp.bindValue(":JsonHash", jsonHash);
+            qp.bindValue(":FullRead", dbFromFullRead ? 1 : 0);
+            exec(qp, "write Package row");
+
+            /* rebuild the file so no freed pages are left behind */
+            QSqlQuery qvac(edb);
+            qvac.prepare("VACUUM");
+            exec(qvac, "compact");
+
+            edb.close();
+        }
+    }
+    QSqlDatabase::removeDatabase(embedConnName);
+
+    if (!prepOk) {
+        QFile::remove(tempDbPath);
         return false;
     }
 
     bool ok = AddFilesToArchive(QStringList() << tempDbPath, QStringList() << "squirrel.db", GetPackagePath(), m);
     QFile::remove(tempDbPath);
     return ok;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetArchiveJsonHash ----------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief SHA-256 of the squirrel.json currently stored in the package, used to
+ * tie an embedded squirrel.db to the exact JSON it was built alongside
+ * @return lowercase hex digest, or an empty string if squirrel.json is unreadable
+ */
+QString squirrel::GetArchiveJsonHash() {
+    QByteArray jsonBytes;
+    if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonBytes))
+        return QString();
+    return QString::fromLatin1(QCryptographicHash::hash(jsonBytes, QCryptographicHash::Sha256).toHex());
 }
 
 
