@@ -366,8 +366,14 @@ bool squirrel::ReadEmbeddedDatabase() {
     for (const QString &t : tables) {
         QSqlQuery qc(dbconn);
         qc.prepare(QString("insert into main.%1 select * from src.%1").arg(t));
-        if (!utils::SQLQuery(qc, __FUNCTION__, __FILE__, __LINE__)) {
-            Log("Error copying table [" + t + "] from embedded database");
+        /* Not utils::SQLQuery(): an older squirrel.db (built before some
+           schema change added/removed a column) fails here with an ordinary
+           column-count mismatch - an expected, handled condition, not a real
+           error. Failing quietly and falling back to JSON avoids printing a
+           scary-looking SQL error for something that just means "old cache,
+           regenerate it on the next write". */
+        if (!qc.exec()) {
+            Log("Error copying table [" + t + "] from embedded database. Error [" + qc.lastError().text() + "]");
             copyOk = false;
             break;
         }
@@ -405,6 +411,9 @@ bool squirrel::ReadEmbeddedDatabase() {
         Readme = qpkg.value("Readme").toString();
         Changes = qpkg.value("Changes").toString();
         Notes = qpkg.value("Notes").toString();
+        PackageFormat = qpkg.value("PackageFormat").toString();
+        SquirrelBuild = qpkg.value("SquirrelBuild").toString();
+        SquirrelVersion = qpkg.value("SquirrelVersion").toString();
     }
 
     isValid = true;
@@ -1332,8 +1341,8 @@ bool squirrel::WriteEmbeddedDatabase(QString &m) {
     utils::SQLQuery(qclear, __FUNCTION__, __FILE__, __LINE__);
 
     QSqlQuery qp(dbconn);
-    qp.prepare("insert into Package (Name, Description, Datetime, SubjectDirFormat, StudyDirFormat, SeriesDirFormat, PackageDataFormat, License, Readme, Changes, Notes) "
-               "values (:Name, :Description, :Datetime, :SubjectDirFormat, :StudyDirFormat, :SeriesDirFormat, :PackageDataFormat, :License, :Readme, :Changes, :Notes)");
+    qp.prepare("insert into Package (Name, Description, Datetime, SubjectDirFormat, StudyDirFormat, SeriesDirFormat, PackageDataFormat, License, Readme, Changes, Notes, PackageFormat, SquirrelBuild, SquirrelVersion) "
+               "values (:Name, :Description, :Datetime, :SubjectDirFormat, :StudyDirFormat, :SeriesDirFormat, :PackageDataFormat, :License, :Readme, :Changes, :Notes, :PackageFormat, :SquirrelBuild, :SquirrelVersion)");
     qp.bindValue(":Name", PackageName);
     qp.bindValue(":Description", Description);
     qp.bindValue(":Datetime", Datetime.toString("yyyy-MM-dd HH:mm:ss"));
@@ -1345,6 +1354,9 @@ bool squirrel::WriteEmbeddedDatabase(QString &m) {
     qp.bindValue(":Readme", Readme);
     qp.bindValue(":Changes", Changes);
     qp.bindValue(":Notes", Notes);
+    qp.bindValue(":PackageFormat", PackageFormat);
+    qp.bindValue(":SquirrelBuild", SquirrelBuild);
+    qp.bindValue(":SquirrelVersion", SquirrelVersion);
     if (!utils::SQLQuery(qp, __FUNCTION__, __FILE__, __LINE__)) {
         m = "Unable to write Package row to embedded database";
         return false;
