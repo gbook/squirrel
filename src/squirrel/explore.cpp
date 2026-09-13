@@ -809,7 +809,6 @@ int explore::Run(const QString &packagePath) {
         }
 
         if (mode == ViewMode::Tree) {
-            const int maxTreeScroll = std::max(0, int(treeRows.size()) - treeViewH);
             const int page = treeViewH > 1 ? treeViewH - 1 : 1;
 
             if (e == Event::ArrowUp)   { if (treeSelected > 0) treeSelected--; return true; }
@@ -817,8 +816,11 @@ int explore::Run(const QString &packagePath) {
             if (e == Event::PageUp)    { treeSelected = std::max(0, treeSelected - page); return true; }
             if (e == Event::PageDown)  { treeSelected = std::min(int(treeRows.size()) - 1, treeSelected + page); return true; }
             if (e.is_mouse()) {
-                if (e.mouse().button == Mouse::WheelUp)   { treeScroll = std::max(0, treeScroll - 3); return true; }
-                if (e.mouse().button == Mouse::WheelDown) { treeScroll = std::min(maxTreeScroll, treeScroll + 3); return true; }
+                /* the wheel moves the selection, not just the view: the renderer
+                   scrolls to keep the selected row visible, so scrolling the view
+                   alone would be undone on the next frame */
+                if (e.mouse().button == Mouse::WheelUp)   { treeSelected = std::max(0, treeSelected - 3); return true; }
+                if (e.mouse().button == Mouse::WheelDown) { treeSelected = std::min(int(treeRows.size()) - 1, treeSelected + 3); return true; }
                 return true;
             }
 

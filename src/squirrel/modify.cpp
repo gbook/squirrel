@@ -708,8 +708,24 @@ bool modify::UpdateObject(QString packagePath, const modification &mod, QString 
             utils::Print("Updated json header in package");
         }
         else {
-            utils::Print("Error updating json header in package");
+            m = "Error updating json header in package";
+            delete sqrl;
+            return false;
         }
+
+        /* squirrel.json changed, so the embedded squirrel.db no longer matches it
+           and Read() would ignore it. Bring the in-memory package fields in line
+           with the new header and re-embed, so the read cache stays usable. */
+        sqrl->Changes = packageInfo["Changes"].toString();
+        sqrl->Datetime = utils::StringToDatetime(packageInfo["Datetime"].toString());
+        sqrl->Description = packageInfo["Description"].toString();
+        sqrl->License = packageInfo["License"].toString();
+        sqrl->Notes = packageInfo["Notes"].toString();
+        sqrl->PackageName = packageInfo["PackageName"].toString();
+        sqrl->Readme = packageInfo["Readme"].toString();
+        QString embedMsg;
+        if (!sqrl->WriteEmbeddedDatabase(embedMsg))
+            sqrl->Log("Warning: unable to write embedded database [squirrel.db]. Message [" + embedMsg + "]");
     }
     else if (mod.object == Subject) {
         /* find the subject */

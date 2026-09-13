@@ -390,12 +390,15 @@ bool squirrel::ReadEmbeddedDatabase() {
         QSqlQuery qv(dbconn);
         qv.prepare("select JsonHash, FullRead from src.Package limit 1");
         if (!qv.exec() || !qv.next()) {
-            rejectReason = "no JSON hash (built by an older version)";
+            rejectReason = "built by an older version of squirrel";
         }
         else {
             const QString dbHash = qv.value("JsonHash").toString();
             dbFullRead = qv.value("FullRead").toInt() == 1;
-            const QString jsonHash = GetArchiveJsonHash();
+            /* a bare 64-character digest is a SHA-256 stamp from before the CRC
+               fingerprint; still honored, at the cost of extracting the JSON */
+            const bool legacyStamp = !dbHash.contains(':') && (dbHash.size() == 64);
+            const QString jsonHash = dbHash.isEmpty() ? QString() : GetArchiveJsonHash(legacyStamp);
             if (dbHash.isEmpty() || jsonHash.isEmpty() || dbHash != jsonHash)
                 rejectReason = "out of date with squirrel.json";
             else if (!quickRead && !dbFullRead)
@@ -436,6 +439,13 @@ bool squirrel::ReadEmbeddedDatabase() {
 
     if (!rejectReason.isEmpty()) {
         Log("Ignoring embedded database [squirrel.db]: " + rejectReason + ". Reading squirrel.json instead");
+        /* say so on screen too: otherwise the "Extracted embedded database" line
+           above is followed by a full JSON read with no explanation. Every reason
+           except the live-database guard (a programming error, not a package
+           problem) is fixed by rebuilding squirrel.db. */
+        if (!rejectReason.startsWith("the live database"))
+            utils::Print(QString("Embedded database not used (%1). Reading squirrel.json instead.\n"
+                                 "  To rebuild it: squirrel modify \"%2\" --operation embeddb").arg(rejectReason).arg(GetPackagePath()));
         QSqlQuery qd(dbconn);
         qd.prepare("DETACH DATABASE src");
         utils::SQLQuery(qd, __FUNCTION__, __FILE__, __LINE__);
@@ -1106,7 +1116,10 @@ bool squirrel::Write() {
     QJsonObject pkgInfo;
     pkgInfo["Changes"] = Changes;
     pkgInfo["DataFormat"] = DataFormat;
-    pkgInfo["Datetime"] = utils::CreateCurrentDateTime(2);
+    /* stamp the write time on the object too, so squirrel.json and the embedded
+       squirrel.db (written from these members) carry the same value */
+    Datetime = QDateTime::currentDateTime();
+    pkgInfo["Datetime"] = Datetime.toString("yyyy-MM-dd HH:mm:ss");
     pkgInfo["Description"] = Description;
     pkgInfo["License"] = License;
     pkgInfo["Notes"] = Notes;
@@ -1128,6 +1141,11 @@ bool squirrel::Write() {
     Log(QString("Adding %1 subjects").arg(subjects.size()));
     for (auto &subject : subjects) {
         JSONsubjects.append(subject.ToJSON());
+        /* a new package copies series files in the loop above; an existing
+           package has no working directory, so files staged for its series and
+           analyses (e.g. by 'modify add') are added to the archive below */
+        if (fileMode == ExistingPackage)
+            stagedFiles += subject.GetStagedFileList();
     }
 
     /* add group-analyses */
@@ -1247,12 +1265,14 @@ bool squirrel::Write() {
     }
     else {
 
-        /* update all files from the staged files list */
+        /* update all files from the staged files list. Each pair is (disk path,
+           virtual directory in the package), so the archive path is that
+           directory plus the file's own name */
         QStringList diskPaths, archivePaths;
         for (int i=0; i<stagedFiles.size(); i++) {
             QStringPair file = stagedFiles.at(i);
             QString source = file.first;
-            QString dest = workingDir + "/" + file.second;
+            QString dest = file.second + "/" + QFileInfo(source).fileName();
             diskPaths.append(source);
             archivePaths.append(dest);
         }
@@ -1304,7 +1324,10 @@ bool squirrel::WriteUpdate() {
     QJsonObject pkgInfo;
     pkgInfo["Changes"] = Changes;
     pkgInfo["DataFormat"] = DataFormat;
-    pkgInfo["Datetime"] = utils::CreateCurrentDateTime(2);
+    /* stamp the write time on the object too, so squirrel.json and the embedded
+       squirrel.db (written from these members) carry the same value */
+    Datetime = QDateTime::currentDateTime();
+    pkgInfo["Datetime"] = Datetime.toString("yyyy-MM-dd HH:mm:ss");
     pkgInfo["Description"] = Description;
     pkgInfo["License"] = License;
     pkgInfo["Notes"] = Notes;
@@ -1550,15 +1573,46 @@ bool squirrel::WriteEmbeddedDatabase(QString &m) {
 /* ----- GetArchiveJsonHash ----------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief SHA-256 of the squirrel.json currently stored in the package, used to
- * tie an embedded squirrel.db to the exact JSON it was built alongside
- * @return lowercase hex digest, or an empty string if squirrel.json is unreadable
+ * @brief Fingerprint of the squirrel.json currently stored in the package,
+ * used to tie an embedded squirrel.db to the exact JSON it was built alongside.
+ *
+ * Normally "crc32:<hex>:size:<bytes>", read from the archive's own index (7z
+ * and zip store a CRC32 for every entry), so no data is extracted - checking
+ * freshness costs about the same as listing the archive, regardless of how
+ * large squirrel.json is. The CRC guards against accidental changes (a
+ * rewritten header, an older squirrel build), which is all this cache needs.
+ * If the archive has no CRC for the entry, or legacySha256 is set (for
+ * squirrel.db files stamped before this existed), squirrel.json is extracted
+ * and "sha256:<hex>" / the bare SHA-256 hex digest is returned instead.
+ *
+ * @param legacySha256 true to return the bare SHA-256 hex digest
+ * @return the fingerprint, or an empty string if squirrel.json is unreadable
  */
-QString squirrel::GetArchiveJsonHash() {
+QString squirrel::GetArchiveJsonHash(bool legacySha256) {
+    if (!legacySha256) {
+        try {
+            using namespace bit7z;
+            Bit7zLibrary lib(p7zipLibPath.toStdString());
+            const bit7z::BitInOutFormat &fmt = GetPackagePath().endsWith(".zip", Qt::CaseInsensitive) ? BitFormat::Zip : BitFormat::SevenZip;
+            BitArchiveReader reader(lib, GetPackagePath().toStdString(), fmt);
+            for (const auto &item : reader.items()) {
+                if (QString::fromStdString(item.path()) != "squirrel.json")
+                    continue;
+                if (item.itemProperty(BitProperty::CRC).isEmpty())
+                    break; /* no CRC recorded - fall back to hashing the contents */
+                return QString("crc32:%1:size:%2").arg(item.crc(), 8, 16, QChar('0')).arg(item.size());
+            }
+        }
+        catch (const std::exception &ex) {
+            Debug("Unable to read archive index for squirrel.json fingerprint [" + QString(ex.what()) + "]", __FUNCTION__);
+        }
+    }
+
     QByteArray jsonBytes;
     if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.json", jsonBytes))
         return QString();
-    return QString::fromLatin1(QCryptographicHash::hash(jsonBytes, QCryptographicHash::Sha256).toHex());
+    const QString sha = QString::fromLatin1(QCryptographicHash::hash(jsonBytes, QCryptographicHash::Sha256).toHex());
+    return legacySha256 ? sha : "sha256:" + sha;
 }
 
 
@@ -4569,6 +4623,7 @@ QString squirrel::ObjectTypeToString(ObjectType object) {
  */
 ObjectType squirrel::ObjectTypeToEnum(QString object) {
     object.replace("-", "");
+    if (object.toLower() == "package") { return Package; }
     if (object.toLower() == "analysis") { return Analysis; }
     if (object.toLower() == "behseries") { return BehSeries; }
     if (object.toLower() == "datadictionary") { return DataDictionary; }

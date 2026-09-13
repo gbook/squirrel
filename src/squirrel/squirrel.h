@@ -69,8 +69,9 @@ public:
        so a later Read() can load it directly instead of re-parsing
        squirrel.json and re-inserting every row. Write() and WriteUpdate() call
        this automatically after writing squirrel.json. The copy is stamped with
-       a hash of the archive's squirrel.json (Read() ignores it if the JSON has
-       since changed) and with whether this object's data came from a full
+       a fingerprint of the archive's squirrel.json - its CRC32 and size from the
+       archive index, so checking it extracts nothing (Read() ignores the copy
+       if the JSON has since changed) and with whether this object's data came from a full
        read (full reads ignore a copy made from a quick read). PHI params and
        StagedFiles are scrubbed from the copy; the live database is untouched. */
     bool WriteEmbeddedDatabase(QString &m);
@@ -241,7 +242,7 @@ private:
        if there is no usable embedded database or loading it fails, so the
        caller falls back to the normal JSON-based read. */
     bool ReadEmbeddedDatabase();
-    QString GetArchiveJsonHash(); /* SHA-256 of the archive's squirrel.json, empty if unreadable */
+    QString GetArchiveJsonHash(bool legacySha256 = false); /* fingerprint of the archive's squirrel.json (CRC32+size from the archive index), empty if unreadable */
 
     /* 7zip archive functions */
     bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);
