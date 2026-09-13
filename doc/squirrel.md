@@ -158,10 +158,27 @@ squirrel explore <package>
 | `info <subjectID>` | Show subject detail |
 | `info <subjectID> <studyNum>` | Show study detail |
 | `info <subjectID> <studyNum> <seriesNum>` | Show series detail |
+| `tree` | Switch to an interactive subject → study → series tree view |
 | `help` | Show the command list |
 | `quit`, `exit` | Leave the shell (Ctrl-D also works) |
 
 Command history is available with the Up/Down arrow keys; the transcript pane can be scrolled with the mouse wheel, Ctrl+Up/Down, or PageUp/PageDown.
+
+**Tree view** (`tree`)
+
+The `tree` command switches the shell into a full-screen, navigable tree of the package's subjects, studies, and series:
+
+| Key | Action |
+|---|---|
+| Up / Down | Move the selection |
+| PageUp / PageDown, mouse wheel | Scroll |
+| Enter | Expand/collapse a subject or study; on a series, open its details |
+| `i` | Open a details popup for the selected subject, study, or series |
+| `q`, Esc | Return to the command shell (Enter/Esc/`q` closes an open details popup) |
+
+Subjects and studies show a `[+]`/`[-]` marker and a child count; opening the details popup on any node reuses the same fields shown by `info` (the popup's title bar already names the object type, so the `----- OBJECT -----` header `info` prints is left out here). The subject popup also shows the subject's observation and intervention counts.
+
+While the popup is open, Up/Down step to the previous/next sibling of the same type under the same parent (e.g. cycling through the series of one study) and refresh the popup in place; the tree's selection follows along, so it lands on whichever sibling was last viewed once the popup is closed.
 
 **Examples**
 

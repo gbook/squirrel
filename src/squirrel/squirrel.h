@@ -65,6 +65,17 @@ public:
     bool WriteUpdate();
     bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
 
+    /* Embed a ready-to-use copy of the in-memory database as "squirrel.db" in
+       the package, so a later Read() can load it directly instead of
+       re-parsing squirrel.json and re-inserting every row. Write() and
+       WriteUpdate() call this automatically after writing squirrel.json, so
+       squirrel.db is always kept in sync; call it directly only to backfill an
+       older package that was never rewritten since this existed. When called
+       directly, the caller must have done a full (non-quick) Read() first, so
+       every table - including Params/StagedFiles, which a quick read skips -
+       is complete. */
+    bool WriteEmbeddedDatabase(QString &m);
+
     /* get/set options */
     QString GetDatabaseUUID() { return databaseUUID; } /*!< get the database UUID */
     QString GetPackagePath();
@@ -109,6 +120,13 @@ public:
     QList<squirrelSeries> GetSeriesList(qint64 studyRowID);
     QList<squirrelStudy> GetStudyList(qint64 subjectRowID);
     QList<squirrelSubject> GetSubjectList();
+
+    /* lightweight row counts, for UIs that only need "how many" without
+       paying to construct every row's full object (e.g. explore's tree) */
+    qint64 CountStudies(qint64 subjectRowID);
+    qint64 CountSeries(qint64 studyRowID);
+    qint64 CountObservations(qint64 subjectRowID);
+    qint64 CountInterventions(qint64 subjectRowID);
 
     /* get individual objects */
     squirrelAnalysis GetAnalysis(qint64 analysisRowID);
@@ -215,6 +233,13 @@ private:
     bool DeleteTempDir(QString dir);
     bool InitializeDatabase();
     bool MakeTempDir(QString &dir);
+
+    /* Read() helper - loads "squirrel.db" (see WriteEmbeddedDatabase()) when
+       the package has one, skipping JSON parsing and per-row insertion.
+       Returns false (leaving the database untouched) if there is no embedded
+       database or loading it fails, so the caller falls back to the normal
+       JSON-based read. */
+    bool ReadEmbeddedDatabase();
 
     /* 7zip archive functions */
     bool AddFilesToArchive(QStringList filePaths, QStringList compressedFilePaths, QString archivePath, QString &m);

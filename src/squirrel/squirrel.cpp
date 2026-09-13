@@ -308,6 +308,111 @@ QString squirrel::GetPackagePath() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- ReadEmbeddedDatabase ------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Load "squirrel.db" (see WriteEmbeddedDatabase()) directly into the
+ * live database, bypassing squirrel.json entirely.
+ *
+ * Rather than swap out the already-open :memory: connection, the extracted
+ * file is ATTACHed alongside it and every table is bulk-copied with one
+ * "insert into main.X select * from src.X" per table - a handful of SQL
+ * statements instead of walking every JSON object and Store()-ing it
+ * individually.
+ *
+ * @return true if squirrel.db was present and loaded successfully; false if
+ * there is no embedded database, or loading it failed for any reason (in
+ * which case nothing has been written to the live database, and the caller
+ * should fall back to the normal JSON-based read)
+ */
+bool squirrel::ReadEmbeddedDatabase() {
+    QElapsedTimer timer;
+    timer.start();
+
+    QByteArray dbBytes;
+    if (!ExtractArchiveFileToMemory(GetPackagePath(), "squirrel.db", dbBytes))
+        return false;
+
+    double extractSec = static_cast<double>(timer.elapsed()) / 1000.0;
+    utils::Print(QString("Extracted embedded database in %1 sec").arg(extractSec, 0, 'f', 2));
+    timer.restart();
+
+    QString tempDbPath = QDir::tempPath() + "/" + databaseUUID + "-embedded-read.db";
+    QFile::remove(tempDbPath);
+    QFile tempFile(tempDbPath);
+    if (!tempFile.open(QIODevice::WriteOnly)) {
+        Log("Unable to write embedded database to temp file [" + tempDbPath + "]");
+        return false;
+    }
+    tempFile.write(dbBytes);
+    tempFile.close();
+
+    QSqlDatabase dbconn = QSqlDatabase::database(databaseUUID);
+
+    QSqlQuery qa(dbconn);
+    qa.prepare(QString("ATTACH DATABASE '%1' AS src").arg(QString(tempDbPath).replace("'", "''")));
+    if (!utils::SQLQuery(qa, __FUNCTION__, __FILE__, __LINE__)) {
+        Log("Unable to attach embedded database [" + tempDbPath + "]");
+        QFile::remove(tempDbPath);
+        return false;
+    }
+
+    static const QStringList tables = {
+        "Package", "Subject", "Study", "Series", "Analysis", "Observation",
+        "Intervention", "Experiment", "Pipeline", "PipelineDataStep",
+        "GroupAnalysis", "DataDictionary", "DataDictionaryItem", "Params", "StagedFiles"
+    };
+    bool copyOk = true;
+    for (const QString &t : tables) {
+        QSqlQuery qc(dbconn);
+        qc.prepare(QString("insert into main.%1 select * from src.%1").arg(t));
+        if (!utils::SQLQuery(qc, __FUNCTION__, __FILE__, __LINE__)) {
+            Log("Error copying table [" + t + "] from embedded database");
+            copyOk = false;
+            break;
+        }
+    }
+
+    QSqlQuery qd(dbconn);
+    qd.prepare("DETACH DATABASE src");
+    utils::SQLQuery(qd, __FUNCTION__, __FILE__, __LINE__);
+    QFile::remove(tempDbPath);
+
+    if (!copyOk) {
+        /* leave nothing half-loaded for the JSON fallback to build on top of */
+        InitializeDatabase();
+        return false;
+    }
+
+    double loadSec = static_cast<double>(timer.elapsed()) / 1000.0;
+    utils::Print(QString("Loaded embedded database in %1 sec").arg(loadSec, 0, 'f', 2));
+
+    /* package-level fields normally come from squirrel.json's "package" object
+       (see below); the embedded database carries the same values in Package,
+       which WriteEmbeddedDatabase() populates since Read() otherwise never
+       touches that table. */
+    QSqlQuery qpkg(dbconn);
+    qpkg.prepare("select * from Package limit 1");
+    if (utils::SQLQuery(qpkg, __FUNCTION__, __FILE__, __LINE__) && qpkg.next()) {
+        PackageName = qpkg.value("Name").toString();
+        Description = qpkg.value("Description").toString();
+        Datetime = utils::StringToDatetime(qpkg.value("Datetime").toString());
+        SubjectDirFormat = qpkg.value("SubjectDirFormat").toString();
+        StudyDirFormat = qpkg.value("StudyDirFormat").toString();
+        SeriesDirFormat = qpkg.value("SeriesDirFormat").toString();
+        DataFormat = qpkg.value("PackageDataFormat").toString();
+        License = qpkg.value("License").toString();
+        Readme = qpkg.value("Readme").toString();
+        Changes = qpkg.value("Changes").toString();
+        Notes = qpkg.value("Notes").toString();
+    }
+
+    isValid = true;
+    return true;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- Read ------------------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
@@ -328,6 +433,17 @@ bool squirrel::Read() {
 
     QElapsedTimer timer;
     timer.start();
+
+    /* If the package carries a pre-built "squirrel.db" (written by
+       WriteEmbeddedDatabase(), which Write()/WriteUpdate() call automatically),
+       load it directly instead of parsing squirrel.json and re-inserting every
+       row - on a package with hundreds of thousands of rows, that walk-and-
+       insert is by far the slower path. Falls through to the normal
+       JSON-based read below when squirrel.db is absent (older packages, not
+       yet rewritten since this existed) or anything about loading it goes
+       wrong. */
+    if (ReadEmbeddedDatabase())
+        return true;
 
     QByteArray jsonbytes;
     utils::Print("Extracting squirrel package header...");
@@ -1040,6 +1156,14 @@ bool squirrel::Write() {
         }
     }
 
+    /* keep the embedded "squirrel.db" read-cache in sync with what was just
+       written to squirrel.json above - see WriteEmbeddedDatabase(). This is a
+       performance cache, not the package's record of truth, so a failure here
+       is logged but does not fail the write. */
+    QString embedMsg;
+    if (!WriteEmbeddedDatabase(embedMsg))
+        Log("Warning: unable to write embedded database [squirrel.db]. Message [" + embedMsg + "]");
+
     /* write the log file */
     if (writeLog)
         utils::WriteTextFile(logfile, log);
@@ -1160,11 +1284,88 @@ bool squirrel::WriteUpdate() {
         Log("Error [" + m + "] compressing memory file to archive");
     }
 
+    /* keep the embedded "squirrel.db" read-cache in sync - see Write() and
+       WriteEmbeddedDatabase(). Logged but non-fatal on failure. */
+    QString embedMsg;
+    if (!WriteEmbeddedDatabase(embedMsg))
+        Log("Warning: unable to write embedded database [squirrel.db]. Message [" + embedMsg + "]");
+
     /* write the log file */
     if (writeLog)
         utils::WriteTextFile(logfile, log);
 
     return true;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- WriteEmbeddedDatabase ----------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Serialize the current in-memory database and embed it in the package
+ * as "squirrel.db", so a later Read() can load it directly instead of
+ * re-parsing squirrel.json and re-inserting every row.
+ *
+ * Called automatically by Write() and WriteUpdate() right after they write
+ * squirrel.json, so the two stay in sync on every convert/modify/merge. Call
+ * it directly only to backfill a package written before this existed - in
+ * that case the caller must have done a full (non-quick) Read() of the same
+ * package first, so every table is complete. squirrel.json remains the
+ * package's human-readable record and is left untouched; squirrel.db is
+ * purely a derived read cache.
+ *
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
+bool squirrel::WriteEmbeddedDatabase(QString &m) {
+    QSqlDatabase dbconn = QSqlDatabase::database(databaseUUID);
+
+    /* the Package table exists in the schema but Read() never populates it
+       from squirrel.json (package-level fields live only as members on this
+       object) - fill it in here so the embedded database is self-contained.
+       Cleared first so this stays idempotent: a package whose database was
+       itself loaded from a previous squirrel.db (via ReadEmbeddedDatabase())
+       already carries a Package row here, which would otherwise collide with
+       Name's UNIQUE constraint on the next write. */
+    QSqlQuery qclear(dbconn);
+    qclear.prepare("delete from Package");
+    utils::SQLQuery(qclear, __FUNCTION__, __FILE__, __LINE__);
+
+    QSqlQuery qp(dbconn);
+    qp.prepare("insert into Package (Name, Description, Datetime, SubjectDirFormat, StudyDirFormat, SeriesDirFormat, PackageDataFormat, License, Readme, Changes, Notes) "
+               "values (:Name, :Description, :Datetime, :SubjectDirFormat, :StudyDirFormat, :SeriesDirFormat, :PackageDataFormat, :License, :Readme, :Changes, :Notes)");
+    qp.bindValue(":Name", PackageName);
+    qp.bindValue(":Description", Description);
+    qp.bindValue(":Datetime", Datetime.toString("yyyy-MM-dd HH:mm:ss"));
+    qp.bindValue(":SubjectDirFormat", SubjectDirFormat);
+    qp.bindValue(":StudyDirFormat", StudyDirFormat);
+    qp.bindValue(":SeriesDirFormat", SeriesDirFormat);
+    qp.bindValue(":PackageDataFormat", DataFormat);
+    qp.bindValue(":License", License);
+    qp.bindValue(":Readme", Readme);
+    qp.bindValue(":Changes", Changes);
+    qp.bindValue(":Notes", Notes);
+    if (!utils::SQLQuery(qp, __FUNCTION__, __FILE__, __LINE__)) {
+        m = "Unable to write Package row to embedded database";
+        return false;
+    }
+
+    /* serialize the live database to a plain file. VACUUM INTO doesn't support
+       bind parameters in the Qt sqlite driver, so the path is inlined - it's
+       always our own temp path, never external input. */
+    QString tempDbPath = QDir::tempPath() + "/" + databaseUUID + "-embed.db";
+    QFile::remove(tempDbPath);
+
+    QSqlQuery qv(dbconn);
+    qv.prepare(QString("VACUUM INTO '%1'").arg(QString(tempDbPath).replace("'", "''")));
+    if (!utils::SQLQuery(qv, __FUNCTION__, __FILE__, __LINE__)) {
+        m = "Unable to serialize database to file [" + tempDbPath + "]. Error [" + dbconn.lastError().text() + "]";
+        return false;
+    }
+
+    bool ok = AddFilesToArchive(QStringList() << tempDbPath, QStringList() << "squirrel.db", GetPackagePath(), m);
+    QFile::remove(tempDbPath);
+    return ok;
 }
 
 
@@ -2397,6 +2598,49 @@ QList<squirrelIntervention> squirrel::GetInterventionList(qint64 subjectRowID) {
         list.append(d);
     }
     return list;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- CountStudies/CountSeries/CountObservations/ ----------- */
+/* ----- CountInterventions ------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Row counts for a parent object, without constructing every child
+ * row's full object. Packages with very large child tables (e.g. hundreds of
+ * thousands of Observation rows) make Get*List() far too slow to call just to
+ * read its size() - these run a plain "select count(*)" instead.
+ */
+qint64 squirrel::CountStudies(qint64 subjectRowID) {
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    q.prepare("select count(*) from Study where SubjectRowID = :id");
+    q.bindValue(":id", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    return q.next() ? q.value(0).toLongLong() : 0;
+}
+
+qint64 squirrel::CountSeries(qint64 studyRowID) {
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    q.prepare("select count(*) from Series where StudyRowID = :id");
+    q.bindValue(":id", studyRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    return q.next() ? q.value(0).toLongLong() : 0;
+}
+
+qint64 squirrel::CountObservations(qint64 subjectRowID) {
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    q.prepare("select count(*) from Observation where SubjectRowID = :id");
+    q.bindValue(":id", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    return q.next() ? q.value(0).toLongLong() : 0;
+}
+
+qint64 squirrel::CountInterventions(qint64 subjectRowID) {
+    QSqlQuery q(QSqlDatabase::database(databaseUUID));
+    q.prepare("select count(*) from Intervention where SubjectRowID = :id");
+    q.bindValue(":id", subjectRowID);
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    return q.next() ? q.value(0).toLongLong() : 0;
 }
 
 

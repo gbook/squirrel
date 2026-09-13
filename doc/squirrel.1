@@ -208,6 +208,9 @@ Show study detail.
 .BI info " subjectID studyNum seriesNum"
 Show series detail.
 .TP
+.B tree
+Switch to an interactive subject \(-> study \(-> series tree view.
+.TP
 .B help
 Show the command list.
 .TP
@@ -217,6 +220,43 @@ Leave the shell (Ctrl-D also works).
 .PP
 Command history is available with the Up/Down arrow keys; the transcript pane
 can be scrolled with the mouse wheel, Ctrl+Up/Down, or PageUp/PageDown.
+.PP
+.B Tree view
+.RS 4
+The
+.B tree
+command switches the shell into a full-screen, navigable tree of the
+package's subjects, studies, and series.
+.TP
+Up / Down
+Move the selection.
+.TP
+PageUp / PageDown, mouse wheel
+Scroll.
+.TP
+Enter
+Expand/collapse a subject or study; on a series, open its details.
+.TP
+.B i
+Open a details popup for the selected subject, study, or series.
+.TP
+.BR q ", Esc"
+Return to the command shell (Enter/Esc/
+.B q
+closes an open details popup).
+.PP
+The details popup shows the same fields as
+.BR info ,
+except that the
+.RB \(lq "----- OBJECT -----" \(rq
+header is left out (the popup's title bar already names the object type). The
+subject popup also shows the subject's observation and intervention counts.
+.PP
+While the popup is open, Up/Down step to the previous/next sibling of the
+same type under the same parent (e.g.\& cycling through the series of one
+study) and refresh the popup in place; the tree's selection follows along, so
+it lands on whichever sibling was last viewed once the popup is closed.
+.RE
 .PP
 .B Examples
 .RS 4

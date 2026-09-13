@@ -56,6 +56,8 @@ bool modify::DoModify(QString packagePath, const modification &mod, QString &m) 
         return RemovePHI(packagePath, mod, m);
     else if (mod.operation == "renumber")
         return RenumberSubjects(packagePath, mod, m);
+    else if (mod.operation == "embeddb")
+        return EmbedDatabase(packagePath, mod, m);
     else {
         m = "Invalid operation [" + mod.operation + "] specified";
         return false;
@@ -1184,7 +1186,45 @@ bool modify::SplitByModality(QString packagePath, const modification &mod, QStri
 
 
 /* ---------------------------------------------------------------------------- */
-/* ----- RemovePHI ------------------------------------------------------------ */
+/* ----- EmbedDatabase ---------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Backfill "squirrel.db" into a package written before every write path
+ * kept it in sync automatically (see squirrel::WriteEmbeddedDatabase(), called
+ * from Write()/WriteUpdate() on every convert/modify/merge). Re-running this on
+ * an up-to-date package is harmless - it just rewrites the same squirrel.db.
+ * @param packagePath path to the squirrel package file
+ * @param mod struct containing all operation parameters (unused)
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
+bool modify::EmbedDatabase(QString packagePath, const modification &mod, QString &m) {
+
+    Q_UNUSED(mod);
+
+    squirrel *sqrl = new squirrel();
+    sqrl->SetFileMode(FileMode::ExistingPackage);
+    sqrl->SetPackagePath(packagePath);
+    /* must be a full read (not quick), so Params/StagedFiles - which a quick
+       read skips - end up in the embedded database too */
+    sqrl->SetQuickRead(false);
+
+    if (!sqrl->Read()) {
+        m = QString("Package unreadable [%1]").arg(packagePath);
+        delete sqrl;
+        return false;
+    }
+
+    bool ok = sqrl->WriteEmbeddedDatabase(m);
+    if (ok)
+        m = "Embedded squirrel.db in [" + packagePath + "]";
+    delete sqrl;
+    return ok;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- RemovePHI -------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
  * @brief Remove all protected health information (dates, birthdates) from a squirrel package
