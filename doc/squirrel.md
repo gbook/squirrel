@@ -284,10 +284,17 @@ squirrel modify <package> --operation <op> --object <type> [options]
 | `splitbymodality` | Split the package into separate packages, one per imaging modality |
 | `removephi` | Strip Protected Health Information (dates, IDs) from the package |
 | `renumber` | Reassign subject IDs sequentially (1–N); original ID is moved to AlternateIDs |
+| `embeddb` | Backfill the embedded `squirrel.db` read cache into a package written before it was kept in sync automatically |
 
 **Object types** (`--object`)
 
 `package`  `subject`  `study`  `series`  `analysis`  `intervention`  `observation`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
+
+**The `squirrel.db` read cache** (`embeddb`)
+
+Every package also carries a `squirrel.db` entry alongside `squirrel.json`: a ready-to-use copy of the package's database that lets `Read()` skip straight to the data instead of parsing JSON and re-inserting every row — a large win on packages with hundreds of thousands of rows. `squirrel.json` remains the package's human-readable record; `squirrel.db` is purely a derived cache and is kept in sync automatically by `convert`, `modify`, and `merge`.
+
+The `embeddb` operation exists only to backfill `squirrel.db` into a package written by an older version of `squirrel`, before this existed. It takes no other options, and running it on a package that already has an up-to-date `squirrel.db` is harmless (it just rewrites the same cache).
 
 **Object data format** (`--objectdata`)
 
@@ -331,6 +338,9 @@ squirrel modify study.sqrl --operation renumber --digits 4 --startnum 1001 --pre
 
 # Renumber with random assignment
 squirrel modify study.sqrl --operation renumber --random
+
+# Backfill the squirrel.db read cache into an older package
+squirrel modify study.sqrl --operation embeddb
 
 # List settable variables for the study object
 squirrel modify study.sqrl --variablelist study

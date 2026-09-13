@@ -351,7 +351,8 @@ Suppress header and progress output.
 .TP
 .BI \-\-operation " op"
 Operation to perform. Possible values:
-.BR add ", " remove ", " update ", " splitbymodality ", " removephi ", " renumber .
+.BR add ", " remove ", " update ", " splitbymodality ", " removephi ", "
+.BR renumber ", " embeddb .
 .TP
 .BI \-\-object " type"
 Object type to operate on. Possible values:
@@ -429,6 +430,33 @@ renumbering. Used with
 .BR renumber .
 .RE
 .PP
+.B The squirrel.db read cache
+.RS 4
+Every package also carries a
+.B squirrel.db
+entry alongside
+.BR squirrel.json :
+a ready-to-use copy of the package's database that lets a read skip straight
+to the data instead of parsing JSON and re-inserting every row \(em a large
+win on packages with hundreds of thousands of rows.
+.B squirrel.json
+remains the package's human-readable record;
+.B squirrel.db
+is purely a derived cache and is kept in sync automatically by
+.BR convert ", " modify ", and " merge .
+.PP
+The
+.B embeddb
+operation exists only to backfill
+.B squirrel.db
+into a package written by an older version of
+.B squirrel,
+before this existed. It takes no other options, and running it on a package
+that already has an up-to-date
+.B squirrel.db
+is harmless (it just rewrites the same cache).
+.RE
+.PP
 .B Examples
 .RS 4
 .EX
@@ -454,6 +482,8 @@ squirrel modify study.sqrl --operation renumber \\
     --digits 4 --startnum 1001 --prefix sub
 
 squirrel modify study.sqrl --operation renumber --random
+
+squirrel modify study.sqrl --operation embeddb
 
 squirrel modify study.sqrl --variablelist study
 .EE
