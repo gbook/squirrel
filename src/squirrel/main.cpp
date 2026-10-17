@@ -43,7 +43,7 @@ void PrintExampleUsage() {
     printf("\nExample usage: \n");
     printf("    squirrel convert <inputDir> <outputPackage> --inputformat dicom --outputformat squirrel --dataformat nifti4d --dirformat orig\n");
     printf("    squirrel convert <inputDir> <outputPackage> --inputformat bids --outputformat squirrel\n");
-    printf("    squirrel modify <package> --operation update --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
+    printf("    squirrel modify <package> --operation update --object subject --objectid S1234 --objectdata 'DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
 }
 
 void PrintExampleUsageConvert() {
@@ -54,7 +54,7 @@ void PrintExampleUsageConvert() {
 
 void PrintExampleModifyUsage() {
     printf("\nExample modify usage: \n");
-    printf("    squirrel modify <package> --operation update --object subject --objectdata 'SubjectID=S1234&DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
+    printf("    squirrel modify <package> --operation update --object subject --objectid S1234 --objectdata 'DateOfBirth=1999-12-31&Sex=M&Gender=M'\n");
     printf("    squirrel modify <package> --operation add --object series --subjectid S1234 --studynum 1 --objectdata 'SeriesNumber=3' --datapath /path/to/dicom/\n");
     printf("    squirrel modify <package> --operation add --object series --subjectid S1234 --studynum 1 --seriesnum 3 --datapath /more/files/*.dcm\n");
     printf("    squirrel modify <package> --operation add --object experiment --objectid MyExperiment --datapath /path/to/files/ --recursive\n");
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
-        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [all  package  subject  study  series  observation  intervention  experiment  analysis  pipeline  groupanalysis  datadictionary].", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [package  subject  study  series  observation  intervention  experiment  analysis  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  --subjectid must also be specified.", "studynum"));
         p.addOption(QCommandLineOption(QStringList() << "dataset", "Dataset type [id  basic  full]", "dataset"));

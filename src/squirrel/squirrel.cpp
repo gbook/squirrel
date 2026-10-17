@@ -611,11 +611,13 @@ bool squirrel::Read() {
 
     /* get the data object, and check for any subjects */
     QJsonArray jsonSubjects;
+    QJsonArray jsonGroupAnalyses;
     qint64 numSubjects;
     if (root.contains("data")) {
         QJsonValue dataVal = root.value("data");
         QJsonObject dataObj = dataVal.toObject();
         jsonSubjects = dataObj["subjects"].toArray();
+        jsonGroupAnalyses = dataObj["group-analysis"].toArray();
         numSubjects = jsonSubjects.size();
         Debug(QString("Found [%1] subjects").arg(numSubjects), __FUNCTION__);
     }
@@ -814,15 +816,18 @@ bool squirrel::Read() {
             sqrlObservation.Store(qObservationInsert);
         }
 
-        /* read all Interventions */
-        QJsonArray jsonInterventions = jsonSubject["Interventions"].toArray();
-        Debug(QString("Reading [%1] Interventions").arg(jsonInterventions.size()), __FUNCTION__);
+        /* read all interventions. Older packages used the key 'Interventions' and the DateStart/DateEnd variable names */
+        QJsonArray jsonInterventions = jsonSubject.contains("interventions") ? jsonSubject["interventions"].toArray() : jsonSubject["Interventions"].toArray();
+        Debug(QString("Reading [%1] interventions").arg(jsonInterventions.size()), __FUNCTION__);
         for (const auto &f : jsonInterventions) {
             QJsonObject jsonIntervention = f.toObject();
             squirrelIntervention sqrlIntervention(databaseUUID);
-            sqrlIntervention.DateEnd = utils::StringToDatetime(jsonIntervention["DateEnd"].toString());
+            sqrlIntervention.DateEnd = utils::StringToDatetime(jsonIntervention.contains("DateInterventionEnd") ? jsonIntervention["DateInterventionEnd"].toString() : jsonIntervention["DateEnd"].toString());
+            sqrlIntervention.DateRecordCreate = utils::StringToDatetime(jsonIntervention["DateRecordCreate"].toString());
             sqrlIntervention.DateRecordEntry = utils::StringToDatetime(jsonIntervention["DateRecordEntry"].toString());
-            sqrlIntervention.DateStart = utils::StringToDatetime(jsonIntervention["DateStart"].toString());
+            sqrlIntervention.DateRecordModify = utils::StringToDatetime(jsonIntervention["DateRecordModify"].toString());
+            sqrlIntervention.DateStart = utils::StringToDatetime(jsonIntervention.contains("DateInterventionStart") ? jsonIntervention["DateInterventionStart"].toString() : jsonIntervention["DateStart"].toString());
+            sqrlIntervention.Description = jsonIntervention["Description"].toString();
             sqrlIntervention.DoseAmount = jsonIntervention["DoseAmount"].toDouble();
             sqrlIntervention.DoseFrequency = jsonIntervention["DoseFrequency"].toString();
             sqrlIntervention.DoseKey = jsonIntervention["DoseKey"].toString();
@@ -836,6 +841,46 @@ bool squirrel::Read() {
             sqrlIntervention.subjectRowID = subjectRowID;
             sqrlIntervention.Store(qInterventionInsert);
         }
+    }
+
+    /* read all group analyses */
+    Debug(QString("Reading [%1] group analyses").arg(jsonGroupAnalyses.size()), __FUNCTION__);
+    for (const auto &g : jsonGroupAnalyses) {
+        QJsonObject jsonGroupAnalysis = g.toObject();
+        squirrelGroupAnalysis sqrlGroupAnalysis(databaseUUID);
+
+        sqrlGroupAnalysis.GroupAnalysisName = jsonGroupAnalysis["GroupAnalysisName"].toString();
+        sqrlGroupAnalysis.DateTime = utils::StringToDatetime(jsonGroupAnalysis["Datetime"].toString());
+        sqrlGroupAnalysis.Description = jsonGroupAnalysis["Description"].toString();
+        sqrlGroupAnalysis.Notes = jsonGroupAnalysis["Notes"].toString();
+        sqrlGroupAnalysis.FileCount = jsonGroupAnalysis["FileCount"].toInteger();
+        sqrlGroupAnalysis.Size = jsonGroupAnalysis["Size"].toInteger();
+        sqrlGroupAnalysis.Store();
+    }
+
+    /* read all data dictionaries */
+    QJsonArray jsonDataDictionaries = root["data-dictionaries"].toArray();
+    Debug(QString("Reading [%1] data dictionaries").arg(jsonDataDictionaries.size()), __FUNCTION__);
+    for (const auto &d : jsonDataDictionaries) {
+        QJsonObject jsonDataDictionary = d.toObject();
+        squirrelDataDictionary sqrlDataDictionary(databaseUUID);
+
+        sqrlDataDictionary.DataDictionaryName = jsonDataDictionary["DataDictionaryName"].toString();
+        sqrlDataDictionary.FileCount = jsonDataDictionary["FileCount"].toInteger();
+        sqrlDataDictionary.Size = jsonDataDictionary["Size"].toInteger();
+        for (const auto &v : jsonDataDictionary["data-dictionary-items"].toArray()) {
+            QJsonObject jsonItem = v.toObject();
+            dataDictionaryItem item;
+            item.VariableType = jsonItem["VariableType"].toString();
+            item.VariableName = jsonItem["VariableName"].toString();
+            item.VariableDescription = jsonItem["VariableDescription"].toString();
+            item.KeyValueMapping = jsonItem["KeyValueMapping"].toString();
+            item.ExpectedTimepoints = jsonItem["ExpectedTimepoints"].toInt();
+            item.RangeLow = jsonItem["RangeLow"].toDouble();
+            item.RangeHigh = jsonItem["RangeHigh"].toDouble();
+            sqrlDataDictionary.dictItems.append(item);
+        }
+        sqrlDataDictionary.Store();
     }
 
     /* read all experiments */
@@ -876,9 +921,18 @@ bool squirrel::Read() {
         sqrlPipeline.PipelineDirectoryStructure = jsonPipeline["PipelineDirectoryStructure"].toString();
         sqrlPipeline.PipelineName = jsonPipeline["PipelineName"].toString();
         sqrlPipeline.PipelineNotes = jsonPipeline["PipelineNotes"].toString();
-        sqrlPipeline.PipelinePrimaryScript = jsonPipeline["PipelinePrimaryScript"].toString();
         sqrlPipeline.PipelineResultScript = jsonPipeline["PipelineResultScript"].toString();
-        sqrlPipeline.PipelineSecondaryScript = jsonPipeline["PipelineSecondaryScript"].toString();
+        /* primary and secondary scripts are written as files in the pipeline directory. Older packages stored them in the JSON */
+        QByteArray scriptBytes;
+        if (ExtractArchiveFileToMemory(GetPackagePath(), QString("pipelines/%1/primaryScript.sh").arg(sqrlPipeline.PipelineName), scriptBytes))
+            sqrlPipeline.PipelinePrimaryScript = QString::fromUtf8(scriptBytes);
+        else
+            sqrlPipeline.PipelinePrimaryScript = jsonPipeline["PipelinePrimaryScript"].toString();
+        scriptBytes.clear();
+        if (ExtractArchiveFileToMemory(GetPackagePath(), QString("pipelines/%1/secondaryScript.sh").arg(sqrlPipeline.PipelineName), scriptBytes))
+            sqrlPipeline.PipelineSecondaryScript = QString::fromUtf8(scriptBytes);
+        else
+            sqrlPipeline.PipelineSecondaryScript = jsonPipeline["PipelineSecondaryScript"].toString();
         sqrlPipeline.PipelineVersion = jsonPipeline["PipelineVersion"].toInt();
         sqrlPipeline.SearchDependencyLevel = jsonPipeline["SearchDependencyLevel"].toString();
         sqrlPipeline.SearchDependencyLinkType = jsonPipeline["SearchDependencyLinkType"].toString();
@@ -888,8 +942,8 @@ bool squirrel::Read() {
         sqrlPipeline.SetupDataCopyMethod = jsonPipeline["SetupDataCopyMethod"].toString();
         sqrlPipeline.SetupDependencyDirectory = jsonPipeline["SetupDependencyDirectory"].toString();
         sqrlPipeline.SetupTempDirectory = jsonPipeline["SetupTempDirectory"].toString();
-        sqrlPipeline.flags.SetupUseProfile = jsonPipeline["SetupUseProfile"].toBool();
-        sqrlPipeline.flags.SetupUseTempDirectory = jsonPipeline["SetupUseTempDirectory"].toBool();
+        sqrlPipeline.flags.SetupUseProfile = jsonPipeline.contains("FlagSetupUseProfile") ? jsonPipeline["FlagSetupUseProfile"].toBool() : jsonPipeline["SetupUseProfile"].toBool();
+        sqrlPipeline.flags.SetupUseTempDirectory = jsonPipeline.contains("FlagSetupUseTempDirectory") ? jsonPipeline["FlagSetupUseTempDirectory"].toBool() : jsonPipeline["SetupUseTempDirectory"].toBool();
 
         QJsonArray jsonCompleteFiles;
         jsonCompleteFiles = jsonPipeline["PipelineCompleteFiles"].toArray();
@@ -899,7 +953,7 @@ bool squirrel::Read() {
 
         /* read the pipeline data steps */
         QJsonArray jsonDataSteps;
-        jsonDataSteps = jsonPipeline["dataSteps"].toArray();
+        jsonDataSteps = jsonPipeline.contains("data-steps") ? jsonPipeline["data-steps"].toArray() : jsonPipeline["dataSteps"].toArray();
         for (const auto &v : jsonDataSteps) {
             QJsonObject jsonDataStep = v.toObject();
             dataStep ds;
@@ -1167,13 +1221,22 @@ bool squirrel::Write() {
     root["data"] = data;
 
     /* add pipelines */
+    QString scriptDir;
     QList <squirrelPipeline> pipelines = GetPipelineList();
     if (pipelines.size() > 0) {
         Log(QString("Adding %1 pipelines").arg(pipelines.size()));
         QJsonArray JSONpipelines;
+        /* an existing package has no working directory, so the pipeline scripts
+           are written to a temp directory and added to the archive below */
+        if (fileMode == ExistingPackage)
+            MakeTempDir(scriptDir);
         for (auto &p : pipelines) {
-            JSONpipelines.append(p.ToJSON(workingDir));
+            JSONpipelines.append(p.ToJSON(fileMode == ExistingPackage ? scriptDir : workingDir));
             stagedFiles += p.GetStagedFileList();
+            if (fileMode == ExistingPackage) {
+                stagedFiles.append(QStringPair(QString("%1/pipelines/%2/primaryScript.sh").arg(scriptDir).arg(p.PipelineName), p.VirtualPath()));
+                stagedFiles.append(QStringPair(QString("%1/pipelines/%2/secondaryScript.sh").arg(scriptDir).arg(p.PipelineName), p.VirtualPath()));
+            }
             Log(QString("Added pipeline [%1]").arg(p.PipelineName));
         }
         root["PipelineCount"] = JSONpipelines.size();
@@ -1280,6 +1343,8 @@ bool squirrel::Write() {
         QString m;
         if (!AddFilesToArchive(diskPaths, archivePaths, GetPackagePath(), m))
             Log("Error [" + m + "] adding file(s) to archive");
+        if (!scriptDir.isEmpty())
+            DeleteTempDir(scriptDir);
 
         /* update the package in place with the new .json file */
         Log("Updating existing package");
@@ -1371,12 +1436,22 @@ bool squirrel::WriteUpdate() {
     root["data"] = data;
 
     /* add pipelines */
+    QString scriptDir;
+    QStringList scriptDiskPaths, scriptArchivePaths;
     QList <squirrelPipeline> pipelines = GetPipelineList();
     if (pipelines.size() > 0) {
         Log(QString("Adding %1 pipelines").arg(pipelines.size()));
         QJsonArray JSONpipelines;
+        /* WriteUpdate() only works on an existing package, which has no working
+           directory, so the pipeline scripts are written to a temp directory and
+           added to the archive below */
+        MakeTempDir(scriptDir);
         for (auto &p : pipelines) {
-            JSONpipelines.append(p.ToJSON(workingDir));
+            JSONpipelines.append(p.ToJSON(scriptDir));
+            scriptDiskPaths << QString("%1/pipelines/%2/primaryScript.sh").arg(scriptDir).arg(p.PipelineName)
+                            << QString("%1/pipelines/%2/secondaryScript.sh").arg(scriptDir).arg(p.PipelineName);
+            scriptArchivePaths << QString("%1/primaryScript.sh").arg(p.VirtualPath())
+                               << QString("%1/secondaryScript.sh").arg(p.VirtualPath());
             Log(QString("Added pipeline [%1]").arg(p.PipelineName));
         }
         root["PipelineCount"] = JSONpipelines.size();
@@ -1418,6 +1493,12 @@ bool squirrel::WriteUpdate() {
     if (!UpdateMemoryFileToArchive(j, "squirrel.json", GetPackagePath(), m)) {
         Log("Error [" + m + "] compressing memory file to archive");
     }
+
+    /* add the pipeline scripts */
+    if (!scriptDiskPaths.isEmpty() && !AddFilesToArchive(scriptDiskPaths, scriptArchivePaths, GetPackagePath(), m))
+        Log("Error [" + m + "] adding pipeline script(s) to archive");
+    if (!scriptDir.isEmpty())
+        DeleteTempDir(scriptDir);
 
     /* keep the embedded "squirrel.db" read-cache in sync - see Write() and
        WriteEmbeddedDatabase(). Logged but non-fatal on failure. */
@@ -1990,7 +2071,7 @@ bool squirrel::MakeTempDir(QString &dir) {
     if (cmdLineExec)
         d = QString(QDir::tempPath() + "/%1").arg(utils::GenerateRandomString(20));
     else
-        d = QString(systemTempDir + "/%1").arg(utils::GenerateRandomString(20));
+        d = QString(GetSystemTempDir() + "/%1").arg(utils::GenerateRandomString(20));
 
     QString m;
     if (utils::MakePath(d, m)) {

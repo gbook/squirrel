@@ -154,19 +154,26 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
     sqrl->SetPackagePath(packagePath);
     sqrl->SetWriteLog(true);
     if (!sqrl->Read()) {
-        m = QString("Package unreadable [%1] already exists in package").arg(vars["ID"]);
+        m = QString("Package unreadable [%1]").arg(packagePath);
         delete sqrl;
         return false;
     }
 
     /* ----- subject ----- */
     if (mod.object == Subject) {
+        /* the subject ID comes from SubjectID (or the older key ID) in the objectdata, or from --objectid */
+        QString subjectID = vars.value("SubjectID", vars.value("ID", mod.objectID));
+        if (subjectID.isEmpty()) {
+            m = "No subject ID specified. Use SubjectID=<id> in --objectdata, or --objectid";
+            delete sqrl;
+            return false;
+        }
         qint64 subjectRowID;
-        subjectRowID = sqrl->FindSubject(vars["ID"]);
+        subjectRowID = sqrl->FindSubject(subjectID);
         if (subjectRowID < 0) {
             squirrelSubject subject(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["ID"]));
-            subject.ID = vars["ID"];
+            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(subjectID));
+            subject.ID = subjectID;
             subject.AlternateIDs = vars["AlternateIDs"].split(",");
             subject.DateOfBirth = QDate::fromString(vars["DateOfBirth"], "yyyy-MM-dd");
             subject.EnrollmentGroup = vars["EnrollmentGroup"];
@@ -182,7 +189,7 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
             sqrl->ResequenceSubjects();
         }
         else {
-            m = QString("Subject with ID [%1] already exists in package").arg(vars["ID"]);
+            m = QString("Subject with ID [%1] already exists in package").arg(subjectID);
             delete sqrl;
             return false;
         }
@@ -193,7 +200,7 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
         qint64 studyRowID = sqrl->FindStudy(mod.subjectID, vars["StudyNumber"].toInt());
         if (studyRowID < 0) {
             squirrelStudy study(sqrl->GetDatabaseUUID());
-            sqrl->Log(QString("Creating squirrel Subject [%1]").arg(vars["ID"]));
+            sqrl->Log(QString("Creating squirrel Study [%1]").arg(vars["StudyNumber"]));
             study.StudyNumber = vars["StudyNumber"].toInt();
             study.DateTime = QDateTime::fromString(vars["Datetime"], "yyyy-MM-dd HH:mm:ss");
             study.AgeAtStudy = vars["AgeAtStudy"].toDouble();
@@ -453,6 +460,8 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
             pipeline.ClusterSubmitDelay = vars.value("ClusterSubmitDelay").toInt();
             pipeline.SetupTempDirectory = vars.value("SetupTempDirectory");
             pipeline.PipelineVersion = vars.value("PipelineVersion").toInt();
+            pipeline.flags.SetupUseProfile = (vars.value("FlagSetupUseProfile").toLower() == "true" || vars.value("FlagSetupUseProfile") == "1");
+            pipeline.flags.SetupUseTempDirectory = (vars.value("FlagSetupUseTempDirectory").toLower() == "true" || vars.value("FlagSetupUseTempDirectory") == "1");
             pipeline.stagedFiles = dataFiles;
             pipeline.Store();
             utils::Print(QString("Created pipeline [%1] and staged [%2] file(s)").arg(pipelineName).arg(dataFiles.size()));
@@ -1482,9 +1491,9 @@ void modify::PrintVariables(ObjectType object) {
             {"Hostname","string","","If run on a cluster, the hostname of the node on which the analysis run"},
             {"PipelineName","string","*","Name of the pipeline used to generate these results"},
             {"PipelineVersion","number","","Version of the pipeline used"},
-            {"RunTime","number","","Elapsed wall time, in seconds, to run the analysis after setup"},
+            {"RunTime","number","","Elapsed wall time, in minutes, to run the analysis after setup"},
             {"SeriesCount","number","","Number of series downloaded/used to perform analysis"},
-            {"SetupTime","number","","Elapsed wall time, in seconds, to copy data and set up analysis"},
+            {"SetupTime","number","","Elapsed wall time, in minutes, to copy data and set up analysis"},
             {"Status","string","","Status, should always be 'complete'"},
             {"StatusMessage","string","","Last running status message"},
             {"Successful","bool","","Analysis ran to completion without error and expected files were created"}

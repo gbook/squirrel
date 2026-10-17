@@ -65,7 +65,7 @@ bool squirrelDataDictionary::Get() {
         /* get the DataDictionaryItems */
         dictItems.clear();
         QSqlQuery q(QSqlDatabase::database(databaseUUID));
-        q.prepare("select * from DataDictionaryItems where DataDictionaryRowID = :id");
+        q.prepare("select * from DataDictionaryItem where DataDictionaryRowID = :id");
         q.bindValue(":id", objectID);
         utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
         while (q.next()) {
@@ -112,7 +112,8 @@ bool squirrelDataDictionary::Store() {
     bool isNewObject = (objectID < 0);
     /* insert if the object doesn't exist ... */
     if (objectID < 0) {
-        q.prepare("insert into DataDictionary (FileCount, Size, VirtualPath) values (:FileCount, :Size, :VirtualPath)");
+        q.prepare("insert into DataDictionary (DataDictionaryName, FileCount, Size, VirtualPath) values (:DataDictionaryName, :FileCount, :Size, :VirtualPath)");
+        q.bindValue(":DataDictionaryName", DataDictionaryName);
         q.bindValue(":FileCount", FileCount);
         q.bindValue(":Size", Size);
         q.bindValue(":VirtualPath", VirtualPath());
@@ -121,8 +122,9 @@ bool squirrelDataDictionary::Store() {
     }
     /* ... otherwise update */
     else {
-        q.prepare("update DataDictionary set FileCount = :FileCount, Size = :Size, VirtualPath = :VirtualPath where DataDictionaryRowID = :id");
+        q.prepare("update DataDictionary set DataDictionaryName = :DataDictionaryName, FileCount = :FileCount, Size = :Size, VirtualPath = :VirtualPath where DataDictionaryRowID = :id");
         q.bindValue(":id", objectID);
+        q.bindValue(":DataDictionaryName", DataDictionaryName);
         q.bindValue(":FileCount", FileCount);
         q.bindValue(":Size", Size);
         q.bindValue(":VirtualPath", VirtualPath());
@@ -130,17 +132,17 @@ bool squirrelDataDictionary::Store() {
     }
 
     /* store the DataDictionaryItems */
-    q.prepare("delete from DataDictionaryItems where DataDictionaryRowID = :id");
+    q.prepare("delete from DataDictionaryItem where DataDictionaryRowID = :id");
     q.bindValue(":id", objectID);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
 
     foreach (dataDictionaryItem dic, dictItems) {
-        q.prepare("insert into DataDictionaryItems (DataDictionaryRowID, VariableType, VariableName, VariableDescription, KeyValue, ExpectedTimepoints, RangeLow, RangeHigh) values (:DataDictionaryRowID, :VariableType, :VariableName, :VariableDescription, :KeyValue, :ExpectedTimepoints, :RangeLow, :RangeHigh)");
+        q.prepare("insert into DataDictionaryItem (DataDictionaryRowID, VariableType, VariableName, VariableDescription, KeyValueMapping, ExpectedTimepoints, RangeLow, RangeHigh) values (:DataDictionaryRowID, :VariableType, :VariableName, :VariableDescription, :KeyValueMapping, :ExpectedTimepoints, :RangeLow, :RangeHigh)");
         q.bindValue(":DataDictionaryRowID", objectID);
         q.bindValue(":VariableType", dic.VariableType);
         q.bindValue(":VariableName", dic.VariableName);
         q.bindValue(":VariableDescription", dic.VariableDescription);
-        q.bindValue(":KeyValue", dic.KeyValueMapping);
+        q.bindValue(":KeyValueMapping", dic.KeyValueMapping);
         q.bindValue(":ExpectedTimepoints", dic.ExpectedTimepoints);
         q.bindValue(":RangeLow", dic.RangeLow);
         q.bindValue(":RangeHigh", dic.RangeHigh);
@@ -179,6 +181,7 @@ QJsonObject squirrelDataDictionary::ToJSON() {
         jsonItems.append(jsonItem);
     }
 
+    json["DataDictionaryName"] = DataDictionaryName;
     json["FileCount"] = FileCount;
     json["Size"] = Size;
     json["VirtualPath"] = VirtualPath();

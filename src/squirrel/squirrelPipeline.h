@@ -114,7 +114,7 @@ public:
     QString SetupWriteBids;
     QStringList PipelineCompleteFiles;      /*!< list of files that must exists to indicate the analysis was complete */
     QStringList SearchParentPipelines;    /*!< list of pipelines on which this pipeline depends */
-    int ClusterMaxWallTime;         /*!< [NiDB] maximum allowed clock (wall) time the analysis is allowed to run (seconds) */
+    int ClusterMaxWallTime;         /*!< [NiDB] maximum allowed clock (wall) time the analysis is allowed to run (minutes) */
     int ClusterMemory;              /*!< [NiDB] memory requested */
     int ClusterNumberConcurrentAnalyses;   /*!< [NiDB] max number of concurrent analyses allowed to run */
     int ClusterNumberCores;         /*!< [NiDB] number of cores requested */
