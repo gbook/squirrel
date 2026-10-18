@@ -3719,7 +3719,8 @@ qint64 squirrel::FindIntervention(QString subjectID, QString interventionName, Q
     q.prepare("select InterventionRowID from Intervention a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.InterventionName = :InterventionName and b.ID = :SubjectID and a.DateStart = :DateStart");
     q.bindValue(":InterventionName", interventionName);
     q.bindValue(":SubjectID", subjectID);
-    q.bindValue(":DateStart", dateStart.toString("yyyy-MM-dd HH:mm:ss"));
+    /* bind the QDateTime itself, so it is formatted the same way as when the object was stored */
+    q.bindValue(":DateStart", dateStart);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("InterventionRowID").toLongLong();
@@ -3744,7 +3745,8 @@ qint64 squirrel::FindObservation(QString subjectID, QString observationName, QDa
     q.prepare("select ObservationRowID from Observation a left join Subject b on a.SubjectRowID = b.SubjectRowID where a.ObservationName = :ObservationName and b.ID = :SubjectID and a.DateStart = :DateStart");
     q.bindValue(":ObservationName", observationName);
     q.bindValue(":SubjectID", subjectID);
-    q.bindValue(":DateStart", dateStart.toString("yyyy-MM-dd HH:mm:ss"));
+    /* bind the QDateTime itself, so it is formatted the same way as when the object was stored */
+    q.bindValue(":DateStart", dateStart);
     utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
     if (q.next()) {
         rowid = q.value("ObservationRowID").toLongLong();
@@ -4574,7 +4576,7 @@ bool squirrel::RenameDirectoriesInArchive(QList<QStringPair> renames, QString ar
 /* ----- GetDataPaths ----------------------------------------- */
 /* ------------------------------------------------------------ */
 /**
- * @brief Get the archive directory of every subject, study, series, and analysis
+ * @brief Get the archive directory of every subject, study, series, analysis, experiment, pipeline, group analysis, and data dictionary
  * @return hash of 'ObjectType:RowID' to the object's directory within the package
  *
  * The paths follow the same rules as the objects' VirtualPath() functions, but are
@@ -4618,6 +4620,27 @@ QHash<QString, QString> squirrel::GetDataPaths() {
         if (pipelineName != "")
             paths[QString("Analysis:%1").arg(q.value("AnalysisRowID").toLongLong())] = studyDirs.value(q.value("StudyRowID").toLongLong()) + "/" + pipelineName;
     }
+
+    /* package-level objects, which are stored by name */
+    q.prepare("select ExperimentRowID, ExperimentName from Experiment");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next())
+        paths[QString("Experiment:%1").arg(q.value(0).toLongLong())] = "experiments/" + utils::CleanString(q.value(1).toString());
+
+    q.prepare("select PipelineRowID, PipelineName from Pipeline");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next())
+        paths[QString("Pipeline:%1").arg(q.value(0).toLongLong())] = "pipelines/" + q.value(1).toString();
+
+    q.prepare("select GroupAnalysisRowID, GroupAnalysisName from GroupAnalysis");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next())
+        paths[QString("GroupAnalysis:%1").arg(q.value(0).toLongLong())] = "group-analysis/" + utils::CleanString(q.value(1).toString());
+
+    q.prepare("select DataDictionaryRowID, DataDictionaryName from DataDictionary");
+    utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+    while (q.next())
+        paths[QString("DataDictionary:%1").arg(q.value(0).toLongLong())] = "data-dictionary/" + utils::CleanString(q.value(1).toString());
 
     return paths;
 }
@@ -5134,10 +5157,12 @@ QString squirrel::ObjectTypeToString(ObjectType object) {
         case BehSeries: return "BehSeries"; break;
         case DataDictionary: return "DataDictionary"; break;
         case DataDictionaryItem: return "DataDictionaryItem"; break;
+        case DataStep: return "DataStep"; break;
         case Experiment: return "Experiment"; break;
         case GroupAnalysis: return "GroupAnalysis"; break;
         case Intervention: return "Intervention"; break;
         case Observation: return "Observation"; break;
+        case Package: return "Package"; break;
         case Params: return "Params"; break;
         case Pipeline: return "Pipeline"; break;
         case Series: return "Series"; break;
@@ -5164,6 +5189,7 @@ ObjectType squirrel::ObjectTypeToEnum(QString object) {
     if (object.toLower() == "behseries") { return BehSeries; }
     if (object.toLower() == "datadictionary") { return DataDictionary; }
     if (object.toLower() == "datadictionaryitem") { return DataDictionaryItem; }
+    if (object.toLower() == "datastep") { return DataStep; }
     if (object.toLower() == "experiment") { return Experiment; }
     if (object.toLower() == "groupanalysis") { return GroupAnalysis; }
     if (object.toLower() == "intervention") { return Intervention; }
