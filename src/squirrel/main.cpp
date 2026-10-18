@@ -174,11 +174,12 @@ int main(int argc, char *argv[])
 
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
-        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [package  subject  study  series  observation  intervention  experiment  analysis  pipeline  groupanalysis  datadictionary].", "object"));
-        p.addOption(QCommandLineOption(QStringList() << "subjectid", "Subject ID.", "subjectid"));
-        p.addOption(QCommandLineOption(QStringList() << "studynum", "Study Number\n  --subjectid must also be specified.", "studynum"));
-        p.addOption(QCommandLineOption(QStringList() << "dataset", "Dataset type [id  basic  full]", "dataset"));
-        p.addOption(QCommandLineOption(QStringList() << "format", "Printing format [list  csv]", "format"));
+        p.addOption(QCommandLineOption(QStringList() << "object", "List items for object [package  subject  study  series  params  observation  intervention  experiment  analysis  pipeline  groupanalysis  datadictionary  datadictionaryitem].", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "subjectid", "Only list objects for this subject.", "subjectid"));
+        p.addOption(QCommandLineOption(QStringList() << "studynum", "Only list objects for this study\n  --subjectid must also be specified.", "studynum"));
+        p.addOption(QCommandLineOption(QStringList() << "seriesnum", "Only list params for this series\n  --subjectid and --studynum must also be specified.", "seriesnum"));
+        p.addOption(QCommandLineOption(QStringList() << "dataset", "Dataset type [id  basic  full] (default: full)", "dataset"));
+        p.addOption(QCommandLineOption(QStringList() << "format", "Printing format [list  csv] (default: list)", "format"));
         p.process(a);
 
         if (inputPath == "") {
@@ -186,29 +187,44 @@ int main(int argc, char *argv[])
             PrintExampleUsageInfo();
         }
         else {
-            QString dataset = p.value("dataset").trimmed();
-            QString format = p.value("format").trimmed();
+            QString object = p.value("object").trimmed();
+            QString dataset = p.value("dataset").trimmed().toLower();
+            QString format = p.value("format").trimmed().toLower();
 
             infoQuery query;
             query.debug = p.isSet("d");
-            query.object = squirrel::ObjectTypeToEnum(p.value("object").trimmed());
+            query.object = squirrel::ObjectTypeToEnum(object);
             query.subjectID = p.value("subjectid").trimmed();
             query.studyNum = p.value("studynum").toInt();
+            query.seriesNum = p.value("seriesnum").toInt();
 
-            if (dataset == "id")
+            /* reject unknown values instead of silently using a default */
+            if (object == "")
+                query.object = Package;
+            else if ((query.object == UnknownObjectType) || (query.object == BehSeries)) {
+                CommandLineError(p, QString("Unknown --object [%1]").arg(object));
+                return 1;
+            }
+
+            if ((dataset == "") || (dataset == "full"))
+                query.dataset = DatasetFull;
+            else if (dataset == "id")
                 query.dataset = DatasetID;
             else if (dataset == "basic")
                 query.dataset = DatasetBasic;
-            else
-                query.dataset = DatasetFull;
+            else {
+                CommandLineError(p, QString("Unknown --dataset [%1]. Valid values: id, basic, full").arg(dataset));
+                return 1;
+            }
 
-            if (format == "csv")
-                query.printFormat = CSV;
-            else
+            if ((format == "") || (format == "list"))
                 query.printFormat = List;
-
-            if (query.object == UnknownObjectType)
-                query.object = Package;
+            else if (format == "csv")
+                query.printFormat = CSV;
+            else {
+                CommandLineError(p, QString("Unknown --format [%1]. Valid values: list, csv").arg(format));
+                return 1;
+            }
 
             QString m;
             info information;

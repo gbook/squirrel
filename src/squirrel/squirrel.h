@@ -176,6 +176,13 @@ public:
     qint64 GetObjectCount(ObjectType object);
     qint64 GetUnzipSize();
 
+    /* keeping data files at their virtual paths. Snapshot the paths before an
+       operation that can change them (renaming IDs, renumbering, resequencing),
+       then call MoveDataPaths() to move the files in the archive to match */
+    QHash<QString, QString> GetDataPaths();
+    void ResequenceAll();
+    bool MoveDataPaths(const QHash<QString, QString> &before, QString &m);
+
     /* validation functions */
     QString GetTempDir();
     bool IsValid() { return isValid; }
@@ -201,15 +208,21 @@ public:
     bool quiet=false;
 
     /* printing of information to console */
-    QString PrintAnalyses(DatasetType dataType, PrintFormat printFormat, qint64 studyRowID = -1);
+    QString PrintAnalyses(DatasetType dataType, PrintFormat printFormat, qint64 studyRowID = -1, qint64 subjectRowID = -1);
     QString PrintDataDictionary(PrintFormat printFormat=List);
+    QString PrintDataDictionary(DatasetType dataType, PrintFormat printFormat);
+    QString PrintDataDictionaryItems(DatasetType dataType, PrintFormat printFormat);
     QString PrintExperiments(PrintFormat printFormat=List);
+    QString PrintExperiments(DatasetType dataType, PrintFormat printFormat);
     QString PrintGroupAnalyses(PrintFormat printFormat=List);
+    QString PrintGroupAnalyses(DatasetType dataType, PrintFormat printFormat);
     QString PrintInterventions(DatasetType dataType, PrintFormat printFormat, qint64 subjectRowID);
     QString PrintObservations(DatasetType dataType, PrintFormat printFormat, qint64 subjectRowID);
     QString PrintPackage();
+    QString PrintParams(PrintFormat printFormat, qint64 studyRowID, qint64 subjectRowID, int seriesNum = -1);
     QString PrintPipelines(PrintFormat printFormat=List);
-    QString PrintSeries(DatasetType dataType, PrintFormat printFormat, qint64 studyRowID);
+    QString PrintPipelines(DatasetType dataType, PrintFormat printFormat);
+    QString PrintSeries(DatasetType dataType, PrintFormat printFormat, qint64 studyRowID, qint64 subjectRowID = -1);
     QString PrintStudies(DatasetType dataType, PrintFormat printFormat, qint64 subjectRowID);
     QString PrintSubjects(DatasetType dataType, PrintFormat printFormat);
     QString PrintTree();
@@ -254,6 +267,7 @@ private:
     bool GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m);
     bool PreloadArchiveForRead(QHash<QString, QByteArray> &paramsByPath, QHash<QString, QStringList> &filesBySeriesDir, QString &m);
     bool RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m);
+    bool RenameDirectoriesInArchive(QList<QStringPair> renames, QString archivePath, QString &m);
     bool UpdateMemoryFileToArchive(QString file, QString compressedFilePath, QString archivePath, QString &m);
 
     /* logMutex guards log, logBuffer, progress and lastLoggedProgressPct so the

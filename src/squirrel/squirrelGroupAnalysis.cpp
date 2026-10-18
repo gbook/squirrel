@@ -153,6 +153,33 @@ QJsonObject squirrelGroupAnalysis::ToJSON() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetData ---------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Get the object data as a hash of 'Object.Variable' keys, for printing
+ * @param d the dataset type (ID, basic, or full)
+ * @return hash of the requested variables
+ */
+QHash<QString, QString> squirrelGroupAnalysis::GetData(DatasetType d) {
+    QHash<QString, QString> data;
+
+    data["GroupAnalysis.GroupAnalysisName"] = GroupAnalysisName;
+    if (d == DatasetBasic || d == DatasetFull) {
+        data["GroupAnalysis.Datetime"] = DateTime.toString("yyyy-MM-dd HH:mm:ss");
+        data["GroupAnalysis.Description"] = Description;
+        data["GroupAnalysis.FileCount"] = QString("%1").arg(FileCount);
+        data["GroupAnalysis.Size"] = QString("%1").arg(Size);
+    }
+    if (d == DatasetFull) {
+        data["GroupAnalysis.Notes"] = Notes;
+        data["GroupAnalysis.VirtualPath"] = VirtualPath();
+    }
+
+    return data;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintGroupAnalysis ----------------------------------- */
 /* ------------------------------------------------------------ */
 /**

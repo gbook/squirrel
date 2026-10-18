@@ -192,6 +192,59 @@ QJsonObject squirrelDataDictionary::ToJSON() {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetData ---------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Get the object data as a hash of 'Object.Variable' keys, for printing
+ * @param d the dataset type (ID, basic, or full)
+ * @return hash of the requested variables
+ */
+QHash<QString, QString> squirrelDataDictionary::GetData(DatasetType d) {
+    QHash<QString, QString> data;
+
+    data["DataDictionary.DataDictionaryName"] = DataDictionaryName;
+    if (d == DatasetBasic || d == DatasetFull) {
+        data["DataDictionary.ItemCount"] = QString("%1").arg(dictItems.size());
+        data["DataDictionary.FileCount"] = QString("%1").arg(FileCount);
+        data["DataDictionary.Size"] = QString("%1").arg(Size);
+    }
+    if (d == DatasetFull)
+        data["DataDictionary.VirtualPath"] = VirtualPath();
+
+    return data;
+}
+
+
+/* ------------------------------------------------------------ */
+/* ----- GetItemData ------------------------------------------ */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Get one data dictionary item as a hash of 'DataDictionaryItem.Variable' keys, for printing
+ * @param item the data dictionary item
+ * @param d the dataset type (ID, basic, or full)
+ * @return hash of the requested variables, including the parent data dictionary name
+ */
+QHash<QString, QString> squirrelDataDictionary::GetItemData(const dataDictionaryItem &item, DatasetType d) {
+    QHash<QString, QString> data;
+
+    data["DataDictionary.DataDictionaryName"] = DataDictionaryName;
+    data["DataDictionaryItem.VariableName"] = item.VariableName;
+    if (d == DatasetBasic || d == DatasetFull) {
+        data["DataDictionaryItem.VariableType"] = item.VariableType;
+        data["DataDictionaryItem.VariableDescription"] = item.VariableDescription;
+    }
+    if (d == DatasetFull) {
+        data["DataDictionaryItem.KeyValueMapping"] = item.KeyValueMapping;
+        data["DataDictionaryItem.ExpectedTimepoints"] = QString("%1").arg(item.ExpectedTimepoints);
+        data["DataDictionaryItem.RangeLow"] = QString("%1").arg(item.RangeLow);
+        data["DataDictionaryItem.RangeHigh"] = QString("%1").arg(item.RangeHigh);
+    }
+
+    return data;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintDataDictionary ---------------------------------- */
 /* ------------------------------------------------------------ */
 /**

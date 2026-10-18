@@ -409,6 +409,57 @@ QJsonObject squirrelPipeline::ToJSON(QString path) {
 
 
 /* ------------------------------------------------------------ */
+/* ----- GetData ---------------------------------------------- */
+/* ------------------------------------------------------------ */
+/**
+ * @brief Get the object data as a hash of 'Object.Variable' keys, for printing
+ * @param d the dataset type (ID, basic, or full)
+ * @return hash of the requested variables
+ */
+QHash<QString, QString> squirrelPipeline::GetData(DatasetType d) {
+    QHash<QString, QString> data;
+
+    data["Pipeline.PipelineName"] = PipelineName;
+    if (d == DatasetBasic || d == DatasetFull) {
+        data["Pipeline.PipelineVersion"] = QString("%1").arg(PipelineVersion);
+        data["Pipeline.PipelineAnalysisLevel"] = QString("%1").arg(PipelineAnalysisLevel);
+        data["Pipeline.PipelineCreateDate"] = PipelineCreateDate.toString("yyyy-MM-dd HH:mm:ss");
+        data["Pipeline.PipelineDescription"] = PipelineDescription;
+        data["Pipeline.DataStepCount"] = QString("%1").arg(dataSteps.size());
+    }
+    if (d == DatasetFull) {
+        data["Pipeline.ClusterEngine"] = ClusterEngine;
+        data["Pipeline.ClusterMaxWallTime"] = QString("%1").arg(ClusterMaxWallTime);
+        data["Pipeline.ClusterMemory"] = QString("%1").arg(ClusterMemory);
+        data["Pipeline.ClusterNumberConcurrentAnalyses"] = QString("%1").arg(ClusterNumberConcurrentAnalyses);
+        data["Pipeline.ClusterNumberCores"] = QString("%1").arg(ClusterNumberCores);
+        data["Pipeline.ClusterQueue"] = ClusterQueue;
+        data["Pipeline.ClusterSubmitDelay"] = QString("%1").arg(ClusterSubmitDelay);
+        data["Pipeline.ClusterSubmitHost"] = ClusterSubmitHost;
+        data["Pipeline.ClusterUser"] = ClusterUser;
+        data["Pipeline.FlagSetupUseProfile"] = flags.SetupUseProfile ? "true" : "false";
+        data["Pipeline.FlagSetupUseTempDirectory"] = flags.SetupUseTempDirectory ? "true" : "false";
+        data["Pipeline.PipelineCompleteFiles"] = PipelineCompleteFiles.join(",");
+        data["Pipeline.PipelineDirectory"] = PipelineDirectory;
+        data["Pipeline.PipelineDirectoryStructure"] = PipelineDirectoryStructure;
+        data["Pipeline.PipelineNotes"] = PipelineNotes;
+        data["Pipeline.PipelineResultScript"] = PipelineResultScript;
+        data["Pipeline.SearchDependencyLevel"] = SearchDependencyLevel;
+        data["Pipeline.SearchDependencyLinkType"] = SearchDependencyLinkType;
+        data["Pipeline.SearchGroup"] = SearchGroup;
+        data["Pipeline.SearchGroupType"] = SearchGroupType;
+        data["Pipeline.SearchParentPipelines"] = SearchParentPipelines.join(",");
+        data["Pipeline.SetupDataCopyMethod"] = SetupDataCopyMethod;
+        data["Pipeline.SetupDependencyDirectory"] = SetupDependencyDirectory;
+        data["Pipeline.SetupTempDirectory"] = SetupTempDirectory;
+        data["Pipeline.VirtualPath"] = VirtualPath();
+    }
+
+    return data;
+}
+
+
+/* ------------------------------------------------------------ */
 /* ----- PrintPipeline ---------------------------------------- */
 /* ------------------------------------------------------------ */
 /**

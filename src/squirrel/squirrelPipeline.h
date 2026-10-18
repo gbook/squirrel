@@ -29,6 +29,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include "squirrelTypes.h"
 
 /**
  * @brief The dataStep struct
@@ -77,6 +78,7 @@ class squirrelPipeline
 public:
     squirrelPipeline(QString dbID);
     QJsonObject ToJSON(QString path);
+    QHash<QString, QString> GetData(DatasetType d);
     QString PrintPipeline();
     bool Get();             /* gets the object data from the database */
     bool Store();           /* saves the object data from this object into the database */

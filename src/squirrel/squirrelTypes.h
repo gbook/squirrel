@@ -17,6 +17,7 @@ enum ObjectType {
     Intervention,
     Observation,
     Package,
+    Params,
     Pipeline,
     Series,
     Study,
@@ -33,6 +34,7 @@ struct infoQuery {
     ObjectType object;
     QString subjectID;
     int studyNum;
+    int seriesNum;
     DatasetType dataset;
     PrintFormat printFormat;
 };

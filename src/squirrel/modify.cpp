@@ -158,6 +158,8 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
         delete sqrl;
         return false;
     }
+    /* adding a subject, study, or series resequences its siblings, which moves them when the directory format is 'seq' */
+    QHash<QString, QString> dataPaths = sqrl->GetDataPaths();
 
     /* ----- subject ----- */
     if (mod.object == Subject) {
@@ -522,6 +524,12 @@ bool modify::AddObject(QString packagePath, const modification &mod, QString &m)
         return false;
     }
 
+    /* move any data files whose directory changed */
+    if (!sqrl->MoveDataPaths(dataPaths, m)) {
+        delete sqrl;
+        return false;
+    }
+
     /* write the updated package */
     if (!sqrl->Write()) {
         m = "Failed to write squirrel package after add operation";
@@ -556,6 +564,8 @@ bool modify::RemoveObject(QString packagePath, const modification &mod, QString 
         delete sqrl;
         return false;
     }
+    /* removing an object resequences its siblings, which moves them when the directory format is 'seq' */
+    QHash<QString, QString> dataPaths = sqrl->GetDataPaths();
 
     /* ----- subject ----- */
     if (mod.object == Subject) {
@@ -572,7 +582,7 @@ bool modify::RemoveObject(QString packagePath, const modification &mod, QString 
     }
     else if (mod.object == Study) {
         qint64 studyRowID = sqrl->FindStudy(mod.subjectID, mod.objectID.toInt());
-        qint64 subjectRowID = sqrl->FindSubject(mod.objectID);
+        qint64 subjectRowID = sqrl->FindSubject(mod.subjectID);
         if (studyRowID >= 0) {
             sqrl->RemoveObject(Study, studyRowID);
             sqrl->ResequenceStudies(subjectRowID);
@@ -646,6 +656,12 @@ bool modify::RemoveObject(QString packagePath, const modification &mod, QString 
         return false;
     }
 
+    /* move any data files whose directory changed */
+    if (!sqrl->MoveDataPaths(dataPaths, m)) {
+        delete sqrl;
+        return false;
+    }
+
     if (sqrl->Write()) {
         m = "Successfully removed object and wrote squirrel package";
         delete sqrl;
@@ -684,6 +700,8 @@ bool modify::UpdateObject(QString packagePath, const modification &mod, QString 
         delete sqrl;
         return false;
     }
+    /* changing a SubjectID, StudyNumber, or SeriesNumber changes the object's directory */
+    QHash<QString, QString> dataPaths = sqrl->GetDataPaths();
 
     //utils::Print("objectData [" + mod.objectData + "]");
     QUrlQuery queryObject(mod.objectData);
@@ -989,6 +1007,12 @@ bool modify::UpdateObject(QString packagePath, const modification &mod, QString 
 
     /* try to write/update the package, IF it has been modified */
     if (sqrl->IsModified()) {
+        /* a changed ID or number can change the sequence order */
+        sqrl->ResequenceAll();
+        if (!sqrl->MoveDataPaths(dataPaths, m)) {
+            delete sqrl;
+            return false;
+        }
         if (!sqrl->WriteUpdate()) {
             m = "Unable to write updated squirrel package";
             delete sqrl;
@@ -1338,6 +1362,9 @@ bool modify::RenumberSubjects(QString packagePath, const modification &mod, QStr
         return false;
     }
 
+    /* new subject IDs change the subject directories when the directory format is 'orig' */
+    QHash<QString, QString> dataPaths = sqrl->GetDataPaths();
+
     /* collect subject rowIDs and current IDs, sorted ascending by ID */
     QSqlQuery q(QSqlDatabase::database(sqrl->GetDatabaseUUID()));
     q.prepare("select SubjectRowID, ID from Subject order by ID asc");
@@ -1370,6 +1397,21 @@ bool modify::RenumberSubjects(QString packagePath, const modification &mod, QStr
         digits = QString::number(maxNum).length();
     }
 
+    /* subject IDs must be unique, and the new IDs can overlap the current ones (for
+       example when renumbering an already renumbered package), so first move every
+       subject to a temporary ID that cannot collide */
+    for (int i = 0; i < n; ++i) {
+        QSqlQuery qt(QSqlDatabase::database(sqrl->GetDatabaseUUID()));
+        qt.prepare("update Subject set ID = :id where SubjectRowID = :rowid");
+        qt.bindValue(":id", QString("__renumber_%1").arg(subjects[i].first));
+        qt.bindValue(":rowid", subjects[i].first);
+        if (!utils::SQLQuery(qt, __FUNCTION__, __FILE__, __LINE__)) {
+            m = QString("Unable to renumber subject [%1]").arg(subjects[i].second);
+            delete sqrl;
+            return false;
+        }
+    }
+
     /* assign new IDs */
     for (int i = 0; i < n; ++i) {
         qint64 rowID = subjects[i].first;
@@ -1385,7 +1427,7 @@ bool modify::RenumberSubjects(QString packagePath, const modification &mod, QStr
             return false;
         }
 
-        if (!subj.AlternateIDs.contains(oldID))
+        if ((oldID != newID) && !subj.AlternateIDs.contains(oldID))
             subj.AlternateIDs.prepend(oldID);
         subj.ID = newID;
 
@@ -1394,6 +1436,15 @@ bool modify::RenumberSubjects(QString packagePath, const modification &mod, QStr
             delete sqrl;
             return false;
         }
+    }
+
+    /* subjects are sequenced by ID, so new IDs can change the sequence order */
+    sqrl->ResequenceSubjects();
+
+    /* move any data files whose directory changed */
+    if (!sqrl->MoveDataPaths(dataPaths, m)) {
+        delete sqrl;
+        return false;
     }
 
     sqrl->WriteUpdate();
