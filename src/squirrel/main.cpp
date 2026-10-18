@@ -71,6 +71,7 @@ void PrintExampleUsageExtract() {
     printf("    squirrel extract <package> --object subject --objectid S1234ABC\n");
     printf("    squirrel extract <package> --object series --objectid 1 --subjectid S1234ABC --studynum 1\n");
     printf("    squirrel extract <package> --object experiment --objectid 'MyExperiment'\n");
+    printf("    squirrel extract <package> --object observation --objectid 'MoCA' --subjectid S1234ABC --objectdate '2024-01-15 09:30:00'\n");
 }
 
 int main(int argc, char *argv[])
@@ -319,9 +320,10 @@ int main(int argc, char *argv[])
         /* command line flag options */
         p.addOption(QCommandLineOption(QStringList() << "d" << "debug", "Enable debugging"));
         p.addOption(QCommandLineOption(QStringList() << "q" << "quiet", "Quiet mode. No printing of headers and checks"));
-        p.addOption(QCommandLineOption(QStringList() << "object", "Object type to perform operation on [package  subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
+        p.addOption(QCommandLineOption(QStringList() << "object", "Object type to extract [subject  study  series  analysis  intervention  observation  experiment  pipeline  groupanalysis  datadictionary].", "object"));
         p.addOption(QCommandLineOption(QStringList() << "outdir", "Path to output directory", "outdir"));
-        p.addOption(QCommandLineOption(QStringList() << "objectid", "Existing object ID, name, or number to modify.", "identifer"));
+        p.addOption(QCommandLineOption(QStringList() << "objectid", "ID, name, or number of the object to extract.", "identifer"));
+        p.addOption(QCommandLineOption(QStringList() << "objectdate", "DateStart of the observation or intervention to extract, used with --objectid (its name).", "datetime"));
         p.addOption(QCommandLineOption(QStringList() << "subjectid", "Parent subject ID. Used when extracting a study, series, observation, intervention, or analysis object.", "id"));
         p.addOption(QCommandLineOption(QStringList() << "studynum", "Parent study number. Used when extracting a series or analysis object (subjectid is also needed).", "num"));
         //p.addOption(QCommandLineOption(QStringList() << "recurse", "Include all child objects of the specified object"));
@@ -329,11 +331,14 @@ int main(int argc, char *argv[])
         p.process(a);
 
         //bool recurse = p.isSet("recurse");
+        bool debug = p.isSet("d");
+        bool quiet = p.isSet("q");
         QString object = p.value("object").trimmed(); /* possible objects: subject study series observation intervention analysis experiment pipeline groupanalysis datadictionary */
         QString outputPath = p.value("outdir").trimmed();
         QString objectID = p.value("objectid").trimmed();
         QString subjectID = p.value("subjectid").trimmed();
         int studyNum = p.value("studynum").toInt();
+        QString objectDate = p.value("objectdate").trimmed();
 
         /* validate the input */
         if (inputPath == "") {
@@ -341,9 +346,12 @@ int main(int argc, char *argv[])
             PrintExampleUsageExtract();
         }
         else {
+            if (!quiet)
+                utils::PrintHeader();
+
             QString m;
             extract ext;
-            if (!ext.DoExtract(inputPath, outputPath, object, objectID, subjectID, studyNum, m)) {
+            if (!ext.DoExtract(inputPath, outputPath, object, objectID, subjectID, studyNum, objectDate, debug, quiet, m)) {
                 CommandLineError(p,m);
             }
         }

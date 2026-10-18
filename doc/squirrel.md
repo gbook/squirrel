@@ -371,12 +371,15 @@ squirrel extract <package> --object <type> --objectid <id> [options]
 | `--object <type>` | Object type to extract (see below) |
 | `--outdir <path>` | Destination directory for extracted files |
 | `--objectid <id>` | ID, name, or number of the object to extract |
-| `--subjectid <id>` | Parent subject ID. Required when extracting a study, series, or analysis |
+| `--objectdate <datetime>` | DateStart of the observation or intervention to extract. Required for those types (`--objectid` is its name) |
+| `--subjectid <id>` | Parent subject ID. Required when extracting a study, series, analysis, observation, or intervention |
 | `--studynum <num>` | Parent study number. Required when extracting a series or analysis (`--subjectid` also required) |
 
 **Object types** (`--object`)
 
-`package`  `subject`  `study`  `series`  `analysis`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
+`subject`  `study`  `series`  `analysis`  `observation`  `intervention`  `experiment`  `pipeline`  `groupanalysis`  `datadictionary`
+
+Observations and interventions have no files in the package, so only their JSON (`observation.json` or `intervention.json`) is written.
 
 **Examples**
 
@@ -390,6 +393,10 @@ squirrel extract study.sqrl --object series --objectid 1 \
 
 # Extract an experiment
 squirrel extract study.sqrl --object experiment --objectid MyExperiment --outdir /tmp/out
+
+# Extract an observation
+squirrel extract study.sqrl --object observation --objectid MoCA \
+    --subjectid S1234ABC --objectdate '2024-01-15 09:30:00' --outdir /tmp/out
 ```
 
 ---

@@ -3761,14 +3761,16 @@ qint64 squirrel::FindObservation(QString subjectID, QString observationName, QDa
 /**
  * @brief Extract an object from the archive into a directory on disk
  * @param object The object type
- * @param subjectRowID The object rowID
+ * @param objectRowID The object rowID
  * @param outDir output directory
+ * @param m output message describing the failure, if any
  * @param recursive `true` if all data should be extracted, recursively (studies and series). This is the default
  * @return `true` if successful, `false` otherwise
  */
-bool squirrel::ExtractObject(ObjectType object, qint64 objectRowID, QString outDir /*, bool recursive*/) {
+bool squirrel::ExtractObject(ObjectType object, qint64 objectRowID, QString outDir, QString &m /*, bool recursive*/) {
     if (objectRowID < 0) {
-        Log(QString("Invalid object ID [%1]").arg(objectRowID));
+        m = QString("Invalid object ID [%1]").arg(objectRowID);
+        Log(m);
         return false;
     }
 
@@ -3831,9 +3833,32 @@ bool squirrel::ExtractObject(ObjectType object, qint64 objectRowID, QString outD
         QJsonDocument doc(d.ToJSON());
         j = doc.toJson();
     }
+    else if (object == Observation) {
+        squirrelObservation o = GetObservation(objectRowID);
+        jsonPath = outDir + "/observation.json";
+        QJsonDocument doc(o.ToJSON());
+        j = doc.toJson();
+    }
+    else if (object == Intervention) {
+        squirrelIntervention i = GetIntervention(objectRowID);
+        jsonPath = outDir + "/intervention.json";
+        QJsonDocument doc(i.ToJSON());
+        j = doc.toJson();
+    }
     else {
-        Log("Unknown object type [" + ObjectTypeToString(object) + "]");
+        m = "Unknown object type [" + ObjectTypeToString(object) + "]";
+        Log(m);
         return false;
+    }
+
+    /* observations and interventions have no files in the archive, only their JSON */
+    if (virtualPath.isEmpty()) {
+        if (!utils::WriteTextFile(jsonPath, j)) {
+            m = "Error writing " + jsonPath;
+            Log(m);
+            return false;
+        }
+        return true;
     }
 
     /* do the extraction to disk */
@@ -3843,15 +3868,18 @@ bool squirrel::ExtractObject(ObjectType object, qint64 objectRowID, QString outD
         virtualPath += "/*";
     #endif
 
-    QString m;
     if (ExtractArchiveFilesToDirectory(packagePath, virtualPath, outDir, m)) {
-        /* write out the JSON to disk for this subject as well */
-        if (!utils::WriteTextFile(jsonPath, j))
-            Log("Error writing " + jsonPath);
+        /* write out the JSON to disk for this object as well */
+        if (!utils::WriteTextFile(jsonPath, j)) {
+            m = "Error writing " + jsonPath;
+            Log(m);
+            return false;
+        }
 
         return true;
     }
     else {
+        Log(m);
         return false;
     }
 }
@@ -5090,7 +5118,7 @@ bool squirrel::UpdateJsonHeader(QString json) {
  * @return true if successful
  */
 bool squirrel::ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m) {
-    utils::Print(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir));
+    Log(QString("Attempting to extract files [%1] from archive [%2] to path [%3]").arg(filePattern).arg(archivePath).arg(outDir));
     try {
         using namespace bit7z;
         Bit7zLibrary lib(p7zipLibPath.toStdString());

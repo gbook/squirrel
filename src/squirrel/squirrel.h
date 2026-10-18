@@ -156,7 +156,7 @@ public:
     qint64 FindObservation(QString subjectID, QString observationName, QDateTime startDate);
 
     /* extract objects */
-    bool ExtractObject(ObjectType object, qint64 subjectRowID, QString outDir /*, bool recursive=false*/);
+    bool ExtractObject(ObjectType object, qint64 objectRowID, QString outDir, QString &m /*, bool recursive=false*/);
 
     /* remove objects */
     bool RemoveObject(ObjectType object, qint64 objectRowID);
