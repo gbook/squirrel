@@ -1,0 +1,18 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "pybind11>=2.13"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "squirrel"
+version = "2026.10.503"
+description = "Python bindings for the squirrel data package library"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "GPL-3.0-or-later" }
+authors = [{ name = "Gregory A Book", email = "gregory.a.book@gmail.com" }]
+
+[tool.scikit-build]
+wheel.packages = ["squirrel"]
+cmake.build-type = "Release"
+# Qt, bit7z, and DCMTK locations are passed through CMake cache variables, e.g.
+#   pip install . --config-settings=cmake.define.QT_ROOT=$HOME/Qt/6.9.3/gcc_64
