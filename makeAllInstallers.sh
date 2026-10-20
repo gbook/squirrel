@@ -12,6 +12,7 @@
 # path directly.
 #
 # Finished installers are collected into ./installers/ with distro-tagged names.
+# The Python wheels (manylinux, built in a container) are collected there too.
 
 SRCDIR="$(pwd)"
 SHARED=/mnt/wsl/squirrel-build
@@ -115,6 +116,28 @@ done
 echo "Unmounting $SHARED..."
 sudo umount $SHARED
 
+# --- Python wheels ---
+# manylinux wheels are built in a container (python/packaging/build-wheels.sh), so they
+# do not depend on the WSL distros above or on bin/. Needs Docker or Podman; set
+# SKIP_WHEELS=1 to leave them out.
+echo ""
+echo "=========================================="
+echo "  Python wheels (manylinux container)"
+echo "=========================================="
+if [ "$SKIP_WHEELS" = "1" ]; then
+    RESULTS[Python-wheels]="SKIPPED (SKIP_WHEELS=1)"
+elif ! command -v docker >/dev/null 2>&1 && ! command -v podman >/dev/null 2>&1; then
+    echo "SKIP: neither docker nor podman found"
+    RESULTS[Python-wheels]="SKIPPED (no docker/podman)"
+else
+    rm -rf python/wheelhouse
+    if bash python/packaging/build-wheels.sh && cp -v python/wheelhouse/*.whl "$OUTDIR/"; then
+        RESULTS[Python-wheels]="SUCCESS"
+    else
+        RESULTS[Python-wheels]="FAILED"
+    fi
+fi
+
 echo ""
 echo "========== Installer Summary =========="
 printf "  %-20s %s\n" "Ubuntu-24" "${RESULTS[Ubuntu-24]}"
@@ -122,6 +145,7 @@ for ENTRY in "${INSTALLERS[@]}"; do
     IFS=':' read -r DISTRO _ _ <<< "$ENTRY"
     printf "  %-20s %s\n" "$DISTRO" "${RESULTS[$DISTRO]}"
 done
+printf "  %-20s %s\n" "Python-wheels" "${RESULTS[Python-wheels]}"
 echo "======================================="
 echo "Installers collected in: $OUTDIR"
 ls -1 "$OUTDIR" 2>/dev/null | sed 's/^/  /'

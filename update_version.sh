@@ -19,4 +19,7 @@ sed -i "s/^Version:.*/Version:        ${VERSION}/" squirrel.el.spec
 sed -i "s/^PACKAGE=squirrel_.*/PACKAGE=squirrel_${VERSION}/" createInstallerDebian.sh
 sed -i "s/^Version:.*/Version: ${VERSION}/" createInstallerDebian.sh
 
+# python/pyproject.toml (Python wheel version; same scheme)
+sed -i "s/^version = \".*\"/version = \"${VERSION}\"/" python/pyproject.toml
+
 echo "Done."

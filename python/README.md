@@ -31,6 +31,10 @@ container; `auditwheel repair` then copies Qt, ICU, DCMTK and OpenSSL into the w
 `squirrel.libs/`. Qt's SQLite driver is a plugin, so it is shipped in `squirrel/qt_plugins/`
 and located through `QT_PLUGIN_PATH`, which `squirrel/__init__.py` sets.
 
+`makeAllInstallers.sh` runs this as its last step and collects the wheels in `installers/`
+(set `SKIP_WHEELS=1` to leave them out; it skips them itself if Docker/Podman is missing).
+`update_version.sh` keeps `version` in `pyproject.toml` in step with the rest.
+
 A wheel built directly on a development machine (`pip wheel .`) is tied to that machine's glibc
 and is only for local testing.
 
