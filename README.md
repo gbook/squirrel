@@ -53,6 +53,11 @@ squirrel --version
 # Documentation
 https://docs.neuroinfodb.org/nidb/contribute/squirrel-data-sharing-format
 
+## Using squirrel from Python
+
+A Python wrapper is in `python/`. See [`doc/python-usage.md`](doc/python-usage.md) for a beginner's guide
+(install, read, create, edit, extract) and [`python/README.md`](python/README.md) for building wheels.
+
 ## Man page and web documentation
 
 The CLI reference is maintained in `doc/squirrel/squirrel.md`. This file is the single source of truth for both the man page and the web documentation page.

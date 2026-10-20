@@ -47,3 +47,25 @@ target_link_libraries(_squirrel PRIVATE
     dl z)
 
 install(TARGETS _squirrel LIBRARY DESTINATION squirrel)
+
+# Qt's SQLite driver is a runtime plugin, which auditwheel cannot discover from
+# DT_NEEDED entries. Ship it inside the package; squirrel/__init__.py points
+# QT_PLUGIN_PATH at it. auditwheel then grafts its Qt dependencies like any other
+# extension module. Turn off when building against a Qt with the driver built in.
+option(SQUIRREL_BUNDLE_QT_PLUGINS "Install Qt's qsqlite plugin into the package" ON)
+if(SQUIRREL_BUNDLE_QT_PLUGINS)
+    get_filename_component(QT_PREFIX "${Qt6_DIR}/../../.." ABSOLUTE)
+    find_file(QSQLITE_PLUGIN libqsqlite.so PATHS "${QT_PREFIX}/plugins/sqldrivers" NO_DEFAULT_PATH REQUIRED)
+    install(FILES "${QSQLITE_PLUGIN}" DESTINATION squirrel/qt_plugins/sqldrivers)
+endif()
+
+# The 7-Zip library libsquirrel loads at runtime. When SQUIRREL_7ZIP_DIR points at a
+# directory holding 7z.so (see packaging/build-7zip.sh), ship it and its licenses;
+# squirrel/__init__.py points SQUIRREL_7ZIP_LIB at it. Otherwise libsquirrel falls
+# back to a system 7-Zip.
+set(SQUIRREL_7ZIP_DIR "" CACHE PATH "directory containing 7z.so and the 7-Zip license files to bundle")
+if(SQUIRREL_7ZIP_DIR)
+    install(FILES "${SQUIRREL_7ZIP_DIR}/7z.so" DESTINATION squirrel/lib7z)
+    file(GLOB SEVENZIP_LICENSES "${SQUIRREL_7ZIP_DIR}/7zip-*.txt")
+    install(FILES ${SEVENZIP_LICENSES} DESTINATION squirrel/lib7z)
+endif()

@@ -7,6 +7,7 @@
 #include <pybind11/stl.h>
 #include <QString>
 #include <QList>
+#include <QHash>
 #include <QDate>
 #include <QDateTime>
 
@@ -32,6 +33,30 @@ template <> struct type_caster<QString> {
 
 /* QList<T> (and therefore QStringList) <-> list */
 template <typename T> struct type_caster<QList<T>> : list_caster<QList<T>, T> {};
+
+/* QHash<QString, QString> <-> dict. QHash's range-for yields values only, so
+   map_caster can't be used. */
+using QStringHash = QHash<QString, QString>;  // alias: the comma would split the macro arguments
+template <> struct type_caster<QStringHash> {
+    PYBIND11_TYPE_CASTER(QStringHash, const_name("dict[str, str]"));
+
+    bool load(handle src, bool convert) {
+        if (!src || !isinstance<dict>(src)) return false;
+        value.clear();
+        for (auto item : reinterpret_borrow<dict>(src)) {
+            make_caster<QString> k, v;
+            if (!k.load(item.first, convert) || !v.load(item.second, convert)) return false;
+            value.insert(cast_op<QString &&>(std::move(k)), cast_op<QString &&>(std::move(v)));
+        }
+        return true;
+    }
+    static handle cast(const QStringHash &h, return_value_policy, handle) {
+        dict d;
+        for (auto it = h.constKeyValueBegin(); it != h.constKeyValueEnd(); ++it)
+            d[pybind11::cast(it->first)] = pybind11::cast(it->second);
+        return d.release();
+    }
+};
 
 /* QDate <-> datetime.date (invalid QDate -> None) */
 template <> struct type_caster<QDate> {
