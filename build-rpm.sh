@@ -60,23 +60,6 @@ cmake --build . --config Release
 cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/
 cp -uv $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/
 
-# ----- build FTXUI library (static; for the interactive 'squirrel explore' shell) -----
-# FTXUI is built as static libs and linked into the CLI via ftxui.pri (same
-# pattern as bit7z). Unlike bit7z it writes its .a files into the build dir (not
-# the shared source tree), so no cross-distro archive cleanup is needed. The
-# stale-cache guard mirrors bit7z: under build-all the WSL distros configure via
-# the /mnt/wsl bind-mount path, so a cache written under a different path
-# spelling would make cmake abort.
-echo -e "\n ----- Building FTXUI -----\n"
-mkdir -p $BUILDDIR/ftxui
-if [ -f "$BUILDDIR/ftxui/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/ftxui" "$BUILDDIR/ftxui/CMakeCache.txt"; then
-	echo "Removing stale FTXUI CMake cache in $BUILDDIR/ftxui"
-	rm -rf "$BUILDDIR/ftxui"
-	mkdir -p "$BUILDDIR/ftxui"
-fi
-cmake -S $SRCDIR/ftxui -B $BUILDDIR/ftxui -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DFTXUI_BUILD_EXAMPLES=OFF -DFTXUI_BUILD_TESTS=OFF -DFTXUI_BUILD_DOCS=OFF -DFTXUI_ENABLE_INSTALL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-cmake --build $BUILDDIR/ftxui --config Release -j 16
-
 # ----- build squirrel library -----
 echo -e "\nBuilding squirrel library\n"
 echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
@@ -84,9 +67,34 @@ $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec 
 cd $BUILDDIR/squirrel
 make -j 16
 
-# ----- build squirrel command line utilities -----
-echo -e "\nBuilding squirrel utilities\n"
-echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
-$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
-cd $BUILDDIR/squirrel
-make -B -j 16
+# ----- FTXUI + squirrel command line utilities -----
+# FTXUI is only needed by the CLI (explore.cpp), never by libsquirrel, so it is
+# built here rather than with the library. Set SKIP_CLI=1 to build only the
+# library (e.g. for the Python wrapper) and skip FTXUI and the CLI.
+if [ "$SKIP_CLI" = "1" ]; then
+	echo -e "\n ----- Skipping FTXUI and squirrel utilities (SKIP_CLI=1) -----\n"
+else
+	# ----- build FTXUI library (static; for the interactive 'squirrel explore' shell) -----
+	# FTXUI is built as static libs and linked into the CLI via ftxui.pri (same
+	# pattern as bit7z). Unlike bit7z it writes its .a files into the build dir (not
+	# the shared source tree), so no cross-distro archive cleanup is needed. The
+	# stale-cache guard mirrors bit7z: under build-all the WSL distros configure via
+	# the /mnt/wsl bind-mount path, so a cache written under a different path
+	# spelling would make cmake abort.
+	echo -e "\n ----- Building FTXUI -----\n"
+	mkdir -p $BUILDDIR/ftxui
+	if [ -f "$BUILDDIR/ftxui/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/ftxui" "$BUILDDIR/ftxui/CMakeCache.txt"; then
+		echo "Removing stale FTXUI CMake cache in $BUILDDIR/ftxui"
+		rm -rf "$BUILDDIR/ftxui"
+		mkdir -p "$BUILDDIR/ftxui"
+	fi
+	cmake -S $SRCDIR/ftxui -B $BUILDDIR/ftxui -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DFTXUI_BUILD_EXAMPLES=OFF -DFTXUI_BUILD_TESTS=OFF -DFTXUI_BUILD_DOCS=OFF -DFTXUI_ENABLE_INSTALL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+	cmake --build $BUILDDIR/ftxui --config Release -j 16
+
+	# ----- build squirrel command line utilities -----
+	echo -e "\nBuilding squirrel utilities\n"
+	echo $QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
+	$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
+	cd $BUILDDIR/squirrel
+	make -B -j 16
+fi
