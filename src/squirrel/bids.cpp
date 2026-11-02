@@ -24,6 +24,29 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QCollator>
+
+/* ---------------------------------------------------------------------------- */
+/* ----- NaturalSort ---------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Directory listings come back in filesystem order, which is arbitrary. Sort them
+ * so subject/session/series numbering is deterministic and follows the BIDS labels
+ * (natural order, so ses-2 comes before ses-10).
+ *
+ * @brief Sort a list of names/paths in natural (numeric-aware) order
+ * @param list the list to sort
+ * @return the sorted list
+ */
+static QStringList NaturalSort(QStringList list) {
+    QCollator collator;
+    collator.setNumericMode(true);
+    collator.setCaseSensitivity(Qt::CaseInsensitive);
+    std::sort(list.begin(), list.end(), [&collator](const QString &a, const QString &b) {
+        return collator.compare(a, b) < 0;
+    });
+    return list;
+}
 
 /* ---------------------------------------------------------------------------- */
 /* ----- bids ----------------------------------------------------------------- */
@@ -100,7 +123,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
     LoadRootFiles(rootfiles, sqrl);
 
     /* get list of directories in the root named 'sub-*' */
-    QStringList subjdirs = utils::FindAllDirs(dir, "sub-*", false);
+    QStringList subjdirs = NaturalSort(utils::FindAllDirs(dir, "sub-*", false));
 
     sqrl->Debug(QString("Found [%1] subject directories matching '%2/sub-*'").arg(subjdirs.size()).arg(dir), __FUNCTION__);
     foreach (QString subjdir, subjdirs) {
@@ -126,7 +149,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         LoadSubjectFiles(subjfiles, subjdir, sqrl);
 
         /* get a list of ses-* DIRS, if there are any */
-        QStringList sesdirs = utils::FindAllDirs(subjpath, "ses-*", false);
+        QStringList sesdirs = NaturalSort(utils::FindAllDirs(subjpath, "ses-*", false));
         sqrl->Debug(QString("Found [%1] session directories matching '%2/ses-*'").arg(sesdirs.size()).arg(subjdir), __FUNCTION__);
         if (sesdirs.size() > 0) {
             int studyNum = 1;
@@ -354,7 +377,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
     QSet<QString> modalities;
 
     /* get list of all datatype dirs in this sesdir */
-    QStringList datatypeDirs = utils::FindAllDirs(sesdir, "*", false);
+    QStringList datatypeDirs = NaturalSort(utils::FindAllDirs(sesdir, "*", false));
     sqrl->Log(QString("Found [%1] datatype directories in [%2/*]").arg(datatypeDirs.size()).arg(sesdir));
 
     foreach (QString datatype, datatypeDirs) {
@@ -363,7 +386,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squ
             continue;
 
         QString datadir = QString("%1/%2").arg(sesdir).arg(datatype);
-        QStringList files = utils::FindAllFiles(datadir, "*", false);
+        QStringList files = NaturalSort(utils::FindAllFiles(datadir, "*", false));
         sqrl->Log(QString("Found [%1] files in '%2'").arg(files.size()).arg(datadir));
 
         QString modality = ModalityForDatatype(datatype);

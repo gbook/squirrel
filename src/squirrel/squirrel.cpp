@@ -1174,6 +1174,34 @@ bool squirrel::Write() {
                         Log("Error writing [" + paramFilePath + "]");
                 }
             }
+
+            /* analysis files. A new package copies series files above, but analysis
+               files only go through the staged-file list, so add them here (an
+               existing package picks them up via subject.GetStagedFileList() below) */
+            if (fileMode == FileMode::NewPackage) {
+                QList<squirrelAnalysis> analyses = GetAnalysisList(studyRowID);
+                for (auto &analysis : analyses) {
+                    analysis.stagedFiles = utils::GetStagedFileList(databaseUUID, analysis.GetObjectID(), Analysis);
+                    if (analysis.stagedFiles.isEmpty())
+                        continue;
+
+                    qint64 analysisSize(0);
+                    foreach (QString f, analysis.stagedFiles)
+                        analysisSize += QFileInfo(f).size();
+                    analysis.Size = analysisSize;
+                    analysis.Store();
+
+                    /* squirrelAnalysis has no FileCount member; set the column directly so GetFileCount() includes these files */
+                    QSqlQuery qfc(QSqlDatabase::database(databaseUUID));
+                    qfc.prepare("update Analysis set FileCount = :fc where AnalysisRowID = :id");
+                    qfc.bindValue(":fc", analysis.stagedFiles.size());
+                    qfc.bindValue(":id", analysis.GetObjectID());
+                    utils::SQLQuery(qfc, __FUNCTION__, __FILE__, __LINE__);
+
+                    stagedFiles += analysis.GetStagedFileList();
+                    Debug(QString("Staged [%1] analysis files for [%2-%3-%4]").arg(analysis.stagedFiles.size()).arg(subject.ID).arg(study.StudyNumber).arg(analysis.AnalysisName), __FUNCTION__);
+                }
+            }
         }
     }
     if (!writeDbconn.commit())
