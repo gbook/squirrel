@@ -719,6 +719,105 @@ namespace utils {
     }
 
 
+    /* ---------------------------------------------------------- */
+    /* --------- CopyPathToDir ---------------------------------- */
+    /* ---------------------------------------------------------- */
+    /**
+     * Staged files may be directories (eg a MEG .ds recording, a .zarr store, or a
+     * derivative sub-directory). A file is copied into dir; a directory is copied
+     * recursively to dir/<dirname>, preserving its internal structure.
+     *
+     * @brief Copy a file or a directory tree into a directory
+     * @param p path to a file or directory
+     * @param dir destination directory (must exist)
+     * @return true if everything was copied
+     */
+    bool CopyPathToDir(QString p, QString dir) {
+        QFileInfo fi(p);
+        if (!fi.isDir())
+            return CopyFileToDir(p, dir);
+
+        QString destRoot = QString("%1/%2").arg(dir).arg(fi.fileName());
+        QString m;
+        if (!MakePath(destRoot, m))
+            return false;
+
+        bool ok = true;
+        QDir src(p);
+        QDirIterator it(p, QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            it.next();
+            QString dest = QString("%1/%2").arg(destRoot).arg(src.relativeFilePath(it.filePath()));
+            if (it.fileInfo().isDir()) {
+                if (!MakePath(dest, m))
+                    ok = false;
+            }
+            else {
+                MakePath(QFileInfo(dest).absolutePath(), m);
+                if (!QFile::copy(it.filePath(), dest))
+                    ok = false;
+            }
+        }
+        if (ok)
+            Print(QString("Copied directory [%1] to [%2]").arg(p).arg(destRoot));
+        return ok;
+    }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- ExpandStagedPath ------------------------------- */
+    /* ---------------------------------------------------------- */
+    /**
+     * @brief Expand a staged file or directory into (disk path, archive path) pairs
+     * @param p path to a file or directory on disk
+     * @param virtualDir directory inside the package that p is staged into
+     * @return list of pairs. A file maps to virtualDir/<name>; a directory maps each
+     *         contained file to virtualDir/<dirname>/<relative path>
+     */
+    QList<QPair<QString,QString>> ExpandStagedPath(QString p, QString virtualDir) {
+        QList<QPair<QString,QString>> list;
+        QFileInfo fi(p);
+        if (!fi.isDir()) {
+            list.append(qMakePair(p, QString("%1/%2").arg(virtualDir).arg(fi.fileName())));
+            return list;
+        }
+        QDir src(p);
+        QDirIterator it(p, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            it.next();
+            list.append(qMakePair(it.filePath(), QString("%1/%2/%3").arg(virtualDir).arg(fi.fileName()).arg(src.relativeFilePath(it.filePath()))));
+        }
+        return list;
+    }
+
+
+    /* ---------------------------------------------------------- */
+    /* --------- GetPathSizeAndFileCount ------------------------ */
+    /* ---------------------------------------------------------- */
+    /**
+     * @brief Get the size and file count of a file, or of a directory tree
+     * @param p path to a file or directory
+     * @param c [out] number of files
+     * @param b [out] total size in bytes
+     */
+    void GetPathSizeAndFileCount(QString p, qint64 &c, qint64 &b) {
+        QFileInfo fi(p);
+        if (fi.isDir()) {
+            c = 0; b = 0;
+            QDirIterator it(p, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden, QDirIterator::Subdirectories);
+            while (it.hasNext()) {
+                it.next();
+                c++;
+                b += it.fileInfo().size();
+            }
+        }
+        else {
+            c = fi.exists() ? 1 : 0;
+            b = fi.size();
+        }
+    }
+
+
 
 
     /* ---------------------------------------------------------- */

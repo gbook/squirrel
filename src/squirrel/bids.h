@@ -36,8 +36,9 @@ public:
     bool LoadToSquirrel(QString dir, squirrel *sqrl);
 
     bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl);
-    bool LoadSubjectFiles(QStringList subjfiles, QString ID, squirrel *sqrl);
-    bool LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, squirrel *sqrl);
+    QStringList InheritableFiles(QStringList files);
+    bool LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QStringList inherited, QStringList subjectScans, squirrel *sqrl);
+    bool LoadScansFile(QString f, const QHash<QString, qint64> &seriesByPath, bool allowFallback, squirrel *sqrl);
 
     bool LoadParticipantsFile(QString f, squirrel *sqrl);
     bool LoadTaskFile(QString f, squirrel *sqrl);
@@ -50,10 +51,22 @@ public:
     qint64 ResolveDerivativeStudy(qint64 subjectRowID, QString sesLabel, squirrel *sqrl);
     qint64 AddAnalysisFromDir(QString dir, QString pipelineName, qint64 pipelineRowID, qint64 studyRowID, squirrel *sqrl);
 
+    /* top-level directories without a squirrel object of their own */
+    bool LoadStimuliDir(QString stimuliDir, squirrel *sqrl);
+    bool LoadCodeDir(QString codeDir, squirrel *sqrl);
+    void StoreDatasetFilesInNotes(QStringList rootfiles, squirrel *sqrl);
+
     /* BIDS filename/entity parsing helpers */
     void ParseBidsFilename(const QString &filename, QHash<QString, QString> &entities, QString &suffix, QString &ext);
     QString ModalityForDatatype(const QString &datatype);
-    qint64 AddSeriesFromBidsFile(QString primaryFile, QString datatype, qint64 studyRowID, squirrel *sqrl);
+    bool IsPrimaryDataFile(const QString &path);
+    bool EntitiesSubset(const QHash<QString, QString> &sub, const QHash<QString, QString> &super, const QStringList &ignore = QStringList());
+    QHash<QString, QString> ReadSidecarParams(QStringList jsonFiles);
+    qint64 AddSeriesFromBidsFile(QString primaryFile, QString datatype, qint64 studyRowID, QStringList companionFiles, QHash<QString, QString> params, squirrel *sqrl);
+
+private:
+    QStringList rootInheritable;     /*!< dataset-root sidecars (eg T1w.json, dwi.bval) applied by the BIDS inheritance principle */
+    QSet<QString> usedRootFiles;     /*!< root files that were applied to a series or staged in an experiment */
 };
 
 #endif // BIDS_H

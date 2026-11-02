@@ -70,6 +70,9 @@ namespace utils {
 
     /* file and directory operations */
     bool CopyFileToDir(QString f, QString dir);
+    bool CopyPathToDir(QString p, QString dir);
+    QList<QPair<QString,QString>> ExpandStagedPath(QString p, QString virtualDir);
+    void GetPathSizeAndFileCount(QString p, qint64 &c, qint64 &b);
     bool MakePath(QString p, QString &msg, bool perm777=true);
     bool RemoveDir(QString p, QString &msg);
     QStringList FindAllFiles(QString dir, QString pattern, bool recursive=false);

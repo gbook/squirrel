@@ -1080,7 +1080,7 @@ bool squirrel::Write() {
                         Debug(QString("Export data format is 'orig'. Copying [%1] files...").arg(series.stagedFiles.size()), __FUNCTION__);
                         /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
-                            if (utils::CopyFileToDir(f, seriesPath))
+                            if (utils::CopyPathToDir(f, seriesPath))
                                 Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
                             else
                                 Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
@@ -1090,7 +1090,7 @@ bool squirrel::Write() {
                         Debug(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
                         /* copy all of the series files to the temp directory */
                         foreach (QString f, series.stagedFiles) {
-                            if (utils::CopyFileToDir(f, seriesPath))
+                            if (utils::CopyPathToDir(f, seriesPath))
                                 Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
                             else
                                 Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
@@ -1162,7 +1162,7 @@ bool squirrel::Write() {
 
                     /* get the number of files and size of the series */
                     qint64 c(0), b(0);
-                    utils::GetDirSizeAndFileCount(seriesPath, c, b, false);
+                    utils::GetDirSizeAndFileCount(seriesPath, c, b, true); /* recursive: series may hold directory-format recordings */
                     series.FileCount = c;
                     series.Size = b;
                     series.Store();
@@ -1185,16 +1185,21 @@ bool squirrel::Write() {
                     if (analysis.stagedFiles.isEmpty())
                         continue;
 
-                    qint64 analysisSize(0);
-                    foreach (QString f, analysis.stagedFiles)
-                        analysisSize += QFileInfo(f).size();
+                    /* staged entries may be files or directories */
+                    qint64 analysisSize(0), analysisFileCount(0);
+                    foreach (QString f, analysis.stagedFiles) {
+                        qint64 c(0), b(0);
+                        utils::GetPathSizeAndFileCount(f, c, b);
+                        analysisFileCount += c;
+                        analysisSize += b;
+                    }
                     analysis.Size = analysisSize;
                     analysis.Store();
 
                     /* squirrelAnalysis has no FileCount member; set the column directly so GetFileCount() includes these files */
                     QSqlQuery qfc(QSqlDatabase::database(databaseUUID));
                     qfc.prepare("update Analysis set FileCount = :fc where AnalysisRowID = :id");
-                    qfc.bindValue(":fc", analysis.stagedFiles.size());
+                    qfc.bindValue(":fc", analysisFileCount);
                     qfc.bindValue(":id", analysis.GetObjectID());
                     utils::SQLQuery(qfc, __FUNCTION__, __FILE__, __LINE__);
 
@@ -1345,7 +1350,12 @@ bool squirrel::Write() {
                 Debug(QString("Successfully created directory [%1] - message [%2]").arg(destDir).arg(m), __FUNCTION__);
 
             Debug(QString("Copying [%1] to [%2]").arg(sourcePath).arg(destPath), __FUNCTION__);
-            if (!QFile::copy(sourcePath, destPath))
+            /* a staged entry may be a directory, which is copied with its structure intact */
+            if (fi.isDir()) {
+                if (!utils::CopyPathToDir(sourcePath, destDir))
+                    Log(QString("Error copying directory [%1] to [%2]").arg(sourcePath).arg(destDir));
+            }
+            else if (!QFile::copy(sourcePath, destPath))
                 Log(QString("Error copying [%1] to [%2]").arg(sourcePath).arg(destPath));
         }
 
@@ -1379,10 +1389,11 @@ bool squirrel::Write() {
         QStringList diskPaths, archivePaths;
         for (int i=0; i<stagedFiles.size(); i++) {
             QStringPair file = stagedFiles.at(i);
-            QString source = file.first;
-            QString dest = file.second + "/" + QFileInfo(source).fileName();
-            diskPaths.append(source);
-            archivePaths.append(dest);
+            /* a staged directory expands to each of its files, keeping relative paths */
+            for (auto &p : utils::ExpandStagedPath(file.first, file.second)) {
+                diskPaths.append(p.first);
+                archivePaths.append(p.second);
+            }
         }
         Log("Adding/updating files in existing package");
         QString m;
