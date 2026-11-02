@@ -41,6 +41,9 @@ public:
     bool LoadScansFile(QString f, const QHash<QString, qint64> &seriesByPath, bool allowFallback, squirrel *sqrl);
 
     bool LoadParticipantsFile(QString f, squirrel *sqrl);
+    QJsonObject ReadColumnSidecars(QStringList jsonFiles, squirrel *sqrl);
+    void ApplyColumnMeta(squirrelObservation &obs, const QString &col, const QJsonObject &colMeta);
+    void AddToPackageNotes(QString section, QString key, QJsonValue value, squirrel *sqrl);
     bool LoadTaskFile(QString f, squirrel *sqrl);
     bool LoadDatasetDescription(QString f, squirrel *sqrl);
     bool LoadSessionsFile(QString f, qint64 subjectRowID, squirrel *sqrl);
@@ -48,7 +51,7 @@ public:
 
     /* derivatives -> pipelines + analyses */
     bool LoadDerivatives(QString derivativesDir, squirrel *sqrl);
-    qint64 LoadDerivativePipeline(QString pdir, QString pipelineName, bool subjectsOnly, squirrel *sqrl);
+    qint64 LoadDerivativePipeline(QString pdir, QString pipelineName, bool subjectsOnly, squirrel *sqrl, QStringList excludeDirs = QStringList());
     void ScanDerivativeDir(QString dir, int depth, QStringList &subjectDirs, QStringList &leftovers, squirrel *sqrl);
     bool ContainsSubjectDir(QString dir, int depth, squirrel *sqrl);
     qint64 ResolveDerivativeStudy(qint64 subjectRowID, QString sesLabel, squirrel *sqrl);
@@ -69,7 +72,10 @@ public:
 
 private:
     QStringList rootInheritable;     /*!< dataset-root sidecars (eg T1w.json, dwi.bval) applied by the BIDS inheritance principle */
-    QString rootDir;                 /*!< the BIDS dataset root directory */
+    QString rootDir;
+    QString datasetType;             /*!< DatasetType from dataset_description.json (raw, derivative) */
+    QString generatedByName;         /*!< GeneratedBy[0].Name from dataset_description.json */
+    bool derivativeRootMode = false; /*!< importing a dataset whose root is a derivative */                 /*!< the BIDS dataset root directory */
     QSet<QString> usedRootFiles;
     QHash<QPair<qint64, qint64>, qint64> derivAnalyses; /*!< (pipeline, study) -> analysis row id, for derivative imports */     /*!< root files that were applied to a series or staged in an experiment */
 };
