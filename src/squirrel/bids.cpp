@@ -50,6 +50,77 @@ static QStringList NaturalSort(QStringList list) {
 }
 
 /* ---------------------------------------------------------------------------- */
+/* ----- ListEntries ---------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Hidden files are included (eg .zgroup, .bidsignore, tool history files), except
+ * operating-system clutter: .DS_Store, ._* (macOS AppleDouble), Thumbs.db, desktop.ini.
+ *
+ * @brief List the files and directories directly inside a directory, including hidden ones
+ * @param dir the directory
+ * @return full paths, files first then directories, each in natural order
+ */
+static QStringList ListEntries(QString dir) {
+    QStringList files, dirs;
+    QDir d(dir);
+    /* no NoSymLinks: DataLad/git-annex datasets store data files as symlinks. System
+     * is needed for Qt to list broken symlinks (content not yet fetched), which are
+     * kept here so file names still drive series creation; StageFiles() drops them */
+    foreach (QFileInfo fi, d.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System)) {
+        if (utils::IsSkippedName(fi.fileName()))
+            continue;
+        if (fi.isDir())
+            dirs.append(fi.absoluteFilePath());
+        else if (fi.isFile() || fi.isSymLink())
+            files.append(fi.absoluteFilePath());
+    }
+    return NaturalSort(files) + NaturalSort(dirs);
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- BidsFiles / BidsDirs ------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Like utils::FindAllFiles/FindAllDirs (non-recursive, no hidden entries), but
+ * symlinks are followed and broken symlinks are listed as files, and VCS/DataLad
+ * metadata and OS clutter are skipped.
+ *
+ * @brief List the (non-hidden) files in a directory matching a pattern
+ * @param dir the directory
+ * @param pattern wildcard pattern, eg "*" or "*.tsv"
+ * @return full paths, in natural order
+ */
+static QStringList BidsFiles(QString dir, QString pattern) {
+    QStringList files;
+    QDir d(dir);
+    foreach (QFileInfo fi, d.entryInfoList(QStringList() << pattern, QDir::Files | QDir::NoDotAndDotDot | QDir::System)) {
+        if (utils::IsSkippedName(fi.fileName()) || fi.isDir())
+            continue;
+        if (fi.isFile() || fi.isSymLink())
+            files.append(fi.absoluteFilePath());
+    }
+    return NaturalSort(files);
+}
+
+/**
+ * @brief List the (non-hidden) directories in a directory matching a pattern, following symlinks
+ * @param dir the directory
+ * @param pattern wildcard pattern, eg "sub-*"
+ * @return directory names (not paths), in natural order
+ */
+static QStringList BidsDirs(QString dir, QString pattern) {
+    QStringList dirs;
+    QDir d(dir);
+    foreach (QFileInfo fi, d.entryInfoList(QStringList() << pattern, QDir::Dirs | QDir::NoDotAndDotDot)) {
+        if (!utils::IsSkippedName(fi.fileName()))
+            dirs.append(fi.fileName());
+    }
+    return NaturalSort(dirs);
+}
+
+
+/* ---------------------------------------------------------------------------- */
 /* ----- bids ----------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
@@ -119,10 +190,11 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         sqrl->Log(QString("Warning: could not start BIDS import transaction: %1").arg(bidsDbconn.lastError().text()));
 
     /* check for all .json files in the root directory */
-    QStringList rootfiles = NaturalSort(utils::FindAllFiles(dir, "*", false));
+    QStringList rootfiles = NaturalSort(BidsFiles(dir, "*"));
     sqrl->Debug(QString("Found [%1] root files matching '%2/*'").arg(rootfiles.size()).arg(dir), __FUNCTION__);
     usedRootFiles.clear();
     rootDir = dir;
+    missingContent.clear();
     LoadRootFiles(rootfiles, sqrl);
 
     /* root-level sidecars apply to every matching data file in the dataset (BIDS inheritance principle) */
@@ -130,7 +202,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
     sqrl->Debug(QString("Found [%1] inheritable root sidecar files").arg(rootInheritable.size()), __FUNCTION__);
 
     /* get list of directories in the root named 'sub-*' */
-    QStringList subjdirs = NaturalSort(utils::FindAllDirs(dir, "sub-*", false));
+    QStringList subjdirs = NaturalSort(BidsDirs(dir, "sub-*"));
 
     sqrl->Debug(QString("Found [%1] subject directories matching '%2/sub-*'").arg(subjdirs.size()).arg(dir), __FUNCTION__);
 
@@ -172,11 +244,11 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
             continue;
 
         /* get a list of ses-* DIRS, if there are any */
-        QStringList sesdirs = NaturalSort(utils::FindAllDirs(subjpath, "ses-*", false));
+        QStringList sesdirs = OrderSessionsByAcqTime(NaturalSort(BidsDirs(subjpath, "ses-*")), QString("%1/%2_sessions.tsv").arg(subjpath).arg(subjdir), sqrl);
         sqrl->Debug(QString("Found [%1] session directories matching '%2/ses-*'").arg(sesdirs.size()).arg(subjdir), __FUNCTION__);
         if (sesdirs.size() > 0) {
             /* sidecars in the subject directory apply to all of this subject's sessions */
-            QStringList subjfiles = NaturalSort(utils::FindAllFiles(subjpath, "*", false));
+            QStringList subjfiles = NaturalSort(BidsFiles(subjpath, "*"));
             QStringList inherited = rootInheritable + InheritableFiles(subjfiles);
             QStringList subjectScans;
             foreach (QString f, subjfiles) {
@@ -246,6 +318,9 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
 
     /* dataset-level files with no squirrel object (LICENSE, participants.json, ...) -> package Notes */
     StoreDatasetFilesInNotes(rootfiles, sqrl);
+
+    /* files whose content isn't present (DataLad/git-annex, not yet fetched) */
+    ReportMissingContent(sqrl);
 
     /* not imported: 'sourcedata' (usually raw DICOM, better imported with the DICOM converter) */
     if (QDir(QString("%1/sourcedata").arg(dir)).exists())
@@ -399,6 +474,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QSt
     if (studyRowID < 0) {
         studyNum = subject.GetNextStudyNumber();
         study.StudyNumber = studyNum;
+        study.DateTime = QDateTime(); /* not the conversion time; set from the data below */
         study.subjectRowID = subjectRowID;
         study.Modality = "MR";
         study.Store();
@@ -418,7 +494,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QSt
         sesLabel = sesDirName.mid(4);
 
     /* files directly in the session directory: scans.tsv, plus session-level sidecars */
-    QStringList sesFiles = NaturalSort(utils::FindAllFiles(sesdir, "*", false));
+    QStringList sesFiles = NaturalSort(BidsFiles(sesdir, "*"));
     QStringList scansFiles;
     foreach (QString f, sesFiles) {
         if (f.endsWith("_scans.tsv"))
@@ -459,7 +535,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QSt
     QSet<QString> usedInherited;
 
     /* get list of all datatype dirs in this sesdir */
-    QStringList datatypeDirs = NaturalSort(utils::FindAllDirs(sesdir, "*", false));
+    QStringList datatypeDirs = NaturalSort(BidsDirs(sesdir, "*"));
     sqrl->Log(QString("Found [%1] datatype directories in [%2/*]").arg(datatypeDirs.size()).arg(sesdir));
 
     foreach (QString datatype, datatypeDirs) {
@@ -470,9 +546,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QSt
         QString datadir = QString("%1/%2").arg(sesdir).arg(datatype);
 
         /* files and directories (directory-format recordings such as MEG .ds or .zarr) */
-        QStringList entries = NaturalSort(utils::FindAllFiles(datadir, "*", false));
-        foreach (QString d, NaturalSort(utils::FindAllDirs(datadir, "*", false)))
-            entries.append(QString("%1/%2").arg(datadir).arg(d));
+        QStringList entries = ListEntries(datadir);
         sqrl->Log(QString("Found [%1] files/directories in '%2'").arg(entries.size()).arg(datadir));
 
         QString modality = ModalityForDatatype(datatype);
@@ -611,7 +685,7 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QSt
                 continue;
             sqrl->Debug(QString("Sidecar [%1] matches no series in [%2]; attaching it to all of them").arg(inh.name).arg(sesdir), __FUNCTION__);
             foreach (qint64 id, seriesByPath.values())
-                sqrl->AddStagedFiles(Series, id, QStringList() << inh.path);
+                StageFiles(Series, id, QStringList() << inh.path, sqrl);
         }
     }
 
@@ -643,6 +717,22 @@ bool bids::LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QSt
         study.Modality = "UNKNOWN"; /* only unrecognized datatypes (or none); squirrel's default */
     if (!sesLabel.isEmpty())
         study.VisitType = sesLabel;
+
+    /* study datetime: the earliest series acquisition time (from scans.tsv), if the
+     * study has none yet. A sessions.tsv acq_time, applied later, takes precedence */
+    if (!study.DateTime.isValid()) {
+        QSqlQuery q(QSqlDatabase::database(sqrl->GetDatabaseUUID()));
+        q.prepare("select Datetime from Series where StudyRowID = :id and Datetime is not null and Datetime != ''");
+        q.bindValue(":id", studyRowID);
+        utils::SQLQuery(q, __FUNCTION__, __FILE__, __LINE__);
+        QDateTime earliest;
+        while (q.next()) {
+            QDateTime dt = q.value("Datetime").toDateTime();
+            if (dt.isValid() && (!earliest.isValid() || (dt < earliest)))
+                earliest = dt;
+        }
+        study.DateTime = earliest; /* stays null (no datetime) if no series has one */
+    }
     study.Store(); /* objectID is set, so this updates the existing study row */
 
     return true;
@@ -709,7 +799,7 @@ bool bids::LoadScansFile(QString f, const QHash<QString, qint64> &seriesByPath, 
             targets.insert(id);
     }
     foreach (qint64 id, targets)
-        sqrl->AddStagedFiles(Series, id, files);
+        StageFiles(Series, id, files, sqrl);
     sqrl->Debug(QString("Staged [%1] with [%2] series").arg(QFileInfo(f).fileName()).arg(targets.size()), __FUNCTION__);
 
     return true;
@@ -955,7 +1045,7 @@ qint64 bids::AddSeriesFromBidsFile(QString primaryFile, QString datatype, qint64
             files.append(f);
     }
 
-    sqrl->AddStagedFiles(Series, seriesRowID, files);
+    StageFiles(Series, seriesRowID, files, sqrl);
     sqrl->Log(QString("  Added %1 series [%2] suffix [%3] task [%4] run [%5] with [%6] file(s)")
                   .arg(datatype).arg(seriesNum).arg(suffix).arg(series.BidsTask).arg(series.BidsRun).arg(files.size()));
 
@@ -1201,38 +1291,33 @@ bool bids::LoadTaskFile(QString f, squirrel *sqrl) {
 
     sqrl->Log(QString("Reading task file [%1]").arg(f));
 
-    QFileInfo fi(f);
-    QString filename = fi.fileName();
-    filename.replace("task-", "");
-    filename.replace(".json", "");
-    filename.replace(".tsv", "");
-    filename.replace("_events", "");
-    filename.replace("_bold", "");
-    QString str = utils::ReadTextFileToString(f);
-    QJsonDocument d = QJsonDocument::fromJson(str.toUtf8());
-    QJsonObject root = d.object();
-
-    QString experimentName = root.value("TaskName").toString().toLower();
-    if (experimentName == "")
-        experimentName = filename;
-
-    //double tr = root.value("RepetitionTime").toDouble();
+    /* all root files for one task (task-rest_bold.json, task-rest_acq-x_bold.json,
+     * task-rest_events.json, ...) go into one experiment, named by the BIDS task label
+     * (which is also each series' BidsTask) */
+    QHash<QString, QString> ents;
+    QString suffix, ext;
+    ParseBidsFilename(QFileInfo(f).fileName(), ents, suffix, ext);
+    QString experimentName = ents.value("task").trimmed();
+    if (experimentName.isEmpty()) {
+        sqrl->Log(QString("Warning: [%1] has no task- label; not added to an experiment").arg(f));
+        return false;
+    }
 
     squirrelExperiment exp(sqrl->GetDatabaseUUID());
+    qint64 expRowID = sqrl->FindExperiment(experimentName);
+    if (expRowID >= 0) {
+        exp.SetObjectID(expRowID);
+        exp.Get();
+    }
     exp.ExperimentName = experimentName;
-    //exp.virtualPath = QString("experiments/%1").arg(experimentName);
+    exp.FileCount += 1;
+    exp.Size += QFileInfo(f).size();
     exp.Store();
-    int expRowID = exp.GetObjectID();
+    expRowID = exp.GetObjectID();
 
-    QStringList files;
-    files.append(f);
-    //squirrelExperiment sqrlExp;
-    //sqrlExp.experimentName = experimentName;
-    //sqrlExp.virtualPath = QString("%1/experiments/%2").arg(sqrl->GetTempDir()).arg(experimentName);
-    //sqrl->experimentList.append(sqrlExp);
-    if (sqrl->AddStagedFiles(Experiment, expRowID, files))
+    if (StageFiles(Experiment, expRowID, QStringList() << f, sqrl) || utils::IsMissingContent(f))
         usedRootFiles.insert(f);
-    sqrl->Debug(QString("Added [%1] files to experiment [%2] with path [%3]").arg(files.size()).arg(experimentName).arg(exp.VirtualPath()), __FUNCTION__);
+    sqrl->Debug(QString("Added [%1] to experiment [%2] (now %3 file(s))").arg(QFileInfo(f).fileName()).arg(experimentName).arg(exp.FileCount), __FUNCTION__);
 
     return true;
 }
@@ -1305,27 +1390,6 @@ bool bids::LoadDatasetDescription(QString f, squirrel *sqrl) {
 
 
 /* ---------------------------------------------------------------------------- */
-/* ----- ListEntries ---------------------------------------------------------- */
-/* ---------------------------------------------------------------------------- */
-/**
- * @brief List the files and directories directly inside a directory, including hidden ones
- * @param dir the directory
- * @return full paths, files first then directories, each in natural order
- */
-static QStringList ListEntries(QString dir) {
-    QStringList files, dirs;
-    QDir d(dir);
-    foreach (QFileInfo fi, d.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::NoSymLinks)) {
-        if (fi.isDir())
-            dirs.append(fi.absoluteFilePath());
-        else
-            files.append(fi.absoluteFilePath());
-    }
-    return NaturalSort(files) + NaturalSort(dirs);
-}
-
-
-/* ---------------------------------------------------------------------------- */
 /* ----- ParseSubjectDirName -------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
@@ -1370,7 +1434,7 @@ bool bids::LoadDerivatives(QString derivativesDir, squirrel *sqrl) {
     sqrl->Log(QString("Loading derivatives from [%1]").arg(derivativesDir));
     derivAnalyses.clear();
 
-    QStringList children = NaturalSort(utils::FindAllDirs(derivativesDir, "*", false));
+    QStringList children = NaturalSort(BidsDirs(derivativesDir, "*"));
 
     /* derivatives/sub-* (no pipeline directory): derivatives/ is itself the pipeline */
     bool hasSubjects = false;
@@ -1474,7 +1538,7 @@ qint64 bids::LoadDerivativePipeline(QString pdir, QString pipelineName, bool sub
             groupEntries.append(e);
     }
     if (!pipelineFiles.isEmpty())
-        sqrl->AddStagedFiles(Pipeline, pipelineRowID, pipelineFiles);
+        StageFiles(Pipeline, pipelineRowID, pipelineFiles, sqrl);
 
     if (!groupEntries.isEmpty()) {
         qint64 groupRowID = sqrl->FindGroupAnalysis(pipelineName);
@@ -1493,7 +1557,15 @@ qint64 bids::LoadDerivativePipeline(QString pdir, QString pipelineName, bool sub
         }
         g.Store();
         groupRowID = g.GetObjectID();
-        sqrl->AddStagedFiles(GroupAnalysis, groupRowID, groupEntries);
+        StageFiles(GroupAnalysis, groupRowID, groupEntries, sqrl);
+
+        /* keep each entry's location within the pipeline directory, so eg
+         * freesurfer/subjects/fsaverage is stored as group-analysis/freesurfer/subjects/fsaverage */
+        foreach (QString e, groupEntries) {
+            QString parentRel = QDir(pdir).relativeFilePath(QFileInfo(e).absolutePath());
+            if (!parentRel.isEmpty() && (parentRel != "."))
+                utils::SetStagedFileSubdir(sqrl->GetDatabaseUUID(), groupRowID, GroupAnalysis, e, parentRel);
+        }
 
         QStringList names;
         foreach (QString e, groupEntries)
@@ -1600,7 +1672,7 @@ void bids::ScanDerivativeDir(QString dir, int depth, QStringList &subjectDirs, Q
 bool bids::ContainsSubjectDir(QString dir, int depth, squirrel *sqrl) {
     const int maxDepth = 3;
 
-    foreach (QString d, utils::FindAllDirs(dir, "*", false)) {
+    foreach (QString d, BidsDirs(dir, "*")) {
         QString subjectID, sesLabel;
         if (ParseSubjectDirName(d, subjectID, sesLabel) && (sqrl->FindSubject(subjectID) >= 0))
             return true;
@@ -1664,6 +1736,7 @@ qint64 bids::ResolveDerivativeStudy(qint64 subjectRowID, QString sesLabel, squir
     st.StudyNumber = subj.GetNextStudyNumber();
     st.Modality = "Derived";
     st.VisitType = sesLabel;
+    st.DateTime = QDateTime(); /* unknown; not the conversion time */
     st.Store();
     sqrl->Log(QString("  Created derived study [%1] for subject [%2]").arg(st.StudyNumber).arg(subj.ID));
     return st.GetObjectID();
@@ -1703,7 +1776,7 @@ qint64 bids::StageAnalysisEntries(QStringList entries, QString pipelineName, qin
     }
 
     if (!entries.isEmpty())
-        sqrl->AddStagedFiles(Analysis, analysisRowID, entries);
+        StageFiles(Analysis, analysisRowID, entries, sqrl);
 
     qint64 fileCount(0);
     foreach (QString e, entries) {
@@ -1857,7 +1930,7 @@ bool bids::LoadPhenotypeDir(QString phenotypeDir, squirrel *sqrl) {
 
     static const QStringList idxCols = {"session_id", "ses", "day", "visit", "timepoint", "run", "wave"};
 
-    QStringList tsvFiles = utils::FindAllFiles(phenotypeDir, "*.tsv", false);
+    QStringList tsvFiles = BidsFiles(phenotypeDir, "*.tsv");
     foreach (QString tsvFile, tsvFiles) {
         QString instrument = QFileInfo(tsvFile).fileName();
         instrument.replace(".tsv", "");
@@ -1950,9 +2023,7 @@ bool bids::LoadStimuliDir(QString stimuliDir, squirrel *sqrl) {
     sqrl->Log(QString("Loading stimuli from [%1]").arg(stimuliDir));
 
     /* top-level files and directories; directories keep their structure */
-    QStringList entries = NaturalSort(utils::FindAllFiles(stimuliDir, "*", false));
-    foreach (QString d, NaturalSort(utils::FindAllDirs(stimuliDir, "*", false)))
-        entries.append(QString("%1/%2").arg(stimuliDir).arg(d));
+    QStringList entries = ListEntries(stimuliDir);
     if (entries.isEmpty())
         return false;
 
@@ -1976,7 +2047,7 @@ bool bids::LoadStimuliDir(QString stimuliDir, squirrel *sqrl) {
     exp.Store();
     expRowID = exp.GetObjectID();
 
-    bool ok = sqrl->AddStagedFiles(Experiment, expRowID, entries);
+    bool ok = StageFiles(Experiment, expRowID, entries, sqrl);
     sqrl->Log(QString("  Added experiment [stimuli] with [%1] file(s)").arg(fileCount));
     return ok;
 }
@@ -1994,9 +2065,7 @@ bool bids::LoadStimuliDir(QString stimuliDir, squirrel *sqrl) {
 bool bids::LoadCodeDir(QString codeDir, squirrel *sqrl) {
     sqrl->Log(QString("Loading code from [%1]").arg(codeDir));
 
-    QStringList entries = NaturalSort(utils::FindAllFiles(codeDir, "*", false));
-    foreach (QString d, NaturalSort(utils::FindAllDirs(codeDir, "*", false)))
-        entries.append(QString("%1/%2").arg(codeDir).arg(d));
+    QStringList entries = ListEntries(codeDir);
     if (entries.isEmpty())
         return false;
 
@@ -2010,7 +2079,7 @@ bool bids::LoadCodeDir(QString codeDir, squirrel *sqrl) {
         pipelineRowID = p.GetObjectID();
     }
 
-    bool ok = sqrl->AddStagedFiles(Pipeline, pipelineRowID, entries);
+    bool ok = StageFiles(Pipeline, pipelineRowID, entries, sqrl);
     sqrl->Log(QString("  Added pipeline [bids-code] with [%1] top-level file(s)/directories").arg(entries.size()));
     return ok;
 }
@@ -2085,4 +2154,149 @@ void bids::StoreDatasetFilesInNotes(QStringList rootfiles, squirrel *sqrl) {
     sqrl->Notes = QString::fromUtf8(QJsonDocument(notes).toJson(QJsonDocument::Compact));
 
     sqrl->Log(QString("Stored [%1] dataset-level file(s) in package Notes: %2").arg(files.size()).arg(QStringList(files.keys()).join(", ")));
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- OrderSessionsByAcqTime ----------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Session labels don't always sort into acquisition order (eg 'pre'/'post', or
+ * 'baseline'/'followup'). If the subject's sessions.tsv gives a valid acq_time for
+ * every session, the sessions are ordered by it (so study 1 is the first session
+ * acquired); otherwise the given (natural label) order is kept.
+ *
+ * @brief Order a subject's ses-* directories by their sessions.tsv acq_time
+ * @param sesdirs ses-* directory names, in natural order
+ * @param sessionsFile path to the subject's sessions.tsv (may not exist)
+ * @param sqrl squirrel object
+ * @return the ordered directory names
+ */
+QStringList bids::OrderSessionsByAcqTime(QStringList sesdirs, QString sessionsFile, squirrel *sqrl) {
+    if ((sesdirs.size() < 2) || !utils::FileExists(sessionsFile))
+        return sesdirs;
+
+    utils::indexedHash tsv;
+    QStringList cols;
+    QString m;
+    if (!utils::ParseTSV(utils::ReadTextFileToString(sessionsFile), tsv, cols, m) || !cols.contains("acq_time"))
+        return sesdirs;
+
+    QHash<QString, QDateTime> acq;
+    for (int i = 0; i < tsv.size(); i++) {
+        QString sesid = tsv[i].value("session_id").trimmed();
+        if (!sesid.startsWith("ses-"))
+            sesid = "ses-" + sesid;
+        QDateTime dt = QDateTime::fromString(tsv[i].value("acq_time").trimmed(), Qt::ISODate);
+        if (dt.isValid())
+            acq.insert(sesid, dt);
+    }
+    foreach (QString s, sesdirs) {
+        if (!acq.contains(s))
+            return sesdirs; /* not every session has a time: keep label order */
+    }
+
+    QStringList ordered = sesdirs;
+    std::stable_sort(ordered.begin(), ordered.end(), [&acq](const QString &a, const QString &b) {
+        return acq.value(a) < acq.value(b);
+    });
+    if (ordered != sesdirs)
+        sqrl->Log(QString("  Ordering sessions by sessions.tsv acq_time: %1").arg(ordered.join(", ")));
+    return ordered;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- FindMissingContent --------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Recursively collect files under a directory whose content is not present
+ * @param dir directory to scan (symlinks followed, loops guarded)
+ * @param visited canonical paths of directories already visited
+ * @param missing [out] paths of broken symlinks and git-annex pointer files
+ */
+static void FindMissingContent(const QString &dir, QSet<QString> &visited, QStringList &missing) {
+    QString canon = QFileInfo(dir).canonicalFilePath();
+    if (canon.isEmpty() || visited.contains(canon))
+        return;
+    visited.insert(canon);
+    foreach (QFileInfo fi, QDir(dir).entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System)) {
+        if (utils::IsSkippedName(fi.fileName()))
+            continue;
+        if (fi.isDir()) {
+            /* a symlink to this directory or one of its ancestors is a cycle */
+            if (fi.isSymLink() && ((fi.canonicalFilePath() == canon) || canon.startsWith(fi.canonicalFilePath() + "/")))
+                continue;
+            FindMissingContent(fi.absoluteFilePath(), visited, missing);
+        }
+        else if (utils::IsMissingContent(fi.absoluteFilePath()))
+            missing.append(fi.absoluteFilePath());
+    }
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- StageFiles ----------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Every BIDS file goes through here on its way into the package. Files whose content
+ * is not present (DataLad/git-annex: broken symlink or pointer file, ie not yet
+ * fetched with 'datalad get') are left out and recorded, so the import can report
+ * them, rather than silently writing a package with missing data. Inside staged
+ * directories they are skipped by the writer (utils::CopyPathToDir) and recorded here.
+ *
+ * @brief Stage files/directories with a squirrel object, leaving out missing content
+ * @param object object type
+ * @param rowid object row id
+ * @param files files and directories to stage
+ * @param sqrl squirrel object
+ * @return true if anything was staged
+ */
+bool bids::StageFiles(ObjectType object, qint64 rowid, QStringList files, squirrel *sqrl) {
+    QStringList kept;
+    foreach (QString f, files) {
+        QFileInfo fi(f);
+        if (fi.isDir()) {
+            QSet<QString> visited;
+            QStringList missing;
+            FindMissingContent(f, visited, missing);
+            foreach (QString m, missing)
+                missingContent.insert(QDir(rootDir).relativeFilePath(m));
+            kept.append(f);
+        }
+        else if (utils::IsMissingContent(f))
+            missingContent.insert(QDir(rootDir).relativeFilePath(f));
+        else
+            kept.append(f);
+    }
+    if (kept.isEmpty())
+        return false;
+    return sqrl->AddStagedFiles(object, rowid, kept);
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- ReportMissingContent ------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Warn about, and record in the package Notes, files whose content was not present
+ * @param sqrl squirrel object
+ */
+void bids::ReportMissingContent(squirrel *sqrl) {
+    if (missingContent.isEmpty())
+        return;
+
+    QStringList list(missingContent.begin(), missingContent.end());
+    list = NaturalSort(list);
+
+    sqrl->Log(QString("WARNING: [%1] file(s) in this dataset have no content (broken symlinks or git-annex pointer files) and were NOT included in the package.").arg(list.size()));
+    sqrl->Log("WARNING: if this is a DataLad dataset, fetch the data first with 'datalad get .' (or 'datalad get <path>') and convert again.");
+    for (int i = 0; (i < list.size()) && (i < 10); i++)
+        sqrl->Log(QString("WARNING:   missing: %1").arg(list[i]));
+    if (list.size() > 10)
+        sqrl->Log(QString("WARNING:   ... and %1 more (all are listed in the package Notes under bids.import.missingContent)").arg(list.size() - 10));
+
+    /* the package records its own incompleteness */
+    AddToPackageNotes("import", "missingContent", QJsonArray::fromStringList(list), sqrl);
+    AddToPackageNotes("import", "missingContentCount", list.size(), sqrl);
 }

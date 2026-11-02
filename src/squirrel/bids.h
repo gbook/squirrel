@@ -38,6 +38,7 @@ public:
     bool LoadRootFiles(QStringList rootfiles, squirrel *sqrl);
     QStringList InheritableFiles(QStringList files);
     bool LoadSessionDir(QString sesdir, qint64 subjectRowID, int studyNum, QStringList inherited, QStringList subjectScans, squirrel *sqrl);
+    QStringList OrderSessionsByAcqTime(QStringList sesdirs, QString sessionsFile, squirrel *sqrl);
     bool LoadScansFile(QString f, const QHash<QString, qint64> &seriesByPath, bool allowFallback, squirrel *sqrl);
 
     bool LoadParticipantsFile(QString f, squirrel *sqrl);
@@ -61,6 +62,8 @@ public:
     bool LoadStimuliDir(QString stimuliDir, squirrel *sqrl);
     bool LoadCodeDir(QString codeDir, squirrel *sqrl);
     void StoreDatasetFilesInNotes(QStringList rootfiles, squirrel *sqrl);
+    bool StageFiles(ObjectType object, qint64 rowid, QStringList files, squirrel *sqrl);
+    void ReportMissingContent(squirrel *sqrl);
 
     /* BIDS filename/entity parsing helpers */
     void ParseBidsFilename(const QString &filename, QHash<QString, QString> &entities, QString &suffix, QString &ext);
@@ -77,6 +80,7 @@ private:
     QString generatedByName;         /*!< GeneratedBy[0].Name from dataset_description.json */
     bool derivativeRootMode = false; /*!< importing a dataset whose root is a derivative */                 /*!< the BIDS dataset root directory */
     QSet<QString> usedRootFiles;
+    QSet<QString> missingContent;    /*!< dataset-relative paths of files whose content is not present (DataLad/git-annex) */
     QHash<QPair<qint64, qint64>, qint64> derivAnalyses; /*!< (pipeline, study) -> analysis row id, for derivative imports */     /*!< root files that were applied to a series or staged in an experiment */
 };
 

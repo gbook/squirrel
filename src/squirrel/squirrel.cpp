@@ -1359,6 +1359,15 @@ bool squirrel::Write() {
                 Log(QString("Error copying [%1] to [%2]").arg(sourcePath).arg(destPath));
         }
 
+        /* now that every file is in the working directory, the package totals are what
+         * is actually there (series data and params.json, analysis/experiment/pipeline
+         * files, generated pipeline scripts), rather than the sum of per-object counts */
+        qint64 totalFiles(0), totalBytes(0);
+        utils::GetPathSizeAndFileCount(workingDir, totalFiles, totalBytes);
+        root["TotalFileCount"] = totalFiles;
+        root["TotalSize"] = totalBytes;
+        j = QJsonDocument(root).toJson();
+
         //Log("Zipping the archive from a temp directory");
 
         /* write the .json file to the temp dir */
