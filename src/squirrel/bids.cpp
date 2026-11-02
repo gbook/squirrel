@@ -122,6 +122,7 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
     QStringList rootfiles = NaturalSort(utils::FindAllFiles(dir, "*", false));
     sqrl->Debug(QString("Found [%1] root files matching '%2/*'").arg(rootfiles.size()).arg(dir), __FUNCTION__);
     usedRootFiles.clear();
+    rootDir = dir;
     LoadRootFiles(rootfiles, sqrl);
 
     /* root-level sidecars apply to every matching data file in the dataset (BIDS inheritance principle) */
@@ -180,9 +181,10 @@ bool bids::LoadToSquirrel(QString dir, squirrel *sqrl) {
         }
 
         /* now that this subject's studies exist, apply the sub-*_sessions.tsv (session
-         * acquisition times + session-level measures) */
+         * acquisition times + session-level measures) and its .json column descriptions */
         QString sessionsFile = QString("%1/%2_sessions.tsv").arg(subjpath).arg(subjdir);
-        if (utils::FileExists(sessionsFile))
+        QString sessionsJson = QString("%1/%2_sessions.json").arg(subjpath).arg(subjdir);
+        if (utils::FileExists(sessionsFile) || utils::FileExists(sessionsJson) || utils::FileExists(rootDir + "/sessions.json"))
             LoadSessionsFile(sessionsFile, subjectRowID, sqrl);
     }
 
@@ -312,7 +314,7 @@ QStringList bids::InheritableFiles(QStringList files) {
         QHash<QString, QString> ents;
         QString suffix, ext;
         ParseBidsFilename(fn, ents, suffix, ext);
-        if (suffix.isEmpty())
+        if (suffix.isEmpty() || (suffix == "sessions"))  /* sessions.json is read by LoadSessionsFile */
             continue;
         if ((ext == ".json") || (ext == ".bval") || (ext == ".bvec") || (ext == ".tsv") || (ext == ".tsv.gz"))
             list.append(f);
@@ -1110,13 +1112,62 @@ bool bids::LoadDatasetDescription(QString f, squirrel *sqrl) {
 
 
 /* ---------------------------------------------------------------------------- */
+/* ----- ListEntries ---------------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief List the files and directories directly inside a directory, including hidden ones
+ * @param dir the directory
+ * @return full paths, files first then directories, each in natural order
+ */
+static QStringList ListEntries(QString dir) {
+    QStringList files, dirs;
+    QDir d(dir);
+    foreach (QFileInfo fi, d.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::NoSymLinks)) {
+        if (fi.isDir())
+            dirs.append(fi.absoluteFilePath());
+        else
+            files.append(fi.absoluteFilePath());
+    }
+    return NaturalSort(files) + NaturalSort(dirs);
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- ParseSubjectDirName -------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Derivatives name subject directories either 'sub-01' (sessions as ses-* children)
+ * or 'sub-01_ses-pre' (subject and session joined, eg BrainVisa/FreeSurfer outputs).
+ *
+ * @brief Parse a derivative subject directory name
+ * @param name directory name
+ * @param subjectID [out] eg 'sub-01'
+ * @param sesLabel [out] eg 'pre', or empty
+ * @return true if the name is a subject directory name
+ */
+static bool ParseSubjectDirName(const QString &name, QString &subjectID, QString &sesLabel) {
+    static const QRegularExpression rx("^(sub-[^_]+)(?:_ses-([^_]+))?$");
+    QRegularExpressionMatch m = rx.match(name);
+    if (!m.hasMatch())
+        return false;
+    subjectID = m.captured(1);
+    sesLabel = m.captured(2);
+    return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
 /* ----- LoadDerivatives ------------------------------------------------------ */
 /* ---------------------------------------------------------------------------- */
 /**
  * @brief Import a BIDS 'derivatives' directory as squirrel pipelines + analyses
  *
- * Each derivatives/<name>/ directory becomes a squirrel pipeline. Each sub-* (and
- * ses-*) directory inside it becomes an analysis attached to that subject's study.
+ * Each derivatives/<name>/ directory becomes a squirrel pipeline. Within it, every
+ * directory for a known subject (sub-01, or sub-01_ses-pre), found up to a few levels
+ * deep (eg freesurfer/subjects/sub-01), becomes an analysis attached to that subject's
+ * study. Outputs that belong to no subject (fsaverage, template subjects, group
+ * statistics) become a group-analysis of the same name. If derivatives/ holds sub-*
+ * directories itself, it is treated as a pipeline named 'derivatives'.
  *
  * @param derivativesDir path to the derivatives directory
  * @param sqrl squirrel object
@@ -1124,73 +1175,233 @@ bool bids::LoadDatasetDescription(QString f, squirrel *sqrl) {
  */
 bool bids::LoadDerivatives(QString derivativesDir, squirrel *sqrl) {
     sqrl->Log(QString("Loading derivatives from [%1]").arg(derivativesDir));
+    derivAnalyses.clear();
 
-    QStringList pipelineDirs = utils::FindAllDirs(derivativesDir, "*", false);
-    foreach (QString pipelineName, pipelineDirs) {
-        QString pdir = QString("%1/%2").arg(derivativesDir).arg(pipelineName);
+    QStringList children = NaturalSort(utils::FindAllDirs(derivativesDir, "*", false));
 
-        /* create the pipeline if it doesn't already exist */
-        qint64 pipelineRowID = sqrl->FindPipeline(pipelineName);
-        if (pipelineRowID < 0) {
-            squirrelPipeline p(sqrl->GetDatabaseUUID());
-            p.PipelineName = pipelineName;
-            p.PipelineVersion = 1;
+    /* derivatives/sub-* (no pipeline directory): derivatives/ is itself the pipeline */
+    bool hasSubjects = false;
+    foreach (QString c, children) {
+        if (c.startsWith("sub-"))
+            hasSubjects = true;
+    }
+    if (hasSubjects)
+        LoadDerivativePipeline(derivativesDir, "derivatives", true, sqrl);
 
-            /* a derivative may describe itself in its own dataset_description.json */
-            QString dd = QString("%1/dataset_description.json").arg(pdir);
-            if (utils::FileExists(dd)) {
-                QJsonObject root = QJsonDocument::fromJson(utils::ReadTextFileToString(dd).toUtf8()).object();
-                p.PipelineDescription = root.value("Name").toString();
-                QJsonArray gb = root.value("GeneratedBy").toArray();
-                if (!gb.isEmpty()) {
-                    QJsonObject g0 = gb.first().toObject();
-                    QString gname = g0.value("Name").toString();
-                    QString gver = g0.value("Version").toString();
-                    if (!gname.isEmpty())
-                        p.PipelineDescription = gname + (gver.isEmpty() ? "" : (" " + gver));
-                }
-            }
-            if (p.PipelineDescription.trimmed().isEmpty())
-                p.PipelineDescription = "BIDS derivative: " + pipelineName;
-
-            p.Store();
-            pipelineRowID = p.GetObjectID();
-            sqrl->Log(QString("  Created pipeline [%1]").arg(pipelineName));
-        }
-
-        /* stage pipeline-level files (those sitting directly in the pipeline dir) */
-        QStringList pipelineFiles = utils::FindAllFiles(pdir, "*", false);
-        if (!pipelineFiles.isEmpty())
-            sqrl->AddStagedFiles(Pipeline, pipelineRowID, pipelineFiles);
-
-        /* per-subject outputs become analyses */
-        QStringList subDirs = utils::FindAllDirs(pdir, "sub-*", false);
-        foreach (QString subName, subDirs) {
-            QString sdir = QString("%1/%2").arg(pdir).arg(subName);
-
-            qint64 subjectRowID = sqrl->FindSubject(subName);
-            if (subjectRowID < 0) {
-                sqrl->Log(QString("  Derivative output for unknown subject [%1]; skipping").arg(subName));
-                continue;
-            }
-
-            /* if the derivative subject has sessions, map each to the matching study */
-            QStringList sesDirs = utils::FindAllDirs(sdir, "ses-*", false);
-            if (!sesDirs.isEmpty()) {
-                foreach (QString sesName, sesDirs) {
-                    QString sesLabel = sesName.startsWith("ses-") ? sesName.mid(4) : sesName;
-                    qint64 studyRowID = ResolveDerivativeStudy(subjectRowID, sesLabel, sqrl);
-                    AddAnalysisFromDir(QString("%1/%2").arg(sdir).arg(sesName), pipelineName, pipelineRowID, studyRowID, sqrl);
-                }
-            }
-            else {
-                qint64 studyRowID = ResolveDerivativeStudy(subjectRowID, "", sqrl);
-                AddAnalysisFromDir(sdir, pipelineName, pipelineRowID, studyRowID, sqrl);
-            }
-        }
+    foreach (QString pipelineName, children) {
+        if (pipelineName.startsWith("sub-"))
+            continue;
+        LoadDerivativePipeline(QString("%1/%2").arg(derivativesDir).arg(pipelineName), pipelineName, false, sqrl);
     }
 
     return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- LoadDerivativePipeline ----------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Import one derivative pipeline directory
+ * @param pdir the pipeline directory
+ * @param pipelineName the pipeline name
+ * @param subjectsOnly only import sub-* children and files (pdir is the derivatives/
+ *        directory itself, whose other children are separate pipelines)
+ * @param sqrl squirrel object
+ * @return the pipeline row id
+ */
+qint64 bids::LoadDerivativePipeline(QString pdir, QString pipelineName, bool subjectsOnly, squirrel *sqrl) {
+
+    /* create the pipeline if it doesn't already exist */
+    qint64 pipelineRowID = sqrl->FindPipeline(pipelineName);
+    if (pipelineRowID < 0) {
+        squirrelPipeline p(sqrl->GetDatabaseUUID());
+        p.PipelineName = pipelineName;
+        p.PipelineVersion = 1;
+
+        /* a derivative may describe itself in its own dataset_description.json */
+        QString dd = QString("%1/dataset_description.json").arg(pdir);
+        if (utils::FileExists(dd)) {
+            QJsonObject root = QJsonDocument::fromJson(utils::ReadTextFileToString(dd).toUtf8()).object();
+            p.PipelineDescription = root.value("Name").toString();
+            QJsonArray gb = root.value("GeneratedBy").toArray();
+            if (!gb.isEmpty()) {
+                QJsonObject g0 = gb.first().toObject();
+                QString gname = g0.value("Name").toString();
+                QString gver = g0.value("Version").toString();
+                if (!gname.isEmpty())
+                    p.PipelineDescription = gname + (gver.isEmpty() ? "" : (" " + gver));
+            }
+        }
+        if (p.PipelineDescription.trimmed().isEmpty())
+            p.PipelineDescription = "BIDS derivative: " + pipelineName;
+
+        p.Store();
+        pipelineRowID = p.GetObjectID();
+        sqrl->Log(QString("  Created pipeline [%1]").arg(pipelineName));
+    }
+
+    /* find the subject directories, and everything else */
+    QStringList subjectDirs, leftovers;
+    if (subjectsOnly) {
+        foreach (QString e, ListEntries(pdir)) {
+            QFileInfo fi(e);
+            QString subjectID, sesLabel;
+            if (fi.isDir() && ParseSubjectDirName(fi.fileName(), subjectID, sesLabel) && (sqrl->FindSubject(subjectID) >= 0))
+                subjectDirs.append(e);
+            else if (fi.isDir() && fi.fileName().startsWith("sub-"))
+                leftovers.append(e);
+            else if (!fi.isDir())
+                leftovers.append(e);
+        }
+    }
+    else
+        ScanDerivativeDir(pdir, 0, subjectDirs, leftovers, sqrl);
+
+    /* files directly in the pipeline directory (dataset_description.json, README, ...)
+     * stay with the pipeline; other non-subject outputs become a group-analysis */
+    QStringList pipelineFiles, groupEntries;
+    foreach (QString e, leftovers) {
+        if ((QFileInfo(e).absolutePath() == QFileInfo(pdir).absoluteFilePath()) && QFileInfo(e).isFile())
+            pipelineFiles.append(e);
+        else
+            groupEntries.append(e);
+    }
+    if (!pipelineFiles.isEmpty())
+        sqrl->AddStagedFiles(Pipeline, pipelineRowID, pipelineFiles);
+
+    if (!groupEntries.isEmpty()) {
+        qint64 groupRowID = sqrl->FindGroupAnalysis(pipelineName);
+        squirrelGroupAnalysis g(sqrl->GetDatabaseUUID());
+        if (groupRowID >= 0) {
+            g.SetObjectID(groupRowID);
+            g.Get();
+        }
+        g.GroupAnalysisName = pipelineName;
+        g.Description = QString("Group-level outputs of BIDS derivative [%1]").arg(pipelineName);
+        foreach (QString e, groupEntries) {
+            qint64 c(0), b(0);
+            utils::GetPathSizeAndFileCount(e, c, b);
+            g.FileCount += c;
+            g.Size += b;
+        }
+        g.Store();
+        groupRowID = g.GetObjectID();
+        sqrl->AddStagedFiles(GroupAnalysis, groupRowID, groupEntries);
+
+        QStringList names;
+        foreach (QString e, groupEntries)
+            names.append(QDir(pdir).relativeFilePath(e));
+        sqrl->Log(QString("  Added group-analysis [%1] with [%2] file(s): %3").arg(pipelineName).arg(g.FileCount).arg(names.join(", ")));
+    }
+
+    /* per-subject outputs become analyses */
+    foreach (QString sdir, subjectDirs) {
+        QString subjectID, sesLabel;
+        ParseSubjectDirName(QFileInfo(sdir).fileName(), subjectID, sesLabel);
+        qint64 subjectRowID = sqrl->FindSubject(subjectID);
+
+        /* sub-01_ses-pre: the session is in the directory name */
+        if (!sesLabel.isEmpty()) {
+            qint64 studyRowID = ResolveDerivativeStudy(subjectRowID, sesLabel, sqrl);
+            StageAnalysisEntries(ListEntries(sdir), pipelineName, pipelineRowID, studyRowID, sqrl);
+            continue;
+        }
+
+        /* sub-01/ses-*: each session maps to its study. Anything at the subject level
+         * (eg a longitudinal anat/) goes with the first session's analysis */
+        QStringList sesDirs, subjectLevel;
+        foreach (QString e, ListEntries(sdir)) {
+            if (QFileInfo(e).isDir() && QFileInfo(e).fileName().startsWith("ses-"))
+                sesDirs.append(e);
+            else
+                subjectLevel.append(e);
+        }
+        if (!sesDirs.isEmpty()) {
+            qint64 firstStudyRowID = -1;
+            foreach (QString sesPath, sesDirs) {
+                QString sesName = QFileInfo(sesPath).fileName();
+                qint64 studyRowID = ResolveDerivativeStudy(subjectRowID, sesName.mid(4), sqrl);
+                if (firstStudyRowID < 0)
+                    firstStudyRowID = studyRowID;
+                StageAnalysisEntries(ListEntries(sesPath), pipelineName, pipelineRowID, studyRowID, sqrl);
+            }
+            if (!subjectLevel.isEmpty())
+                StageAnalysisEntries(subjectLevel, pipelineName, pipelineRowID, firstStudyRowID, sqrl);
+        }
+        else {
+            qint64 studyRowID = ResolveDerivativeStudy(subjectRowID, "", sqrl);
+            StageAnalysisEntries(subjectLevel, pipelineName, pipelineRowID, studyRowID, sqrl);
+        }
+    }
+
+    return pipelineRowID;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- ScanDerivativeDir ---------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * Descends into directories that contain subject directories (eg freesurfer/subjects/)
+ * up to a fixed depth. Directories for subjects not in the dataset (sub-Talairach,
+ * fsaverage) are leftovers, as is anything else.
+ *
+ * @brief Split a derivative directory into known-subject directories and everything else
+ * @param dir directory to scan
+ * @param depth current depth below the pipeline directory
+ * @param subjectDirs [out] directories of known subjects
+ * @param leftovers [out] all other files/directories (not descended into)
+ * @param sqrl squirrel object
+ */
+void bids::ScanDerivativeDir(QString dir, int depth, QStringList &subjectDirs, QStringList &leftovers, squirrel *sqrl) {
+    const int maxDepth = 3;
+
+    foreach (QString e, ListEntries(dir)) {
+        QFileInfo fi(e);
+        if (!fi.isDir()) {
+            leftovers.append(e);
+            continue;
+        }
+        QString subjectID, sesLabel;
+        if (ParseSubjectDirName(fi.fileName(), subjectID, sesLabel)) {
+            if (sqrl->FindSubject(subjectID) >= 0)
+                subjectDirs.append(e);
+            else {
+                sqrl->Log(QString("  Derivative directory [%1] is not a subject in this dataset; storing it as group-level output").arg(fi.fileName()));
+                leftovers.append(e);
+            }
+            continue;
+        }
+        if ((depth < maxDepth) && ContainsSubjectDir(e, depth + 1, sqrl))
+            ScanDerivativeDir(e, depth + 1, subjectDirs, leftovers, sqrl);
+        else
+            leftovers.append(e);
+    }
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- ContainsSubjectDir --------------------------------------------------- */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Does this directory contain (within the depth limit) a known subject's directory?
+ * @param dir directory to check
+ * @param depth depth of dir below the pipeline directory
+ * @param sqrl squirrel object
+ * @return true if a known subject directory was found
+ */
+bool bids::ContainsSubjectDir(QString dir, int depth, squirrel *sqrl) {
+    const int maxDepth = 3;
+
+    foreach (QString d, utils::FindAllDirs(dir, "*", false)) {
+        QString subjectID, sesLabel;
+        if (ParseSubjectDirName(d, subjectID, sesLabel) && (sqrl->FindSubject(subjectID) >= 0))
+            return true;
+        if ((depth < maxDepth) && ContainsSubjectDir(QString("%1/%2").arg(dir).arg(d), depth + 1, sqrl))
+            return true;
+    }
+    return false;
 }
 
 
@@ -1199,6 +1410,11 @@ bool bids::LoadDerivatives(QString derivativesDir, squirrel *sqrl) {
 /* ---------------------------------------------------------------------------- */
 /**
  * @brief Find the study a derivative analysis should attach to, creating one if needed
+ *
+ * Matches the session label exactly, then as an unambiguous prefix (derivatives
+ * often abbreviate, eg 'ses-pre' for 'ses-preimp'), then falls back to the subject's
+ * first study.
+ *
  * @param subjectRowID parent subject
  * @param sesLabel session/visit label to match (empty = no session)
  * @param sqrl squirrel object
@@ -1207,12 +1423,21 @@ bool bids::LoadDerivatives(QString derivativesDir, squirrel *sqrl) {
 qint64 bids::ResolveDerivativeStudy(qint64 subjectRowID, QString sesLabel, squirrel *sqrl) {
     QList<squirrelStudy> studies = sqrl->GetStudyList(subjectRowID);
 
-    /* prefer a study whose visit type matches the session label */
     if (!sesLabel.isEmpty()) {
+        /* exact match on the visit type */
         foreach (squirrelStudy s, studies) {
             if (s.VisitType == sesLabel)
                 return s.GetObjectID();
         }
+        /* unambiguous prefix match */
+        QList<qint64> prefixMatches;
+        foreach (squirrelStudy s, studies) {
+            if (s.VisitType.startsWith(sesLabel))
+                prefixMatches.append(s.GetObjectID());
+        }
+        if (prefixMatches.size() == 1)
+            return prefixMatches.first();
+        sqrl->Log(QString("  Derivative session [ses-%1] matches no study; using the subject's first study").arg(sesLabel));
     }
     /* otherwise use the subject's first study */
     if (!studies.isEmpty())
@@ -1235,33 +1460,37 @@ qint64 bids::ResolveDerivativeStudy(qint64 subjectRowID, QString sesLabel, squir
 
 
 /* ---------------------------------------------------------------------------- */
-/* ----- AddAnalysisFromDir --------------------------------------------------- */
+/* ----- StageAnalysisEntries ------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */
 /**
- * @brief Create an analysis from a derivative directory and stage its files
- * @param dir directory containing the derivative output for one subject/session
- * @param pipelineName name of the pipeline this analysis belongs to
+ * There is one analysis per (pipeline, study); entries from several derivative
+ * directories that resolve to the same study are added to the same analysis.
+ * Directories are staged whole and copied with their structure intact.
+ *
+ * @brief Stage derivative files/directories into the analysis for a pipeline + study
+ * @param entries files and directories to stage
+ * @param pipelineName name of the pipeline
  * @param pipelineRowID parent pipeline row id
  * @param studyRowID parent study row id
  * @param sqrl squirrel object
- * @return the new analysis row id
+ * @return the analysis row id
  */
-qint64 bids::AddAnalysisFromDir(QString dir, QString pipelineName, qint64 pipelineRowID, qint64 studyRowID, squirrel *sqrl) {
-    squirrelAnalysis a(sqrl->GetDatabaseUUID());
-    a.AnalysisName = pipelineName;
-    a.PipelineName = pipelineName;
-    a.PipelineVersion = 1;
-    a.studyRowID = studyRowID;
-    a.pipelineRowID = pipelineRowID;
-    a.StatusMessage = "Imported from BIDS derivatives";
-    a.Store();
-    qint64 analysisRowID = a.GetObjectID();
+qint64 bids::StageAnalysisEntries(QStringList entries, QString pipelineName, qint64 pipelineRowID, qint64 studyRowID, squirrel *sqrl) {
+    QPair<qint64, qint64> key(pipelineRowID, studyRowID);
+    qint64 analysisRowID = derivAnalyses.value(key, -1);
+    if (analysisRowID < 0) {
+        squirrelAnalysis a(sqrl->GetDatabaseUUID());
+        a.AnalysisName = pipelineName;
+        a.PipelineName = pipelineName;
+        a.PipelineVersion = 1;
+        a.studyRowID = studyRowID;
+        a.pipelineRowID = pipelineRowID;
+        a.StatusMessage = "Imported from BIDS derivatives";
+        a.Store();
+        analysisRowID = a.GetObjectID();
+        derivAnalyses.insert(key, analysisRowID);
+    }
 
-    /* stage the top-level files and directories; directories are copied with their
-     * structure intact, so same-named files in different subdirectories don't collide */
-    QStringList entries = NaturalSort(utils::FindAllFiles(dir, "*", false));
-    foreach (QString d, NaturalSort(utils::FindAllDirs(dir, "*", false)))
-        entries.append(QString("%1/%2").arg(dir).arg(d));
     if (!entries.isEmpty())
         sqrl->AddStagedFiles(Analysis, analysisRowID, entries);
 
@@ -1271,7 +1500,7 @@ qint64 bids::AddAnalysisFromDir(QString dir, QString pipelineName, qint64 pipeli
         utils::GetPathSizeAndFileCount(e, c, b);
         fileCount += c;
     }
-    sqrl->Log(QString("  Added analysis [%1] -> studyRowID [%2] with [%3] file(s)").arg(pipelineName).arg(studyRowID).arg(fileCount));
+    sqrl->Log(QString("  Added [%1] file(s) to analysis [%2] -> studyRowID [%3]").arg(fileCount).arg(pipelineName).arg(studyRowID));
     return analysisRowID;
 }
 
@@ -1286,13 +1515,74 @@ qint64 bids::AddAnalysisFromDir(QString dir, QString pipelineName, qint64 pipeli
  * remaining (session-level) columns as subject observations, prefixed with the
  * session label so repeated measures across sessions stay unique.
  *
- * @param f path to the sessions.tsv file
+ * Column metadata comes from the sessions.json sidecar: the dataset-root sessions.json
+ * (applies to every subject) overridden by the subject's own sub-*_sessions.json. Each
+ * observation's Description is the column's 'Description', and any other column
+ * metadata (Units, Levels, LongName, TermURL, ...) is stored in the observation Notes
+ * as JSON. The merged sidecar itself is kept in the subject Notes (bids.sessions.json),
+ * so descriptions of columns that are not observations (session_id, acq_time) are kept.
+ *
+ * @param f path to the sessions.tsv file (may not exist if only a sessions.json does)
  * @param subjectRowID the parent subject
  * @param sqrl squirrel object
  * @return true if parsed
  */
 bool bids::LoadSessionsFile(QString f, qint64 subjectRowID, squirrel *sqrl) {
     sqrl->Log(QString("Reading sessions file [%1]").arg(f));
+
+    /* column metadata: root sessions.json, then the subject's sidecar (more specific wins) */
+    QJsonObject colMeta;
+    QString subjectJson = f;
+    subjectJson.replace(QRegularExpression("\\.tsv$"), ".json");
+    foreach (QString jf, QStringList({rootDir + "/sessions.json", subjectJson})) {
+        if (!utils::FileExists(jf))
+            continue;
+        QJsonDocument doc = QJsonDocument::fromJson(utils::ReadTextFileToString(jf).toUtf8());
+        if (!doc.isObject()) {
+            sqrl->Log(QString("Warning: could not parse [%1] as JSON").arg(jf));
+            continue;
+        }
+        QJsonObject obj = doc.object();
+        for (auto it = obj.constBegin(); it != obj.constEnd(); ++it) {
+            /* merge key-by-key within each column, so a subject sidecar can override just one field */
+            if (it.value().isObject() && colMeta.value(it.key()).isObject()) {
+                QJsonObject merged = colMeta.value(it.key()).toObject();
+                QJsonObject over = it.value().toObject();
+                for (auto o = over.constBegin(); o != over.constEnd(); ++o)
+                    merged.insert(o.key(), o.value());
+                colMeta.insert(it.key(), merged);
+            }
+            else
+                colMeta.insert(it.key(), it.value());
+        }
+        if (jf == rootDir + "/sessions.json")
+            usedRootFiles.insert(jf);
+    }
+
+    /* keep the merged sidecar in the subject's Notes, so nothing in it is lost */
+    if (!colMeta.isEmpty()) {
+        squirrelSubject subj(sqrl->GetDatabaseUUID());
+        subj.SetObjectID(subjectRowID);
+        if (subj.Get()) {
+            QJsonObject notes;
+            QString existing = subj.Notes.trimmed();
+            if (!existing.isEmpty()) {
+                QJsonDocument doc = QJsonDocument::fromJson(existing.toUtf8());
+                if (doc.isObject())
+                    notes = doc.object();
+                else
+                    notes.insert("text", existing);
+            }
+            QJsonObject bidsMeta = notes.value("bids").toObject();
+            bidsMeta.insert("sessions.json", colMeta);
+            notes.insert("bids", bidsMeta);
+            subj.Notes = QString::fromUtf8(QJsonDocument(notes).toJson(QJsonDocument::Compact));
+            subj.Store();
+        }
+    }
+
+    if (!utils::FileExists(f))
+        return true;
 
     utils::indexedHash tsv;
     QStringList cols;
@@ -1345,6 +1635,15 @@ bool bids::LoadSessionsFile(QString f, qint64 subjectRowID, squirrel *sqrl) {
             obs.InstrumentName = "sessions";
             obs.ObservationName = sesLabel.isEmpty() ? col : QString("%1_%2").arg(sesLabel).arg(col);
             obs.Description = col;
+            if (colMeta.value(col).isObject()) {
+                QJsonObject meta = colMeta.value(col).toObject();
+                QString desc = meta.value("Description").toString().trimmed();
+                if (!desc.isEmpty())
+                    obs.Description = desc;
+                meta.remove("Description");
+                if (!meta.isEmpty())
+                    obs.Notes = QString::fromUtf8(QJsonDocument(meta).toJson(QJsonDocument::Compact));
+            }
             obs.Value = val;
             if (dt.isValid())
                 obs.DateStart = dt;

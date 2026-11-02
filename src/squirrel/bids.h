@@ -48,8 +48,11 @@ public:
 
     /* derivatives -> pipelines + analyses */
     bool LoadDerivatives(QString derivativesDir, squirrel *sqrl);
+    qint64 LoadDerivativePipeline(QString pdir, QString pipelineName, bool subjectsOnly, squirrel *sqrl);
+    void ScanDerivativeDir(QString dir, int depth, QStringList &subjectDirs, QStringList &leftovers, squirrel *sqrl);
+    bool ContainsSubjectDir(QString dir, int depth, squirrel *sqrl);
     qint64 ResolveDerivativeStudy(qint64 subjectRowID, QString sesLabel, squirrel *sqrl);
-    qint64 AddAnalysisFromDir(QString dir, QString pipelineName, qint64 pipelineRowID, qint64 studyRowID, squirrel *sqrl);
+    qint64 StageAnalysisEntries(QStringList entries, QString pipelineName, qint64 pipelineRowID, qint64 studyRowID, squirrel *sqrl);
 
     /* top-level directories without a squirrel object of their own */
     bool LoadStimuliDir(QString stimuliDir, squirrel *sqrl);
@@ -66,7 +69,9 @@ public:
 
 private:
     QStringList rootInheritable;     /*!< dataset-root sidecars (eg T1w.json, dwi.bval) applied by the BIDS inheritance principle */
-    QSet<QString> usedRootFiles;     /*!< root files that were applied to a series or staged in an experiment */
+    QString rootDir;                 /*!< the BIDS dataset root directory */
+    QSet<QString> usedRootFiles;
+    QHash<QPair<qint64, qint64>, qint64> derivAnalyses; /*!< (pipeline, study) -> analysis row id, for derivative imports */     /*!< root files that were applied to a series or staged in an experiment */
 };
 
 #endif // BIDS_H

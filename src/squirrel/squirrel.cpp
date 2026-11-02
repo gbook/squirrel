@@ -2229,6 +2229,17 @@ bool squirrel::AddStagedFiles(ObjectType object, qint64 rowid, QStringList files
         }
     }
 
+    if (object == GroupAnalysis) {
+        squirrelGroupAnalysis g(databaseUUID);
+        g.SetObjectID(rowid);
+        if (g.Get()) {
+            foreach (QString f, files)
+                g.stagedFiles.append(f);
+            if (g.Store())
+                return true;
+        }
+    }
+
     return false;
 }
 
