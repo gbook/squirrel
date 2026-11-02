@@ -13,6 +13,9 @@
 #
 # Finished installers are collected into ./installers/ with distro-tagged names.
 # The Python wheels (manylinux, built in a container) are collected there too.
+# Each target's full build output is also written to ./installers/logs/
+# (e.g. squirrel_2026.11.515_AlmaLinux-8.log), along with a summary file, so a
+# failure in the summary can be traced back to its log.
 
 SRCDIR="$(pwd)"
 SHARED=/mnt/wsl/squirrel-build
@@ -37,8 +40,27 @@ INSTALLERS=(
     "Debian:deb:bin/debian12/squirrel"
 )
 declare -A RESULTS
+declare -A LOGS
 
-mkdir -p "$OUTDIR"
+LOGDIR="$OUTDIR/logs"
+mkdir -p "$OUTDIR" "$LOGDIR"
+
+# Log file for a target, versioned so earlier runs are kept.
+logfile() {   # $1 = target name
+    echo "$LOGDIR/${DEB_PACKAGE}_$1.log"
+}
+
+# Start a fresh log for a target with a header, and remember its path.
+start_log() {   # $1 = target name
+    local log
+    log=$(logfile "$1")
+    LOGS[$1]="$log"
+    {
+        echo "# $1 installer build"
+        echo "# Started: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo ""
+    } > "$log"
+}
 
 echo "Mounting source at $SHARED (shared across all WSL2 distros)..."
 sudo mkdir -p $SHARED
@@ -61,14 +83,16 @@ echo ""
 echo "=========================================="
 echo "  Ubuntu 24 (local): building .deb"
 echo "=========================================="
+start_log Ubuntu-24
 if [ -d "bin/ubuntu24/squirrel" ]; then
-    if bash createInstallerDebian.sh bin/ubuntu24/squirrel && collect_deb ubuntu24; then
+    { bash createInstallerDebian.sh bin/ubuntu24/squirrel && collect_deb ubuntu24; } 2>&1 | tee -a "${LOGS[Ubuntu-24]}"
+    if [ "${PIPESTATUS[0]}" -eq 0 ]; then
         RESULTS[Ubuntu-24]="SUCCESS"
     else
         RESULTS[Ubuntu-24]="FAILED"
     fi
 else
-    echo "SKIP: bin/ubuntu24/squirrel not found (run build-all.sh first)"
+    echo "SKIP: bin/ubuntu24/squirrel not found (run build-all.sh first)" | tee -a "${LOGS[Ubuntu-24]}"
     RESULTS[Ubuntu-24]="SKIPPED (no build)"
 fi
 
@@ -79,18 +103,23 @@ for ENTRY in "${INSTALLERS[@]}"; do
     echo "=========================================="
     echo "  $DISTRO: building .$TYPE"
     echo "=========================================="
+    start_log "$DISTRO"
+    LOG="${LOGS[$DISTRO]}"
 
     case "$TYPE" in
         deb)
             if [ ! -d "$FIELD" ]; then
-                echo "SKIP: $FIELD not found (run build-all.sh first)"
+                echo "SKIP: $FIELD not found (run build-all.sh first)" | tee -a "$LOG"
                 RESULTS[$DISTRO]="SKIPPED (no build)"
                 continue
             fi
             # Build the .deb inside the distro, then collect on the host side.
-            wsl.exe -d "$DISTRO" -- bash -c \
-                "cd $SHARED && PATH=$CLEANPATH bash createInstallerDebian.sh $FIELD"
-            if [ $? -eq 0 ] && collect_deb "$DISTRO"; then
+            {
+                wsl.exe -d "$DISTRO" -- bash -c \
+                    "cd $SHARED && PATH=$CLEANPATH bash createInstallerDebian.sh $FIELD" \
+                    && collect_deb "$DISTRO"
+            } 2>&1 | tee -a "$LOG"
+            if [ "${PIPESTATUS[0]}" -eq 0 ]; then
                 RESULTS[$DISTRO]="SUCCESS"
             else
                 RESULTS[$DISTRO]="FAILED"
@@ -103,8 +132,9 @@ for ENTRY in "${INSTALLERS[@]}"; do
             wsl.exe -d "$DISTRO" -- bash -c \
                 "cd $SHARED && PATH=$CLEANPATH bash createInstallerRHEL.sh && \
                  mkdir -p $SHARED/installers && \
-                 cp -v ~/rpmbuild/RPMS/x86_64/squirrel-*.rpm $SHARED/installers/"
-            if [ $? -eq 0 ]; then
+                 cp -v ~/rpmbuild/RPMS/x86_64/squirrel-*.rpm $SHARED/installers/" \
+                2>&1 | tee -a "$LOG"
+            if [ "${PIPESTATUS[0]}" -eq 0 ]; then
                 RESULTS[$DISTRO]="SUCCESS"
             else
                 RESULTS[$DISTRO]="FAILED"
@@ -124,28 +154,55 @@ echo ""
 echo "=========================================="
 echo "  Python wheels (manylinux container)"
 echo "=========================================="
+start_log Python-wheels
 if [ "$SKIP_WHEELS" = "1" ]; then
     RESULTS[Python-wheels]="SKIPPED (SKIP_WHEELS=1)"
 elif ! command -v docker >/dev/null 2>&1 && ! command -v podman >/dev/null 2>&1; then
-    echo "SKIP: neither docker nor podman found"
+    echo "SKIP: neither docker nor podman found" | tee -a "${LOGS[Python-wheels]}"
     RESULTS[Python-wheels]="SKIPPED (no docker/podman)"
 else
     rm -rf python/wheelhouse
-    if bash python/packaging/build-wheels.sh && cp -v python/wheelhouse/*.whl "$OUTDIR/"; then
+    { bash python/packaging/build-wheels.sh && cp -v python/wheelhouse/*.whl "$OUTDIR/"; } \
+        2>&1 | tee -a "${LOGS[Python-wheels]}"
+    if [ "${PIPESTATUS[0]}" -eq 0 ]; then
         RESULTS[Python-wheels]="SUCCESS"
     else
         RESULTS[Python-wheels]="FAILED"
     fi
 fi
 
-echo ""
-echo "========== Installer Summary =========="
-printf "  %-20s %s\n" "Ubuntu-24" "${RESULTS[Ubuntu-24]}"
+# Append the result to each log, then print the summary to the console and to
+# a summary file next to the logs. Non-successful targets show their log path.
+SUMMARY="$LOGDIR/${DEB_PACKAGE}_summary.txt"
+TARGETS=(Ubuntu-24)
 for ENTRY in "${INSTALLERS[@]}"; do
     IFS=':' read -r DISTRO _ _ <<< "$ENTRY"
-    printf "  %-20s %s\n" "$DISTRO" "${RESULTS[$DISTRO]}"
+    TARGETS+=("$DISTRO")
 done
-printf "  %-20s %s\n" "Python-wheels" "${RESULTS[Python-wheels]}"
-echo "======================================="
+TARGETS+=(Python-wheels)
+
+for T in "${TARGETS[@]}"; do
+    if [ -n "${LOGS[$T]}" ]; then
+        {
+            echo ""
+            echo "# Finished: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "# Result: ${RESULTS[$T]}"
+        } >> "${LOGS[$T]}"
+    fi
+done
+
+{
+    echo ""
+    echo "========== Installer Summary =========="
+    echo "  Run finished: $(date '+%Y-%m-%d %H:%M:%S')"
+    for T in "${TARGETS[@]}"; do
+        printf "  %-20s %s\n" "$T" "${RESULTS[$T]}"
+        if [ "${RESULTS[$T]}" != "SUCCESS" ] && [ -n "${LOGS[$T]}" ]; then
+            printf "  %-20s   log: %s\n" "" "${LOGS[$T]}"
+        fi
+    done
+    echo "======================================="
+} | tee "$SUMMARY"
+echo "Logs and summary written to: $LOGDIR"
 echo "Installers collected in: $OUTDIR"
 ls -1 "$OUTDIR" 2>/dev/null | sed 's/^/  /'
