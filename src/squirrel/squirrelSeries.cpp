@@ -589,6 +589,10 @@ QStringList squirrelSeries::AnonymizedParamKeys() {
     anonFields << "AcquisitionDate";
     anonFields << "AcquisitionTime";
     anonFields << "CommentsOnThePerformedProcedureSte";
+    anonFields << "DatasetName";          /* PAR/REC export path, may contain the patient name */
+    anonFields << "ExaminationDate";      /* PAR/REC (older NiDB versions) */
+    anonFields << "ExaminationName";      /* PAR/REC (older NiDB versions) */
+    anonFields << "ExaminationTime";      /* PAR/REC (older NiDB versions) */
     anonFields << "ContentDate";
     anonFields << "ContentTime";
     anonFields << "Filename";
