@@ -54,7 +54,7 @@ public:
     void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
 
     /* squirrel database variables */
-    qint64 subjectRowID;        /*!< database row ID of the parent object */
+    qint64 subjectRowID = -1;        /*!< database row ID of the parent object */
 
     /* JSON elements */
     QDateTime DateEnd;           /*!< Intervention end date */
@@ -74,7 +74,7 @@ public:
     QString InterventionName;    /*!< Intervention name (required) */
     QString Notes;               /*!< freeform field for notes */
     QString Rater;               /*!< rater/experimenter/prescriber */
-    double DoseAmount;           /*!< dose amount (required) */
+    double DoseAmount = 0.0;           /*!< dose amount (required) */
     double FrequencyValue = 0.0; /*!< frequency value, eg 6 for 'every 6 hours' */
 
 private:

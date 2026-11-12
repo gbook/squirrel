@@ -294,11 +294,11 @@ private:
     /* flags */
     bool cmdLineExec; /* true if running from command line, false if running from library */
     bool debug;
-    bool debugSQL;
-    bool isModified; /* true if any object in the package has been modified */
+    bool debugSQL = false;
+    bool isModified = false; /* true if any object in the package has been modified */
     bool isOkToDelete;
     bool isValid;
-    bool overwritePackage;
+    bool overwritePackage = false;
     bool quickRead; /* set true to skip reading of the params.json files */
     bool useEmbeddedDb = true; /* false to make Read() ignore squirrel.db */
     bool dbFromFullRead = false; /* true if the live database holds a complete (non-quick) read of the package */

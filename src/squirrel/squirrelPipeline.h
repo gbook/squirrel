@@ -50,16 +50,16 @@ struct dataStep {
     QString SearchNumberImagesCriteria;         /*!< criteria on the number of images (files) in a series, ie '>100' */
     QString SearchProtocol;                     /*!< protocol name(s) to search for */
     QString SearchSeriesCriteria;               /*!< criteria for downloading data from a study, if more than one series matches the protocol: all, first, last, largest, smallest, usecriteria */
-    int StepNumber;                             /*!< order of this step */
+    int StepNumber = 0;                             /*!< order of this step */
 
     struct flag {
-        bool ExportGzip;                    /*!< whether Nifti data should be zipped (.nii.gz) */
-        bool ExportPreserveSeriesNumber;    /*!< whether to preserve the series number, if writing series directories. Otherwise the series directories are generated sequentially starting at 1 */
-        bool ExportWritePhaseDirectory;     /*!< whether to place data into a sub-directory based on the phase-encoding direction */
-        bool ExportWriteSeriesDirectory;    /*!< true to write each series to an individually numbered directory, otherwise write it to the directory specified in 'location' */
-        bool IsEnabled;                     /*!< whether this step is enabled */
-        bool IsOptional;                    /*!< if the step is optional */
-        bool IsPrimaryProtocol;             /*!< true if this is the primary protocol. this determines if this study will be used as the parent for child pipelines */
+        bool ExportGzip = false;                    /*!< whether Nifti data should be zipped (.nii.gz) */
+        bool ExportPreserveSeriesNumber = false;    /*!< whether to preserve the series number, if writing series directories. Otherwise the series directories are generated sequentially starting at 1 */
+        bool ExportWritePhaseDirectory = false;     /*!< whether to place data into a sub-directory based on the phase-encoding direction */
+        bool ExportWriteSeriesDirectory = false;    /*!< true to write each series to an individually numbered directory, otherwise write it to the directory specified in 'location' */
+        bool IsEnabled = false;                     /*!< whether this step is enabled */
+        bool IsOptional = false;                    /*!< if the step is optional */
+        bool IsPrimaryProtocol = false;             /*!< true if this is the primary protocol. this determines if this study will be used as the parent for child pipelines */
     } flags;
 };
 
@@ -116,16 +116,16 @@ public:
     QString SetupWriteBids;
     QStringList PipelineCompleteFiles;      /*!< list of files that must exists to indicate the analysis was complete */
     QStringList SearchParentPipelines;    /*!< list of pipelines on which this pipeline depends */
-    int ClusterMaxWallTime;         /*!< [NiDB] maximum allowed clock (wall) time the analysis is allowed to run (minutes) */
-    int ClusterMemory;              /*!< [NiDB] memory requested */
-    int ClusterNumberConcurrentAnalyses;   /*!< [NiDB] max number of concurrent analyses allowed to run */
-    int ClusterNumberCores;         /*!< [NiDB] number of cores requested */
-    int ClusterSubmitDelay;                /*!< [NiDB] time in hours after the study datetime to delay before running this analysis */
-    int PipelineAnalysisLevel;                      /*!< 1 (subject), or 2 (group) */
-    int PipelineVersion;                    /*!< pipeline version (required) */
+    int ClusterMaxWallTime = 0;         /*!< [NiDB] maximum allowed clock (wall) time the analysis is allowed to run (minutes) */
+    int ClusterMemory = 0;              /*!< [NiDB] memory requested */
+    int ClusterNumberConcurrentAnalyses = 0;   /*!< [NiDB] max number of concurrent analyses allowed to run */
+    int ClusterNumberCores = 0;         /*!< [NiDB] number of cores requested */
+    int ClusterSubmitDelay = 0;                /*!< [NiDB] time in hours after the study datetime to delay before running this analysis */
+    int PipelineAnalysisLevel = 0;                      /*!< 1 (subject), or 2 (group) */
+    int PipelineVersion = 0;                    /*!< pipeline version (required) */
     struct flag {
-        bool SetupUseProfile;            /*!< whether to use the profile command to see CPU and memory usage history for each analysis */
-        bool SetupUseTempDirectory;      /*!< whether to use a temp directory or not */
+        bool SetupUseProfile = false;            /*!< whether to use the profile command to see CPU and memory usage history for each analysis */
+        bool SetupUseTempDirectory = false;      /*!< whether to use a temp directory or not */
     } flags;
 
     QList<dataStep> dataSteps;

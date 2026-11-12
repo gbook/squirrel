@@ -51,7 +51,7 @@ public:
     void SetDatabaseUUID(QString dbID) { databaseUUID = dbID; }
     void SetObjectID(qint64 id) { objectID = id; }
 
-    qint64 subjectRowID;
+    qint64 subjectRowID = -1;
 
     /* JSON elements */
     QDateTime DateEnd;          /*!< end date of the observationment */
@@ -66,7 +66,7 @@ public:
     QString Notes;              /*!< notes about the observation */
     QString Rater;              /*!< name or username of the person who rated the observation */
     QString Value;              /*!< value, in string or number stored as a string */
-    double Duration;            /*!< duration of the observation, in seconds */
+    double Duration = 0.0;            /*!< duration of the observation, in seconds */
 
 private:
     bool valid = false;

@@ -1091,6 +1091,33 @@ bool squirrel::Write() {
                                 Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
                         }
                     }
+                    else if ((DataFormat == "anon") || (DataFormat == "anonfull")) {
+                        /* anonymize any modality (not just MR) - copy the files directly into the series directory, then anonymize them in place */
+                        int numCopyErrors(0);
+                        foreach (QString f, series.stagedFiles) {
+                            if (utils::CopyFileToDir(f, seriesPath))
+                                Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(seriesPath));
+                            else {
+                                Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
+                                numCopyErrors++;
+                            }
+                        }
+                        if (numCopyErrors > 0)
+                            Log(QString("  ERROR [%1] of [%2] files could not be copied to [%3] for anonymization").arg(numCopyErrors).arg(series.stagedFiles.size()).arg(seriesPath));
+
+                        /* anonymize the directory */
+                        squirrelImageIO io;
+                        QString m;
+                        bool anonOK;
+                        if (DataFormat == "anon")
+                            anonOK = io.AnonymizeDicomDirInPlace(seriesPath, 1, m);
+                        else
+                            anonOK = io.AnonymizeDicomDirInPlace(seriesPath, 2, m);
+                        if (anonOK)
+                            Debug(m, __FUNCTION__);
+                        else
+                            Log(QString("  ERROR anonymizing DICOM files in [%1]: %2").arg(seriesPath).arg(m));
+                    }
                     else if (study.Modality.toUpper() != "MR") {
                         Debug(QString("Study modality is [%1]. Copying files...").arg(study.Modality.toUpper()), __FUNCTION__);
                         /* copy all of the series files to the temp directory */
@@ -1100,47 +1127,6 @@ bool squirrel::Write() {
                             else
                                 Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(seriesPath));
                         }
-                    }
-                    else if ((DataFormat == "anon") || (DataFormat == "anonfull")) {
-                        /* create temp directory for the anonymization */
-                        QString td;
-                        if (MakeTempDir(td)) {
-                            /* copy all files to temp directory */
-                            QString systemstring;
-                            foreach (QString f, series.stagedFiles) {
-                                if (utils::CopyFileToDir(f, td))
-                                    Debug(QString("  ... copying original files from %1 to %2").arg(f).arg(td));
-                                else
-                                    Log(QString("  ERROR copying original files from %1 to %2").arg(f).arg(td));
-                            }
-
-                            /* copy all dicom files from indir to outdir */
-                            systemstring = QString("rsync %1/* %2/").arg(td).arg(seriesPath);
-                            utils::SystemCommand(systemstring);
-
-                            /* anonymize the directory */
-                            squirrelImageIO io;
-                            QString m;
-                            bool anonOK;
-                            if (DataFormat == "anon")
-                                anonOK = io.AnonymizeDicomDirInPlace(seriesPath, 1, m);
-                            else
-                                anonOK = io.AnonymizeDicomDirInPlace(seriesPath, 2, m);
-                            if (anonOK)
-                                Debug(m, __FUNCTION__);
-                            else
-                                Log(QString("  ERROR anonymizing DICOM files in [%1]: %2").arg(seriesPath).arg(m));
-
-                            /* move the anonymized files to the staging area */
-                            //systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);
-                            //Log(QString("  ... anonymizing DICOM files from %1 to %2").arg(td).arg(seriesPath));
-                            //Debug(utils::SystemCommand(systemstring), __FUNCTION__);
-
-                            /* delete temp directory */
-                            DeleteTempDir(td);
-                        }
-                        else
-                            Log("Error creating temp directory for DICOM anonymization");
                     }
                     else if (DataFormat.contains("nifti")) {
                         int numConv(0), numRename(0);
