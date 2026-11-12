@@ -1121,10 +1121,15 @@ bool squirrel::Write() {
                             /* anonymize the directory */
                             squirrelImageIO io;
                             QString m;
+                            bool anonOK;
                             if (DataFormat == "anon")
-                                io.AnonymizeDicomDirInPlace(seriesPath, 1, m);
+                                anonOK = io.AnonymizeDicomDirInPlace(seriesPath, 1, m);
                             else
-                                io.AnonymizeDicomDirInPlace(seriesPath, 2, m);
+                                anonOK = io.AnonymizeDicomDirInPlace(seriesPath, 2, m);
+                            if (anonOK)
+                                Debug(m, __FUNCTION__);
+                            else
+                                Log(QString("  ERROR anonymizing DICOM files in [%1]: %2").arg(seriesPath).arg(m));
 
                             /* move the anonymized files to the staging area */
                             //systemstring = QString("mv %1/* %2/").arg(td).arg(seriesPath);

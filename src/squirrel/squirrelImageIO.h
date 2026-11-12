@@ -29,6 +29,7 @@
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dcfilefo.h"
 #include "dcmtk/dcmdata/dcdatset.h"
+#include "dcmtk/dcmdata/dcmetinf.h"
 #include "dcmtk/dcmdata/dcdeftag.h"
 #include "dcmtk/dcmdata/dcdict.h"
 #include "utils.h"
@@ -53,10 +54,9 @@ public:
 
     /* DICOM & image functions */
     bool ConvertDicom(QString filetype, QString indir, QString outdir, QString bindir, bool gzip, QString uid, QString studynum, QString seriesnum, QString datatype, int &numfilesconv, int &numfilesrenamed, QString &msg);
-    bool IsDICOMFile(QString f);
 
     bool AnonymizeDicomDirInPlace(QString dir, int anonlevel, QString &msg);
-    bool AnonymizeDicomFileInPlace(QString file, QStringList tagsToChange, QString &msg);
+    bool AnonymizeDicomFileInPlace(QString file, QList<DcmTagKey> tagsToChange, QString &msg);
 
     //bool AnonymizeDir(QString dir, int anonlevel, QString randstr1, QString randstr2, QString &msg);
     //bool AnonymizeDicomFile(gdcm::Anonymizer &anon, QString infile, QString outfile, std::vector<gdcm::Tag> const &empty_tags, std::vector<gdcm::Tag> const &remove_tags, std::vector< std::pair<gdcm::Tag, std::string> > const & replace_tags, QString &msg);

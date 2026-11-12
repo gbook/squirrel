@@ -483,57 +483,111 @@ bool squirrelImageIO::ConvertDicom(QString filetype, QString indir, QString outd
 
 
 /* ---------------------------------------------------------- */
-/* --------- IsDICOMFile ------------------------------------ */
-/* ---------------------------------------------------------- */
-bool squirrelImageIO::IsDICOMFile(QString f) {
-    /* check if its really a dicom file... */
-    /* try reading with exiftool */
-    QHash<QString, QString> tags;
-    QString exifoutput = Exiftool(f);
-    QStringList lines = exifoutput.split(QRegularExpression("(\\n|\\r\\n|\\r)"), Qt::SkipEmptyParts);
-
-    foreach (QString line, lines) {
-        QString delimiter = ":";
-        qint64 index = line.indexOf(delimiter);
-
-        if (index != -1) {
-            QString firstPart = line.mid(0, index).replace(" ", "");
-            QString secondPart = line.mid(index + delimiter.length());
-            tags[firstPart.trimmed()] = secondPart.trimmed();
-        }
-    }
-
-    if (tags["FileType"] != "DICOM")
-        return false;
-    else
-        return false;
-}
-
-
-/* ---------------------------------------------------------- */
 /* --------- AnonymizeDicomFileInPlace ---------------------- */
 /* ---------------------------------------------------------- */
-/* borrowed in its entirety from gdcmanon.cxx                 */
-bool squirrelImageIO::AnonymizeDicomFileInPlace(QString file, QStringList tagsToChange, QString &msg)
+/**
+ * @brief Anonymize a single DICOM file in place using DCMTK
+ *
+ * Each listed tag that exists in the top-level dataset is overwritten with a
+ * value appropriate for its VR: dates become 19000101, times 000000.000000,
+ * person names and text become "Anon", numeric/age values are emptied, and
+ * sequences are removed. Tags not present in the file are not added.
+ *
+ * The file is written to a temporary file in the same directory, which then
+ * replaces the original, so a failure never leaves a half-written file.
+ *
+ * @param file the DICOM file
+ * @param tagsToChange list of tags to anonymize
+ * @param msg error/status messages
+ * @return true if the file was successfully anonymized and saved
+ */
+bool squirrelImageIO::AnonymizeDicomFileInPlace(QString file, QList<DcmTagKey> tagsToChange, QString &msg)
 {
-    if( tagsToChange.isEmpty() ) {
-        msg += "AnonymizeDICOMFile() called with no tags to change. No operation to be done.";
+    if (tagsToChange.isEmpty()) {
+        msg += QString("AnonymizeDicomFileInPlace() called with no tags to change for [%1]. No operation to be done.").arg(file);
         return false;
     }
 
-    /* do the command line anonymization */
-    int i(0);
-    QStringList subsetTags;
-    foreach (const QString &str, tagsToChange) {
-        if (i > 10) {
-            QString systemstring = QString("gdcmanon --dumb -i %1 -o %2 %3").arg(file).arg(subsetTags.join(" "));
-            QString output = utils::SystemCommand(systemstring, false);
-            msg += output;
-            i=0;
-            subsetTags.clear();
+    const QByteArray fileBA = QFile::encodeName(file);
+
+    DcmFileFormat fileformat;
+    OFCondition status = fileformat.loadFile(fileBA.constData());
+    if (status.bad()) {
+        msg += QString("Not a readable DICOM file [%1]: %2").arg(file).arg(status.text());
+        return false;
+    }
+
+    /* pixel data and other large elements are read lazily from the original file
+       by default. Load everything now, because the original is about to be replaced */
+    status = fileformat.loadAllDataIntoMemory();
+    if (status.bad()) {
+        msg += QString("Unable to load all data from [%1]: %2").arg(file).arg(status.text());
+        return false;
+    }
+
+    const char *anonStr = "Anon";
+    const char *anonDate = "19000101";
+    const char *anonTime = "000000.000000";
+    const char *anonDateTime = "19000101000000.000000";
+
+    DcmDataset *dataset = fileformat.getDataset();
+    QStringList errors;
+    foreach (const DcmTagKey &key, tagsToChange) {
+        DcmElement *elem = nullptr;
+        if (dataset->findAndGetElement(key, elem, OFFalse /*searchIntoSub*/).bad() || (elem == nullptr))
+            continue; /* tag not present - nothing to anonymize */
+
+        OFCondition cond;
+        switch (elem->ident()) {
+            case EVR_SQ:
+                cond = dataset->findAndDeleteElement(key);
+                break;
+            case EVR_DA:
+                cond = dataset->putAndInsertString(key, anonDate);
+                break;
+            case EVR_TM:
+                cond = dataset->putAndInsertString(key, anonTime);
+                break;
+            case EVR_DT:
+                cond = dataset->putAndInsertString(key, anonDateTime);
+                break;
+            case EVR_PN:
+            case EVR_LO:
+            case EVR_SH:
+            case EVR_ST:
+            case EVR_LT:
+            case EVR_UT:
+            case EVR_UC:
+            case EVR_CS:
+                cond = dataset->putAndInsertString(key, anonStr);
+                break;
+            default:
+                /* AS, DS, IS, binary, etc - "Anon" is not a valid value, so empty it */
+                cond = dataset->putAndInsertString(key, "");
+                break;
         }
-        subsetTags.append(str);
-        i++;
+        if (cond.bad())
+            errors << QString("(%1,%2): %3").arg(key.getGroup(), 4, 16, QChar('0')).arg(key.getElement(), 4, 16, QChar('0')).arg(cond.text());
+    }
+
+    if (!errors.isEmpty()) {
+        msg += QString("Unable to anonymize tags in [%1]: %2").arg(file).arg(errors.join("; "));
+        return false;
+    }
+
+    /* save to a temp file, keeping the original transfer syntax, then replace the original */
+    const QString tmpFile = file + ".anon.tmp";
+    const QByteArray tmpBA = QFile::encodeName(tmpFile);
+    status = fileformat.saveFile(tmpBA.constData(), EXS_Unknown);
+    if (status.bad()) {
+        QFile::remove(tmpFile);
+        msg += QString("Unable to save anonymized file [%1]: %2").arg(tmpFile).arg(status.text());
+        return false;
+    }
+    if (!QFile::remove(file) || !QFile::rename(tmpFile, file)) {
+        QFile::remove(tmpFile);
+        msg += QString("Unable to replace [%1] with anonymized file").arg(file);
+        return false;
     }
 
     return true;
@@ -541,121 +595,131 @@ bool squirrelImageIO::AnonymizeDicomFileInPlace(QString file, QStringList tagsTo
 
 
 /* ---------------------------------------------------------- */
-/* --------- AnonymizeDir ----------------------------------- */
+/* --------- AnonymizeDicomDirInPlace ----------------------- */
 /* ---------------------------------------------------------- */
+/**
+ * @brief Anonymize all DICOM files in a directory, in place
+ * @param dir directory containing the DICOM files (files without a .dcm extension are included)
+ * @param anonlevel 0 = none, 1 or 3 = partial (names and birthdate), 2 = full, 4 = patient name only
+ * @param msg error/status messages
+ * @return true if every DICOM file found was anonymized, false if any failed
+ */
 bool squirrelImageIO::AnonymizeDicomDirInPlace(QString dir, int anonlevel, QString &msg) {
 
-
-    // gdcmanon --dumb -i /path/to/dicom --replace 10,10=Anonymous -o /path/to/output <-- output will be created if it doesn't exist
-
-    QString anonStr = "Anon";
-    QString anonDate = "19000101";
-    QString anonTime = "000000.000000";
-
-    QStringList cmdArgs;
+    QList<DcmTagKey> tags;
 
     switch (anonlevel) {
     case 0: {
         msg += "No anonymization requested. Leaving files unchanged.";
-        return 0;
+        return true;
     }
     case 1:
     case 3: {
-        /* partial anonmymization - remove the obvious stuff like name and DOB */
-        cmdArgs.append(QString("--replace 8,90='%1'").arg(anonStr)); // ReferringPhysicianName
-        cmdArgs.append(QString("--replace 8,1050='%1'").arg(anonStr)); // PerformingPhysicianName
-        cmdArgs.append(QString("--replace 8,1070='%1'").arg(anonStr)); // OperatorsName
-        cmdArgs.append(QString("--replace 10,10='%1'").arg(anonStr)); // PatientName
-        cmdArgs.append(QString("--replace 10,30='%1'").arg(anonStr)); // PatientBirthDate
-
+        /* partial anonymization - remove the obvious stuff like name and DOB */
+        tags << DcmTagKey(0x0008, 0x0090)  // ReferringPhysicianName
+             << DcmTagKey(0x0008, 0x1050)  // PerformingPhysicianName
+             << DcmTagKey(0x0008, 0x1070)  // OperatorsName
+             << DcmTagKey(0x0010, 0x0010)  // PatientName
+             << DcmTagKey(0x0010, 0x0030); // PatientBirthDate
         break;
     }
     case 2: {
         /* Full anonymization. remove all names, dates, locations. ANYTHING identifiable */
-        cmdArgs.append(QString("--replace 8,12='%1'").arg(anonDate)); // InstanceCreationDate
-        cmdArgs.append(QString("--replace 8,13='%1'").arg(anonDate)); // InstanceCreationTime
-        cmdArgs.append(QString("--replace 8,20='%1'").arg(anonDate)); // StudyDate
-        cmdArgs.append(QString("--replace 8,21='%1'").arg(anonDate)); // SeriesDate
-        cmdArgs.append(QString("--replace 8,22='%1'").arg(anonDate)); // AcquisitionDate
-        cmdArgs.append(QString("--replace 8,23='%1'").arg(anonDate)); // ContentDate
-        cmdArgs.append(QString("--replace 8,30='%1'").arg(anonTime)); //StudyTime
-        cmdArgs.append(QString("--replace 8,31='%1'").arg(anonTime)); //SeriesTime
-        cmdArgs.append(QString("--replace 8,32='%1'").arg(anonTime)); //AcquisitionTime
-        cmdArgs.append(QString("--replace 8,33='%1'").arg(anonTime)); //ContentTime
-        cmdArgs.append(QString("--replace 8,80='%1'").arg(anonStr)); // InstitutionName
-        cmdArgs.append(QString("--replace 8,81='%1'").arg(anonStr)); // InstitutionAddress
-        cmdArgs.append(QString("--replace 8,90='%1'").arg(anonStr)); // ReferringPhysicianName
-        cmdArgs.append(QString("--replace 8,92='%1'").arg(anonStr)); // ReferringPhysicianAddress
-        cmdArgs.append(QString("--replace 8,94='%1'").arg(anonStr)); // ReferringPhysicianTelephoneNumber
-        cmdArgs.append(QString("--replace 8,96='%1'").arg(anonStr)); // ReferringPhysicianIDSequence
-        cmdArgs.append(QString("--replace 8,1010='%1'").arg(anonStr)); // StationName
-        cmdArgs.append(QString("--replace 8,1030='%1'").arg(anonStr)); // StudyDescription
-        cmdArgs.append(QString("--replace 8,103E='%1'").arg(anonStr)); // SeriesDescription
-        cmdArgs.append(QString("--replace 8,1048='%1'").arg(anonStr)); // PhysiciansOfRecord
-        cmdArgs.append(QString("--replace 8,1050='%1'").arg(anonStr)); // PerformingPhysicianName
-        cmdArgs.append(QString("--replace 8,1060='%1'").arg(anonStr)); // NameOfPhysicianReadingStudy
-        cmdArgs.append(QString("--replace 8,1070='%1'").arg(anonStr)); // OperatorsName
-
-        cmdArgs.append(QString("--replace 10,10='%1'").arg(anonStr)); // PatientName
-        cmdArgs.append(QString("--replace 10,20='%1'").arg(anonStr)); // PatientID
-        cmdArgs.append(QString("--replace 10,21='%1'").arg(anonStr)); // IssuerOfPatientID
-        cmdArgs.append(QString("--replace 10,30='%1'").arg(anonDate)); // PatientBirthDate
-        cmdArgs.append(QString("--replace 10,32='%1'").arg(anonTime)); // PatientBirthTime
-        cmdArgs.append(QString("--replace 10,50='%1'").arg(anonStr)); // PatientInsurancePlanCodeSequence
-        cmdArgs.append(QString("--replace 10,1000='%1'").arg(anonStr)); // OtherPatientIDs
-        cmdArgs.append(QString("--replace 10,1001='%1'").arg(anonStr)); // OtherPatientNames
-        cmdArgs.append(QString("--replace 10,1005='%1'").arg(anonStr)); // PatientBirthName
-        cmdArgs.append(QString("--replace 10,1010='%1'").arg(anonStr)); // PatientAge
-        cmdArgs.append(QString("--replace 10,1020='%1'").arg(anonStr)); // PatientSize
-        cmdArgs.append(QString("--replace 10,1030='%1'").arg(anonStr)); // PatientWeight
-        cmdArgs.append(QString("--replace 10,1040='%1'").arg(anonStr)); // PatientAddress
-        cmdArgs.append(QString("--replace 10,1060='%1'").arg(anonStr)); // PatientMotherBirthName
-        cmdArgs.append(QString("--replace 10,2154='%1'").arg(anonStr)); // PatientTelephoneNumbers
-        cmdArgs.append(QString("--replace 10,21B0='%1'").arg(anonStr)); // AdditionalPatientHistory
-        cmdArgs.append(QString("--replace 10,21F0='%1'").arg(anonStr)); // PatientReligiousPreference
-        cmdArgs.append(QString("--replace 10,4000='%1'").arg(anonStr)); // PatientComments
-
-        cmdArgs.append(QString("--replace 18,1030='%1'").arg(anonStr)); // ProtocolName
-
-        cmdArgs.append(QString("--replace 32,1032='%1'").arg(anonStr)); // RequestingPhysician
-        cmdArgs.append(QString("--replace 32,1060='%1'").arg(anonStr)); // RequestedProcedureDescription
-
-        cmdArgs.append(QString("--replace 40,6='%1'").arg(anonStr)); // ScheduledPerformingPhysiciansName
-        cmdArgs.append(QString("--replace 40,244='%1'").arg(anonDate)); // PerformedProcedureStepStartDate
-        cmdArgs.append(QString("--replace 40,245='%1'").arg(anonTime)); // PerformedProcedureStepStartTime
-        cmdArgs.append(QString("--replace 40,253='%1'").arg(anonStr)); // PerformedProcedureStepID
-        cmdArgs.append(QString("--replace 40,254='%1'").arg(anonStr)); // PerformedProcedureStepDescription
-        cmdArgs.append(QString("--replace 40,4036='%1'").arg(anonStr)); // HumanPerformerOrganization
-        cmdArgs.append(QString("--replace 40,4037='%1'").arg(anonStr)); // HumanPerformerName
-        cmdArgs.append(QString("--replace 40,A123='%1'").arg(anonStr)); // PersonName
-
+        tags << DcmTagKey(0x0008, 0x0012)  // InstanceCreationDate
+             << DcmTagKey(0x0008, 0x0013)  // InstanceCreationTime
+             << DcmTagKey(0x0008, 0x0020)  // StudyDate
+             << DcmTagKey(0x0008, 0x0021)  // SeriesDate
+             << DcmTagKey(0x0008, 0x0022)  // AcquisitionDate
+             << DcmTagKey(0x0008, 0x0023)  // ContentDate
+             << DcmTagKey(0x0008, 0x0030)  // StudyTime
+             << DcmTagKey(0x0008, 0x0031)  // SeriesTime
+             << DcmTagKey(0x0008, 0x0032)  // AcquisitionTime
+             << DcmTagKey(0x0008, 0x0033)  // ContentTime
+             << DcmTagKey(0x0008, 0x0080)  // InstitutionName
+             << DcmTagKey(0x0008, 0x0081)  // InstitutionAddress
+             << DcmTagKey(0x0008, 0x0090)  // ReferringPhysicianName
+             << DcmTagKey(0x0008, 0x0092)  // ReferringPhysicianAddress
+             << DcmTagKey(0x0008, 0x0094)  // ReferringPhysicianTelephoneNumbers
+             << DcmTagKey(0x0008, 0x0096)  // ReferringPhysicianIdentificationSequence
+             << DcmTagKey(0x0008, 0x1010)  // StationName
+             << DcmTagKey(0x0008, 0x1030)  // StudyDescription
+             << DcmTagKey(0x0008, 0x103E)  // SeriesDescription
+             << DcmTagKey(0x0008, 0x1048)  // PhysiciansOfRecord
+             << DcmTagKey(0x0008, 0x1050)  // PerformingPhysicianName
+             << DcmTagKey(0x0008, 0x1060)  // NameOfPhysiciansReadingStudy
+             << DcmTagKey(0x0008, 0x1070)  // OperatorsName
+             << DcmTagKey(0x0010, 0x0010)  // PatientName
+             << DcmTagKey(0x0010, 0x0020)  // PatientID
+             << DcmTagKey(0x0010, 0x0021)  // IssuerOfPatientID
+             << DcmTagKey(0x0010, 0x0030)  // PatientBirthDate
+             << DcmTagKey(0x0010, 0x0032)  // PatientBirthTime
+             << DcmTagKey(0x0010, 0x0050)  // PatientInsurancePlanCodeSequence
+             << DcmTagKey(0x0010, 0x1000)  // OtherPatientIDs
+             << DcmTagKey(0x0010, 0x1001)  // OtherPatientNames
+             << DcmTagKey(0x0010, 0x1005)  // PatientBirthName
+             << DcmTagKey(0x0010, 0x1010)  // PatientAge
+             << DcmTagKey(0x0010, 0x1020)  // PatientSize
+             << DcmTagKey(0x0010, 0x1030)  // PatientWeight
+             << DcmTagKey(0x0010, 0x1040)  // PatientAddress
+             << DcmTagKey(0x0010, 0x1060)  // PatientMotherBirthName
+             << DcmTagKey(0x0010, 0x2154)  // PatientTelephoneNumbers
+             << DcmTagKey(0x0010, 0x21B0)  // AdditionalPatientHistory
+             << DcmTagKey(0x0010, 0x21F0)  // PatientReligiousPreference
+             << DcmTagKey(0x0010, 0x4000)  // PatientComments
+             << DcmTagKey(0x0018, 0x1030)  // ProtocolName
+             << DcmTagKey(0x0032, 0x1032)  // RequestingPhysician
+             << DcmTagKey(0x0032, 0x1060)  // RequestedProcedureDescription
+             << DcmTagKey(0x0040, 0x0006)  // ScheduledPerformingPhysicianName
+             << DcmTagKey(0x0040, 0x0244)  // PerformedProcedureStepStartDate
+             << DcmTagKey(0x0040, 0x0245)  // PerformedProcedureStepStartTime
+             << DcmTagKey(0x0040, 0x0253)  // PerformedProcedureStepID
+             << DcmTagKey(0x0040, 0x0254)  // PerformedProcedureStepDescription
+             << DcmTagKey(0x0040, 0x4036)  // HumanPerformerOrganization
+             << DcmTagKey(0x0040, 0x4037)  // HumanPerformerName
+             << DcmTagKey(0x0040, 0xA123); // PersonName
         break;
     }
     case 4: {
-        cmdArgs.append(QString("--replace 10,10='%1'").arg(anonStr));
+        tags << DcmTagKey(0x0010, 0x0010); // PatientName
         break;
     }
     default: {
-        break;
+        msg += QString("Unknown anonymization level [%1]. Leaving files unchanged.").arg(anonlevel);
+        return false;
     }
     }
 
-    /* do the command line anonymization */
+    /* check every file - DICOM files frequently have no .dcm extension. Files
+       that DCMTK can't read as DICOM are skipped */
+    QStringList files = utils::FindAllFiles(dir, "*");
+    int numAnon(0), numFailed(0), numSkipped(0);
+    foreach (const QString &f, files) {
+        if (f.endsWith(".anon.tmp"))
+            continue;
 
-    QStringList dcms = utils::FindAllFiles(dir, "*.dcm");
-    foreach (const QString &f, dcms) {
+        DcmFileFormat probe;
+        if (probe.loadFileUntilTag(QFile::encodeName(f).constData(), EXS_Unknown, EGL_noChange, DCM_MaxReadLength, ERM_autoDetect, DCM_PixelData).bad()) {
+            numSkipped++;
+            continue;
+        }
+        /* require a SOP Class UID so non-DICOM files that happen to parse aren't rewritten */
+        if (!probe.getDataset()->tagExists(DCM_SOPClassUID) && !probe.getMetaInfo()->tagExists(DCM_MediaStorageSOPClassUID)) {
+            numSkipped++;
+            continue;
+        }
+
         QString m;
-        AnonymizeDicomFileInPlace(f, cmdArgs, m);
-        msg += m + '\n';
+        if (AnonymizeDicomFileInPlace(f, tags, m))
+            numAnon++;
+        else {
+            numFailed++;
+            msg += m + '\n';
+        }
     }
 
-    //QString systemstring = QString("gdcmanon --dumb --continue %1 -i %2 -o %3").arg(cmdArgs.join(" ")).arg(indir).arg(outdir);
-    //n->Log(systemstring);
-    //QString output = SystemCommand(systemstring, true);
-    //n->Log(output);
-    //msg += output;
+    msg += QString("Anonymized %1 DICOM files in [%2]. %3 failed, %4 non-DICOM files skipped").arg(numAnon).arg(dir).arg(numFailed).arg(numSkipped);
 
-    return true;
+    return (numFailed == 0);
 }
 
 
@@ -995,7 +1059,7 @@ void squirrelImageIO::GetFileType(QString f, QString &fileType, QString &fileMod
                 filePatientID = "Empty";
         }
         /* check if par/rec */
-        else if (f.endsWith(".par")) {
+        else if (f.endsWith(".par", Qt::CaseInsensitive)) {
             //WriteLog("Found a PARREC image [" + f + "]");
             fileType = "PARREC";
             fileModality = "PARREC";
@@ -1009,11 +1073,13 @@ void squirrelImageIO::GetFileType(QString f, QString &fileType, QString &fileMod
                     QString line = in.readLine();
                     if (line.contains("Patient name")) {
                         QStringList parts = line.split(":",Qt::SkipEmptyParts);
-                        filePatientID = parts[1].trimmed();
+                        if (parts.size() > 1)
+                            filePatientID = parts[1].trimmed();
                     }
                     if (line.contains("Protocol name")) {
                         QStringList parts = line.split(":",Qt::SkipEmptyParts);
-                        fileProtocol = parts[1].trimmed();
+                        if (parts.size() > 1)
+                            fileProtocol = parts[1].trimmed();
                     }
                     if (line.contains("MRSERIES", Qt::CaseInsensitive)) {
                         fileModality = "MR";

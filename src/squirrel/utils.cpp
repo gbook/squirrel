@@ -329,6 +329,9 @@ namespace utils {
         date = QDate::fromString(s, "yyyy-M-d");
         if (date.isValid()) return date.toString("yyyy-MM-dd");
 
+        date = QDate::fromString(s, "yyyyMMdd");
+        if (date.isValid()) return date.toString("yyyy-MM-dd");
+
         date = QDate::fromString(s, "dd-MM-yy");
         if (date.isValid()) return date.toString("yyyy-MM-dd");
 
@@ -666,12 +669,17 @@ namespace utils {
         if (PatientAgeStr.contains('W')) PatientAge = PatientAgeStr.replace("W","").toDouble()/52.0;
         if (PatientAgeStr.contains('D')) PatientAge = PatientAgeStr.replace("D","").toDouble()/365.25;
 
-        /* fix patient age */
+        /* fix patient age: calculate from the birthdate and study date if possible */
         if (PatientAge < 0.001) {
-            QDate studydate = QDate::fromString(StudyDate);
-            QDate dob = QDate::fromString(PatientBirthDate);
+            QDate studydate = QDate::fromString(StudyDate, "yyyy-MM-dd");
+            QDate dob = QDate::fromString(PatientBirthDate, "yyyy-MM-dd");
 
-            PatientAge = double(dob.daysTo(studydate))/365.25;
+            /* ignore invalid or placeholder dates (ex. 0001-01-01) */
+            if (studydate.isValid() && dob.isValid() && (studydate.year() >= 1900) && (dob.year() >= 1900)) {
+                PatientAge = double(dob.daysTo(studydate))/365.25;
+                if (PatientAge < 0.0)
+                    PatientAge = 0.0;
+            }
         }
 
         return PatientAge;
