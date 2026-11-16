@@ -58,6 +58,30 @@ bool info::DisplayInfo(QString packagePath, const infoQuery &query, QString &m) 
     }
     sqrl->Debug("Reading package...", __FUNCTION__);
 
+    bool ok = DisplayInfo(sqrl, query, m);
+    delete sqrl;
+    return ok;
+}
+
+
+/**
+ * @brief Print the requested objects from a package that is already open.
+ * Used by DisplayInfo(path) above and by the interactive 'explore' shell, which
+ * keeps one package loaded for the whole session.
+ * Note: Params are only present if the package was read with quick-read off.
+ */
+bool info::DisplayInfo(squirrel *sqrl, const infoQuery &query, QString &m) {
+
+    /* --studynum and --seriesnum narrow down a parent, so they need the parents above them */
+    if ((query.studyNum > 0) && (query.subjectID == "")) {
+        m = "--studynum requires --subjectid";
+        return false;
+    }
+    if ((query.seriesNum > 0) && (query.studyNum < 1)) {
+        m = "--seriesnum requires --subjectid and --studynum";
+        return false;
+    }
+
     /* resolve the optional subject and study filters. -1 means all */
     qint64 subjectRowID = -1;
     qint64 studyRowID = -1;
@@ -65,7 +89,6 @@ bool info::DisplayInfo(QString packagePath, const infoQuery &query, QString &m) 
         subjectRowID = sqrl->FindSubject(query.subjectID);
         if (subjectRowID < 0) {
             m = QString("Subject [%1] was not found in this package").arg(query.subjectID);
-            delete sqrl;
             return false;
         }
     }
@@ -73,7 +96,6 @@ bool info::DisplayInfo(QString packagePath, const infoQuery &query, QString &m) 
         studyRowID = sqrl->FindStudy(query.subjectID, query.studyNum);
         if (studyRowID < 0) {
             m = QString("Study [%1] was not found for subject [%2]").arg(query.studyNum).arg(query.subjectID);
-            delete sqrl;
             return false;
         }
     }
@@ -94,6 +116,6 @@ bool info::DisplayInfo(QString packagePath, const infoQuery &query, QString &m) 
         default: sqrl->PrintPackage(); break;
     }
 
-    delete sqrl;
     return true;
 }
+

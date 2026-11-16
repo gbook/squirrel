@@ -25,26 +25,14 @@
 
 extract::extract() {}
 
-/* ---------------------------------------------------------------------------- */
-/* ----- DoExtract ------------------------------------------------------------ */
-/* ---------------------------------------------------------------------------- */
-/**
- * @brief Extract an object from a squirrel package to a directory on disk
- * @param packagePath path to the squirrel package file
- * @param outputPath directory where extracted files will be written
- * @param objectType string name of the object type to extract
- * @param objectIdentifier identifier (ID, name, or number) of the object to extract
- * @param subjectID subject ID for study/series/analysis/observation/intervention scoped extractions
- * @param studyNum study number for series/analysis scoped extractions
- * @param objectDate DateStart of the observation or intervention to extract
- * @param debug enable debug logging
- * @param quiet suppress progress output
- * @param m output message describing success or failure
- * @return true if successful
- */
-bool extract::DoExtract(QString packagePath, QString outputPath, QString objectType, QString objectIdentifier, QString subjectID, int studyNum, QString objectDate, bool debug, bool quiet, QString &m) {
+/* Validate the extract arguments for this object type. On success, object and
+   objectNum (the study/series number, when the object is identified by number)
+   are filled in. Shared by both DoExtract() overloads. */
+static bool CheckExtractArgs(QString outputPath, QString objectType, QString objectIdentifier, QString subjectID, int studyNum, QString objectDate, ObjectType &object, int &objectNum, QString &m) {
 
-    ObjectType object = squirrel::ObjectTypeToEnum(objectType);
+    object = squirrel::ObjectTypeToEnum(objectType);
+    objectNum = 0;
+
     switch (object) {
         case Subject: case Study: case Series: case Analysis: case Observation: case Intervention:
         case Experiment: case Pipeline: case GroupAnalysis: case DataDictionary: break;
@@ -76,7 +64,6 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
         m = QString("Missing --objectdate, which is required for object type [%1]").arg(objectType);
         return false;
     }
-    int objectNum = 0;
     if (object == Study || object == Series) {
         bool ok;
         objectNum = objectIdentifier.toInt(&ok);
@@ -85,6 +72,34 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
             return false;
         }
     }
+
+    return true;
+}
+
+
+/* ---------------------------------------------------------------------------- */
+/* ----- DoExtract ------------------------------------------------------------ */
+/* ---------------------------------------------------------------------------- */
+/**
+ * @brief Extract an object from a squirrel package to a directory on disk
+ * @param packagePath path to the squirrel package file
+ * @param outputPath directory where extracted files will be written
+ * @param objectType string name of the object type to extract
+ * @param objectIdentifier identifier (ID, name, or number) of the object to extract
+ * @param subjectID subject ID for study/series/analysis/observation/intervention scoped extractions
+ * @param studyNum study number for series/analysis scoped extractions
+ * @param objectDate DateStart of the observation or intervention to extract
+ * @param debug enable debug logging
+ * @param quiet suppress progress output
+ * @param m output message describing success or failure
+ * @return true if successful
+ */
+bool extract::DoExtract(QString packagePath, QString outputPath, QString objectType, QString objectIdentifier, QString subjectID, int studyNum, QString objectDate, bool debug, bool quiet, QString &m) {
+
+    ObjectType object;
+    int objectNum;
+    if (!CheckExtractArgs(outputPath, objectType, objectIdentifier, subjectID, studyNum, objectDate, object, objectNum, m))
+        return false;
 
     /* read squirrel package */
     squirrel *sqrl = new squirrel(debug, quiet);
@@ -96,6 +111,25 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
         delete sqrl;
         return false;
     }
+
+    bool ok = DoExtract(sqrl, outputPath, objectType, objectIdentifier, subjectID, studyNum, objectDate, quiet, m);
+    delete sqrl;
+    return ok;
+}
+
+
+/**
+ * @brief Extract an object from a squirrel package that is already open. Used by
+ * DoExtract(path) above and by the interactive 'explore' shell, which keeps one
+ * package loaded for the whole session. The caller keeps ownership of sqrl.
+ */
+bool extract::DoExtract(squirrel *sqrl, QString outputPath, QString objectType, QString objectIdentifier, QString subjectID, int studyNum, QString objectDate, bool quiet, QString &m) {
+
+    ObjectType object;
+    int objectNum;
+    if (!CheckExtractArgs(outputPath, objectType, objectIdentifier, subjectID, studyNum, objectDate, object, objectNum, m))
+        return false;
+    QString packagePath = sqrl->GetPackagePath();
 
     /* find the object */
     qint64 rowID = -1;
@@ -145,7 +179,6 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
     }
     if (rowID < 0) {
         m = desc.left(1).toUpper() + desc.mid(1) + " not found in package [" + packagePath + "]";
-        delete sqrl;
         return false;
     }
 
@@ -153,7 +186,6 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
     QString m2;
     if (!utils::MakePath(outputPath, m2)) {
         m = "Error creating output path [" + outputPath + "]. Message [" + m2 + "]";
-        delete sqrl;
         return false;
     }
 
@@ -162,13 +194,11 @@ bool extract::DoExtract(QString packagePath, QString outputPath, QString objectT
         utils::Print("Extracting " + desc + " from package [" + packagePath + "] to directory [" + outputPath + "]");
     if (!sqrl->ExtractObject(object, rowID, outputPath, m2)) {
         m = "Error extracting " + desc + ". Message [" + m2 + "]";
-        delete sqrl;
         return false;
     }
 
     if (!quiet)
         utils::Print("Extracted " + desc + " to [" + outputPath + "]");
 
-    delete sqrl;
     return true;
 }

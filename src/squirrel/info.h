@@ -31,6 +31,7 @@ public:
     info();
 
     bool DisplayInfo(QString packagePath, const infoQuery &query, QString &m);
+    bool DisplayInfo(squirrel *sqrl, const infoQuery &query, QString &m);
 
 };
 
