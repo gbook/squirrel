@@ -52,7 +52,24 @@
 #include <algorithm>
 #include <memory>
 #include <thread>
+#ifdef _WIN32
+/* MSVC has no unistd.h: dup, dup2, close, read, write and fileno are declared
+   in io.h/stdio.h under their POSIX names; pipe, ssize_t and the descriptor
+   constants are supplied here. */
+#include <io.h>
+#include <fcntl.h>
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO 1
+#endif
+#ifndef STDERR_FILENO
+#define STDERR_FILENO 2
+#endif
+static int pipe(int fds[2]) { return _pipe(fds, 65536, _O_BINARY); }
+#else
 #include <unistd.h>
+#endif
 
 #include <QString>
 #include <QStringList>
