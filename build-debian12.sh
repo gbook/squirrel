@@ -7,7 +7,7 @@
 #              bin/qmake is also accepted, for older callers.
 #   src-dir    default ./src
 #   build-dir  default ./bin/debian12
-# Set SKIP_CLI=1 to build only libsquirrel (no FTXUI, no CLI, no install).
+# Set SKIP_CLI=1 to build only libsquirrel (no FTXUI, no CLI, no GUI, no install).
 set -e
 
 SKIP_CLI="${SKIP_CLI:-0}"
@@ -28,7 +28,7 @@ command -v make  >/dev/null 2>&1 || { echo -e "\nThis script requires make, but 
 command -v gcc   >/dev/null 2>&1 || { echo -e "\nThis script requires gcc, but it is not installed\n"; exit 1; }
 command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.16 or newer\n"; exit 1; }
 
-if [ "$SKIP_CLI" = "1" ]; then BUILD_CLI=OFF; else BUILD_CLI=ON; fi
+if [ "$SKIP_CLI" = "1" ]; then BUILD_CLI=OFF; BUILD_GUI=OFF; else BUILD_CLI=ON; BUILD_GUI=ON; fi
 
 # CMakeCache.txt stores the absolute source path. build-all.sh builds the local
 # host from the real path but the WSL distros through the /mnt/wsl bind mount,
@@ -45,7 +45,8 @@ cmake -S "$SRCDIR" -B "$BUILDDIR" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_PREFIX_PATH="$QTDIR" \
 	-DBIT7Z_USE_LEGACY_IUNKNOWN=$BIT7Z_LEGACY_IUNKNOWN \
-	-DSQUIRREL_BUILD_CLI=$BUILD_CLI
+	-DSQUIRREL_BUILD_CLI=$BUILD_CLI \
+	-DSQUIRREL_BUILD_GUI=$BUILD_GUI
 
 echo -e "\n ----- Building squirrel -----\n"
 cmake --build "$BUILDDIR" -j 16
@@ -60,6 +61,13 @@ elif [ -f "$SQUIRREL_BIN" ]; then
     sudo ldconfig || true
 else
     echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"
+fi
+
+# ----- install squirrel-gui to /usr/local/bin (built only when Qt Widgets is available) -----
+SQUIRREL_GUI_BIN="$BUILDDIR/squirrel-gui/squirrel-gui"
+if [ "$SKIP_CLI" != "1" ] && [ -f "$SQUIRREL_GUI_BIN" ]; then
+    echo -e "\n ----- Installing squirrel-gui to /usr/local/bin -----\n"
+    sudo cp -v "$SQUIRREL_GUI_BIN" /usr/local/bin/squirrel-gui || echo "WARNING: could not install squirrel-gui to /usr/local/bin"
 fi
 
 echo -e "\nBuild complete. Output: $BUILDDIR\n"

@@ -33,12 +33,13 @@ These are invoked by the scripts above, not by you.
 
 - **`build-<distro>.sh`** — the seven per-distro build scripts. Each configures
   and builds the CMake project in `src/CMakeLists.txt` (bit7z, FTXUI, libsquirrel,
-  squirrel CLI) into `bin/<distro>/` and installs the CLI to `/usr/local/bin`.
+  squirrel CLI, and squirrel-gui when Qt Widgets is available) into `bin/<distro>/` and
+  installs the CLI and GUI to `/usr/local/bin`.
   Called by `build.sh`. Arguments: `[qt-dir] [src-dir] [build-dir]`, with `qt-dir`
   defaulting to `~/Qt/6.9.3/gcc_64`. The scripts differ only in the bit7z 7-Zip ABI
   flag (`BIT7Z_USE_LEGACY_IUNKNOWN`: `OFF` for Ubuntu 24 and Debian 12/13, which ship
   modern 7-Zip; `ON` elsewhere) and, on AlmaLinux 8, enabling gcc-toolset-10.
-  `SKIP_CLI=1` builds only libsquirrel.
+  `SKIP_CLI=1` builds only libsquirrel. `build-rpm.sh` builds without the GUI.
 - **`build-rpm.sh`** — the compile step used *inside* the rpm build. It is
   referenced by the `%build` section of `squirrel.el.spec`, which `rpmbuild`
   runs when `createInstallerRHEL.sh` executes.

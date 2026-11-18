@@ -6,6 +6,7 @@
 #   ftxui      (src/ftxui)    terminal UI for 'squirrel explore' (CLI only)
 #   squirrellib               libsquirrel static library   -> <build>/squirrel/libsquirrel.a
 #   squirrel                  command line utility         -> <build>/squirrel/squirrel
+#   squirrel-gui              Qt Widgets GUI (optional)    -> <build>/squirrel-gui/squirrel-gui
 #
 # Typical use (Linux):
 #   cmake -S src -B bin/ubuntu24 -DCMAKE_PREFIX_PATH=~/Qt/6.9.3/gcc_64
@@ -15,6 +16,7 @@
 #
 # Options:
 #   -DSQUIRREL_BUILD_CLI=OFF            build only libsquirrel (no FTXUI, no CLI)
+#   -DSQUIRREL_BUILD_GUI=OFF            do not build the GUI
 #   -DBIT7Z_USE_LEGACY_IUNKNOWN=ON|OFF  must match the 7-Zip on the target system:
 #                                       ON  = legacy p7zip 16.02 ABI
 #                                       OFF = modern 7-Zip (23.01+), e.g. Ubuntu 24,
@@ -66,3 +68,16 @@ endif()
 
 # ----- squirrel library + CLI -------------------------------------------------
 add_subdirectory(squirrel)
+
+# ----- squirrel GUI (Qt Widgets) ----------------------------------------------
+# Optional: skipped with a warning when Qt Widgets (and, on Linux, its OpenGL
+# development files) are not available, so library/CLI builds never fail on it.
+option(SQUIRREL_BUILD_GUI "Build the squirrel GUI (needs Qt6 Widgets)" ON)
+if(SQUIRREL_BUILD_GUI)
+    find_package(Qt6 QUIET COMPONENTS Widgets)
+    if(Qt6Widgets_FOUND)
+        add_subdirectory(squirrel-gui)
+    else()
+        message(WARNING "Qt6 Widgets not found: skipping the squirrel GUI (set SQUIRREL_BUILD_GUI=OFF to silence this)")
+    endif()
+endif()

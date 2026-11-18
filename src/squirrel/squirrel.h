@@ -64,6 +64,7 @@ public:
     bool Write();
     bool WriteUpdate();
     bool ExtractArchiveFilesToDirectory(QString archivePath, QString filePattern, QString outDir, QString &m);
+    bool GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m); /*!< list archive entries whose path starts with subDir */
 
     /* Embed a copy of the in-memory database as "squirrel.db" in the package,
        so a later Read() can load it directly instead of re-parsing
@@ -264,7 +265,6 @@ private:
     bool ExtractArchiveFileToMemory(QString archivePath, QString filePath, QByteArray &fileContents);
     bool ExtractArchiveFileToMemory(QString archivePath, QString filePath, QString &fileContents);
     bool Get7zipLibPath();
-    bool GetArchiveFileListing(QString archivePath, QString subDir, QStringList &files, QString &m);
     bool PreloadArchiveForRead(QHash<QString, QByteArray> &paramsByPath, QHash<QString, QStringList> &filesBySeriesDir, QString &m);
     bool RemoveDirectoryFromArchive(QString compressedDirPath, QString archivePath, QString &m);
     bool RenameDirectoriesInArchive(QList<QStringPair> renames, QString archivePath, QString &m);

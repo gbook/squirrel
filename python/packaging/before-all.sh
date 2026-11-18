@@ -54,6 +54,6 @@ ldconfig
 cmake -G Ninja -S "$PROJECT/src" -B "$DEPS/build" -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_PREFIX_PATH="/opt/Qt/$QT_VERSION/gcc_64" \
     -DBIT7Z_USE_LEGACY_IUNKNOWN="$BIT7Z_LEGACY_IUNKNOWN" \
-    -DSQUIRREL_BUILD_CLI=OFF
+    -DSQUIRREL_BUILD_CLI=OFF -DSQUIRREL_BUILD_GUI=OFF
 cmake --build "$DEPS/build"
 ls -l "$DEPS/build/squirrel/libsquirrel.a" "$DEPS/build/bit7z/libbit7z64.a"
