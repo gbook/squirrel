@@ -5,8 +5,6 @@
 #   - squirrellib.pro includes this file to build libsquirrel (no main.cpp).
 #   - squirrel.pro includes this file and then adds main.cpp itself to build the
 #     command line executable.
-#   - squirrel-gui.pro does NOT include this file. It links the prebuilt
-#     libsquirrel instead of recompiling these sources.
 #
 # Paths are written as $$PWD/... so they resolve relative to this .pri's
 # directory (src/squirrel) regardless of which .pro includes it.

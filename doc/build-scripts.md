@@ -32,7 +32,7 @@ Ubuntu 24 host distro, because they drive the other WSL distros via `wsl.exe`.
 These are invoked by the scripts above, not by you.
 
 - **`build-<distro>.sh`** — the nine per-distro build scripts. Each performs the
-  actual compile (bit7z → squirrel library → squirrel utilities → optional GUI)
+  actual compile (bit7z → squirrel library → squirrel utilities)
   for one distro and writes to `bin/<distro>/`. Called by `build.sh`.
 - **`build-rpm.sh`** — the compile step used *inside* the rpm build. It is
   referenced by the `%build` section of `squirrel.el.spec`, which `rpmbuild`

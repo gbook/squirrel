@@ -3,8 +3,6 @@ set -e
 
 SKIP_CLI="${SKIP_CLI:-0}"
 
-SKIP_GUI=1
-
 if [ -z "$1" ]; then
 	QMAKEBIN=~/Qt/6.9.3/gcc_64/bin/qmake
 else
@@ -106,29 +104,6 @@ else
 	make -B -j 16
 fi
 
-# ----- build squirrel GUI -----
-# The GUI is optional. It needs the Qt Widgets module and OpenGL development
-# files, which are not installed on every build host, so a GUI failure is a
-# warning rather than a build failure - the command line utility is the primary
-# artifact. Set SKIP_GUI=1 to skip this step entirely.
-#
-# The GUI builds into its own directory, which MUST remain a sibling of
-# $BUILDDIR/squirrel and $BUILDDIR/bit7z: squirrel-gui.pro and squirrel-deps.pri
-# locate libsquirrel and bit7z through build-directory-relative paths
-# (../squirrel and ../bit7z), not through absolute ones.
-if [ "$SKIP_GUI" = "1" ]; then
-	echo -e "\n ----- Skipping squirrel GUI (SKIP_GUI=1) -----\n"
-elif [ ! -d "$($QMAKEBIN -query QT_INSTALL_HEADERS)/QtWidgets" ]; then
-	echo -e "\n ----- Skipping squirrel GUI: Qt Widgets headers not found -----\n"
-else
-	echo -e "\n ----- Building squirrel GUI -----\n"
-	if ( $QMAKEBIN -o $BUILDDIR/squirrel-gui/Makefile $SRCDIR/squirrel-gui/squirrel-gui.pro -spec linux-g++ && cd $BUILDDIR/squirrel-gui && make -B -j 16 ); then
-		echo -e "\n ----- squirrel GUI built -----\n"
-	else
-		echo -e "\n ----- WARNING: squirrel GUI failed to build. Continuing without it. -----\n"
-	fi
-fi
-
 cd $ORIGDIR
 
 # ----- install squirrel to /usr/local/bin -----
@@ -141,13 +116,6 @@ elif [ -f "$SQUIRREL_BIN" ]; then
     sudo ldconfig || true
 else
     echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"
-fi
-
-# ----- install squirrel-gui to /usr/local/bin -----
-SQUIRREL_GUI_BIN="$BUILDDIR/squirrel-gui/squirrel-gui"
-if [ -f "$SQUIRREL_GUI_BIN" ]; then
-    echo -e "\n ----- Installing squirrel-gui to /usr/local/bin -----\n"
-    sudo cp -v "$SQUIRREL_GUI_BIN" /usr/local/bin/squirrel-gui || echo "WARNING: could not install squirrel-gui to /usr/local/bin"
 fi
 
 echo -e "\nBuild complete. Output: $BUILDDIR\n"

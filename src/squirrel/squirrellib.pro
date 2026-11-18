@@ -27,7 +27,7 @@ linux: CONFIG += staticlib
 # squirrel core sources (everything except main.cpp)
 include($$PWD/squirrel-sources.pri)
 
-# bit7z (LZMA) + DCMTK, shared with squirrel.pro and squirrel-gui.pro
+# bit7z (LZMA) + DCMTK, shared with squirrel.pro
 include($$PWD/squirrel-deps.pri)
 
 # dcm2niix in-process DICOM->Nifti conversion (Linux only; see dcm2niix.pri)

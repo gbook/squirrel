@@ -1,17 +1,11 @@
 # ------------------------------------------------------------------------------
 # bit7z (LZMA) + DCMTK dependencies
 # ------------------------------------------------------------------------------
-# Shared by squirrellib.pro, squirrel.pro and squirrel-gui.pro so all three link
-# against the same archive (bit7z) and DICOM (DCMTK) libraries.
+# Shared by squirrellib.pro and squirrel.pro so both link against the same archive (bit7z) and DICOM (DCMTK) libraries.
 #
 # The bit7z paths (LZMABIN, LZMAINCLUDE) are relative to the BUILD directory, not
 # the source directory: they match the layout the build-<distro>.sh scripts
-# create, where $BUILDDIR/bit7z sits alongside $BUILDDIR/squirrel and
-# $BUILDDIR/squirrel-gui (hence ../bit7z from any of them).
-#
-# In squirrel-gui.pro this file MUST be included AFTER -lsquirrel, because GNU ld
-# resolves static archives in command line order and libsquirrel depends on these
-# libraries.
+# create, where $BUILDDIR/bit7z sits alongside $BUILDDIR/squirrel (hence ../bit7z).
 # ------------------------------------------------------------------------------
 
 win32: {

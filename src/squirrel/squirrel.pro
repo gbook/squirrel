@@ -25,7 +25,7 @@ HEADERS += $$PWD/explore.h
 # links them.
 include($$PWD/ftxui.pri)
 
-# bit7z (LZMA) + DCMTK, shared with squirrellib.pro and squirrel-gui.pro
+# bit7z (LZMA) + DCMTK, shared with squirrellib.pro
 include($$PWD/squirrel-deps.pri)
 
 # dcm2niix in-process DICOM->Nifti conversion (Linux only; see dcm2niix.pri)

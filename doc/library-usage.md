@@ -5,8 +5,6 @@ the CLI can do — read, write, validate, merge, modify, extract, convert — is
 as ordinary C++ classes, so a third program gets identical behavior by linking the
 library rather than shelling out to the `squirrel` binary.
 
-The GUI in `src/squirrel-gui` is a worked example of everything on this page.
-
 - [Requirements](#requirements)
 - [Building the library](#building-the-library)
 - [Linking it: qmake](#linking-it-qmake)
@@ -46,9 +44,7 @@ cd $BUILDDIR/squirrel && make -j
 
 This produces `libsquirrel.a` (Linux; `CONFIG += staticlib`) or `squirrel.lib` in
 `bin/squirrel` (MSVC). The `build-<distro>.sh` scripts in the repo root do this for you,
-along with building bit7z first, then the CLI and the GUI. (The GUI step is skipped with
-a warning if Qt Widgets is unavailable, and can be suppressed with `SKIP_GUI=1`; it never
-fails the build.)
+along with building bit7z first, then the CLI.
 
 **`libsquirrel` is a static archive on Linux.** That single fact drives most of what
 follows: a static archive does not record its own dependencies, so *your* final link
@@ -300,20 +296,20 @@ the one that opened it. Violations do not always crash — they can silently ret
 result sets, which is worse.
 
 If you have a UI, do not open packages on the UI thread; reading a multi-gigabyte archive
-will freeze it for minutes. The pattern used by `src/squirrel-gui`:
+will freeze it for minutes. The recommended pattern:
 
-1. A worker `QObject` (`squirrelWorker`) is `moveToThread()`-ed onto a `QThread`.
+1. A worker `QObject` is `moveToThread()`-ed onto a `QThread`.
 2. The `squirrel` instance is created, used and destroyed entirely inside that object.
 3. The UI asks for work by emitting signals connected to the worker's slots (queued
    automatically across threads).
-4. Results come back as **plain copied structs** (`squirrelModel.h`), never as pointers
+4. Results come back as **plain copied structs**, never as pointers
    into library objects and never as a `squirrelSubject` still carrying a `rowID` the UI
    would later query.
 
 Register any struct you send through a queued signal:
 
 ```cpp
-qRegisterMetaType<guiPackage>("guiPackage");
+qRegisterMetaType<PackageSummary>("PackageSummary");   // your own struct
 ```
 
 Several packages *can* be open simultaneously — `databaseUUID` gives each its own
@@ -352,9 +348,3 @@ classes report through their `QString &m` out-parameter instead.
   `PATH`. On Linux it is in-process.
 - The library is **not thread-safe within a single instance**. One thread per `squirrel`
   object.
-
----
-
-For a complete, compiling consumer of everything described here, read
-`src/squirrel-gui/squirrelWorker.cpp` (library calls, threading, snapshotting) and
-`src/squirrel-gui/squirrel-gui.pro` (linking).
