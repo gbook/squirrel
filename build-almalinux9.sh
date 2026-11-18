@@ -1,103 +1,54 @@
 #!/bin/bash
+# Builds squirrel (bit7z, FTXUI, libsquirrel and the squirrel CLI) for AlmaLinux 9
+# with CMake, using the top-level project in src/CMakeLists.txt.
+#
+# Usage: build-almalinux9.sh [qt-dir] [src-dir] [build-dir]
+#   qt-dir     Qt install prefix (default ~/Qt/6.9.3/gcc_64). A path to its
+#              bin/qmake is also accepted, for older callers.
+#   src-dir    default ./src
+#   build-dir  default ./bin/almalinux9
+# Set SKIP_CLI=1 to build only libsquirrel (no FTXUI, no CLI, no install).
 set -e
 
 SKIP_CLI="${SKIP_CLI:-0}"
 
-if [ -z "$1" ]; then
-	QMAKEBIN=~/Qt/6.9.3/gcc_64/bin/qmake
-else
-	QMAKEBIN=$1
+QTDIR="${1:-$HOME/Qt/6.9.3/gcc_64}"
+case "$QTDIR" in */bin/qmake) QTDIR="$(dirname "$(dirname "$QTDIR")")" ;; esac
+SRCDIR="${2:-$PWD/src}"
+BUILDDIR="${3:-$PWD/bin/almalinux9}"
+
+# bit7z must be built for the 7-Zip ABI installed on this distro:
+#   ON  = legacy p7zip 16.02 IUnknown ABI
+#   OFF = modern 7-Zip (23.01+, /usr/lib/7zip/7z.so)
+# A mismatch links a wrong vtable and segfaults inside 7z.so as soon as a
+# package is written.
+BIT7Z_LEGACY_IUNKNOWN=ON
+
+command -v make  >/dev/null 2>&1 || { echo -e "\nThis script requires make, but it is not installed\n"; exit 1; }
+command -v gcc   >/dev/null 2>&1 || { echo -e "\nThis script requires gcc, but it is not installed\n"; exit 1; }
+command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.16 or newer\n"; exit 1; }
+
+if [ "$SKIP_CLI" = "1" ]; then BUILD_CLI=OFF; else BUILD_CLI=ON; fi
+
+# CMakeCache.txt stores the absolute source path. build-all.sh builds the local
+# host from the real path but the WSL distros through the /mnt/wsl bind mount,
+# and cmake aborts if the spelling differs ("CMakeCache.txt directory ... is
+# different"). Drop a cache written for another path so configure re-runs clean.
+if [ -f "$BUILDDIR/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR" "$BUILDDIR/CMakeCache.txt"; then
+	echo "Removing stale CMake cache in $BUILDDIR"
+	rm -rf "$BUILDDIR/CMakeCache.txt" "$BUILDDIR/CMakeFiles"
 fi
+mkdir -p "$BUILDDIR"
 
-if [ -z "$2" ]; then
-	SRCDIR=$PWD/src
-else
-	SRCDIR=$2
-fi
+echo -e "\n ----- Configuring squirrel (CMake) -----\n"
+cmake -S "$SRCDIR" -B "$BUILDDIR" \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_PREFIX_PATH="$QTDIR" \
+	-DBIT7Z_USE_LEGACY_IUNKNOWN=$BIT7Z_LEGACY_IUNKNOWN \
+	-DSQUIRREL_BUILD_CLI=$BUILD_CLI
 
-if [ -z "$3" ]; then
-	BUILDDIR=$PWD/bin/almalinux9
-else
-	BUILDDIR=$3
-fi
-
-ORIGDIR=$PWD
-
-command -v make >/dev/null 2>&1 || { echo -e "\nThis script requires make, but it is not installed\n"; exit 1; }
-command -v gcc >/dev/null 2>&1 || { echo -e "\nThis script requires gcc, but it is not installed\n"; exit 1; }
-command -v cmake >/dev/null 2>&1 || { echo -e "\nThis script requires cmake 3.x.\n"; exit 1; }
-
-echo "Creating build directory: $BUILDDIR"
-mkdir -p $BUILDDIR
-
-# ----- build bit7z library -----
-echo -e "\n ----- Building bit7z -----\n"
-mkdir -p $BUILDDIR/bit7z
-# CMakeCache.txt stores absolute source/binary paths. build-all.sh configures the
-# local host from the real path but the WSL distros via the /mnt/wsl bind mount, so
-# a cache written under a different path spelling makes cmake abort ("CMakeCache.txt
-# directory ... is different"). Drop a stale/mismatched cache so configure re-runs clean.
-if [ -f "$BUILDDIR/bit7z/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/bit7z" "$BUILDDIR/bit7z/CMakeCache.txt"; then
-	echo "Removing stale bit7z CMake cache in $BUILDDIR/bit7z"
-	rm -rf "$BUILDDIR/bit7z"
-	mkdir -p "$BUILDDIR/bit7z"
-fi
-cmake -DBIT7Z_AUTO_FORMAT:BOOL=ON -DBIT7Z_USE_LEGACY_IUNKNOWN=ON -DBIT7Z_GENERATE_PIC=ON -DCMAKE_CXX_FLAGS:STRING=-fPIC -DCMAKE_C_FLAGS:STRING=-fPIC -S $SRCDIR/bit7z -B $BUILDDIR/bit7z
-cd $BUILDDIR/bit7z
-# bit7z (cmake/OutputOptions.cmake) forces its archive into the SHARED source
-# tree ($SRCDIR/bit7z/lib/x64), which build-all.sh bind-mounts across every
-# distro. Delete any archive left by another distro/toolchain so the build below
-# relinks libbit7z64.a from THIS distro's objects. Otherwise e.g. AlmaLinux 8
-# (gcc-toolset-10) links a lib built by Ubuntu 24 (GCC 13) and fails on missing
-# GCC12/glibc2.32 symbols (exception_ptr::_M_release, __libc_single_threaded, ...).
-rm -f "$SRCDIR/bit7z/lib/x64/"*.a "$SRCDIR/bit7z/"*.a 2>/dev/null || true
-cmake --build . --config Release
-cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $BUILDDIR/bit7z/ || true
-cp -v $SRCDIR/bit7z/lib/x64/libbit7z64.a $SRCDIR/bit7z/ || true
-
-# ----- dcm2niix (DICOM -> Nifti) -----
-# No build step needed here: the dcm2niix sources are compiled directly into
-# squirrellib/squirrel via src/squirrel/dcm2niix.pri (shared by both .pro files),
-# so DICOM conversion is in-process and does not need an external dcm2niix binary.
-
-# ----- build squirrel library -----
-echo -e "\n ----- Building squirrel library -----\n"
-$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrellib.pro -spec linux-g++
-cd $BUILDDIR/squirrel
-make -j 16
-
-# ----- FTXUI + squirrel command line utilities -----
-# FTXUI is only needed by the CLI (explore.cpp), never by libsquirrel, so it is
-# built here rather than with the library. Set SKIP_CLI=1 to build only the
-# library (e.g. for the Python wrapper) and skip FTXUI and the CLI.
-if [ "$SKIP_CLI" = "1" ]; then
-	echo -e "\n ----- Skipping FTXUI and squirrel utilities (SKIP_CLI=1) -----\n"
-else
-	# ----- build FTXUI library (static; for the interactive 'squirrel explore' shell) -----
-	# FTXUI is built as static libs and linked into the CLI via ftxui.pri (same
-	# pattern as bit7z). Unlike bit7z it writes its .a files into the build dir (not
-	# the shared source tree), so no cross-distro archive cleanup is needed. The
-	# stale-cache guard mirrors bit7z: under build-all the WSL distros configure via
-	# the /mnt/wsl bind-mount path, so a cache written under a different path
-	# spelling would make cmake abort.
-	echo -e "\n ----- Building FTXUI -----\n"
-	mkdir -p $BUILDDIR/ftxui
-	if [ -f "$BUILDDIR/ftxui/CMakeCache.txt" ] && ! grep -qxF "CMAKE_HOME_DIRECTORY:INTERNAL=$SRCDIR/ftxui" "$BUILDDIR/ftxui/CMakeCache.txt"; then
-		echo "Removing stale FTXUI CMake cache in $BUILDDIR/ftxui"
-		rm -rf "$BUILDDIR/ftxui"
-		mkdir -p "$BUILDDIR/ftxui"
-	fi
-	cmake -S $SRCDIR/ftxui -B $BUILDDIR/ftxui -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DFTXUI_BUILD_EXAMPLES=OFF -DFTXUI_BUILD_TESTS=OFF -DFTXUI_BUILD_DOCS=OFF -DFTXUI_ENABLE_INSTALL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-	cmake --build $BUILDDIR/ftxui --config Release -j 16
-
-	# ----- build squirrel command line utilities -----
-	echo -e "\n ----- Building squirrel utilities -----\n"
-	$QMAKEBIN -o $BUILDDIR/squirrel/Makefile $SRCDIR/squirrel/squirrel.pro -spec linux-g++
-	cd $BUILDDIR/squirrel
-	make -B -j 16
-fi
-
-cd $ORIGDIR
+echo -e "\n ----- Building squirrel -----\n"
+cmake --build "$BUILDDIR" -j 16
 
 # ----- install squirrel to /usr/local/bin -----
 SQUIRREL_BIN="$BUILDDIR/squirrel/squirrel"

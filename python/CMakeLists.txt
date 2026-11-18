@@ -5,11 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# The C++ library itself is still built with qmake (src/squirrel/squirrellib.pro).
-# This file only builds the Python extension and links the prebuilt libsquirrel.a.
+# The C++ library is built separately by the main CMake project (src/CMakeLists.txt,
+# e.g. via build.sh or with -DSQUIRREL_BUILD_CLI=OFF). This file only builds the
+# Python extension and links the prebuilt libsquirrel.a and libbit7z64.a from that
+# build directory. libsquirrel.a must be built with the same Qt as this module.
 get_filename_component(SQUIRREL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
-set(SQUIRREL_LIB_DIR "${SQUIRREL_ROOT}/bin/squirrel" CACHE PATH "directory containing libsquirrel.a")
-set(BIT7Z_LIB_DIR    "${SQUIRREL_ROOT}/src/bit7z/lib/x64" CACHE PATH "directory containing libbit7z64.a")
+set(SQUIRREL_BUILD_DIR "${SQUIRREL_ROOT}/bin/ubuntu24" CACHE PATH "build directory of src/CMakeLists.txt")
+set(SQUIRREL_LIB_DIR "${SQUIRREL_BUILD_DIR}/squirrel" CACHE PATH "directory containing libsquirrel.a")
+set(BIT7Z_LIB_DIR    "${SQUIRREL_BUILD_DIR}/bit7z"    CACHE PATH "directory containing libbit7z64.a")
 set(DCMTK_PREFIX     "/usr/local"                    CACHE PATH "DCMTK install prefix")
 
 # Qt install prefix. Appended (not set) so scikit-build-core's own prefix path,
@@ -31,7 +34,7 @@ target_include_directories(_squirrel PRIVATE
 # QT_NO_KEYWORDS: Qt's `slots` macro breaks Python.h (PyType_Slot *slots)
 target_compile_definitions(_squirrel PRIVATE SQUIRREL_BUILD QT_NO_KEYWORDS)
 
-# Same library set as src/squirrel/squirrel-deps.pri (linux). The group is needed
+# Same DCMTK libraries as DCMTK::DCMTK in src/squirrel/CMakeLists.txt. The group is needed
 # because the static archives depend on each other.
 set(DCMTK_LIBS
     dcmdata cmr dcmdsig dcmect dcmfg dcmimage dcmimgle dcmiod dcmjpeg dcmjpls

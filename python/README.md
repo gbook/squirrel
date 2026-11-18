@@ -7,11 +7,14 @@ for subj in pkg.get_subject_list():
     print(subj.id, subj.sex)
 ```
 
-Build (the C++ library is built separately with qmake, see `src/squirrel/squirrellib.pro`):
+Build. The C++ library comes from the main CMake project (`src/CMakeLists.txt`), so build
+that first; `build.sh` does it into `bin/<distro>/`, or `SKIP_CLI=1 ./build.sh` for the library
+alone. Then point `SQUIRREL_BUILD_DIR` at that build directory (default `bin/ubuntu24`):
 
 ```bash
 python -m venv .venv && . .venv/bin/activate
-pip install . --config-settings=cmake.define.QT_ROOT=$HOME/Qt/6.9.3/gcc_64
+pip install . --config-settings=cmake.define.QT_ROOT=$HOME/Qt/6.9.3/gcc_64 \
+              --config-settings=cmake.define.SQUIRREL_BUILD_DIR=$PWD/../bin/ubuntu24
 ```
 
 Thread safety: a `Squirrel` object holds a Qt SQL connection and must be used from the

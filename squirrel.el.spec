@@ -8,14 +8,14 @@ URL:            http://github.com/gbook/squirrel
 #Source0:        
 
 BuildArch:	x86_64
-BuildRequires:  gcc, cmake, make
+BuildRequires:  gcc, cmake >= 3.16, make
 Requires:       openssl, p7zip, p7zip-plugins
 
 %description
 squirrel library and utilities is a data format to allow aggregation and dissemination of neuroscience data.
 
 %build # This section does the building. all the binary files will end up in %{builddir}
-%{_sourcedir}/build-rpm.sh ~/Qt/6.9.3/gcc_64/bin/qmake %{_sourcedir}/src %{_builddir}/bin
+%{_sourcedir}/build-rpm.sh ~/Qt/6.9.3/gcc_64 %{_sourcedir}/src %{_builddir}/bin
 
 %install # This section installs the files to the BUILDROOT dir, which is basically a copy of what the user's computer will look like after the RPM installs
 mkdir -p %{buildroot}/usr/local/bin
@@ -23,9 +23,9 @@ mkdir -p %{buildroot}/usr/lib
 mkdir -p %{buildroot}/usr/local/bin/sqldrivers
 
 cp -f %{_builddir}/bin/squirrel/squirrel %{buildroot}/usr/local/bin/ # copy squirrel util binary
-# NOTE: squirrellib.pro builds libsquirrel as a STATIC lib on Linux (CONFIG +=
-# staticlib), so it is linked directly into the squirrel binary above - there is
-# no libsquirrel.so.1 to ship. (Do not re-add it; the file does not exist.)
+# NOTE: libsquirrel is a STATIC library (src/squirrel/CMakeLists.txt), so it is
+# linked directly into the squirrel binary above - there is no libsquirrel.so.1
+# to ship. (Do not re-add it; the file does not exist.)
 #cp -f %{_builddir}/bin/gdcm/bin/libgdcmMSFF.so.3.0 %{buildroot}/usr/lib/ # copy GDCM libs
 #cp -f %{_builddir}/bin/gdcm/bin/libgdcmopenjp2.so.7 %{buildroot}/usr/lib/ # copy GDCM libs
 #cp -f %{_builddir}/bin/gdcm/bin/libgdcmuuid.so.3.0 %{buildroot}/usr/lib/ # copy GDCM libs

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Detects the current distro and delegates to the appropriate build script.
-# Arguments are passed through: $1=qmake path, $2=src dir, $3=build dir
+# Arguments are passed through: $1=Qt dir (e.g. ~/Qt/6.9.3/gcc_64), $2=src dir, $3=build dir
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 

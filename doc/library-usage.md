@@ -7,8 +7,8 @@ library rather than shelling out to the `squirrel` binary.
 
 - [Requirements](#requirements)
 - [Building the library](#building-the-library)
-- [Linking it: qmake](#linking-it-qmake)
-- [Linking it: CMake](#linking-it-cmake)
+- [Linking it: CMake, from source (recommended)](#linking-it-cmake-from-source-recommended)
+- [Linking it: CMake, prebuilt archive](#linking-it-cmake-prebuilt-archive)
 - [Linking it: plain g++](#linking-it-plain-g)
 - [Hello, package](#hello-package)
 - [The API in brief](#the-api-in-brief)
@@ -28,59 +28,56 @@ library rather than shelling out to the `squirrel` binary.
 | **Qt 6** (Core + Sql) | `QtSql` is not optional — a squirrel package *is* a SQLite database, and the library keeps a `QSqlDatabase` connection open. Make sure Qt's SQLite driver is present. |
 | A **`QCoreApplication`** | Must exist before you construct a `squirrel` object. `QApplication` counts. |
 | **DCMTK** | DICOM reading. Expected in `/usr/local` on Linux, `C:\Program Files (x86)\DCMTK` on Windows. |
-| **bit7z** | LZMA compression of the package archive. Built by each `build-<distro>.sh`. |
-| **C++17** | The library is built with `CONFIG += c++17`. |
+| **bit7z** | LZMA compression of the package archive. Built as part of `src/CMakeLists.txt`. |
+| **C++17** | Set for the whole project in `src/CMakeLists.txt`. |
 
-On Linux the library also has **dcm2niix compiled into it** (see `src/squirrel/dcm2niix.pri`),
+On Linux the library also has **dcm2niix compiled into it** (see `src/squirrel/CMakeLists.txt`),
 so in-process DICOM→NIfTI conversion works without an external `dcm2niix` binary. On
 Windows that is not the case and `ConvertDicom()` falls back to invoking `dcm2niix.exe`.
 
 ## Building the library
 
 ```bash
-qmake -o $BUILDDIR/squirrel/Makefile src/squirrel/squirrellib.pro -spec linux-g++
-cd $BUILDDIR/squirrel && make -j
+cmake -S src -B $BUILDDIR -DCMAKE_PREFIX_PATH=$HOME/Qt/6.9.3/gcc_64 -DSQUIRREL_BUILD_CLI=OFF
+cmake --build $BUILDDIR -j
 ```
 
-This produces `libsquirrel.a` (Linux; `CONFIG += staticlib`) or `squirrel.lib` in
-`bin/squirrel` (MSVC). The `build-<distro>.sh` scripts in the repo root do this for you,
-along with building bit7z first, then the CLI.
+`src/CMakeLists.txt` builds bit7z first, then libsquirrel, then (unless
+`-DSQUIRREL_BUILD_CLI=OFF`) FTXUI and the CLI. The outputs are
+`$BUILDDIR/squirrel/libsquirrel.a` (`squirrel.lib` with MSVC) and
+`$BUILDDIR/bit7z/libbit7z64.a`. The `build-<distro>.sh` scripts in the repo root run
+exactly this, with the bit7z 7-Zip ABI flag set for each distro.
 
-**`libsquirrel` is a static archive on Linux.** That single fact drives most of what
-follows: a static archive does not record its own dependencies, so *your* final link
-line has to repeat every library squirrel was built against.
+**`libsquirrel` is a static archive.** A static archive does not record its own
+dependencies, so whatever links it has to repeat every library squirrel was built
+against. Inside CMake that is automatic (see below); outside it, it is your job.
 
-## Linking it: qmake
+## Linking it: CMake, from source (recommended)
 
-Easiest path — include the shared dependency file and let it supply bit7z, DCMTK and
-zlib for you:
+Add squirrel's top-level project as a subdirectory and link the `squirrellib` target.
+CMake then builds bit7z and libsquirrel alongside your program and carries all of
+their dependencies (Qt, DCMTK, bit7z, dl) to your link line in the right order:
 
-```qmake
-QT += core sql
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(myapp CXX)
 
-SQUIRRELSRC = /path/to/squirrel/src/squirrel
-INCLUDEPATH += $$SQUIRRELSRC
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_AUTOMOC ON)          # only if your own code uses Q_OBJECT
 
-# -lsquirrel must come BEFORE squirrel-deps.pri.
-# GNU ld resolves archives in command line order: it takes one pass over
-# libsquirrel.a, notes the symbols still undefined, and expects to find them in
-# libraries listed AFTER it. Put -lsquirrel last and you get a wall of
-# "undefined reference to dcmtk..." errors.
-LIBS += -L/path/to/build/squirrel -lsquirrel
+set(SQUIRREL_BUILD_CLI OFF CACHE BOOL "")   # skip FTXUI and the squirrel CLI
+add_subdirectory(/path/to/squirrel/src ${CMAKE_BINARY_DIR}/squirrel-src)
 
-include($$SQUIRRELSRC/squirrel-deps.pri)
+add_executable(myapp main.cpp)
+target_link_libraries(myapp PRIVATE squirrellib)   # also gives you squirrel's headers
 ```
 
-Two things to know about `squirrel-deps.pri`:
+Pass `-DBIT7Z_USE_LEGACY_IUNKNOWN=OFF` when configuring if the target system has
+modern 7-Zip (23.01+) rather than p7zip 16.02.
 
-- **Its paths are relative to the build directory, not to the .pri file.** `LZMABIN = ../bit7z`
-  assumes your project is built in a directory that is a *sibling* of the bit7z build
-  directory — the layout `build-<distro>.sh` creates. If you build somewhere else, set
-  the paths yourself instead of including the file.
-- **Do not also include `dcm2niix.pri`.** Those objects are already inside `libsquirrel`;
-  including it again compiles them a second time and you get duplicate symbols at link.
+## Linking it: CMake, prebuilt archive
 
-## Linking it: CMake
+If you would rather link an already-built `libsquirrel.a`:
 
 ```cmake
 cmake_minimum_required(VERSION 3.16)
@@ -116,7 +113,7 @@ target_link_libraries(myapp PRIVATE
 
 ## Linking it: plain g++
 
-For reference, this is what the qmake-generated link line reduces to:
+For reference, this is what the link line reduces to:
 
 ```bash
 g++ -std=c++17 -fPIC main.cpp -o myapp \
@@ -338,7 +335,7 @@ classes report through their `QString &m` out-parameter instead.
   `qt.sql.qsqldatabase: QSqlDatabase requires a QCoreApplication`. The object is then
   unusable.
 - **Link order.** `-lsquirrel` before the DCMTK/bit7z group. See above.
-- **Don't include `dcm2niix.pri`** if you link the library — duplicate symbols.
+- **Don't compile the dcm2niix sources into your program** if you link the library — they are already inside it, and you get duplicate symbols.
 - **`SetQuickRead(true)`** unless you actually need per-object file lists.
 - **Check `IsValid()` after `Read()`.** `Read()` itself returns `bool`, but `IsValid()`
   is what the CLI tests, and a package can read without being usable.

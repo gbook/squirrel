@@ -31,9 +31,14 @@ Ubuntu 24 host distro, because they drive the other WSL distros via `wsl.exe`.
 
 These are invoked by the scripts above, not by you.
 
-- **`build-<distro>.sh`** — the nine per-distro build scripts. Each performs the
-  actual compile (bit7z → squirrel library → squirrel utilities)
-  for one distro and writes to `bin/<distro>/`. Called by `build.sh`.
+- **`build-<distro>.sh`** — the seven per-distro build scripts. Each configures
+  and builds the CMake project in `src/CMakeLists.txt` (bit7z, FTXUI, libsquirrel,
+  squirrel CLI) into `bin/<distro>/` and installs the CLI to `/usr/local/bin`.
+  Called by `build.sh`. Arguments: `[qt-dir] [src-dir] [build-dir]`, with `qt-dir`
+  defaulting to `~/Qt/6.9.3/gcc_64`. The scripts differ only in the bit7z 7-Zip ABI
+  flag (`BIT7Z_USE_LEGACY_IUNKNOWN`: `OFF` for Ubuntu 24 and Debian 12/13, which ship
+  modern 7-Zip; `ON` elsewhere) and, on AlmaLinux 8, enabling gcc-toolset-10.
+  `SKIP_CLI=1` builds only libsquirrel.
 - **`build-rpm.sh`** — the compile step used *inside* the rpm build. It is
   referenced by the `%build` section of `squirrel.el.spec`, which `rpmbuild`
   runs when `createInstallerRHEL.sh` executes.

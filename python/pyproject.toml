@@ -28,6 +28,6 @@ test-requires = "pytest"
 test-command = "pytest {project}/python/tests"
 
 [tool.cibuildwheel.linux]
-environment = { SKBUILD_CMAKE_DEFINE = "SQUIRREL_LIB_DIR=/opt/squirrel-deps/squirrel;SQUIRREL_7ZIP_DIR=/opt/squirrel-deps/7zip;QT_ROOT=/opt/Qt/6.9.3/gcc_64", LD_LIBRARY_PATH = "/opt/Qt/6.9.3/gcc_64/lib:/usr/local/lib:/usr/local/lib64" }
+environment = { SKBUILD_CMAKE_DEFINE = "SQUIRREL_BUILD_DIR=/opt/squirrel-deps/build;SQUIRREL_7ZIP_DIR=/opt/squirrel-deps/7zip;QT_ROOT=/opt/Qt/6.9.3/gcc_64", LD_LIBRARY_PATH = "/opt/Qt/6.9.3/gcc_64/lib:/usr/local/lib:/usr/local/lib64" }
 # Qt, ICU, DCMTK, and OpenSSL are copied into squirrel.libs/ by auditwheel.
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
