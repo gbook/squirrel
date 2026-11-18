@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds squirrel (bit7z, FTXUI, libsquirrel and the squirrel CLI) for Ubuntu 22.04
+# Builds squirrel (bit7z, FTXUI, libsquirrel, the squirrel CLI and squirrel-gui) for Ubuntu 22.04
 # with CMake, using the top-level project in src/CMakeLists.txt.
 #
 # Usage: build-ubuntu22.sh [qt-dir] [src-dir] [build-dir]

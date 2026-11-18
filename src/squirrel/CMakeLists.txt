@@ -7,6 +7,8 @@
 find_package(Qt6 REQUIRED COMPONENTS Core Sql)
 
 # DCMTK: built from source and installed to /usr/local on the Linux build hosts.
+# On Windows ../CMakeLists.txt has already put SQUIRREL_DCMTK_DIR
+# (default <repo>/bin/dcmtk-bin) first in CMAKE_PREFIX_PATH.
 if(UNIX)
     list(APPEND CMAKE_PREFIX_PATH /usr/local)
 elseif(WIN32)
@@ -118,4 +120,5 @@ if(SQUIRREL_BUILD_CLI)
             BUILD_RPATH "/usr/local/lib;/usr/local/lib64"
             INSTALL_RPATH "/usr/local/lib;/usr/local/lib64")
     endif()
+    squirrel_copy_dcmtk_dlls(squirrel)
 endif()

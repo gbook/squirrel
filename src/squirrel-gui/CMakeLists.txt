@@ -2,6 +2,14 @@
 # squirrel-gui: Qt Widgets viewer for squirrel packages (view only in v1)
 # ------------------------------------------------------------------------------
 # Configured from ../CMakeLists.txt, which provides the squirrellib target.
+# This file is not a project on its own: open src/CMakeLists.txt instead.
+
+if(NOT TARGET squirrellib)
+    message(FATAL_ERROR
+        "src/squirrel-gui/CMakeLists.txt cannot be opened on its own. "
+        "Open src/CMakeLists.txt (the top-level project) instead; it builds "
+        "bit7z and libsquirrel and then the squirrel-gui target.")
+endif()
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
@@ -34,3 +42,5 @@ if(UNIX)
         BUILD_RPATH "/usr/local/lib;/usr/local/lib64"
         INSTALL_RPATH "/usr/local/lib;/usr/local/lib64")
 endif()
+
+squirrel_copy_dcmtk_dlls(squirrel-gui)

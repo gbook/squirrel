@@ -27,7 +27,7 @@ library rather than shelling out to the `squirrel` binary.
 |---|---|
 | **Qt 6** (Core + Sql) | `QtSql` is not optional — a squirrel package *is* a SQLite database, and the library keeps a `QSqlDatabase` connection open. Make sure Qt's SQLite driver is present. |
 | A **`QCoreApplication`** | Must exist before you construct a `squirrel` object. `QApplication` counts. |
-| **DCMTK** | DICOM reading. Expected in `/usr/local` on Linux, `C:\Program Files (x86)\DCMTK` on Windows. |
+| **DCMTK** | DICOM reading. Expected in `/usr/local` on Linux, `bin\dcmtk-bin` in the repository on Windows (override with `-DSQUIRREL_DCMTK_DIR=...`; `C:\Program Files (x86)\DCMTK` and `C:\Program Files\DCMTK` are also searched). |
 | **bit7z** | LZMA compression of the package archive. Built as part of `src/CMakeLists.txt`. |
 | **C++17** | Set for the whole project in `src/CMakeLists.txt`. |
 

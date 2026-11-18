@@ -66,6 +66,30 @@ if(SQUIRREL_BUILD_CLI)
     add_subdirectory(ftxui)
 endif()
 
+# ----- DCMTK location on Windows ----------------------------------------------
+# Expected as an installed DCMTK tree (bin/, include/, lib/, cmake/) in
+# <repo>/bin/dcmtk-bin, built with the same MSVC version and build type.
+# Override with -DSQUIRREL_DCMTK_DIR=... ; the Program Files locations are
+# still searched after it.
+if(WIN32)
+    get_filename_component(_squirrel_repo "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
+    set(SQUIRREL_DCMTK_DIR "${_squirrel_repo}/bin/dcmtk-bin" CACHE PATH
+        "Installed DCMTK (contains bin, include, lib, cmake)")
+    list(PREPEND CMAKE_PREFIX_PATH "${SQUIRREL_DCMTK_DIR}")
+    # A shared DCMTK build puts its DLLs in bin/; copy them next to the
+    # executables so they run from the build folder (and from Qt Creator).
+    file(GLOB SQUIRREL_DCMTK_DLLS "${SQUIRREL_DCMTK_DIR}/bin/*.dll")
+endif()
+
+function(squirrel_copy_dcmtk_dlls target)
+    if(WIN32 AND SQUIRREL_DCMTK_DLLS)
+        add_custom_command(TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${SQUIRREL_DCMTK_DLLS} "$<TARGET_FILE_DIR:${target}>"
+            COMMENT "Copying DCMTK DLLs next to ${target}")
+    endif()
+endfunction()
+
 # ----- squirrel library + CLI -------------------------------------------------
 add_subdirectory(squirrel)
 
