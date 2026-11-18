@@ -36,6 +36,11 @@ add_executable(squirrel-gui WIN32
 # squirrellib carries Qt Core/Sql, DCMTK and bit7z with it.
 target_link_libraries(squirrel-gui PRIVATE squirrellib Qt6::Widgets)
 
+if(WIN32)
+    # DCMTK headers pull in windows.h, whose min/max macros break std::min/std::max.
+    target_compile_definitions(squirrel-gui PRIVATE NOMINMAX)
+endif()
+
 if(UNIX)
     # Same runtime search path as the CLI: DCMTK lives in /usr/local.
     set_target_properties(squirrel-gui PROPERTIES
