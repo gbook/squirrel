@@ -1,40 +1,18 @@
 /bin
-/src/build-*
-src/squirrel/squirrellib.pro.user.afb6026
-src/squirrel/squirrellib.pro.user.0a56b21
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user.6926030
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrellib.pro.user
-src/squirrel/squirrel.pro.user
+/src/tests
+
+# Qt Creator: per-user project settings (CMakeLists.txt.user, *.user.<hash>)
 *.user
-src/squirrel/squirrel.pro.user.0a56b21
-src/squirrel/squirrel.pro.user.6926030
-src/squirrel/squirrel.pro.user.0a56b21
+*.user.*
+# Qt Creator / CMake build directories inside the source tree
+/src/build/
+/src/build-*
+/src/squirrel/build/
+/src/Desktop_Qt_*
+
+# old SWIG Python wrapper output
 src/squirrel/squirrel_wrap.c
 src/squirrel/squirrel.py
-src/squirrel/squirrel.pro.user.0a56b21
-src/squirrel/squirrel.pro.user.afb6026
-src/squirrel/squirrel.pro.user
-src/squirrel/Qt/Uninstall Qt.lnk
-src/squirrel/Qt/Qt Creator 11.0.2 (Community).lnk
-src/squirrel/Qt/Qt Maintenance Tool.lnk
-src/squirrel/squirrel.pro.user
-src/squirrel/squirrel.pro.user
-/src/Desktop_Qt_6_6_1_MSVC2019_64bit-Release
-/src/squirrel/build/Desktop_Qt_6_6_1_MSVC2019_64bit-Release
-src/squirrel/squirrel.pro.user.a471750
-/src/squirrel/build
-src/squirrel/squirrel.pro.user
-src/squirrel/squirrel.pro.user
-*.user
-*.user
-src/squirrel/squirrel.pro.user
-/src/tests
-src/squirrel/bin/squirrel/squirrel.pdb
+
+src/squirrel/Qt/
+src/squirrel/bin/
