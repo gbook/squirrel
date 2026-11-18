@@ -25,5 +25,7 @@ tar -C "$ROOT" \
 mkdir -p "$OUT"
 cd "$STAGE"
 python3 -m pip install --user --upgrade cibuildwheel
-python3 -m cibuildwheel --package-dir python --config-file python/pyproject.toml \
-    --output-dir "$OUT" "$@"
+# The package directory is a positional argument; cibuildwheel 4 removed
+# --package-dir. The staged root is still the 'project' copied into the container.
+python3 -m cibuildwheel --config-file python/pyproject.toml \
+    --output-dir "$OUT" "$@" python
