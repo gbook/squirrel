@@ -9,7 +9,8 @@ URL:            http://github.com/gbook/squirrel
 
 BuildArch:	x86_64
 BuildRequires:  gcc, cmake >= 3.16, make
-Requires:       openssl, p7zip, p7zip-plugins
+# 7-Zip is not required: the package ships its own 7z.so (modern 7-Zip).
+Requires:       openssl
 
 %description
 squirrel library and utilities is a data format to allow aggregation and dissemination of neuroscience data.
@@ -23,6 +24,7 @@ mkdir -p %{buildroot}/usr/lib
 mkdir -p %{buildroot}/usr/local/bin/sqldrivers
 
 cp -f %{_builddir}/bin/squirrel/squirrel %{buildroot}/usr/local/bin/ # copy squirrel util binary
+cp -f %{_builddir}/bin/squirrel/7z.so %{_builddir}/bin/squirrel/7zip-*.txt %{buildroot}/usr/local/bin/ # 7-Zip library squirrel loads (next to the binary), with its licenses
 # NOTE: libsquirrel is a STATIC library (src/squirrel/CMakeLists.txt), so it is
 # linked directly into the squirrel binary above - there is no libsquirrel.so.1
 # to ship. (Do not re-add it; the file does not exist.)

@@ -18,6 +18,7 @@ cp -uv ~/Qt/6.9.3/gcc_64/lib/libQt6Sql.so* ~/Qt/6.9.3/gcc_64/lib/libQt6Network.s
 cp -uv ~/Qt/6.9.3/gcc_64/lib/libicui18n.so.73 ~/Qt/6.9.3/gcc_64/lib/libicuuc.so.73 ~/Qt/6.9.3/gcc_64/lib/libicudata.so.73 $LIBDIR
 
 cp -uv $SRCBINDIR/squirrel $BINDIR
+cp -uv $SRCBINDIR/7z.so $SRCBINDIR/7zip-*.txt $BINDIR   # 7-Zip library squirrel loads (next to the binary)
 
 echo "Package: squirrel
 Version: 2026.11.538

@@ -21,8 +21,9 @@ case "$QTDIR" in */bin/qmake) QTDIR="$(dirname "$(dirname "$QTDIR")")" ;; esac
 SRCDIR="${2:-$PWD/src}"
 BUILDDIR="${3:-$PWD/bin}"
 
-# The rpm Requires: p7zip, i.e. the legacy p7zip 16.02 IUnknown ABI.
-BIT7Z_LEGACY_IUNKNOWN=ON
+# The rpm ships its own modern 7-Zip (7z.so, built by the CMake project next to
+# the squirrel binary), so bit7z uses the modern ABI.
+BIT7Z_LEGACY_IUNKNOWN=OFF
 
 command -v make  >/dev/null 2>&1 || { echo -e "\nThis script requires make, but it is not installed\n"; exit 1; }
 command -v gcc   >/dev/null 2>&1 || { echo -e "\nThis script requires gcc, but it is not installed\n"; exit 1; }

@@ -31,6 +31,7 @@
 #include "squirrelVersion.h"
 #include "squirrelTypes.h"
 #include <QCryptographicHash>
+#include <QFileInfo>
 #include <QCoreApplication>
 
 /* ----- bit7z progress callbacks ----- */
@@ -143,11 +144,16 @@ squirrel::~squirrel()
 /**
  * @brief Locate the 7-zip shared library on disk and store its path
  *
- * The SQUIRREL_7ZIP_LIB environment variable, if it names an existing file, takes
- * precedence over the system locations. The Python wheel uses this to load the
- * 7z.so it ships, so it does not depend on (or mismatch the ABI of) a system 7-zip.
- * On Windows a 7z.dll next to the executable (as shipped by the .msi installer) is
- * used before an installed 7-Zip.
+ * libsquirrel is built against the modern 7-Zip interface (bit7z with
+ * BIT7Z_USE_LEGACY_IUNKNOWN=OFF), so only a modern 7-Zip (23.01+) library may be
+ * loaded. The legacy p7zip 16.02 library has a different ABI and crashes inside
+ * 7z.so, so its locations (/usr/libexec/p7zip, /usr/lib/p7zip) are deliberately
+ * not searched. Search order:
+ *   1. SQUIRREL_7ZIP_LIB environment variable (the Python wheel points it at the
+ *      7z.so it ships)
+ *   2. 7z.so / 7z.dll next to the executable. The squirrel and NiDB packages and
+ *      the Windows installer all ship the library there.
+ *   3. A system-installed modern 7-Zip
  * @return true if the library was found, false otherwise
  */
 bool squirrel::Get7zipLibPath() {
@@ -159,42 +165,37 @@ bool squirrel::Get7zipLibPath() {
     }
 
 #ifdef Q_OS_WINDOWS
-    if (QCoreApplication::instance()) {
-        QString appLib = QCoreApplication::applicationDirPath() + "/7z.dll";
-        if (QFile::exists(appLib)) {
-            p7zipLibPath = appLib;
-            Debug("Found 7zip library next to the executable: " + appLib, __FUNCTION__);
+    const QString libName = "7z.dll";
+    const QStringList systemLibs = { "C:/Program Files/7-Zip/7z.dll" };
+#else
+    const QString libName = "7z.so";
+    const QStringList systemLibs = {
+        "/usr/libexec/7zip/7z.so",  /* RHEL/EPEL '7zip' package */
+        "/usr/lib/7zip/7z.so"       /* Debian/Ubuntu '7zip' package */
+    };
+#endif
+
+    QStringList candidates;
+    QString exeDir;
+    if (QCoreApplication::instance())
+        exeDir = QCoreApplication::applicationDirPath();
+#ifdef Q_OS_LINUX
+    else
+        exeDir = QFileInfo("/proc/self/exe").canonicalPath();
+#endif
+    if (!exeDir.isEmpty())
+        candidates << exeDir + "/" + libName;
+    candidates << systemLibs;
+
+    for (const QString &lib : candidates) {
+        if (QFile::exists(lib)) {
+            p7zipLibPath = lib;
+            Debug("Found 7zip library " + lib, __FUNCTION__);
             return true;
         }
     }
-    if (QFile::exists("C:/Program Files/7-Zip/7z.dll")) {
-        p7zipLibPath = "C:/Program Files/7-Zip/7z.dll";
-        Debug("Found 7zip path C:/Program Files/7-Zip/7z.dll", __FUNCTION__);
-        return true;
-    }
-#else
-    if (QFile::exists("/usr/libexec/p7zip/7z.so")) {
-        p7zipLibPath = "/usr/libexec/p7zip/7z.so";
-        Debug("Found 7zip library path /usr/libexec/p7zip/7z.so", __FUNCTION__);
-        return true;
-    }
-    else if (QFile::exists("/usr/libexec/p7zip/7za.so")) {
-        p7zipLibPath = "/usr/libexec/p7zip/7za.so";
-        Debug("Found 7zip library path /usr/libexec/p7zip/7za.so", __FUNCTION__);
-        return true;
-    }
-    else if (QFile::exists("/usr/lib/7zip/7z.so")) {
-        p7zipLibPath = "/usr/lib/7zip/7z.so";
-        Debug("Found 7zip library path /usr/lib/7zip/7z.so", __FUNCTION__);
-        return true;
-    }
-    else if (QFile::exists("/usr/lib/p7zip/7z.so")) {
-        p7zipLibPath = "/usr/lib/p7zip/7z.so";
-        Debug("Found 7zip library path /usr/lib/p7zip/7z.so", __FUNCTION__);
-        return true;
-    }
-#endif
 
+    Log("7-zip library not found. Searched: SQUIRREL_7ZIP_LIB, " + candidates.join(", "));
     return false;
 }
 

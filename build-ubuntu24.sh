@@ -17,10 +17,9 @@ case "$QTDIR" in */bin/qmake) QTDIR="$(dirname "$(dirname "$QTDIR")")" ;; esac
 SRCDIR="${2:-$PWD/src}"
 BUILDDIR="${3:-$PWD/bin/ubuntu24}"
 
-# bit7z must be built for the 7-Zip ABI installed on this distro:
-#   ON  = legacy p7zip 16.02 IUnknown ABI
-#   OFF = modern 7-Zip (23.01+, /usr/lib/7zip/7z.so)
-# A mismatch links a wrong vtable and segfaults inside 7z.so as soon as a
+# bit7z must match the 7-Zip library loaded at runtime. squirrel builds and ships
+# its own modern 7-Zip (7z.so, next to the binaries), so this is OFF on every
+# distro. ON (legacy p7zip 16.02 ABI) would segfault inside 7z.so as soon as a
 # package is written.
 BIT7Z_LEGACY_IUNKNOWN=OFF
 
@@ -58,6 +57,8 @@ if [ "$SKIP_CLI" = "1" ]; then
 elif [ -f "$SQUIRREL_BIN" ]; then
     echo -e "\n ----- Installing squirrel to /usr/local/bin -----\n"
     sudo cp -v "$SQUIRREL_BIN" /usr/local/bin/squirrel || echo "WARNING: could not install squirrel to /usr/local/bin (compile succeeded; install skipped)"
+    # the 7-Zip library squirrel loads (built next to the binary)
+    sudo cp -v "$BUILDDIR"/squirrel/7z.so "$BUILDDIR"/squirrel/7zip-*.txt /usr/local/bin/ || echo "WARNING: could not install 7z.so to /usr/local/bin"
     sudo ldconfig || true
 else
     echo "Warning: squirrel binary not found at $SQUIRREL_BIN, skipping install"

@@ -61,3 +61,4 @@ if(UNIX)
 endif()
 
 squirrel_copy_dcmtk_dlls(squirrel-gui)
+squirrel_copy_7zip(squirrel-gui)
