@@ -12,7 +12,7 @@
 # What goes into <install>/bin:
 #   squirrel-gui.exe, squirrel.exe
 #   Qt DLLs + plugins (platforms, styles, sqldrivers/qsqlite, ...) via windeployqt
-#   DCMTK DLLs (SQUIRREL_DCMTK_DIR/bin)
+#   DCMTK DLLs (from the imported DCMTK targets)
 #   7z.dll (SQUIRREL_7ZIP_DLL, taken from an installed 64-bit 7-Zip)
 #   MSVC runtime DLLs (InstallRequiredSystemLibraries)
 #
@@ -27,10 +27,10 @@ set(SQUIRREL_PACKAGING_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 # ----- executables -------------------------------------------------------------
 if(TARGET squirrel-gui)
-    install(TARGETS squirrel-gui RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS squirrel-gui RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT squirrel)
 endif()
 if(TARGET squirrel)
-    install(TARGETS squirrel RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS squirrel RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT squirrel)
 endif()
 
 # ----- Qt runtime (windeployqt) ------------------------------------------------
@@ -44,13 +44,20 @@ if(TARGET squirrel-gui)
         # The MSVC runtime is installed below; the GUI is English only.
         DEPLOY_TOOL_OPTIONS --no-compiler-runtime --no-translations
     )
-    install(SCRIPT "${SQUIRREL_GUI_DEPLOY_SCRIPT}")
+    install(SCRIPT "${SQUIRREL_GUI_DEPLOY_SCRIPT}" COMPONENT squirrel)
 endif()
 
 # ----- DCMTK DLLs ----------------------------------------------------------------
-if(SQUIRREL_DCMTK_DLLS)
-    install(FILES ${SQUIRREL_DCMTK_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif()
+# Every DLL of the imported shared libraries the exes link (DCMTK, plus Qt
+# libraries that windeployqt also copies), for the configuration being
+# installed. This works whether SQUIRREL_DCMTK_DIR is a DCMTK install tree
+# (bin/*.dll) or a build tree (bin/Release/*.dll).
+foreach(_exe squirrel-gui squirrel)
+    if(TARGET ${_exe})
+        install(FILES $<TARGET_RUNTIME_DLLS:${_exe}> DESTINATION ${CMAKE_INSTALL_BINDIR}
+                COMPONENT squirrel)
+    endif()
+endforeach()
 
 # ----- 7-Zip -----------------------------------------------------------------------
 # libsquirrel loads 7z.dll at runtime; it looks next to the executable first, so
@@ -58,12 +65,12 @@ endif()
 set(SQUIRREL_7ZIP_DLL "C:/Program Files/7-Zip/7z.dll" CACHE FILEPATH
     "64-bit 7z.dll to bundle in the Windows installer")
 if(EXISTS "${SQUIRREL_7ZIP_DLL}")
-    install(FILES "${SQUIRREL_7ZIP_DLL}" DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES "${SQUIRREL_7ZIP_DLL}" DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT squirrel)
     # 7-Zip is LGPL (with unRAR restriction); ship its license alongside.
     get_filename_component(_7z_dir "${SQUIRREL_7ZIP_DLL}" DIRECTORY)
     if(EXISTS "${_7z_dir}/License.txt")
         install(FILES "${_7z_dir}/License.txt" DESTINATION ${CMAKE_INSTALL_BINDIR}
-                RENAME 7zip-License.txt)
+                RENAME 7zip-License.txt COMPONENT squirrel)
     endif()
 else()
     message(WARNING "7z.dll not found at '${SQUIRREL_7ZIP_DLL}'. The installer will "
@@ -73,15 +80,19 @@ endif()
 
 # ----- MSVC runtime ----------------------------------------------------------------
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${CMAKE_INSTALL_BINDIR})
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT squirrel)
 set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 include(InstallRequiredSystemLibraries)
 
 # ----- license (WiX wants .txt or .rtf) ---------------------------------------------
 configure_file("${PROJECT_SOURCE_DIR}/../LICENSE" "${CMAKE_BINARY_DIR}/LICENSE.txt" COPYONLY)
-install(FILES "${CMAKE_BINARY_DIR}/LICENSE.txt" DESTINATION .)
+install(FILES "${CMAKE_BINARY_DIR}/LICENSE.txt" DESTINATION . COMPONENT squirrel)
 
 # ----- CPack / WiX --------------------------------------------------------------------
 set(CPACK_GENERATOR "WIX")
+# Package only the 'squirrel' component above. bit7z's own install rules (its
+# headers and static library) are not wanted in the installer.
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};squirrel;squirrel;/")
 set(CPACK_PACKAGE_NAME "Squirrel")
 set(CPACK_PACKAGE_VENDOR "Olin Neuropsychiatry Research Center")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Viewer and command line tools for squirrel data packages")
