@@ -7,6 +7,7 @@
 #   squirrellib               libsquirrel static library   -> <build>/squirrel/libsquirrel.a
 #   squirrel                  command line utility         -> <build>/squirrel/squirrel
 #   squirrel-gui              Qt Widgets GUI (optional)    -> <build>/squirrel-gui/squirrel-gui
+#   Windows: 'cpack -C Release' in the build folder makes an .msi (packaging/windows.cmake)
 #
 # Typical use (Linux):
 #   cmake -S src -B bin/ubuntu24 -DCMAKE_PREFIX_PATH=~/Qt/6.9.3/gcc_64
@@ -27,7 +28,21 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(squirrel LANGUAGES C CXX)
+# Version comes from squirrel/squirrelVersion.h (maintained by update_version.sh).
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/squirrel/squirrelVersion.h" _squirrel_ver_lines
+     REGEX "#define UTIL_(VERSION_MAJ|VERSION_MIN|BUILD_NUM) ")
+foreach(_line IN LISTS _squirrel_ver_lines)
+    if(_line MATCHES "UTIL_VERSION_MAJ \"([0-9]+)\"")
+        set(SQUIRREL_VERSION_YEAR "${CMAKE_MATCH_1}")
+    elseif(_line MATCHES "UTIL_VERSION_MIN \"([0-9]+)\"")
+        set(SQUIRREL_VERSION_MONTH "${CMAKE_MATCH_1}")
+    elseif(_line MATCHES "UTIL_BUILD_NUM \"([0-9]+)\"")
+        set(SQUIRREL_VERSION_BUILD "${CMAKE_MATCH_1}")
+    endif()
+endforeach()
+set(SQUIRREL_VERSION "${SQUIRREL_VERSION_YEAR}.${SQUIRREL_VERSION_MONTH}.${SQUIRREL_VERSION_BUILD}")
+
+project(squirrel VERSION ${SQUIRREL_VERSION} LANGUAGES C CXX)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
@@ -104,4 +119,9 @@ if(SQUIRREL_BUILD_GUI)
     else()
         message(WARNING "Qt6 Widgets not found: skipping the squirrel GUI (set SQUIRREL_BUILD_GUI=OFF to silence this)")
     endif()
+endif()
+
+# ----- Windows installer (.msi, via 'cpack') -----------------------------------
+if(WIN32)
+    include(packaging/windows.cmake)
 endif()

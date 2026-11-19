@@ -33,12 +33,24 @@ add_executable(squirrel-gui WIN32
     settings.cpp        settings.h
 )
 
+# Window icon (title bar, taskbar, dialogs), compiled into the exe.
+qt_add_resources(squirrel-gui "squirrel_gui_icons"
+    PREFIX "/"
+    FILES resources/squirrel.png)
+
 # squirrellib carries Qt Core/Sql, DCMTK and bit7z with it.
 target_link_libraries(squirrel-gui PRIVATE squirrellib Qt6::Widgets)
 
 if(WIN32)
     # DCMTK headers pull in windows.h, whose min/max macros break std::min/std::max.
     target_compile_definitions(squirrel-gui PRIVATE NOMINMAX)
+
+    # Explorer/shortcut icon and file version info.
+    set(SQUIRREL_GUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/squirrel.ico")
+    file(TO_CMAKE_PATH "${SQUIRREL_GUI_ICON}" SQUIRREL_GUI_ICON)
+    configure_file(resources/squirrel-gui.rc.in
+                   "${CMAKE_CURRENT_BINARY_DIR}/squirrel-gui.rc" @ONLY)
+    target_sources(squirrel-gui PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/squirrel-gui.rc")
 endif()
 
 if(UNIX)

@@ -29,6 +29,7 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QIcon>
 
 #include "dicomslice.h"
 #include "mainwindow.h"
@@ -41,6 +42,7 @@ int main(int argc, char *argv[]) {
     QApplication::setOrganizationName("squirrel");
     QApplication::setApplicationName("squirrel-gui");
     QApplication::setApplicationDisplayName("Squirrel");
+    QApplication::setWindowIcon(QIcon(":/resources/squirrel.png"));
 
     qRegisterMetaType<SnapshotPtr>("SnapshotPtr");
     qRegisterMetaType<ExtractRequest>("ExtractRequest");

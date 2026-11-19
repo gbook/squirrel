@@ -31,6 +31,7 @@
 #include "squirrelVersion.h"
 #include "squirrelTypes.h"
 #include <QCryptographicHash>
+#include <QCoreApplication>
 
 /* ----- bit7z progress callbacks ----- */
 qint64 totalbytes(0);
@@ -145,6 +146,8 @@ squirrel::~squirrel()
  * The SQUIRREL_7ZIP_LIB environment variable, if it names an existing file, takes
  * precedence over the system locations. The Python wheel uses this to load the
  * 7z.so it ships, so it does not depend on (or mismatch the ABI of) a system 7-zip.
+ * On Windows a 7z.dll next to the executable (as shipped by the .msi installer) is
+ * used before an installed 7-Zip.
  * @return true if the library was found, false otherwise
  */
 bool squirrel::Get7zipLibPath() {
@@ -156,6 +159,14 @@ bool squirrel::Get7zipLibPath() {
     }
 
 #ifdef Q_OS_WINDOWS
+    if (QCoreApplication::instance()) {
+        QString appLib = QCoreApplication::applicationDirPath() + "/7z.dll";
+        if (QFile::exists(appLib)) {
+            p7zipLibPath = appLib;
+            Debug("Found 7zip library next to the executable: " + appLib, __FUNCTION__);
+            return true;
+        }
+    }
     if (QFile::exists("C:/Program Files/7-Zip/7z.dll")) {
         p7zipLibPath = "C:/Program Files/7-Zip/7z.dll";
         Debug("Found 7zip path C:/Program Files/7-Zip/7z.dll", __FUNCTION__);
