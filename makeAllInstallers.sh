@@ -19,6 +19,8 @@
 # Each target's full build output is also written to ./installers/logs/
 # (e.g. squirrel_2026.11.515_AlmaLinux-8.log), along with a summary file, so a
 # failure in the summary can be traced back to its log.
+# Old installers (.deb/.rpm/.msi/.whl) in ./installers/ are deleted at the start
+# of each run; logs are kept.
 
 SRCDIR="$(pwd)"
 SHARED=/mnt/wsl/squirrel-build
@@ -47,6 +49,11 @@ declare -A LOGS
 
 LOGDIR="$OUTDIR/logs"
 mkdir -p "$OUTDIR" "$LOGDIR"
+
+# Start from an empty set of installers so OUTDIR holds only this run's output.
+# Logs are versioned and kept.
+echo "Removing old installers from $OUTDIR..."
+find "$OUTDIR" -maxdepth 1 -type f \( -name '*.deb' -o -name '*.rpm' -o -name '*.msi' -o -name '*.whl' \) -print -delete
 
 # Log file for a target, versioned so earlier runs are kept.
 logfile() {   # $1 = target name
