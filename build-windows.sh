@@ -13,7 +13,8 @@
 #      <win-repo>/src/build-msi.
 #   3. cpack -> squirrel_<version>_Windows-x64.msi, copied into ./installers/.
 #
-# The full output goes to ./installers/logs/squirrel_<version>_Windows.log.
+# The full output goes to ./installers/logs/squirrel_<version>_Windows.log
+# (unless NO_LOG=1, for callers that log it themselves).
 #
 # Windows-side requirements (paths can be overridden with the variables below):
 #   Visual Studio 2022 with the C++ workload
@@ -65,7 +66,10 @@ OUTDIR="$SRCDIR/installers"
 LOGDIR="$OUTDIR/logs"
 LOG="$LOGDIR/squirrel_${VERSION}_Windows.log"
 mkdir -p "$LOGDIR"
-exec > >(tee "$LOG") 2>&1
+# A caller that keeps its own log (makeAllInstallers.sh) sets NO_LOG=1.
+if [ "${NO_LOG:-0}" != "1" ]; then
+    exec > >(tee "$LOG") 2>&1
+fi
 echo "# Windows installer build, version $VERSION"
 echo "# Started: $(date '+%Y-%m-%d %H:%M:%S')"
 echo "# Source: $SRCDIR -> $WINREPO"

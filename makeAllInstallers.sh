@@ -13,6 +13,9 @@
 #
 # Finished installers are collected into ./installers/ with distro-tagged names.
 # The Python wheels (manylinux, built in a container) are collected there too.
+# The Windows .msi is built last with build-windows.sh (MSVC/Qt/WiX on the
+# Windows side, via WSL interop, in /mnt/c/squirrel); set SKIP_WINDOWS=1 to
+# leave it out, or WINDOWS_REPO=<path> to use another Windows checkout.
 # Each target's full build output is also written to ./installers/logs/
 # (e.g. squirrel_2026.11.515_AlmaLinux-8.log), along with a summary file, so a
 # failure in the summary can be traced back to its log.
@@ -171,6 +174,30 @@ else
     fi
 fi
 
+# --- Windows .msi ---
+# Built on the Windows side (Visual Studio, Qt, WiX) through WSL interop by
+# build-windows.sh, which syncs src/ into the Windows checkout first and copies
+# the finished .msi into OUTDIR.
+WINDOWS_REPO="${WINDOWS_REPO:-/mnt/c/squirrel}"
+echo ""
+echo "=========================================="
+echo "  Windows: building .msi"
+echo "=========================================="
+start_log Windows
+if [ "$SKIP_WINDOWS" = "1" ]; then
+    RESULTS[Windows]="SKIPPED (SKIP_WINDOWS=1)"
+elif [ ! -d "$WINDOWS_REPO" ]; then
+    echo "SKIP: Windows checkout $WINDOWS_REPO not found" | tee -a "${LOGS[Windows]}"
+    RESULTS[Windows]="SKIPPED (no Windows checkout)"
+else
+    NO_LOG=1 bash "$SRCDIR/build-windows.sh" "$WINDOWS_REPO" 2>&1 | tee -a "${LOGS[Windows]}"
+    if [ "${PIPESTATUS[0]}" -eq 0 ]; then
+        RESULTS[Windows]="SUCCESS"
+    else
+        RESULTS[Windows]="FAILED"
+    fi
+fi
+
 # Append the result to each log, then print the summary to the console and to
 # a summary file next to the logs. Non-successful targets show their log path.
 SUMMARY="$LOGDIR/${DEB_PACKAGE}_summary.txt"
@@ -179,7 +206,7 @@ for ENTRY in "${INSTALLERS[@]}"; do
     IFS=':' read -r DISTRO _ _ <<< "$ENTRY"
     TARGETS+=("$DISTRO")
 done
-TARGETS+=(Python-wheels)
+TARGETS+=(Python-wheels Windows)
 
 for T in "${TARGETS[@]}"; do
     if [ -n "${LOGS[$T]}" ]; then
