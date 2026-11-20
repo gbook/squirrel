@@ -2,7 +2,7 @@
 # Optional arg: path to the distro-specific squirrel build dir (default: bin/squirrel)
 SRCBINDIR=${1:-bin/squirrel}
 
-PACKAGE=squirrel_2026.11.538
+PACKAGE=squirrel_2026.11.541
 LIBDIR=$PACKAGE/lib/x86_64-linux-gnu/
 BINDIR=$PACKAGE/usr/local/bin/
 DEBDIR=$PACKAGE/DEBIAN
@@ -21,7 +21,7 @@ cp -uv $SRCBINDIR/squirrel $BINDIR
 cp -uv $SRCBINDIR/7z.so $SRCBINDIR/7zip-*.txt $BINDIR   # 7-Zip library squirrel loads (next to the binary)
 
 echo "Package: squirrel
-Version: 2026.11.538
+Version: 2026.11.541
 Section: base
 Priority: optional
 Architecture: amd64
